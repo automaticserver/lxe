@@ -1,0 +1,14 @@
+metadata:
+  name: myubuntutest-container
+image:
+  image: ubuntu/16.04
+envs:
+  - key: "user-data"
+    value: |
+      #cloud-config
+      write_files:
+        - path: /tmp/cloud-init-test-file
+          owner: root:root
+          permissions: '0644'
+          content: |
+            blueberry

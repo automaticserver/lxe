@@ -1,0 +1,12 @@
+{
+    "metadata": {
+        "name": "myubuntutest-sandbox",
+        "namespace": "default",
+        "attempt": 1,
+        "uid": "hdishd83djaidwnduwk28bcsb"
+    },
+    "dns_config": {
+	    "servers": [ "9.9.9.9" ]
+    },
+    "linux": {}
+}

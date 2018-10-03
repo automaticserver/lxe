@@ -1,0 +1,19 @@
+{
+    "metadata": {
+        "name": "volumetest-container"
+    },
+    "image": {
+        "image": "images/ubuntu/18.04"
+    },
+    "mounts": [
+       {
+           "container_path": "/dev/termination-log",
+           "host_path": "/var/tmp/crictl/term-log"
+       },
+       {
+           "container_path": "/var/run/secrets/kubernetes.io/serviceacount",
+           "host_path": "/var/tmp/crictl/k8s4t"
+       }
+    ],
+    "linux": {}
+}

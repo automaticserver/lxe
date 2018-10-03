@@ -1,0 +1,17 @@
+[Unit]
+Description=LXE, CRI shim for lxc
+Requires=lxd.socket
+Wants=network-online.target
+After=lxd.socket network-online.target
+
+[Service]
+EnvironmentFile=-/etc/default/lxe
+ExecStart=/usr/bin/lxe --logfile /var/log/lxe.log --verbose
+SyslogIdentifier=lxe.daemon
+Restart=always
+KillMode=process
+TimeoutStopSec=600
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

@@ -2,3 +2,4 @@ vendor
 .vscode/
 *.coverprofile
 cri/version.go
+bin

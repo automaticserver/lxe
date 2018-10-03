@@ -4,6 +4,7 @@ LXDSOCKETFILE ?= /var/lib/lxd/unix.socket
 LXESOCKETFILE ?= /var/run/lxe.sock
 LXDSOCKET=unix://$(LXDSOCKETFILE)
 LXESOCKET=unix://$(LXESOCKETFILE)
+LXELOGFILE ?= /var/log/lxe.log
 
 VERSION=$(shell git describe --long --tags --dirty --always --match '[0-9]\.[0-9]' | sed -e 's|-|.|g')
 PACKAGENAME=$(shell echo "$${PWD\#"$$GOPATH/src/"}")
@@ -17,28 +18,15 @@ all: build test lint
 build: mod version
 	go build -v $(DEBUG) -o bin/lxe ./cmd/lxe
 
-.PHONY: fetch
-fetch: $(GOPATH)/bin/glide
-	$(GOPATH)/bin/glide install -v
-
 .PHONY: 
 mod: 
 	go mod download
 	go mod tidy
 	go mod verify
 
-.PHONY: update
-update: $(GOPATH)/bin/glide
-	$(GOPATH)/bin/glide update -v
-	@echo "Dependencies updated"
-
 .PHONY: debug
 debug: mod version
-	go install -v -tags logdebug $(DEBUG) ./...
-	@echo "$(DOMAIN) built successfully"
-
-$(GOPATH)/bin/glide:
-	go get -v -u "github.com/Masterminds/glide"
+	go build -v -tags logdebug $(DEBUG) -o bin/lxe ./cmd/lxe
 
 $(GOPATH)/bin/gometalinter:
 	go get -v -u "github.com/alecthomas/gometalinter"
@@ -113,8 +101,8 @@ critest: checklxd $(GOPATH)/bin/critest
 
 .PHONY: cribench
 cribench: checklxd default prepareintegration $(GOPATH)/bin/critest
-	($(GOPATH)/bin/lxe --socket $(LXESOCKETFILE) --lxd-socket $(LXDSOCKETFILE) &)
+	(./bin/lxe --socket $(LXESOCKETFILE) --lxd-socket $(LXDSOCKETFILE) --logfile $(LXELOGFILE) &)
 	$(GOPATH)/bin/critest -benchmark -runtime-endpoint $(LXESOCKET) -image-endpoint $(LXESOCKET)
 
 run: checklxd build
-	$(GOPATH)/bin/lxe --debug --socket $(LXESOCKETFILE) --lxd-socket $(LXDSOCKETFILE)
+	./bin/lxe --debug --socket $(LXESOCKETFILE) --lxd-socket $(LXDSOCKETFILE) --logfile $(LXELOGFILE)

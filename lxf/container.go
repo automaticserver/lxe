@@ -26,6 +26,7 @@ const (
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
+	cfgAutoStartOnBoot    = "boot.autostart"
 	// PathHostnetworkInclude is the path to the `lxe.net.0.type=none` workaround file for HostNetwork
 	PathHostnetworkInclude = "/var/lib/lxe/hostnetwork.conf"
 
@@ -401,6 +402,7 @@ func makeContainerConfig(c *Container) map[string]string {
 	config[cfgIsContainer] = "true"
 	config[cfgMetaAttempt] = strconv.Itoa(c.Metadata.Attempt)
 	config[cfgVolatileBaseImage] = c.Image
+	config[cfgAutoStartOnBoot] = "true"
 
 	for k, v := range c.EnvironmentVars {
 		config[cfgEnvironmentPrefix+"."+k] = v

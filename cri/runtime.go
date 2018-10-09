@@ -205,17 +205,21 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 
 	// The following fields allow to specify lxc config not directly represented by the PodSpec
 	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCNamespaces, sb.Annotations[fieldLXENamespaces])
-	if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-		logger.Infof("empty Annotation for %s", serr.Where)
-	} else {
-		logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc")
+	if err != nil {
+		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
+			logger.Infof("empty Annotation for %s", serr.Where)
+		} else {
+			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+		}
 	}
 
 	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCKernelModules, sb.Annotations[fieldLXEKernelModules])
-	if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-		logger.Infof("empty Annotation for %s", serr.Where)
-	} else {
-		logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc")
+	if err != nil {
+		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
+			logger.Infof("empty Annotation for %s", serr.Where)
+		} else {
+			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+		}
 	}
 
 	// TODO: Refactor...
@@ -278,10 +282,12 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 }
 
 func testErrorEmptyAnnotation(err error) {
-	if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-		logger.Infof("empty Annotation for %s", serr.Where)
-	} else {
-		logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc")
+	if err != nil {
+		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
+			logger.Infof("empty Annotation for %s", serr.Where)
+		} else {
+			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+		}
 	}
 }
 

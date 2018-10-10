@@ -22,7 +22,12 @@ build: mod version
 mod:
 	go mod download
 	go mod tidy
+	go mod vendor
 	go mod verify
+
+.PHONY: mod-update
+mod-update:
+	go get -u all
 
 .PHONY: debug
 debug: mod version

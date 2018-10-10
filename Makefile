@@ -18,8 +18,8 @@ all: build test lint
 build: mod version
 	go build -v $(DEBUG) -o bin/lxe ./cmd/lxe
 
-.PHONY: 
-mod: 
+.PHONY: mod
+mod:
 	go mod download
 	go mod tidy
 	go mod verify

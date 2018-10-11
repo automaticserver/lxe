@@ -1,7 +1,6 @@
 module github.com/lxc/lxe
 
 require (
-	cloud.google.com/go v0.30.0 // indirect
 	github.com/containernetworking/cni v0.6.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/docker v1.13.1

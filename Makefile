@@ -6,11 +6,7 @@ LXDSOCKET=unix://$(LXDSOCKETFILE)
 LXESOCKET=unix://$(LXESOCKETFILE)
 LXELOGFILE ?= /var/log/lxe.log
 
-<<<<<<< HEAD
-VERSION=$(shell git describe --tags --dirty --broken --always --exact-match --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || (echo -n "v0.0.0-"; git describe --dirty --broken --always))
-=======
 VERSION=$(shell git describe --tags --dirty --always --exact-match --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || (echo -n "v0.0.0-"; git describe --dirty --broken --always))
->>>>>>> implement good versioning, honoring semver and go mod
 PACKAGENAME=$(shell echo "$${PWD\#"$$GOPATH/src/"}")
 
 GO111MODULE=on

@@ -6,7 +6,7 @@ LXDSOCKET=unix://$(LXDSOCKETFILE)
 LXESOCKET=unix://$(LXESOCKETFILE)
 LXELOGFILE ?= /var/log/lxe.log
 
-VERSION=$(shell git describe --tags --dirty --always --exact-match --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || (echo -n "v0.0.0-"; git describe --dirty --broken --always))
+VERSION=$(shell git describe --tags --dirty --always --exact-match --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || (echo -n "v0.0.0-"; git describe --dirty --always))
 PACKAGENAME=$(shell echo "$${PWD\#"$$GOPATH/src/"}")
 
 GO111MODULE=on

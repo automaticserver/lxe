@@ -48,7 +48,7 @@ Also make sure the LXD-client's remote configuration file exists (e.g. by runnin
 
 - if you built LXD by source, this file is located in `~/.config/lxc/config.yml` (LXE will guess this automatically by default)
 - if you installed LXD via snap, the file is located in `~/snap/lxd/current/.config/lxc/config.yml`
-- or you wrote that configration file on a location of your choice
+- or you wrote that configuration file on a location of your choice
 
 LXE might be run as user (* implementation incomplete), so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control)
 

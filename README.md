@@ -1,7 +1,7 @@
 # LXE
 
 LXE is a shim of the Kubernetes [Container Runtime Interface](https://github.com/kubernetes/community/blob/master/contributors/devel/container-runtime-interface.md) for LXD.
-This project is currently under heavy development - expect incompatible changes. A lot of options are missing and not yet implemented from the Kubernetes PodSpec. The name of this project can change - we're open for suggestions - lxe was only an internal codename.
+This project is currently under heavy development, expect incompatible changes. The name of this project can change - we're open for suggestions - lxe was only an internal codename.
 
 ## Requirements
 
@@ -98,6 +98,7 @@ Bug reports can be filed at the [github issue tracker](https://github.com/automa
 
 Contribution guidelines are not yet defined.
 
-## FAQ
+## Documentation / FAQ
 
+[A lot of options are missing and not yet implemented](doc/podspec-features.md) from the Kubernetes PodSpec.
 Limitations and decisions of the current state are described in the [development preview FAQ](/doc/development-preview-faq.md).

@@ -86,34 +86,3 @@ func DeleteContainer(server lxd.ContainerServer, id string) error {
 	}
 	return op.Wait()
 }
-
-// MoveContainer will rename the container and wait till operation is done or
-// return an error
-func MoveContainer(server lxd.ContainerServer, id string, post api.ContainerPost) error {
-	op, err := server.RenameContainer(id, post)
-	if err != nil {
-		return err
-	}
-
-	return op.Wait()
-}
-
-// CreateContainerSnapshot creates a snapshot for the container and wait till operation is done or
-// return an error
-func CreateContainerSnapshot(server lxd.ContainerServer, id string, snapshot api.ContainerSnapshotsPost) error {
-	op, err := server.CreateContainerSnapshot(id, snapshot)
-	if err != nil {
-		return err
-	}
-	return op.Wait()
-}
-
-// CopyContainerSnapshot copies a snapshot into a container an wait till operation is done or
-// return an error
-func CopyContainerSnapshot(server lxd.ContainerServer, s api.ContainerSnapshot, args *lxd.ContainerSnapshotCopyArgs) error {
-	op, err := server.CopyContainerSnapshot(server, s, args)
-	if err != nil {
-		return err
-	}
-	return op.Wait()
-}

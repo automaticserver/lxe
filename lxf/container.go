@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
@@ -29,9 +28,6 @@ const (
 	cfgAutoStartOnBoot    = "boot.autostart"
 	// PathHostnetworkInclude is the path to the `lxe.net.0.type=none` workaround file for HostNetwork
 	PathHostnetworkInclude = "/var/lib/lxe/hostnetwork.conf"
-
-	// SnapshotPrefix is the prefix of snapshots created by lxe
-	SnapshotPrefix = "lxe-"
 )
 
 // ContainerState says it all
@@ -210,72 +206,6 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 	}
 
 	return l.toContainer(ct)
-}
-
-// CreateContainerSnapshot will take a stateful snapshot of the container
-func (l *LXF) CreateContainerSnapshot(id string) error {
-	snapshot := api.ContainerSnapshotsPost{
-		Name:     SnapshotPrefix + strconv.FormatInt(time.Now().UnixNano(), 10),
-		Stateful: true,
-	}
-
-	return lxo.CreateContainerSnapshot(l.server, id, snapshot)
-}
-
-// GetContainerSnapshot returns the latest snapshot of the container created by lxe
-func (l *LXF) GetContainerSnapshot(id string) (string, error) {
-	sNames, err := l.server.GetContainerSnapshotNames(id)
-	if err != nil {
-		return "", err
-	}
-
-	var newest int64
-	for _, s := range sNames {
-		if !strings.HasPrefix(s, SnapshotPrefix) {
-			continue
-		}
-		current, err := strconv.ParseInt(strings.TrimPrefix(s, SnapshotPrefix), 10, 64)
-		if err != nil {
-			return "", err
-		}
-		if newest == 0 {
-			newest = current
-			continue
-		}
-		if current > newest {
-			newest = current
-		}
-	}
-	if newest == 0 {
-		return "", fmt.Errorf(ErrorNotFound)
-	}
-	return strconv.FormatInt(newest, 10), nil
-}
-
-// CreateContainerFromSnapshot creates a container from a container's snapshot
-func (l *LXF) CreateContainerFromSnapshot(sourceID, snapshotName string, c *Container) error {
-	s, _, err := l.server.GetContainerSnapshot(sourceID, snapshotName)
-	if err != nil {
-		return err
-	}
-
-	// set the id so the created snapshot has the right name
-	c.ID = c.CreateID()
-
-	args := lxd.ContainerSnapshotCopyArgs{
-		Name: c.ID,
-		Mode: "pull",
-		Live: true,
-	}
-	err = lxo.CopyContainerSnapshot(l.server, *s, &args)
-	if err != nil {
-		return err
-	}
-
-	// TODO: get modifications also from source container...
-
-	// update the container to reflect the current config
-	return l.saveContainer(c)
 }
 
 // saveContainer

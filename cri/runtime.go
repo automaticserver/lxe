@@ -179,6 +179,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 			case rtApi.Protocol_UDP:
 				protocol = device.ProtocolUDP
 			case rtApi.Protocol_TCP:
+				fallthrough
+			default:
 				protocol = device.ProtocolTCP
 			}
 
@@ -207,18 +209,18 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCNamespaces, sb.Annotations[fieldLXENamespaces])
 	if err != nil {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Infof("empty Annotation for %s", serr.Where)
+			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
 		}
 	}
 
 	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCKernelModules, sb.Annotations[fieldLXEKernelModules])
 	if err != nil {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Infof("empty Annotation for %s", serr.Where)
+			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
 		}
 	}
 
@@ -286,9 +288,9 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 func testErrorEmptyAnnotation(err error) {
 	if err != nil {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Infof("empty Annotation for %s", serr.Where)
+			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
 		}
 	}
 }

@@ -33,9 +33,9 @@ mod-update:
 debug: mod version
 	go build -v -tags logdebug $(DEBUG) -o bin/lxe ./cmd/lxe
 
-$(GOPATH)/bin/gometalinter:
-	go get -v -u "github.com/alecthomas/gometalinter"
-	$(GOPATH)/bin/gometalinter --install
+bin/gometalinter:
+	# Unhappy the way gometalinter wants to be installed now...
+	curl -L https://git.io/vp6lP | sh
 
 $(GOPATH)/bin/overalls:
 	go get -v -u "github.com/go-playground/overalls"
@@ -48,8 +48,8 @@ $(GOPATH)/bin/critest:
 check: lint vet test
 
 .PHONY: lint
-lint: $(GOPATH)/bin/gometalinter
-	$(GOPATH)/bin/gometalinter ./... --vendor \
+lint: bin/gometalinter
+	bin/gometalinter ./... --vendor --skip=$(GOPATH)/pkg/mod --exclude="/pkg/mod/" \
 		--disable-all \
 		--deadline 160s \
 		--enable=misspell \

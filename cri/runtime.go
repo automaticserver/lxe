@@ -121,7 +121,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) {
 
-	logger.Infof("RunPodSandbox called: %v, %v, %v", req.GetConfig().GetMetadata().GetName(),
+	logger.Infof("RunPodSandbox called: SandboxName %v in Namespace %v with SandboxUID %v", req.GetConfig().GetMetadata().GetName(),
 		req.GetConfig().GetMetadata().GetNamespace(), req.GetConfig().GetMetadata().GetUid())
 	logger.Debugf("RunPodSandbox triggered: %v", req)
 
@@ -276,6 +276,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		logger.Errorf("failed to create sandbox, %v", err)
 	}
 
+	logger.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
+
 	return &rtApi.RunPodSandboxResponse{
 		PodSandboxId: sb.ID,
 	}, nil
@@ -301,7 +303,7 @@ func testErrorEmptyAnnotation(err error) {
 // reclaim resources eagerly, as soon as a sandbox is not needed. Hence,
 // multiple StopPodSandbox calls are expected.
 func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSandboxRequest) (*rtApi.StopPodSandboxResponse, error) {
-	logger.Infof("StopPodSandbox called: %v", req.GetPodSandboxId())
+	logger.Infof("StopPodSandbox called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("StopPodSandbox triggered: %v", req)
 
 	_, err := s.cleanupSandbox(req.PodSandboxId)
@@ -333,7 +335,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 // RemovePodSandbox removes the sandbox.
 // This is pretty much the same as StopPodSandbox but also removes the sandbox and the containers
 func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePodSandboxRequest) (*rtApi.RemovePodSandboxResponse, error) {
-	logger.Infof("RemovePodSandbox called: %v", req.GetPodSandboxId())
+	logger.Infof("RemovePodSandbox called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("RemovePodSandbox triggered: %v", req)
 
 	profile, err := s.cleanupSandbox(req.PodSandboxId)
@@ -505,7 +507,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 func (s RuntimeServer) CreateContainer(ctx context.Context,
 	req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) {
 
-	logger.Infof("CreateContainer called: %v, %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
+	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
 	logger.Debugf("CreateContainer triggered: %v", req)
 
 	sandbox, err := s.lxf.GetSandbox(req.GetPodSandboxId())
@@ -585,6 +587,8 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 		return nil, err
 	}
 
+	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", cnt.ID, req.GetPodSandboxId())
+
 	return &rtApi.CreateContainerResponse{
 		ContainerId: cnt.ID,
 	}, err
@@ -594,7 +598,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 // nolint: dupl
 func (s RuntimeServer) StartContainer(ctx context.Context,
 	req *rtApi.StartContainerRequest) (*rtApi.StartContainerResponse, error) {
-	logger.Infof("StartContainer called: %v", req.GetContainerId())
+	logger.Infof("StartContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StartContainer triggered: %v", req)
 
 	err := s.lxf.StartContainer(req.ContainerId)
@@ -611,7 +615,7 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 // nolint: dupl
 func (s RuntimeServer) StopContainer(ctx context.Context,
 	req *rtApi.StopContainerRequest) (*rtApi.StopContainerResponse, error) {
-	logger.Infof("StopContainer called: %v", req.GetContainerId())
+	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StopContainer triggered: %v", req)
 
 	err := s.stopContainer(req.GetContainerId())
@@ -632,7 +636,7 @@ func (s RuntimeServer) stopContainer(id string) error {
 // already been removed.
 // nolint: dupl
 func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveContainerRequest) (*rtApi.RemoveContainerResponse, error) {
-	logger.Infof("RemoveContainer called: %v", req.GetContainerId())
+	logger.Infof("RemoveContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("RemoveContainer triggered: %v", req)
 
 	err := s.removeContainer(req.GetContainerId())

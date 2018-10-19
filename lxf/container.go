@@ -174,16 +174,6 @@ func (l *LXF) DeleteContainer(id string) error {
 	return lxo.DeleteContainer(l.server, id)
 }
 
-// MarkContainerDeleted will mark the container as deleted without actually deleting it
-func (l *LXF) MarkContainerDeleted(id string) error {
-	c, _, err := l.server.GetContainer(id)
-	if err != nil {
-		return err
-	}
-	c.Config[cfgMarkedDeleted] = strconv.FormatBool(true)
-	return lxo.UpdateContainer(l.server, id, c.Writable())
-}
-
 // ListContainers returns a list of all available containers
 func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 	cts, err := l.server.GetContainers()
@@ -220,52 +210,6 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 	}
 
 	return l.toContainer(ct)
-}
-
-// LookUpContainer will find the container by container name, pod name and namespace
-// If multiple matching containers are found, returns the newest one
-func (l *LXF) LookUpContainer(name, podname, namespace string) (*Container, error) {
-	containers, err := l.ListContainers()
-	if err != nil {
-		return nil, err
-	}
-
-	var matches []*Container
-	for _, c := range containers {
-		if c.Config[cfgMarkedDeleted] != strconv.FormatBool(true) &&
-			c.Name == name && c.Sandbox.Metadata.Name == podname && c.Sandbox.Metadata.Namespace == namespace {
-			matches = append(matches, c)
-		}
-	}
-
-	if len(matches) == 0 {
-		return nil, fmt.Errorf(ErrorNotFound)
-	}
-	var newest *Container
-	for _, c := range matches {
-		if newest == nil {
-			newest = c
-			continue
-		}
-		if c.CreatedAt.Unix() > newest.CreatedAt.Unix() {
-			newest = c
-		}
-	}
-	return newest, nil
-}
-
-// MoveContainer will rename the container to another sandbox
-// c is the source container with a matchin ID
-// with is the target sandbox
-func (l *LXF) MoveContainer(c *Container, with *Sandbox) error {
-	source := c.ID
-	c.Sandbox = with
-	c.ID = c.CreateID()
-	dest := api.ContainerPost{
-		Name: c.ID,
-	}
-
-	return lxo.MoveContainer(l.server, source, dest)
 }
 
 // CreateContainerSnapshot will take a stateful snapshot of the container

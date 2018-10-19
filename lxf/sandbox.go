@@ -17,14 +17,13 @@ import (
 )
 
 const (
-	cfgHostname      = "user.host_name"
-	cfgLogDirectory  = "user.log_directory"
-	cfgCreatedAt     = "user.created_at"
-	cfgState         = "user.state"
-	cfgIsSandbox     = "user.is_cri_sandbox"
-	cfgMarkedDeleted = "user.is_cri_deleted"
-	cfgLabels        = "user.labels"
-	cfgAnnotations   = "user.annotations"
+	cfgHostname     = "user.host_name"
+	cfgLogDirectory = "user.log_directory"
+	cfgCreatedAt    = "user.created_at"
+	cfgState        = "user.state"
+	cfgIsSandbox    = "user.is_cri_sandbox"
+	cfgLabels       = "user.labels"
+	cfgAnnotations  = "user.annotations"
 
 	cfgMetaAttempt              = "user.metadata.attempt"
 	cfgMetaName                 = "user.metadata.name"
@@ -54,7 +53,7 @@ const (
 
 var (
 	sandboxConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgHostname, cfgLogDirectory, cfgCreatedAt,
-		cfgState, cfgMarkedDeleted, cfgIsSandbox, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
+		cfgState, cfgIsSandbox, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
 		cfgCloudInitVendorData, cfgNetworkConfigModeData, cfgRawLXC).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations)
 )
@@ -224,51 +223,9 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 	return l.toSandbox(p)
 }
 
-// LookUpSandbox will find the sandbox by pod name and namespace
-// If multiple matching sandboxes are found, returns the newest one
-func (l *LXF) LookUpSandbox(podname, namespace string) (*Sandbox, error) {
-	sandboxes, err := l.ListSandboxes()
-	if err != nil {
-		return nil, err
-	}
-
-	var matches []*Sandbox
-	for _, s := range sandboxes {
-		if s.Config[cfgMarkedDeleted] != strconv.FormatBool(true) &&
-			s.Metadata.Name == podname && s.Metadata.Namespace == namespace {
-			matches = append(matches, s)
-		}
-	}
-
-	if len(matches) == 0 {
-		return nil, fmt.Errorf(ErrorNotFound)
-	}
-	var newest *Sandbox
-	for _, s := range matches {
-		if newest == nil {
-			newest = s
-			continue
-		}
-		if s.CreatedAt > newest.CreatedAt {
-			newest = s
-		}
-	}
-	return newest, nil
-}
-
 // DeleteSandbox will delete the given sandbox
 func (l *LXF) DeleteSandbox(name string) error {
 	return l.server.DeleteProfile(name)
-}
-
-// MarkSandboxDeleted will mark the sandbox as deleted without actually deleting it
-func (l *LXF) MarkSandboxDeleted(id string) error {
-	p, _, err := l.server.GetProfile(id)
-	if err != nil {
-		return err
-	}
-	p.Config[cfgMarkedDeleted] = strconv.FormatBool(true)
-	return l.server.UpdateProfile(id, p.Writable(), "")
 }
 
 // ListSandboxes will return a list with all the available sandboxes

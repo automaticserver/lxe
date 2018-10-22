@@ -26,7 +26,7 @@ func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
 	key := "CONTAINER_" + strings.ToUpper(string(ct.State))
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    ct.Name,
+			Name:    ct.Metadata.Name,
 			Attempt: uint32(ct.Metadata.Attempt),
 		},
 		State:       rtApi.ContainerState(rtApi.ContainerState_value[key]),
@@ -63,7 +63,7 @@ func toCriStats(lxdStats *lxf.Container) *rtApi.ContainerStats {
 	attribs := rtApi.ContainerAttributes{
 		Id: lxdStats.ID,
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    lxdStats.Name,
+			Name:    lxdStats.Metadata.Name,
 			Attempt: uint32(lxdStats.Metadata.Attempt),
 		},
 		Labels:      lxdStats.Labels,
@@ -89,7 +89,7 @@ func toCriContainer(ct *lxf.Container) *rtApi.Container {
 		CreatedAt:    ct.CreatedAt.UnixNano(),
 		State:        state,
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    ct.Name,
+			Name:    ct.Metadata.Name,
 			Attempt: uint32(ct.Metadata.Attempt),
 		},
 		Labels:      ct.Labels,

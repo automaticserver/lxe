@@ -8,8 +8,12 @@ import (
 // Schema Version this package is currently expecting
 const (
 	cfgSchema              = "user.lxe.schema"
-	SchemaVersionProfile   = "0.1"
-	SchemaVersionContainer = "0.1"
+	SchemaVersionProfile   = "0.2"
+	SchemaVersionContainer = "0.2"
+
+	cfgOldIsSandbox     = "user.is_cri_sandbox"
+	cfgOldIsContainer   = "user.is_cri_container"
+	cfgOldContainerName = "user.containerName"
 )
 
 type migrationWorkspace struct {
@@ -34,13 +38,16 @@ func (m *migrationWorkspace) ensure() error {
 		p := &profiles[k]
 
 		// Ignore everything which is not created by lxe
-		if p.Config[cfgIsSandbox] == "" {
+		if p.Config[cfgIsCRI] == "" && p.Config[cfgOldIsSandbox] == "" {
 			continue
 		}
 
 		// TODO: or better compare to a copy of the entry?
 		counter := 0
 		if m.ensureProfileZeroOne(p) {
+			counter++
+		}
+		if m.ensureProfileZeroZwo(p) {
 			counter++
 		}
 
@@ -63,13 +70,16 @@ func (m *migrationWorkspace) ensure() error {
 		c := &containers[k]
 
 		// Ignore everything which is not created by lxe
-		if c.Config[cfgIsContainer] == "" {
+		if c.Config[cfgIsCRI] == "" && c.Config[cfgOldIsContainer] == "" {
 			continue
 		}
 
 		// TODO: or better compare to a copy of the entry?
 		counter := 0
 		if m.ensureContainerZeroOne(c) {
+			counter++
+		}
+		if m.ensureContainerZeroTwo(c) {
 			counter++
 		}
 
@@ -96,9 +106,31 @@ func (m *migrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
 	return false
 }
 
-func (m *migrationWorkspace) ensureContainerZeroOne(p *api.Container) bool {
-	if p.Config[cfgSchema] == "" {
-		p.Config[cfgSchema] = "0.1"
+// user.is_cri_sandbox has moved to user.cri
+func (m *migrationWorkspace) ensureProfileZeroZwo(p *api.Profile) bool {
+	if p.Config[cfgSchema] == "0.1" {
+		p.Config[cfgIsCRI] = p.Config[cfgOldIsSandbox]
+		p.Config[cfgSchema] = "0.2"
+		return true
+	}
+	return false
+}
+
+func (m *migrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
+	if c.Config[cfgSchema] == "" {
+		c.Config[cfgSchema] = "0.1"
+		return true
+	}
+	return false
+}
+
+// user.is_cri_container has moved to user.cri
+// user.containerName has moved to user.metadata.Name
+func (m *migrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
+	if c.Config[cfgSchema] == "0.1" {
+		c.Config[cfgIsCRI] = c.Config[cfgOldIsContainer]
+		c.Config[cfgMetaName] = c.Config[cfgOldContainerName]
+		c.Config[cfgSchema] = "0.2"
 		return true
 	}
 	return false

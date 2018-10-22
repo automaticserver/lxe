@@ -17,8 +17,6 @@ import (
 
 const (
 	cfgLogPath            = "user.log_path"
-	cfgIsContainer        = "user.is_cri_container"
-	cfgContainerName      = "user.containerName"
 	cfgSecurityPrivileged = "security.privileged"
 	cfgVolatileBaseImage  = "volatile.base_image"
 	cfgStartedAt          = "user.started_at"
@@ -45,7 +43,7 @@ const (
 )
 
 var (
-	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsContainer, cfgContainerName,
+	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsCRI,
 		cfgSecurityPrivileged, cfgState, cfgMetaAttempt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
 		cfgCloudInitNetworkConfig).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations, "volatile")
@@ -53,13 +51,9 @@ var (
 
 // Container is a unified interface to LXDs container methodes
 type Container struct {
-	// ID is a unique generated ID and is read-only
-	ID          string
-	Name        string
-	Metadata    ContainerMetadata
-	LogPath     string
-	Labels      map[string]string
-	Annotations map[string]string
+	CRIObject
+	LogPath  string
+	Metadata ContainerMetadata
 	// State is read only
 	State ContainerState
 	// Pid is readonly
@@ -67,11 +61,6 @@ type Container struct {
 	// StartedAt is read only, if not started it will be the zero time
 	StartedAt              time.Time
 	CreatedAt              time.Time
-	Proxies                []device.Proxy
-	Disks                  []device.Disk
-	Blocks                 []device.Block
-	Nics                   []device.Nic
-	Config                 map[string]string
 	Privileged             bool
 	CloudInitUserData      string
 	CloudInitMetaData      string
@@ -96,7 +85,8 @@ type ContainerStats struct {
 
 // ContainerMetadata has the metadata neede by a container
 type ContainerMetadata struct {
-	Attempt int
+	Name    string
+	Attempt uint32
 }
 
 // CreateContainer will instantiate a container but not start it
@@ -178,7 +168,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 	}
 	result := []*Container{}
 	for _, ct := range cts {
-		if _, has := ct.Config[cfgIsContainer]; has {
+		if _, has := ct.Config[cfgIsCRI]; has {
 			res, err := l.toContainer(&ct)
 			if err != nil {
 				return nil, err
@@ -196,7 +186,7 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
-	isCRIContainer, err := strconv.ParseBool(ct.Config[cfgIsContainer])
+	isCRIContainer, err := strconv.ParseBool(ct.Config[cfgIsCRI])
 	if err != nil {
 		return nil, err
 	}
@@ -270,11 +260,10 @@ func makeContainerConfig(c *Container) map[string]string {
 	}
 
 	config[cfgState] = string(ContainerStateCreated)
-	config[cfgContainerName] = c.Name
 	config[cfgSecurityPrivileged] = strconv.FormatBool(c.Privileged)
 	config[cfgLogPath] = c.LogPath
-	config[cfgIsContainer] = "true"
-	config[cfgMetaAttempt] = strconv.Itoa(c.Metadata.Attempt)
+	config[cfgIsCRI] = "true"
+	config[cfgMetaAttempt] = strconv.FormatUint(uint64(c.Metadata.Attempt), 10)
 	config[cfgVolatileBaseImage] = c.Image
 	config[cfgAutoStartOnBoot] = "true"
 
@@ -326,7 +315,7 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 		return nil, err
 	}
 
-	attempt, err := strconv.Atoi(ct.Config[cfgMetaAttempt])
+	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
 	}
@@ -336,31 +325,31 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 		return nil, err
 	}
 
-	c := &Container{
-		ID:   ct.Name,
-		Name: ct.Config[cfgContainerName],
-		Metadata: ContainerMetadata{
-			Attempt: attempt,
-		},
-		LogPath:     ct.Config[cfgLogPath],
-		Image:       ct.Config[cfgVolatileBaseImage],
-		Annotations: containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations),
-		Labels:      containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels),
-		Config:      containerConfigStore.UnreservedMap(ct.Config),
-		Pid:         st.Pid,
-		CreatedAt:   ct.CreatedAt,
-		Stats: ContainerStats{
-			CPUUsage:        uint64(st.CPU.Usage),
-			MemoryUsage:     uint64(st.Memory.Usage),
-			FilesystemUsage: uint64(st.Disk["root"].Usage),
-		},
-		Network:                st.Network,
-		EnvironmentVars:        extractEnvVars(ct.Config),
-		Privileged:             privileged,
-		CloudInitUserData:      ct.Config[cfgCloudInitUserData],
-		CloudInitMetaData:      ct.Config[cfgCloudInitMetaData],
-		CloudInitNetworkConfig: ct.Config[cfgCloudInitNetworkConfig],
+	c := &Container{}
+	c.ID = ct.Name
+	c.Metadata = ContainerMetadata{
+		Name:    ct.Config[cfgMetaName],
+		Attempt: uint32(attempts),
 	}
+	c.LogPath = ct.Config[cfgLogPath]
+	c.Image = ct.Config[cfgVolatileBaseImage]
+	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
+	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
+	c.Config = containerConfigStore.UnreservedMap(ct.Config)
+	c.Pid = st.Pid
+	c.CreatedAt = ct.CreatedAt
+	c.Stats = ContainerStats{
+		CPUUsage:        uint64(st.CPU.Usage),
+		MemoryUsage:     uint64(st.Memory.Usage),
+		FilesystemUsage: uint64(st.Disk["root"].Usage),
+	}
+	c.Network = st.Network
+	c.EnvironmentVars = extractEnvVars(ct.Config)
+	c.Privileged = privileged
+	c.CloudInitUserData = ct.Config[cfgCloudInitUserData]
+	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
+	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
+
 	if stat, has := ct.Config[cfgStartedAt]; has {
 		v, err := strconv.ParseInt(stat, 10, 64)
 		if err != nil {
@@ -586,7 +575,7 @@ func (l *LXF) remountMissingVolumes(cntInfo *Container) {
 func (c *Container) CreateID() string {
 	var parts []string
 	parts = append(parts, "k8s")
-	parts = append(parts, c.Name)
+	parts = append(parts, c.Metadata.Name)
 	parts = append(parts, c.Sandbox.Metadata.Name)
 	parts = append(parts, c.Sandbox.Metadata.Namespace)
 	parts = append(parts, strconv.FormatUint(uint64(c.Sandbox.Metadata.Attempt), 10))
@@ -594,7 +583,7 @@ func (c *Container) CreateID() string {
 	name := strings.Join(parts, "-")
 
 	bin := md5.Sum([]byte(name)) // nolint: gosec #nosec
-	return string(c.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
+	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
 // GetContainerIPv4Address returns the IPv4 address of the first matching interface in the parameter list

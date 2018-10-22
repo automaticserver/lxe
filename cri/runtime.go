@@ -521,9 +521,13 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 		Sandbox: sandbox,
 	}
 
-	cnt.Name = req.GetConfig().GetMetadata().GetName()
 	cnt.Labels = req.GetConfig().GetLabels()
 	cnt.Annotations = req.GetConfig().GetAnnotations()
+	meta := req.GetConfig().GetMetadata()
+	cnt.Metadata = lxf.ContainerMetadata{
+		Attempt: meta.GetAttempt(),
+		Name:    meta.GetName(),
+	}
 	cnt.LogPath = req.GetConfig().GetLogPath()
 	cnt.Image = req.GetConfig().GetImage().GetImage()
 	cnt.Config = make(map[string]string)

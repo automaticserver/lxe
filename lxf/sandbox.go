@@ -21,14 +21,7 @@ const (
 	cfgLogDirectory = "user.log_directory"
 	cfgCreatedAt    = "user.created_at"
 	cfgState        = "user.state"
-	cfgIsSandbox    = "user.is_cri_sandbox"
-	cfgLabels       = "user.labels"
-	cfgAnnotations  = "user.annotations"
 
-	cfgMetaAttempt              = "user.metadata.attempt"
-	cfgMetaName                 = "user.metadata.name"
-	cfgMetaNamespace            = "user.metadata.namespace"
-	cfgMetaUID                  = "user.metadata.uid"
 	cfgNetworkConfigNameservers = "user.networkconfig.nameservers"
 	cfgNetworkConfigSearches    = "user.networkconfig.searches"
 	cfgNetworkConfigMode        = "user.networkconfig.mode"
@@ -44,44 +37,25 @@ const (
 	CfgRawLXCNamespaces = "lxc.namespace.keep"
 	// CfgRawLXCKernelModules is the lxc config field name for what kernel modules to load
 	CfgRawLXCKernelModules = "linux.kernel_modules"
-
-	// ErrorMultipleFound is the error string in cases, where it's unexpected to find multiple
-	ErrorMultipleFound = "multiple found"
-	// ErrorNotFound is the error strin gin cases, where it's unexpected to find nothing
-	ErrorNotFound = "not found"
 )
 
 var (
 	sandboxConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgHostname, cfgLogDirectory, cfgCreatedAt,
-		cfgState, cfgIsSandbox, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
+		cfgState, cfgIsCRI, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
 		cfgCloudInitVendorData, cfgNetworkConfigModeData, cfgRawLXC).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations)
 )
 
-// Sandbox is an abstraction of a profile/sandbox
-//
-// TODO: a lot of fields are equal with Container, consider inheritance:
-//    LXDObject (general possibilities like id/devices...)
-// <- CRIObject (common fields like metadata/labels/annotations...)
-// <- Sandbox|Container
+// Sandbox is an abstraction of a CRI PodSandbox saved as a LXD profile
 type Sandbox struct {
-	// ID is a unique generated ID and is read-only
-	ID            string
+	CRIObject
 	Hostname      string
 	LogDirectory  string
 	Metadata      SandboxMetadata
 	NetworkConfig NetworkConfig
-	Labels        map[string]string
-	Annotations   map[string]string
 	// State is readonly
 	State     SandboxState
 	CreatedAt int64
-	Proxies   []device.Proxy
-	Disks     []device.Disk
-	Blocks    []device.Block
-	Nics      []device.Nic
-	// Config are additional fields coming from CRI request and will be returned as-is
-	Config map[string]string
 	// RawLXCOptions are additional raw.lxc fields
 	RawLXCOptions map[string]string
 	// UsedBy contains the names of the containers using this profile
@@ -212,7 +186,7 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
-	isCRISandbox, err := strconv.ParseBool(p.Config[cfgIsSandbox])
+	isCRISandbox, err := strconv.ParseBool(p.Config[cfgIsCRI])
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +211,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 
 	sandboxes := []*Sandbox{}
 	for _, p := range ps {
-		if _, has := p.Config[cfgIsSandbox]; has {
+		if _, has := p.Config[cfgIsCRI]; has {
 			sb, err2 := l.toSandbox(&p)
 			if err2 != nil {
 				return nil, err2
@@ -254,7 +228,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 func (l *LXF) saveSandbox(s *Sandbox) error {
 	config := map[string]string{
 		cfgState:                    s.State.toString(),
-		cfgIsSandbox:                "true",
+		cfgIsCRI:                    "true",
 		cfgCreatedAt:                strconv.FormatInt(s.CreatedAt, 10),
 		cfgMetaAttempt:              strconv.FormatUint(uint64(s.Metadata.Attempt), 10),
 		cfgMetaName:                 s.Metadata.Name,
@@ -383,29 +357,28 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 		return nil, err
 	}
 
-	s := &Sandbox{
-		ID:           p.Name,
-		Hostname:     p.Config[cfgHostname],
-		LogDirectory: p.Config[cfgLogDirectory],
-		Metadata: SandboxMetadata{
-			Attempt:   uint32(attempts),
-			Name:      p.Config[cfgMetaName],
-			Namespace: p.Config[cfgMetaNamespace],
-			UID:       p.Config[cfgMetaUID],
-		},
-		NetworkConfig: NetworkConfig{
-			Nameservers: strings.Split(p.Config[cfgNetworkConfigNameservers], ","),
-			Searches:    strings.Split(p.Config[cfgNetworkConfigSearches], ","),
-			Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
-			// ModeData:    make(map[string]string),
-		},
-		Labels:        sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels),
-		Annotations:   sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations),
-		Config:        sandboxConfigStore.UnreservedMap(p.Config),
-		RawLXCOptions: make(map[string]string),
-		State:         getSandboxState(p.Config[cfgState]),
-		CreatedAt:     createdAt,
+	s := &Sandbox{}
+	s.ID = p.Name
+	s.Hostname = p.Config[cfgHostname]
+	s.LogDirectory = p.Config[cfgLogDirectory]
+	s.Metadata = SandboxMetadata{
+		Attempt:   uint32(attempts),
+		Name:      p.Config[cfgMetaName],
+		Namespace: p.Config[cfgMetaNamespace],
+		UID:       p.Config[cfgMetaUID],
 	}
+	s.NetworkConfig = NetworkConfig{
+		Nameservers: strings.Split(p.Config[cfgNetworkConfigNameservers], ","),
+		Searches:    strings.Split(p.Config[cfgNetworkConfigSearches], ","),
+		Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
+		// ModeData:    make(map[string]string),
+	}
+	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
+	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
+	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
+	s.RawLXCOptions = make(map[string]string)
+	s.State = getSandboxState(p.Config[cfgState])
+	s.CreatedAt = createdAt
 
 	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
 	if err != nil {

@@ -1,7 +1,6 @@
 package lxf
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -82,8 +81,7 @@ func New(socket string, configPath string) (*LXF, error) {
 
 	// the HttpClient tries to reuse already opened connections (this is done by golangs core library
 	// and is rather transparent for the caller) which does not seem to happen in this special case.
-	// this commit uses a cloned lxd repo @stable-3.0 with patch which forces a timeout
-	// on the httpClient used by the LXE (via the LXD client API) to talk to LXD.
+	// this commit forces a timeout on the httpClient used by the LXE (via the LXD client API) to talk to LXD.
 
 	// this does not fix the real problem, which can be either in LXE, LXD client API or the LXD server
 	// and still needs more investigation.
@@ -119,12 +117,6 @@ func New(socket string, configPath string) (*LXF, error) {
 	}
 
 	go lxf.containerMonitor(lxf.cntMonitorChan)
-
-	// Ensure profile and container schema migration
-	err = migration(lxf).ensure()
-	if err != nil {
-		return nil, fmt.Errorf("Migration failed: %v", err)
-	}
 
 	// register LXD eventhandler
 	listener, err := server.GetEvents()

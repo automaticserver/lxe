@@ -8,7 +8,6 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
 	"google.golang.org/grpc"
-
 	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
@@ -58,6 +57,12 @@ func NewServer(criConfig *LXEConfig) *Server {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
 	}
 	logger.Infof("Connected to LXD via %q", criConfig.LXDSocket)
+
+	// Ensure profile and container schema migration
+	err = lxf.Migration().Ensure()
+	if err != nil {
+		logger.Critf("Migration failed: %v", err)
+	}
 
 	// for now we bind the http on every interface
 	streamServerAddr := ":" + criConfig.LXEStreamingPort

@@ -16,18 +16,20 @@ const (
 	cfgOldContainerName = "user.containerName"
 )
 
-type migrationWorkspace struct {
+// MigrationWorkspace manages schema of lxd objects
+type MigrationWorkspace struct {
 	lxf *LXF
 }
 
 // Migration initializes the migration workspace
-func migration(l *LXF) *migrationWorkspace {
-	return &migrationWorkspace{
+func (l *LXF) Migration() *MigrationWorkspace {
+	return &MigrationWorkspace{
 		lxf: l,
 	}
 }
 
-func (m *migrationWorkspace) ensure() error {
+// Ensure applies all migration steps from detected schema to current schema
+func (m *MigrationWorkspace) Ensure() error {
 	profiles, err := m.lxf.server.GetProfiles()
 	if err != nil {
 		return err
@@ -97,7 +99,7 @@ func (m *migrationWorkspace) ensure() error {
 
 // All the following functions return true, if they have changed something, otherwise false
 
-func (m *migrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
+func (m *MigrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
 	if p.Config[cfgSchema] == "" {
 		p.Config[cfgMetaUID] = p.Name
 		p.Config[cfgSchema] = "0.1"
@@ -107,7 +109,7 @@ func (m *migrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
 }
 
 // user.is_cri_sandbox has moved to user.cri
-func (m *migrationWorkspace) ensureProfileZeroZwo(p *api.Profile) bool {
+func (m *MigrationWorkspace) ensureProfileZeroZwo(p *api.Profile) bool {
 	if p.Config[cfgSchema] == "0.1" {
 		p.Config[cfgIsCRI] = p.Config[cfgOldIsSandbox]
 		p.Config[cfgSchema] = "0.2"
@@ -116,7 +118,7 @@ func (m *migrationWorkspace) ensureProfileZeroZwo(p *api.Profile) bool {
 	return false
 }
 
-func (m *migrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
+func (m *MigrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
 	if c.Config[cfgSchema] == "" {
 		c.Config[cfgSchema] = "0.1"
 		return true
@@ -126,7 +128,7 @@ func (m *migrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
 
 // user.is_cri_container has moved to user.cri
 // user.containerName has moved to user.metadata.Name
-func (m *migrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
+func (m *MigrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
 	if c.Config[cfgSchema] == "0.1" {
 		c.Config[cfgIsCRI] = c.Config[cfgOldIsContainer]
 		c.Config[cfgMetaName] = c.Config[cfgOldContainerName]

@@ -44,7 +44,7 @@ const (
 
 var (
 	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsCRI,
-		cfgSecurityPrivileged, cfgState, cfgMetaAttempt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
+		cfgSecurityPrivileged, cfgState, cfgMetaName, cfgMetaAttempt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
 		cfgCloudInitNetworkConfig).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations, "volatile")
 )

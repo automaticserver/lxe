@@ -386,7 +386,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			Linux:       &rtApi.LinuxPodSandboxStatus{},
 			Labels:      sb.Labels,
 			Annotations: sb.Annotations,
-			CreatedAt:   sb.CreatedAt,
+			CreatedAt:   sb.CreatedAt.UnixNano(),
 			State: rtApi.PodSandboxState(
 				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(string(sb.State))]),
 		},
@@ -488,7 +488,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 
 		pod := rtApi.PodSandbox{
 			Id:        sb.ID,
-			CreatedAt: sb.CreatedAt,
+			CreatedAt: sb.CreatedAt.UnixNano(),
 			Metadata: &rtApi.PodSandboxMetadata{
 				Attempt:   sb.Metadata.Attempt,
 				Name:      sb.Metadata.Name,

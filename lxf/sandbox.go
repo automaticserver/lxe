@@ -55,7 +55,7 @@ type Sandbox struct {
 	NetworkConfig NetworkConfig
 	// State is readonly
 	State     SandboxState
-	CreatedAt int64
+	CreatedAt time.Time
 	// RawLXCOptions are additional raw.lxc fields
 	RawLXCOptions map[string]string
 	// UsedBy contains the names of the containers using this profile
@@ -145,7 +145,7 @@ type NetworkConfigEntry struct {
 // CreateSandbox will create the provided sandbox and put it into state ready
 func (l *LXF) CreateSandbox(s *Sandbox) error {
 	s.State = SandboxReady
-	s.CreatedAt = time.Now().UnixNano()
+	s.CreatedAt = time.Now()
 
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode {
@@ -228,8 +228,8 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 func (l *LXF) saveSandbox(s *Sandbox) error {
 	config := map[string]string{
 		cfgState:                    s.State.toString(),
-		cfgIsCRI:                    "true",
-		cfgCreatedAt:                strconv.FormatInt(s.CreatedAt, 10),
+		cfgIsCRI:                    strconv.FormatBool(true),
+		cfgCreatedAt:                strconv.FormatInt(s.CreatedAt.UnixNano(), 10),
 		cfgMetaAttempt:              strconv.FormatUint(uint64(s.Metadata.Attempt), 10),
 		cfgMetaName:                 s.Metadata.Name,
 		cfgMetaNamespace:            s.Metadata.Namespace,
@@ -351,7 +351,6 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	createdAt, err := strconv.ParseInt(p.Config[cfgCreatedAt], 10, 64)
 	if err != nil {
 		return nil, err
@@ -378,7 +377,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
 	s.RawLXCOptions = make(map[string]string)
 	s.State = getSandboxState(p.Config[cfgState])
-	s.CreatedAt = createdAt
+	s.CreatedAt = time.Unix(0, createdAt)
 
 	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
 	if err != nil {

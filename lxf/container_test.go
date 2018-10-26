@@ -235,29 +235,6 @@ func TestContainerPid(t *testing.T) {
 
 }
 
-func TestContainerAttempts(t *testing.T) {
-	lt := newLXFTest(t)
-
-	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
-		Sandbox: setUpSandbox(lt, "roosevelt"),
-		Image:   imgBusybox,
-	})
-
-	ct := lt.getContainer("roosevelt")
-
-	if ct.Metadata.Attempt != 0 {
-		t.Errorf("attempts of unstarted container should be 0 but is %v", ct.Metadata.Attempt)
-	}
-
-	lt.startContainer("roosevelt")
-	ct = lt.getContainer("roosevelt")
-
-	if ct.Metadata.Attempt != 1 {
-		t.Errorf("attempts of started container should be 1 but is %v", ct.Metadata.Attempt)
-	}
-}
-
 func TestContainerStartedAt(t *testing.T) {
 	lt := newLXFTest(t)
 

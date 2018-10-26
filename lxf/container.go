@@ -44,7 +44,7 @@ const (
 
 var (
 	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsCRI,
-		cfgSecurityPrivileged, cfgState, cfgMetaName, cfgMetaAttempt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
+		cfgSecurityPrivileged, cfgState, cfgMetaName, cfgMetaAttempt, cfgCreatedAt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
 		cfgCloudInitNetworkConfig).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations, "volatile")
 )
@@ -95,6 +95,7 @@ func (l *LXF) CreateContainer(c *Container) error {
 		return fmt.Errorf("container needs a sandbox")
 	}
 
+	c.CreatedAt = time.Now()
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
 		if !c.Privileged {
@@ -128,14 +129,10 @@ func (l *LXF) StartContainer(id string) error {
 	if err != nil {
 		return err
 	}
+
 	// custom state created is removed
 	delete(ct.Config, cfgState)
-	// attempt increased by 1
-	attempt, err := strconv.Atoi(ct.Config[cfgMetaAttempt])
-	if err != nil {
-		return err
-	}
-	ct.Config[cfgMetaAttempt] = strconv.Itoa(attempt + 1)
+
 	// set started at date
 	ct.Config[cfgStartedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
 
@@ -186,11 +183,12 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// treat non CRI objects as non existent
 	isCRIContainer, err := strconv.ParseBool(ct.Config[cfgIsCRI])
 	if err != nil {
 		return nil, err
 	}
-	// treat non CRI objects as non existent
 	if !isCRIContainer {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
@@ -260,12 +258,15 @@ func makeContainerConfig(c *Container) map[string]string {
 	}
 
 	config[cfgState] = string(ContainerStateCreated)
+	config[cfgCreatedAt] = strconv.FormatInt(c.CreatedAt.UnixNano(), 10)
+	config[cfgStartedAt] = strconv.FormatInt(c.StartedAt.UnixNano(), 10)
 	config[cfgSecurityPrivileged] = strconv.FormatBool(c.Privileged)
 	config[cfgLogPath] = c.LogPath
-	config[cfgIsCRI] = "true"
+	config[cfgIsCRI] = strconv.FormatBool(true)
+	config[cfgMetaName] = c.Metadata.Name
 	config[cfgMetaAttempt] = strconv.FormatUint(uint64(c.Metadata.Attempt), 10)
 	config[cfgVolatileBaseImage] = c.Image
-	config[cfgAutoStartOnBoot] = "true"
+	config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 
 	for k, v := range c.EnvironmentVars {
 		config[cfgEnvironmentPrefix+"."+k] = v
@@ -310,17 +311,23 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 		return nil, fmt.Errorf("Container %v is not in schema version %v, got %v", ct.Name, SchemaVersionContainer, ct.Config[cfgSchema])
 	}
 
-	st, _, err := l.server.GetContainerState(ct.Name)
+	state, _, err := l.server.GetContainerState(ct.Name)
 	if err != nil {
 		return nil, err
 	}
-
 	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
 	}
-
 	privileged, err := strconv.ParseBool(ct.Config[cfgSecurityPrivileged])
+	if err != nil {
+		return nil, err
+	}
+	createdAt, err := strconv.ParseInt(ct.Config[cfgCreatedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	startedAt, err := strconv.ParseInt(ct.Config[cfgStartedAt], 10, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -336,35 +343,28 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
 	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
 	c.Config = containerConfigStore.UnreservedMap(ct.Config)
-	c.Pid = st.Pid
-	c.CreatedAt = ct.CreatedAt
+	c.Pid = state.Pid
+	c.CreatedAt = time.Unix(0, createdAt)
+	c.StartedAt = time.Unix(0, startedAt)
 	c.Stats = ContainerStats{
-		CPUUsage:        uint64(st.CPU.Usage),
-		MemoryUsage:     uint64(st.Memory.Usage),
-		FilesystemUsage: uint64(st.Disk["root"].Usage),
+		CPUUsage:        uint64(state.CPU.Usage),
+		MemoryUsage:     uint64(state.Memory.Usage),
+		FilesystemUsage: uint64(state.Disk["root"].Usage),
 	}
-	c.Network = st.Network
+	c.Network = state.Network
 	c.EnvironmentVars = extractEnvVars(ct.Config)
 	c.Privileged = privileged
 	c.CloudInitUserData = ct.Config[cfgCloudInitUserData]
 	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
 	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
 
-	if stat, has := ct.Config[cfgStartedAt]; has {
-		v, err := strconv.ParseInt(stat, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		c.StartedAt = time.Unix(0, v)
-	}
-
 	// get status and map it
-	switch ct.StatusCode {
+	switch state.StatusCode {
 	case api.Running:
 		c.State = ContainerStateRunning
 	case api.Stopped, api.Aborting, api.Stopping:
 		// we have to differentiate between stopped and created using the "user.state" config value
-		if st, has := ct.Config[cfgState]; has && st == string(ContainerStateCreated) {
+		if state, has := ct.Config[cfgState]; has && state == string(ContainerStateCreated) {
 			c.State = ContainerStateCreated
 		} else {
 			c.State = ContainerStateExited

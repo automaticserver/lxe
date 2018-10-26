@@ -10,7 +10,6 @@ import (
 )
 
 var keepImages = []string{
-	"sleeper:latest",
 	"critest.asag.io/busybox/1.28:latest",
 }
 
@@ -50,7 +49,7 @@ func (lt *lxfTest) clear() {
 		lt.deleteSandbox(sb.ID)
 	}
 
-	// remove all image aliases except the busybox/sleeper one
+	// remove all image aliases except the busybox one
 	for _, im := range lt.listImages("") {
 		for _, al := range im.Aliases {
 			keep := false

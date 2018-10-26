@@ -553,7 +553,9 @@ func (l *LXF) remountMissingVolumes(cntInfo *Container) {
 			return
 		}
 
+		// TODO: Can we remove the sleep since we redo this repeatedly in containerMonitor()?
 		time.Sleep(time.Second * 1)
+
 		// remove failed devices, to retry later (with all)
 		cntInfo.Disks = mountedDisks
 		err = l.UpdateContainer(cntInfo)

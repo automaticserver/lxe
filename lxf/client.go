@@ -11,7 +11,6 @@ import (
 // LXF is a facade to thin the interface needed for our usecase and map
 // the cri logic to lxd.
 type LXF struct {
-	sleeperHash    string
 	server         lxd.ContainerServer
 	config         *config.Config
 	cntMonitorChan chan ContainerMonitorChan
@@ -104,13 +103,7 @@ func New(socket string, configPath string) (*LXF, error) {
 		return nil, err
 	}
 
-	// a, _, err := server.GetImageAlias("sleeper")
-	// if err != nil {
-	// 	log.Printf("faield to get sleeper image hash, provide a sleeper image with name sleeper")
-	// }
-
 	lxf := &LXF{
-		sleeperHash:    "",
 		server:         server,
 		config:         lxdConfig,
 		cntMonitorChan: make(chan ContainerMonitorChan),

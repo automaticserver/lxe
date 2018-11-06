@@ -106,11 +106,10 @@ func NewRuntimeServer(
 // Version returns the runtime name, runtime version, and runtime API version.
 func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (*rtApi.VersionResponse, error) {
 	logger.Debugf("Version triggered: %v", req)
-	name := "lxe"
 	version := "0.1.0" // kubelet/remote version, must be 0.1.0
 	return &rtApi.VersionResponse{
 		Version:           version,
-		RuntimeName:       name,
+		RuntimeName:       Domain,
 		RuntimeVersion:    Version,
 		RuntimeApiVersion: version,
 	}, nil

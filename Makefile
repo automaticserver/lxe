@@ -80,7 +80,6 @@ test: $(GOPATH)/bin/overalls
 
 gccgo:
 	go build -v $(DEBUG) -compiler gccgo ./...
-	@echo "$(DOMAIN) built successfully with gccgo"
 
 version:
 	@echo "$(VERSION)"

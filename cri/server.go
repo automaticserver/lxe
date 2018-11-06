@@ -107,7 +107,7 @@ func (c *Server) Serve() error {
 		os.Exit(1)
 	}
 
-	logger.Infof("Started LXE/%s CRI shim on UNIX socket %q", Version, sock)
+	logger.Infof("Started %s/%s CRI shim on UNIX socket %q", Domain, Version, sock)
 
 	defer c.sock.Close()                    // nolint
 	defer os.Remove(c.criConfig.UnixSocket) // nolint

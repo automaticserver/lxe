@@ -1,6 +1,9 @@
 package lxf
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxe/lxf/lxo"
 )
@@ -8,8 +11,8 @@ import (
 // Schema Version this package is currently expecting
 const (
 	cfgSchema              = "user.lxe.schema"
-	SchemaVersionProfile   = "0.2"
-	SchemaVersionContainer = "0.2"
+	SchemaVersionProfile   = "0.3"
+	SchemaVersionContainer = "0.3"
 
 	cfgOldIsSandbox     = "user.is_cri_sandbox"
 	cfgOldIsContainer   = "user.is_cri_container"
@@ -49,7 +52,10 @@ func (m *MigrationWorkspace) Ensure() error {
 		if m.ensureProfileZeroOne(p) {
 			counter++
 		}
-		if m.ensureProfileZeroZwo(p) {
+		if m.ensureProfileZeroTwo(p) {
+			counter++
+		}
+		if m.ensureProfileZeroThree(p) {
 			counter++
 		}
 
@@ -84,6 +90,9 @@ func (m *MigrationWorkspace) Ensure() error {
 		if m.ensureContainerZeroTwo(c) {
 			counter++
 		}
+		if m.ensureContainerZeroThree(c) {
+			counter++
+		}
 
 		// If something has changed, update it
 		if counter > 0 {
@@ -109,10 +118,20 @@ func (m *MigrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
 }
 
 // user.is_cri_sandbox has moved to user.cri
-func (m *MigrationWorkspace) ensureProfileZeroZwo(p *api.Profile) bool {
+func (m *MigrationWorkspace) ensureProfileZeroTwo(p *api.Profile) bool {
 	if p.Config[cfgSchema] == "0.1" {
 		p.Config[cfgIsCRI] = p.Config[cfgOldIsSandbox]
 		p.Config[cfgSchema] = "0.2"
+		return true
+	}
+	return false
+}
+
+// cleanup unused keys
+func (m *MigrationWorkspace) ensureProfileZeroThree(p *api.Profile) bool {
+	if p.Config[cfgSchema] == "0.2" {
+		delete(p.Config, cfgOldIsSandbox)
+		p.Config[cfgSchema] = "0.3"
 		return true
 	}
 	return false
@@ -133,6 +152,30 @@ func (m *MigrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
 		c.Config[cfgIsCRI] = c.Config[cfgOldIsContainer]
 		c.Config[cfgMetaName] = c.Config[cfgOldContainerName]
 		c.Config[cfgSchema] = "0.2"
+		return true
+	}
+	return false
+}
+
+// createdDate can be missing
+// autostart can be missing
+// cleanup unused keys
+func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
+	if c.Config[cfgSchema] == "0.2" {
+		delete(c.Config, cfgOldIsContainer)
+		delete(c.Config, cfgOldContainerName)
+		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		if c.Config[cfgCreatedAt] == "" {
+			if c.Config[cfgStartedAt] == "" {
+				c.Config[cfgCreatedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
+			} else {
+				c.Config[cfgCreatedAt] = c.Config[cfgStartedAt]
+			}
+		}
+		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		c.Config[cfgSchema] = "0.3"
 		return true
 	}
 	return false

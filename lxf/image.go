@@ -8,6 +8,7 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxe/lxf/lxo"
 )
 
 // Image is here to translate the relevant data from lxd image to cri image
@@ -43,13 +44,7 @@ func (l *LXF) PullImage(name string) (string, error) {
 		AutoUpdate:  true,  // Maybe bug: currently NOT a technical requirement to know where the source is
 	}
 
-	op, err := l.server.CopyImage(imgServer, *image, &args)
-	if err != nil {
-		return "", fmt.Errorf("unable to pull requested image (%v) from server %v, %v",
-			image, imageID.Remote, err)
-	}
-
-	err = op.Wait()
+	err = lxo.CopyImage(l.server, imgServer, *image, &args)
 	if err != nil {
 		return "", fmt.Errorf("unable to pull requested image (%v) from server %v, %v",
 			image, imageID.Remote, err)
@@ -73,7 +68,7 @@ func (l *LXF) RemoveImage(name string) error {
 		return err
 	}
 
-	op, err := l.server.DeleteImage(hash)
+	err = lxo.DeleteImage(l.server, hash)
 	if err != nil {
 		if IsErrorNotFound(err) {
 			return nil
@@ -81,13 +76,6 @@ func (l *LXF) RemoveImage(name string) error {
 		return err
 	}
 
-	err = op.Wait()
-	if err != nil {
-		if IsErrorNotFound(err) {
-			return nil
-		}
-		return err
-	}
 	return nil
 }
 

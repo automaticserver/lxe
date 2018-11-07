@@ -1,5 +1,3 @@
-// Package lxo abstracts some of the lxd calls with additional functionality like
-// retrying, idempotency and some level of error recovery
 package lxo
 
 import (
@@ -7,7 +5,6 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 )
 
 // StopContainer will try to stop the container with provided name.
@@ -32,8 +29,6 @@ func StopContainer(server lxd.ContainerServer, id string) error {
 
 		err = op.Wait()
 		if err != nil && err.Error() == "The container is already stopped" {
-			logger.Debugf("container is stopped")
-			// done…
 			return nil
 		}
 		lastErr = err

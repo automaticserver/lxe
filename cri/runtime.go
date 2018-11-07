@@ -324,7 +324,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		return nil, err
 	}
 	for _, cnt := range profile.UsedBy {
-		err = s.stopContainer(cnt)
+		err = s.lxf.StopContainer(cnt)
 		if err != nil {
 			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
 		}
@@ -348,7 +348,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	}
 
 	for _, cnt := range profile.UsedBy {
-		err := s.removeContainer(cnt)
+		err := s.lxf.DeleteContainer(cnt)
 		if err != nil {
 			return nil, err
 		}
@@ -623,16 +623,12 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StopContainer triggered: %v", req)
 
-	err := s.stopContainer(req.GetContainerId())
+	err := s.lxf.StopContainer(req.GetContainerId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &rtApi.StopContainerResponse{}, nil
-}
-
-func (s RuntimeServer) stopContainer(id string) error {
-	return s.lxf.StopContainer(id)
 }
 
 // RemoveContainer removes the container. If the container is running, the
@@ -644,21 +640,12 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 	logger.Infof("RemoveContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("RemoveContainer triggered: %v", req)
 
-	err := s.removeContainer(req.GetContainerId())
+	err := s.lxf.DeleteContainer(req.GetContainerId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &rtApi.RemoveContainerResponse{}, nil
-}
-
-func (s RuntimeServer) removeContainer(id string) error {
-	err := s.lxf.DeleteContainer(id)
-	if err != nil {
-		logger.Errorf("removeContainer: DeleteContainer(%v): %v", id, err)
-		return err
-	}
-	return nil
 }
 
 // ListContainers lists all containers by filters.

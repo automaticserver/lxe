@@ -8,6 +8,7 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxe/lxf/lxo"
 )
 
 // ExecResponse returns the stdout and err from an exec call
@@ -24,25 +25,18 @@ func (l *LXF) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 
 	dataDone := make(chan bool)
 
-	execArgs := lxd.ContainerExecArgs{
-		Stderr:   tempStderr,
-		Stdout:   tempStdout,
-		Stdin:    ioutil.NopCloser(bytes.NewReader(nil)),
-		DataDone: dataDone,
-	}
-
-	op, err := l.server.ExecContainer(cid, lxdApi.ContainerExecPost{
+	op, err := lxo.ExecContainer(l.server, cid, lxdApi.ContainerExecPost{
 		Command:     cmd,
 		Interactive: false,
 		Width:       0,
 		Height:      0,
 		WaitForWS:   true,
-	}, &execArgs)
-
-	if err != nil {
-		return nil, err
-	}
-	err = op.Wait()
+	}, &lxd.ContainerExecArgs{
+		Stderr:   tempStderr,
+		Stdout:   tempStdout,
+		Stdin:    ioutil.NopCloser(bytes.NewReader(nil)),
+		DataDone: dataDone,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +64,7 @@ func (l *LXF) Exec(cid string, cmd []string,
 
 	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface
 	var stdinCloser io.ReadCloser
-	// kubelet might give us stdin==nil btw lxd expects something there otherwise it will segfault
+	// kubelet might give us stdin==nil but lxd expects something there otherwise it will segfault
 	if stdin == nil {
 		stdinCloser = ioutil.NopCloser(bytes.NewBufferString(""))
 	} else {
@@ -83,6 +77,7 @@ func (l *LXF) Exec(cid string, cmd []string,
 
 	dataDone := make(chan bool)
 
+	// TODO: Is no op.Wait() intentional?
 	_, err := l.server.ExecContainer(cid,
 		lxdApi.ContainerExecPost{
 			Command:      cmd,
@@ -100,7 +95,7 @@ func (l *LXF) Exec(cid string, cmd []string,
 			DataDone: dataDone,
 		})
 	if err != nil {
-		return 0, err
+		return 1, err
 	}
 
 	<-dataDone

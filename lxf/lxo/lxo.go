@@ -86,3 +86,14 @@ func DeleteContainer(server lxd.ContainerServer, id string) error {
 	}
 	return op.Wait()
 }
+
+// ExecContainer runs a command on a container and wait till operation is done or
+// return an error
+func ExecContainer(server lxd.ContainerServer, id string, containerExec api.ContainerExecPost, execArgs *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	op, err := server.ExecContainer(id, containerExec, execArgs)
+	if err != nil {
+		return op, err
+	}
+	err = op.Wait()
+	return op, err
+}

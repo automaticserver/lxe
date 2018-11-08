@@ -165,7 +165,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 	}
 	result := []*Container{}
 	for _, ct := range cts {
-		if _, has := ct.Config[cfgIsCRI]; has {
+		if IsCRI(ct) {
 			res, err := l.toContainer(&ct)
 			if err != nil {
 				return nil, err
@@ -185,11 +185,7 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 	}
 
 	// treat non CRI objects as non existent
-	isCRIContainer, err := strconv.ParseBool(ct.Config[cfgIsCRI])
-	if err != nil {
-		return nil, err
-	}
-	if !isCRIContainer {
+	if !IsCRI(ct) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 

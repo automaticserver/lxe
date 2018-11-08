@@ -186,12 +186,8 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
-	isCRISandbox, err := strconv.ParseBool(p.Config[cfgIsCRI])
-	if err != nil {
-		return nil, err
-	}
-	// treat non CRI objects as non existent
-	if !isCRISandbox {
+
+	if !IsCRI(p) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 	return l.toSandbox(p)
@@ -211,7 +207,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 
 	sandboxes := []*Sandbox{}
 	for _, p := range ps {
-		if _, has := p.Config[cfgIsCRI]; has {
+		if !IsCRI(p) {
 			sb, err2 := l.toSandbox(&p)
 			if err2 != nil {
 				return nil, err2

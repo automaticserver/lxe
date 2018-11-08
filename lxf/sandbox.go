@@ -187,7 +187,7 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 		return nil, err
 	}
 
-	if IsCRI(p) {
+	if !IsCRI(p) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 	return l.toSandbox(p)
@@ -207,13 +207,14 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 
 	sandboxes := []*Sandbox{}
 	for _, p := range ps {
-		if IsCRI(p) {
-			sb, err2 := l.toSandbox(&p)
-			if err2 != nil {
-				return nil, err2
-			}
-			sandboxes = append(sandboxes, sb)
+		if !IsCRI(p) {
+			continue
 		}
+		sb, err2 := l.toSandbox(&p)
+		if err2 != nil {
+			return nil, err2
+		}
+		sandboxes = append(sandboxes, sb)
 	}
 
 	return sandboxes, nil

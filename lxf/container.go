@@ -165,13 +165,14 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 	}
 	result := []*Container{}
 	for _, ct := range cts {
-		if IsCRI(ct) {
-			res, err := l.toContainer(&ct)
-			if err != nil {
-				return nil, err
-			}
-			result = append(result, res)
+		if !IsCRI(ct) {
+			continue
 		}
+		res, err := l.toContainer(&ct)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, res)
 	}
 
 	return result, nil

@@ -31,6 +31,27 @@ func (l *LXF) Migration() *MigrationWorkspace {
 	}
 }
 
+// IsSchemaCurrent checks if a object is in the current schema
+func IsSchemaCurrent(i interface{}) bool {
+	var val string
+	var has bool
+
+	switch o := i.(type) {
+	case api.Container:
+		if val, has = o.Config[cfgSchema]; !has {
+			return false
+		}
+		return val == SchemaVersionContainer
+	case api.Profile:
+		if val, has = o.Config[cfgSchema]; !has {
+			return false
+		}
+		return val == SchemaVersionProfile
+	default:
+		return false
+	}
+}
+
 // Ensure applies all migration steps from detected schema to current schema
 func (m *MigrationWorkspace) Ensure() error {
 	profiles, err := m.lxf.server.GetProfiles()

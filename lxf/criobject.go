@@ -29,6 +29,10 @@ type CRIObject struct {
 
 // IsCRI checks if a object is a cri object
 func IsCRI(i interface{}) bool {
+	if !IsSchemaCurrent(i) {
+		return false
+	}
+
 	var val string
 	var has bool
 

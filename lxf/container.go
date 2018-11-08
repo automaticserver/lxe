@@ -303,10 +303,6 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 
 // toContainer will convert an lxd container to lxf format
 func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
-	if ct.Config[cfgSchema] != SchemaVersionContainer {
-		return nil, fmt.Errorf("Container %v is not in schema version %v, got %v", ct.Name, SchemaVersionContainer, ct.Config[cfgSchema])
-	}
-
 	state, _, err := l.server.GetContainerState(ct.Name)
 	if err != nil {
 		return nil, err
@@ -448,7 +444,8 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
 	cnt, err := l.GetContainer(containerID)
 	if err != nil {
-		logger.Debugf("unable to GetContainer %v: %v", containerID, err)
+		logger.Errorf("unable to GetContainer %v: %v", containerID, err)
+		return
 	}
 
 	// add container to queue in order to recheck if mounts are okay
@@ -518,6 +515,9 @@ func (l *LXF) containerMonitor(cntMonitorChan chan ContainerMonitorChan) {
 	}
 }
 
+// TODO: Why exactly do we remove disks and add them again?
+// BTW there is a bug: when LXE is started it tries to mount only the then known list of devices
+// If this function somehow didn't save full list before getting restarted, devices are lost!
 func (l *LXF) remountMissingVolumes(cntInfo *Container) {
 	logger.Debugf("remountMissingVolumes triggered: %v", cntInfo.ID)
 
@@ -526,10 +526,11 @@ func (l *LXF) remountMissingVolumes(cntInfo *Container) {
 	for {
 		cntInfo, err := l.GetContainer(cntInfo.ID)
 		if err != nil {
-			logger.Debugf("remountMissingVolumes failed to update container info: %v", err)
+			logger.Errorf("remountMissingVolumes failed to update container %s info: %v", cntInfo.ID, err)
+			return
 		}
 		if cntInfo == nil {
-			logger.Errorf("cntInfo was nil")
+			logger.Errorf("cntInfo %s was nil", cntInfo.ID)
 			return
 		}
 		if (cntInfo.State == ContainerStateExited) || (cntInfo.State == ContainerStateUnknown) {

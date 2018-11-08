@@ -187,7 +187,7 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 		return nil, err
 	}
 
-	if !IsCRI(p) {
+	if IsCRI(p) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 	return l.toSandbox(p)
@@ -339,10 +339,6 @@ manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
 
 // toSandbox will take a profile and convert it to a sandbox.
 func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
-	if p.Config[cfgSchema] != SchemaVersionProfile {
-		return nil, fmt.Errorf("Sandbox %v is not in schema version %v, got %v", p.Name, SchemaVersionProfile, p.Config[cfgSchema])
-	}
-
 	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err

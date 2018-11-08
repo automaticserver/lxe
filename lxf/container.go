@@ -518,30 +518,30 @@ func (l *LXF) containerMonitor(cntMonitorChan chan ContainerMonitorChan) {
 // TODO: Why exactly do we remove disks and add them again?
 // BTW there is a bug: when LXE is started it tries to mount only the then known list of devices
 // If this function somehow didn't save full list before getting restarted, devices are lost!
-func (l *LXF) remountMissingVolumes(cntInfo *Container) {
-	logger.Debugf("remountMissingVolumes triggered: %v", cntInfo.ID)
+func (l *LXF) remountMissingVolumes(container *Container) {
+	logger.Debugf("remountMissingVolumes triggered: %v", container.ID)
 
-	allDisks := cntInfo.Disks
+	allDisks := container.Disks
 	mountedDisks := []device.Disk{}
 	for {
-		cntInfo, err := l.GetContainer(cntInfo.ID)
+		current, err := l.GetContainer(container.ID)
 		if err != nil {
-			logger.Errorf("remountMissingVolumes failed to update container %s info: %v", cntInfo.ID, err)
+			logger.Errorf("remountMissingVolumes failed to update container %s info: %v", container.ID, err)
 			return
 		}
-		if cntInfo == nil {
-			logger.Errorf("cntInfo %s was nil", cntInfo.ID)
+		if current == nil {
+			logger.Errorf("current container %s was nil", container.ID)
 			return
 		}
-		if (cntInfo.State == ContainerStateExited) || (cntInfo.State == ContainerStateUnknown) {
+		if (current.State == ContainerStateExited) || (current.State == ContainerStateUnknown) {
 			logger.Debugf("state remountMissingVolumes: stale container")
 			return
 		}
-		for _, disk := range cntInfo.Disks {
-			_, _, err := l.server.GetContainerFile(cntInfo.ID, disk.Path)
+		for _, disk := range current.Disks {
+			_, _, err := l.server.GetContainerFile(current.ID, disk.Path)
 			if err != nil {
 				logger.Debugf("remountMissingVolumes Container(%s) '%s' path: %s: %v. - attempting remounting",
-					cntInfo.ID, disk.GetName(), disk.Path, err)
+					current.ID, disk.GetName(), disk.Path, err)
 			} else {
 				mountedDisks = append(mountedDisks, disk)
 			}
@@ -554,15 +554,15 @@ func (l *LXF) remountMissingVolumes(cntInfo *Container) {
 		time.Sleep(time.Second * 1)
 
 		// remove failed devices, to retry later (with all)
-		cntInfo.Disks = mountedDisks
-		err = l.UpdateContainer(cntInfo)
+		current.Disks = mountedDisks
+		err = l.UpdateContainer(current)
 		if err != nil {
 			logger.Debugf("Failed to update container without failed disks, %v", err)
 		}
 
 		// mount with all devices
-		cntInfo.Disks = allDisks
-		err = l.UpdateContainer(cntInfo)
+		current.Disks = allDisks
+		err = l.UpdateContainer(current)
 		if err != nil {
 			logger.Debugf("Failed to update container with all disks, %v", err)
 		}

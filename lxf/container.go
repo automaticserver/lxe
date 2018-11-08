@@ -184,7 +184,6 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 		return nil, err
 	}
 
-	// treat non CRI objects as non existent
 	if !IsCRI(ct) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
@@ -444,8 +443,13 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
 	cnt, err := l.GetContainer(containerID)
 	if err != nil {
-		logger.Errorf("unable to GetContainer %v: %v", containerID, err)
-		return
+		if IsErrorNotFound(err) {
+			// The started container is not a cri container, so we get the error not found
+			return
+		} else {
+			logger.Errorf("Unable to GetContainer %v: %v", containerID, err)
+			return
+		}
 	}
 
 	// add container to queue in order to recheck if mounts are okay

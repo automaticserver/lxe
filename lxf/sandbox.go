@@ -207,7 +207,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 
 	sandboxes := []*Sandbox{}
 	for _, p := range ps {
-		if !IsCRI(p) {
+		if IsCRI(p) {
 			sb, err2 := l.toSandbox(&p)
 			if err2 != nil {
 				return nil, err2

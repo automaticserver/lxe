@@ -13,7 +13,11 @@ import (
 func TestExecSyncInParallel(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -41,7 +45,11 @@ func TestExecSyncInParallel(t *testing.T) {
 func TestExecSync(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -60,7 +68,11 @@ func TestExecSync(t *testing.T) {
 func TestExecSyncSuccess(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -74,7 +86,11 @@ func TestExecSyncSuccess(t *testing.T) {
 func TestExecSyncFailure(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -89,7 +105,11 @@ func TestExecSyncFailure(t *testing.T) {
 func TestNonInteractiveExec(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})

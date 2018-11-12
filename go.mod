@@ -43,7 +43,7 @@ require (
 	github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
-	github.com/stretchr/testify v1.2.2 // indirect
+	github.com/stretchr/testify v1.2.2
 	// Do not have SemVer tags - latest commits at time of writing
 	golang.org/x/crypto v0.0.0-20181009213950-7c1a557ab941 // indirect
 	golang.org/x/net v0.0.0-20181004221649-146acd28ed58

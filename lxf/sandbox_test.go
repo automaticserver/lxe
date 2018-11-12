@@ -167,8 +167,10 @@ func TestSandboxLabels(t *testing.T) { // nolint:dupl
 		"delicious": "coffee",
 	}
 	r := &lxf.Sandbox{
+		CRIObject: lxf.CRIObject{
+			Labels: lb,
+		},
 		Hostname: "affective",
-		Labels:   lb,
 	}
 	lt.createSandbox(r)
 
@@ -187,8 +189,10 @@ func TestSandboxAnnotations(t *testing.T) { // nolint:dupl
 		"delicious": "coffee",
 	}
 	r := &lxf.Sandbox{
-		Hostname:    "affective",
-		Annotations: an,
+		CRIObject: lxf.CRIObject{
+			Annotations: an,
+		},
+		Hostname: "affective",
 	}
 	lt.createSandbox(r)
 
@@ -218,8 +222,12 @@ func TestSandboxProxies(t *testing.T) {
 	}
 
 	r := &lxf.Sandbox{
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				Proxies: proxies,
+			},
+		},
 		Hostname: "affective",
-		Proxies:  proxies,
 	}
 	lt.createSandbox(r)
 
@@ -238,8 +246,12 @@ func TestSandboxConfigs(t *testing.T) {
 	}
 
 	r := &lxf.Sandbox{
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				Config: cfg,
+			},
+		},
 		Hostname: "affective",
-		Config:   cfg,
 	}
 	lt.createSandbox(r)
 
@@ -263,8 +275,12 @@ func TestSandboxDisk(t *testing.T) {
 	}
 
 	r := &lxf.Sandbox{
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				Disks: disks,
+			},
+		},
 		Hostname: "affective",
-		Disks:    disks,
 	}
 	lt.createSandbox(r)
 
@@ -279,7 +295,11 @@ func TestUsedBy(t *testing.T) {
 	lt := newLXFTest(t)
 
 	c := &lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	}

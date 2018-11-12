@@ -17,7 +17,11 @@ func TestCreateContainer(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -29,7 +33,11 @@ func TestContainerAttributes(t *testing.T) {
 	ld := "/var/log/veryloggylog"
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		LogPath: ld,
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
@@ -54,10 +62,14 @@ func TestContainerLabels(t *testing.T) { // nolint:dupl
 		"delicious": "coffee",
 	}
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+			Labels: lb,
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
-		Labels:  lb,
 	})
 
 	ct := lt.getContainer("roosevelt")
@@ -75,10 +87,14 @@ func TestContainerAnnotations(t *testing.T) { // nolint:dupl
 		"delicious": "coffee",
 	}
 	lt.createContainer(&lxf.Container{
-		Name:        "roosevelt",
-		Sandbox:     setUpSandbox(lt, "roosevelt"),
-		Image:       imgBusybox,
-		Annotations: an,
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+			Annotations: an,
+		},
+		Sandbox: setUpSandbox(lt, "roosevelt"),
+		Image:   imgBusybox,
 	})
 
 	ct := lt.getContainer("roosevelt")
@@ -102,7 +118,11 @@ write_files:
 `
 
 	lt.createContainer(&lxf.Container{
-		Name:              "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox:           setUpSandbox(lt, "roosevelt"),
 		Image:             imgBusybox,
 		CloudInitUserData: cloudinit,
@@ -126,10 +146,14 @@ func TestUpdateContainer(t *testing.T) {
 		"delicious": "iced-coffee",
 	}
 	lt.createContainer(&lxf.Container{
-		Name:        "roosevelt",
-		Sandbox:     setUpSandbox(lt, "roosevelt"),
-		Image:       imgBusybox,
-		Annotations: an1,
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+			Annotations: an1,
+		},
+		Sandbox: setUpSandbox(lt, "roosevelt"),
+		Image:   imgBusybox,
 	})
 
 	ct := lt.getContainer("roosevelt")
@@ -150,7 +174,11 @@ func TestStartContainer(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -162,7 +190,11 @@ func TestStopContainer(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -176,7 +208,11 @@ func TestContainerWithReallyLongName(t *testing.T) {
 	name := strings.Repeat("roosevelt", 10) + "_reallylong"
 
 	lt.createContainer(&lxf.Container{
-		Name:    name,
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -184,15 +220,19 @@ func TestContainerWithReallyLongName(t *testing.T) {
 	lt.startContainer(name)
 	ct := lt.getContainer(name)
 
-	if ct.Name != name {
-		t.Errorf("expected container name to be %v but is %v", name, ct.Name)
+	if ct.ID != name {
+		t.Errorf("expected container name to be %v but is %v", name, ct.ID)
 	}
 }
 
 func TestContainerStateTransitions(t *testing.T) {
 	lt := newLXFTest(t)
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -221,7 +261,11 @@ func TestContainerPid(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -239,7 +283,11 @@ func TestContainerStartedAt(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})
@@ -263,7 +311,11 @@ func TestContainerCreatedAt(t *testing.T) {
 	lt := newLXFTest(t)
 
 	lt.createContainer(&lxf.Container{
-		Name:    "roosevelt",
+		CRIObject: lxf.CRIObject{
+			LXDObject: lxf.LXDObject{
+				ID: "roosevelt",
+			},
+		},
 		Sandbox: setUpSandbox(lt, "roosevelt"),
 		Image:   imgBusybox,
 	})

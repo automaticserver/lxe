@@ -295,7 +295,6 @@ func testErrorEmptyAnnotation(err error) {
 			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
 			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err)
-			return nil, err
 		}
 	}
 }
@@ -333,7 +332,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		err = s.lxf.StopContainer(cnt)
 		if err != nil {
 			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
-			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt.ID, err)
+			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt, err)
 		}
 	}
 

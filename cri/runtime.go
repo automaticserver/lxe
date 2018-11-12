@@ -64,6 +64,7 @@ func NewRuntimeServer(
 	outboundIP, err := utilNet.ChooseHostInterface()
 	if err != nil {
 		logger.Errorf("could not find suitable host interface: %v", err)
+		return nil, err
 	}
 
 	// Prepare streaming server
@@ -76,7 +77,8 @@ func NewRuntimeServer(
 	runtime.stream.runtimeServer = &runtime
 	runtime.stream.streamServer, err = streaming.NewServer(streamServerConfig, runtime.stream)
 	if err != nil {
-		panic(fmt.Errorf("unable to create streaming server"))
+		logger.Errorf("unable to create streaming server")
+		return nil, err
 	}
 
 	runtime.stream.streamServerCloseCh = make(chan struct{})
@@ -210,7 +212,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
 			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %v", err)
+			return nil, err
 		}
 	}
 
@@ -219,7 +222,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
 			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %v", err)
+			return nil, err
 		}
 	}
 
@@ -275,6 +279,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	err = s.lxf.CreateSandbox(sb)
 	if err != nil {
 		logger.Errorf("failed to create sandbox, %v", err)
+		return nil, err
 	}
 
 	logger.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
@@ -289,7 +294,8 @@ func testErrorEmptyAnnotation(err error) {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
 			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err)
+			return nil, err
 		}
 	}
 }
@@ -327,6 +333,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		err = s.lxf.StopContainer(cnt)
 		if err != nil {
 			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
+			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt.ID, err)
 		}
 	}
 

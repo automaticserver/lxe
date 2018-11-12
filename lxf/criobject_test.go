@@ -58,3 +58,13 @@ func TestIsCRITrue(t *testing.T) {
 	p := IsCRI(getCRIProfile("True"))
 	assert.Equal(t, true, p)
 }
+
+func TestIsCRIPointer(t *testing.T) {
+	c1 := getCRIContainer("true")
+	c := IsCRI(&c1)
+	assert.Equal(t, true, c)
+
+	p1 := getCRIProfile("True")
+	p := IsCRI(&p1)
+	assert.Equal(t, true, p)
+}

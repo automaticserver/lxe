@@ -52,3 +52,13 @@ func TestIsSchemaCurrent(t *testing.T) {
 	p := IsSchemaCurrent(getSchemaProfile(SchemaVersionProfile))
 	assert.Equal(t, true, p)
 }
+
+func TestIsSchemaPointer(t *testing.T) {
+	c1 := getSchemaContainer(SchemaVersionContainer)
+	c := IsSchemaCurrent(&c1)
+	assert.Equal(t, true, c)
+
+	p1 := getSchemaProfile(SchemaVersionProfile)
+	p := IsSchemaCurrent(&p1)
+	assert.Equal(t, true, p)
+}

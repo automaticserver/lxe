@@ -42,11 +42,15 @@ func IsSchemaCurrent(i interface{}) bool {
 			return false
 		}
 		return val == SchemaVersionContainer
+	case *api.Container:
+		return IsSchemaCurrent(*o)
 	case api.Profile:
 		if val, has = o.Config[cfgSchema]; !has {
 			return false
 		}
 		return val == SchemaVersionProfile
+	case *api.Profile:
+		return IsSchemaCurrent(*o)
 	default:
 		return false
 	}

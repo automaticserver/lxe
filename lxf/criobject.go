@@ -41,10 +41,14 @@ func IsCRI(i interface{}) bool {
 		if val, has = o.Config[cfgIsCRI]; !has {
 			return false
 		}
+	case *api.Container:
+		return IsCRI(*o)
 	case api.Profile:
 		if val, has = o.Config[cfgIsCRI]; !has {
 			return false
 		}
+	case *api.Profile:
+		return IsCRI(*o)
 	default:
 		return false
 	}

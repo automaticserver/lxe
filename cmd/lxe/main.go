@@ -78,23 +78,23 @@ func main() {
 	globalCmd := cmdGlobal{}
 	daemonCmd.global = &globalCmd
 	app.PersistentPreRunE = globalCmd.Run
-	app.PersistentFlags().BoolVar(&globalCmd.flagVersion, "version", false, "Print version number")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagHelp, "help", "h", false, "Print help")
-	app.PersistentFlags().StringVar(&globalCmd.flagLogFile, "logfile", "/var/log/lxe.log", "Path to the log file"+"``")
-	app.PersistentFlags().StringArrayVar(&globalCmd.flagLogTrace, "trace", []string{}, "Log tracing targets"+"``")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages")
+	app.PersistentFlags().BoolVar(&globalCmd.flagVersion, "version", false, "Print version number.")
+	app.PersistentFlags().BoolVarP(&globalCmd.flagHelp, "help", "h", false, "Print help.")
+	app.PersistentFlags().StringVar(&globalCmd.flagLogFile, "logfile", "/var/log/lxe.log", "Path to the log file."+"``")
+	app.PersistentFlags().StringArrayVar(&globalCmd.flagLogTrace, "trace", []string{}, "Log tracing targets."+"``")
+	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages.")
+	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages.")
 	// lxd / lxe specific flags
 	app.PersistentFlags().StringVar(&globalCmd.flagUnixSocket, "socket",
-		"/var/run/lxe.sock", "The unix socket under which LXE will expose its service to Kubernetes")
+		"/var/run/lxe.sock", "The unix socket under which LXE will expose its service to Kubernetes.")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXDSocket, "lxd-socket",
-		"/var/lib/lxd/unix.socket", "LXD's unix socket")
+		"/var/lib/lxd/unix.socket", "LXD's unix socket.")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXDRemoteConfig, "lxd-remote-config",
-		"", "Path to the LXD remote config (guessed by default)")
+		"", "Path to the LXD remote config. (guessed by default)")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXDImageRemote, "lxd-image-remote",
-		"local", "Use this remote when ImageSpec doesn't provide an explicit remote")
+		"local", "Use this remote when ImageSpec doesn't provide an explicit remote.")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXEStreamServerEndpoint, "streaming-endpoint",
-		"", "IP or Interface for Streaming Server (guessed by default)")
+		"", "IP or Interface for Streaming Server. (guessed by default)")
 	app.PersistentFlags().IntVar(&globalCmd.flagLXEStreamingPort, "streaming-port",
 		44124, "Port where LXE's Streaming HTTP Server will listen.")
 	// Run the main command and handle errors

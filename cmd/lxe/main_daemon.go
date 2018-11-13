@@ -29,10 +29,8 @@ type cmdDaemon struct {
 func (c *cmdDaemon) Command() *cobra.Command {
 	cmd := &cobra.Command{}
 	cmd.Use = cri.Domain
-	cmd.Short = "The TODO TBD CRI implementation"
-	cmd.Long = `Description:
-  TODO TBD CRI implementation
-`
+	cmd.Short = "LXE is a shim of the Kubernetes Container Runtime Interface for LXD"
+
 	cmd.RunE = c.Run
 	cmd.Flags().StringVar(&c.flagCPUProfile, "cpu-profile", "", "Enable CPU profiling, writing into the specified file"+"``")
 	cmd.Flags().StringVar(&c.flagMemoryProfile, "memory-profile", "", "Enable memory profiling, writing into the specified file"+"``")
@@ -44,6 +42,7 @@ func (c *cmdDaemon) Command() *cobra.Command {
 
 func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 
+	// TODO: apply for latest variant introduced by lxd
 	// Start debug activities as per command line flags, if any.
 	//stop, err := dbg.Start(
 	//dbg.CPU(c.flagCPUProfile),

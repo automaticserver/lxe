@@ -99,7 +99,7 @@ func (l *LXF) Exec(cid string, cmd []string,
 	}
 
 	<-dataDone
-	// we close as soon as connections are terminated and all data got send
+	// we close as soon as connections are terminated and all data got sent
 	// it seems they won't be closed automatically but i'm not sure if i miss something
 	if stdout != nil {
 		err = stdout.Close()

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/lxo"
 )
 
@@ -62,6 +63,7 @@ func (m *MigrationWorkspace) Ensure() error {
 	if err != nil {
 		return err
 	}
+	anyChanges := false
 
 	for k := range profiles {
 		// Since we want to work and modify the item directly, reference the entry
@@ -86,6 +88,7 @@ func (m *MigrationWorkspace) Ensure() error {
 
 		// If something has changed, update it
 		if counter > 0 {
+			anyChanges = true
 			err = m.lxf.server.UpdateProfile(p.Name, p.Writable(), "")
 			if err != nil {
 				return err
@@ -121,6 +124,7 @@ func (m *MigrationWorkspace) Ensure() error {
 
 		// If something has changed, update it
 		if counter > 0 {
+			anyChanges = true
 			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable())
 			if err != nil {
 				return err
@@ -128,6 +132,9 @@ func (m *MigrationWorkspace) Ensure() error {
 		}
 	}
 
+	if anyChanges {
+		logger.Warnf("Migration changes applied successfully")
+	}
 	return nil
 }
 

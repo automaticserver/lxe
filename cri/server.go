@@ -6,6 +6,7 @@ import (
 
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
+	"github.com/lxc/lxe/shared"
 	"google.golang.org/grpc"
 	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -49,13 +50,13 @@ func NewServer(criConfig *LXEConfig) *Server {
 	configPath, err := getLXDConfigPath(criConfig)
 	if err != nil {
 		logger.Critf("Unable to find lxc config: %v", err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	lxf, err := lxf.New(criConfig.LXDSocket, configPath)
 	if err != nil {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 	logger.Infof("Connected to LXD via %q", criConfig.LXDSocket)
 
@@ -63,7 +64,7 @@ func NewServer(criConfig *LXEConfig) *Server {
 	err = lxf.Migration().Ensure()
 	if err != nil {
 		logger.Critf("Migration failed: %v", err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeSchemaMigrationFailure)
 	}
 
 	// for now we bind the http on every interface
@@ -71,12 +72,12 @@ func NewServer(criConfig *LXEConfig) *Server {
 	runtimeServer, err := NewRuntimeServer(criConfig, streamServerAddr, lxf)
 	if err != nil {
 		logger.Critf("Unable to start runtime server: %v", err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 	imageServer, err := NewImageServer(runtimeServer, lxf)
 	if err != nil {
 		logger.Critf("Unable to start image server: %v", err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	runtimeapi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
@@ -98,13 +99,13 @@ func (c *Server) Serve() error {
 		logger.Debugf("Cleaning up stale socket")
 		if err != nil {
 			logger.Critf("Error cleaning up stale (?) listening socket %q: %v ", sock, err)
-			os.Exit(1)
+			os.Exit(shared.ExitCodeUnspecified)
 		}
 	}
 	c.sock, err = net.Listen("unix", sock)
 	if err != nil {
 		logger.Critf("Error listening on socket %q: %v ", sock, err)
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	logger.Infof("Started %s/%s CRI shim on UNIX socket %q", Domain, Version, sock)

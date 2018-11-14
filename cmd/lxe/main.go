@@ -8,6 +8,7 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxd/shared/logging"
 	"github.com/lxc/lxe/cri"
+	"github.com/lxc/lxe/shared"
 	"github.com/spf13/cobra"
 )
 
@@ -100,6 +101,6 @@ func main() {
 	// Run the main command and handle errors
 	err := app.Execute()
 	if err != nil {
-		os.Exit(1)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 }

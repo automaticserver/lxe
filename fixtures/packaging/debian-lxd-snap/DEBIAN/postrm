@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_systemd_start
+if [ -d /run/systemd/system ]; then
+        systemctl --system daemon-reload >/dev/null || true
+fi
+# End automatically added section
+# Automatically added by dh_installinit
+if [ "$1" = "purge" ] ; then
+        update-rc.d lxe remove >/dev/null
+fi
+
+# In case this system is running systemd, we make systemd reload the unit files
+# to pick up changes.
+if [ -d /run/systemd/system ] ; then
+        systemctl --system daemon-reload >/dev/null || true
+fi
+# End automatically added section
+# Automatically added by dh_systemd_enable
+if [ "$1" = "remove" ]; then
+        if [ -x "/usr/bin/deb-systemd-helper" ]; then
+                deb-systemd-helper mask lxe.service >/dev/null
+        fi
+fi
+
+if [ "$1" = "purge" ]; then
+        if [ -x "/usr/bin/deb-systemd-helper" ]; then
+                deb-systemd-helper purge lxe.service >/dev/null
+                deb-systemd-helper unmask lxe.service >/dev/null
+        fi
+fi
+# End automatically added section

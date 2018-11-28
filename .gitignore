@@ -2,7 +2,8 @@ vendor
 .vscode/
 *.coverprofile
 cri/version.go
-bin
+bin/
+package/
 
 #temporarly due to bug https://github.com/golang/go/issues/27925
 go.sum

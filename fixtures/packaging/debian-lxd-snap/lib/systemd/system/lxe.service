@@ -1,12 +1,12 @@
 [Unit]
-Description=LXE, CRI shim for lxc
+Description=LXE is a shim of the Kubernetes Container Runtime Interface for LXD
 Requires=lxd.socket
 Wants=network-online.target
 After=lxd.socket network-online.target
 
 [Service]
 EnvironmentFile=-/etc/default/lxe
-ExecStart=/usr/bin/lxe --logfile /var/log/lxe.log --verbose
+ExecStart=/usr/bin/lxe --logfile /var/log/lxe.log $OPTIONS
 SyslogIdentifier=lxe.daemon
 Restart=always
 KillMode=process

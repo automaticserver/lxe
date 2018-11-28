@@ -1,0 +1,18 @@
+default-remote: local
+remotes:
+  images:
+    addr: https://images.linuxcontainers.org
+    public: true
+    protocol: simplestreams
+  local:
+    addr: unix://
+    public: false
+  ubuntu:
+    addr: https://cloud-images.ubuntu.com/releases
+    public: true
+    protocol: simplestreams
+  ubuntu-daily:
+    addr: https://cloud-images.ubuntu.com/daily
+    public: true
+    protocol: simplestreams
+aliases: {}

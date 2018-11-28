@@ -1,0 +1,1 @@
+OPTIONS="--verbose --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config /etc/lxe/lxd-remote.yaml"

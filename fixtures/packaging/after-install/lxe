@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# force generating remote config once (care, that file is written somewhere in $USER/$HOME and 
-# thus not system wide, will affect as which user the lxe daemon should be started)
-# WARNING: --version is NOT sufficient to let lxc create .config/lxc/config.yml!
-lxc version > /dev/null 2>&1 || true

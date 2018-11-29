@@ -44,7 +44,6 @@ func (p Proxy) ToMap() (map[string]string, error) {
 		"type":    proxyType,
 		"listen":  p.Listen.String(),
 		"connect": p.Destination.String(),
-		"bind":    "container",
 	}, nil
 }
 

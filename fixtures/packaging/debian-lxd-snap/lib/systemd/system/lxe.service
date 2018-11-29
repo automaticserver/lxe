@@ -1,8 +1,8 @@
 [Unit]
 Description=LXE is a shim of the Kubernetes Container Runtime Interface for LXD
-Requires=lxd.socket
+Requires=snap.lxd.daemon.unix.socket
 Wants=network-online.target
-After=lxd.socket network-online.target
+After=snap.lxd.daemon.unix.socket network-online.target
 
 [Service]
 EnvironmentFile=-/etc/default/lxe

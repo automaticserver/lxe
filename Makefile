@@ -139,5 +139,5 @@ package-deb-lxd-snap: build
 	
 	chmod -R g-w package/debian-lxd-snap/
 	fakeroot dpkg-deb -b package/debian-lxd-snap
-	mv package/debian-lxd-snap.deb package/$(DOMAIN)_$(VERSION).debian-lxd-snap.deb
-	lintian -i -I --show-overrides package/$(DOMAIN)_$(VERSION).debian-lxd-snap.deb
+	mv package/debian-lxd-snap.deb package/$(DOMAIN)_$(version).debian-lxd-snap.deb
+	lintian -i -I --show-overrides package/$(DOMAIN)_$(version).debian-lxd-snap.deb

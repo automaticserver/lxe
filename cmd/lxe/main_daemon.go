@@ -63,6 +63,7 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 		c.global.flagLXDImageRemote,
 		c.global.flagLXEStreamServerEndpoint,
 		strconv.Itoa(c.global.flagLXEStreamingPort),
+		c.global.flagLXEHostnetworkFile,
 	)
 	if err != nil {
 		return err

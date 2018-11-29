@@ -37,6 +37,7 @@ type cmdGlobal struct {
 	flagLXDImageRemote          string
 	flagLXEStreamServerEndpoint string
 	flagLXEStreamingPort        int
+	flagLXEHostnetworkFile      string
 }
 
 func (c *cmdGlobal) Run(cmd *cobra.Command, args []string) error {
@@ -98,6 +99,8 @@ func main() {
 		"", "IP or Interface for Streaming Server. (guessed by default)")
 	app.PersistentFlags().IntVar(&globalCmd.flagLXEStreamingPort, "streaming-port",
 		44124, "Port where LXE's Streaming HTTP Server will listen.")
+	app.PersistentFlags().StringVar(&globalCmd.flagLXEHostnetworkFile, "hostnetwork-file",
+		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
 	// Run the main command and handle errors
 	err := app.Execute()
 	if err != nil {

@@ -152,6 +152,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) ==
 		string(lxf.NetworkHost) {
 		sb.NetworkConfig.Mode = lxf.NetworkHost
+		lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
 	} else if sb.Annotations[fieldLXEBridge] != "" {
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
 		sb.NetworkConfig.ModeData = map[string]string{

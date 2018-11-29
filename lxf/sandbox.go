@@ -149,14 +149,14 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode {
-	case NetworkHost:
-		SetIfSet(&s.RawLXCOptions, CfgRawLXCInclude, PathHostnetworkInclude)
 	case NetworkBridged:
 		s.Nics = append(s.Nics, device.Nic{
 			Name:    network.DefaultInterface,
 			NicType: "bridged",
 			Parent:  s.NetworkConfig.ModeData["bridge"],
 		})
+	case NetworkHost:
+		fallthrough
 	case NetworkCNI:
 		fallthrough
 	case NetworkNone:
@@ -411,9 +411,8 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 
 	// get containers using this sandbox
 	for _, name := range p.UsedBy {
-		if strings.HasPrefix(name, "/1.0/containers/") {
-			name = strings.TrimPrefix(name, "/1.0/containers/")
-		}
+		name = strings.TrimPrefix(name, "/1.0/containers/")
+		name = strings.TrimSuffix(name, "?project=default")
 		if strings.Contains(name, shared.SnapshotDelimiter) {
 			// this is a snapshot so dont parse this entry
 			continue

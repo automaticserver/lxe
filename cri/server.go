@@ -20,11 +20,12 @@ type LXEConfig struct {
 	LXDImageRemote             string // Remote to use when ImageSpec doesn't provide an explicit remote
 	LXEStreamingServerEndpoint string // IP or Interface for Streaming Server. Guessed by default if not present
 	LXEStreamingPort           string // Port where LXE's Http Server will listen
+	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
 }
 
 // NewLXEConfig returns lxe daemon config for the above options
 func NewLXEConfig(socket, lxdSocket, lxdRemoteConfig, lxdImageRemote,
-	lxeStreamingServerEndpoint, lxeStreamingPort string) (*LXEConfig, error) {
+	lxeStreamingServerEndpoint, lxeStreamingPort, lxeHostnetworkFile string) (*LXEConfig, error) {
 	return &LXEConfig{
 		Domain:                     "lxd",
 		UnixSocket:                 socket,
@@ -33,6 +34,7 @@ func NewLXEConfig(socket, lxdSocket, lxdRemoteConfig, lxdImageRemote,
 		LXDImageRemote:             lxdImageRemote,
 		LXEStreamingServerEndpoint: lxeStreamingServerEndpoint,
 		LXEStreamingPort:           lxeStreamingPort,
+		LXEHostnetworkFile:         lxeHostnetworkFile,
 	}, nil
 }
 

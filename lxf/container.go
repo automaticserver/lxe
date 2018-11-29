@@ -24,8 +24,6 @@ const (
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
 	cfgAutoStartOnBoot    = "boot.autostart"
-	// PathHostnetworkInclude is the path to the `lxe.net.0.type=none` workaround file for HostNetwork
-	PathHostnetworkInclude = "/var/lib/lxe/hostnetwork.conf"
 )
 
 // ContainerState says it all

@@ -19,7 +19,7 @@ snap install lxd
 cat preseed-lxd-init.yaml | lxd init --preseed
 
 # enable kubernetes apt
-apt-get update && apt-get install -y apt-transport-https curl
+apt-get install -y apt-transport-https curl
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 deb https://apt.kubernetes.io/ kubernetes-xenial main
@@ -35,7 +35,9 @@ dpkg -i lxe*.debian-lxd-snap.deb
 systemctl status lxe | cat
 
 # copy various predefined files
+apt-get install facter -y
 cp -r files/* /
+sed -i "s@\[\[ipaddress\]\]@$(facter ipaddress_ens3)@g" /etc/kubernetes/kubeadm.conf
 
 # install cri-tools and configuration for lxe
 apt-get install cri-tools
@@ -56,3 +58,7 @@ systemctl daemon-reload
 systemctl enable kubelet.service
 
 # create pod manifests for various required containers for kubernetes (networking, proxy, dns, etc.)
+# TODO
+
+# simple pod for access
+#kubectl apply -f pods/nginx.yaml

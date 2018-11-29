@@ -20,6 +20,8 @@ const (
 	fieldLXENamespaces = "x-lxe-namespaces"
 	// fieldLXEKernelModules is the key name to specify kernel modules
 	fieldLXEKernelModules = "x-lxe-kernel-modules"
+	// fieldLXERawMounts is the key name to add raw mounts to the lxc config
+	fieldLXERawMounts = "x-lxe-raw-mounts"
 )
 
 func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {

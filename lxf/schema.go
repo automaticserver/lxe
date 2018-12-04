@@ -204,6 +204,9 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 				c.Config[cfgCreatedAt] = c.Config[cfgStartedAt]
 			}
 		}
+		if c.Config[cfgStartedAt] == "" {
+			c.Config[cfgStartedAt] = "0"
+		}
 		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)

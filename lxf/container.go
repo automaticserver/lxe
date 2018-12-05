@@ -18,6 +18,7 @@ import (
 const (
 	cfgLogPath            = "user.log_path"
 	cfgSecurityPrivileged = "security.privileged"
+	cfgSecurityNesting    = "security.nesting"
 	cfgVolatileBaseImage  = "volatile.base_image"
 	cfgStartedAt          = "user.started_at"
 	cfgCloudInitUserData  = "user.user-data"
@@ -42,7 +43,7 @@ const (
 
 var (
 	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsCRI,
-		cfgSecurityPrivileged, cfgState, cfgMetaName, cfgMetaAttempt, cfgCreatedAt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
+		cfgSecurityPrivileged, cfgSecurityNesting, cfgState, cfgMetaName, cfgMetaAttempt, cfgCreatedAt, cfgStartedAt, cfgCloudInitUserData, cfgCloudInitMetaData,
 		cfgCloudInitNetworkConfig).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations, "volatile")
 )
@@ -279,6 +280,12 @@ func makeContainerConfig(c *Container) map[string]string {
 		config[cfgCloudInitNetworkConfig] = c.CloudInitNetworkConfig
 	}
 
+	for _, containerName := range c.Sandbox.SecurityNesting {
+		if containerName == c.Metadata.Name {
+			config[cfgSecurityNesting] = strconv.FormatBool(true)
+		}
+	}
+
 	return config
 }
 
@@ -445,10 +452,9 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 		if IsErrorNotFound(err) {
 			// The started container is not a cri container, so we get the error not found
 			return
-		} else {
-			logger.Errorf("Unable to GetContainer %v: %v", containerID, err)
-			return
 		}
+		logger.Errorf("Unable to GetContainer %v: %v", containerID, err)
+		return
 	}
 
 	// add container to queue in order to recheck if mounts are okay

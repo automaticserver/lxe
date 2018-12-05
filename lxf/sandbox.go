@@ -28,6 +28,7 @@ const (
 	cfgNetworkConfigModeData    = "user.networkconfig.modedata"
 	cfgCloudInitNetworkConfig   = "user.network-config" // write-only field
 	cfgCloudInitVendorData      = "user.vendor-data"    // write-only field
+	cfgKeepSecurityNesting      = "user.security.nesting"
 
 	cfgRawLXC = "raw.lxc"
 
@@ -60,7 +61,10 @@ type Sandbox struct {
 	RawLXCOptions map[string]string
 	// UsedBy contains the names of the containers using this profile
 	// It is read only.
-	UsedBy []string
+	UsedBy          []string
+	// SecurityNesting is an array of containerNames that will have the 
+	// config key `security.nesting` set to true. Set through annotation
+	SecurityNesting []string
 }
 
 // SandboxMetadata contains common metadata values
@@ -236,6 +240,7 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 		cfgNetworkConfigNameservers: strings.Join(s.NetworkConfig.Nameservers, ","),
 		cfgNetworkConfigSearches:    strings.Join(s.NetworkConfig.Searches, ","),
 		cfgNetworkConfigMode:        s.NetworkConfig.Mode.toString(),
+		cfgKeepSecurityNesting:      strings.Join(s.SecurityNesting, ","),
 	}
 
 	// write NetworkConfigData as yaml
@@ -371,6 +376,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 	s.RawLXCOptions = make(map[string]string)
 	s.State = getSandboxState(p.Config[cfgState])
 	s.CreatedAt = time.Unix(0, createdAt)
+	s.SecurityNesting = strings.Split(p.Config[cfgKeepSecurityNesting], ",")
 
 	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
 	if err != nil {

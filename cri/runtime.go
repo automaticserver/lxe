@@ -228,6 +228,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		}
 	}
 
+	sb.SecurityNesting = strings.Split(sb.Annotations[fieldLXENesting], ",")
+
 	// TODO: Refactor...
 	if req.Config.Linux != nil {
 		err = lxf.SetIfSet(&sb.Config, "user.linux.cgroup_parent", req.Config.Linux.CgroupParent)

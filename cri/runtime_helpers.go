@@ -20,6 +20,8 @@ const (
 	fieldLXENamespaces = "x-lxe-namespaces"
 	// fieldLXEKernelModules is the key name to specify kernel modules
 	fieldLXEKernelModules = "x-lxe-kernel-modules"
+	// fieldLXENesting is the key name to specify to allow nesting
+	fieldLXENesting = "x-lxe-nesting"
 )
 
 func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {

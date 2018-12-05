@@ -141,7 +141,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	sb.Labels = req.GetConfig().GetLabels()
 	sb.Annotations = req.GetConfig().GetAnnotations()
 	sb.Config = map[string]string{}
-	sb.RawLXCOptions = map[string]string{}
+	sb.RawLXCOptions = make([]lxf.RawLXCOption, 0)
 
 	if req.GetConfig().GetDnsConfig() != nil {
 		sb.NetworkConfig.Nameservers = req.GetConfig().GetDnsConfig().GetServers()
@@ -152,7 +152,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) ==
 		string(lxf.NetworkHost) {
 		sb.NetworkConfig.Mode = lxf.NetworkHost
-		lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
+		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
 	} else if sb.Annotations[fieldLXEBridge] != "" {
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
 		sb.NetworkConfig.ModeData = map[string]string{
@@ -208,24 +208,12 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	}
 
 	// The following fields allow to specify lxc config not directly represented by the PodSpec
-	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCNamespaces, sb.Annotations[fieldLXENamespaces])
-	if err != nil {
-		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Debugf("empty Annotation for %s", serr.Where)
-		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %v", err)
-			return nil, err
-		}
-	}
+	setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCNamespaces, sb.Annotations[fieldLXENamespaces])
 
-	err = lxf.SetIfSet(&sb.RawLXCOptions, lxf.CfgRawLXCKernelModules, sb.Annotations[fieldLXEKernelModules])
-	if err != nil {
-		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Debugf("empty Annotation for %s", serr.Where)
-		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %v", err)
-			return nil, err
-		}
+	setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCKernelModules, sb.Annotations[fieldLXEKernelModules])
+
+	for _, mountOption := range strings.Split(sb.Annotations[fieldLXERawMounts], ",") {
+		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCMounts, strings.TrimSpace(mountOption))
 	}
 
 	sb.SecurityNesting = strings.Split(sb.Annotations[fieldLXENesting], ",")
@@ -290,6 +278,18 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	return &rtApi.RunPodSandboxResponse{
 		PodSandboxId: sb.ID,
 	}, nil
+}
+
+// setRaw calls the lxf.SetRaw method and handles logging
+func setRaw(s *[]lxf.RawLXCOption, key, value string) {
+	err := lxf.SetRaw(s, key, value)
+	if err != nil {
+		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
+			logger.Infof("empty Annotation for %s", serr.Where)
+		} else {
+			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
+		}
+	}
 }
 
 func testErrorEmptyAnnotation(err error) {

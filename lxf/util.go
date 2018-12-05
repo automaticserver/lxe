@@ -44,3 +44,15 @@ func SetIfSet(s *map[string]string, where string, what string) error {
 	}
 	return &EmptyAnnotationWarning{where}
 }
+
+// SetRaw takes a key and a value (where, what) and puts them into the RawLXCOptions set
+func SetRaw(s *[]RawLXCOption, key, value string) error {
+	if value != "" {
+		*s = append(*s, RawLXCOption{
+			Option: key,
+			Value:  value,
+		})
+		return nil
+	}
+	return &EmptyAnnotationWarning{key}
+}

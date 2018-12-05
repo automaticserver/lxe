@@ -38,6 +38,9 @@ const (
 	CfgRawLXCNamespaces = "lxc.namespace.keep"
 	// CfgRawLXCKernelModules is the lxc config field name for what kernel modules to load
 	CfgRawLXCKernelModules = "linux.kernel_modules"
+	// CfgRawLXCMounts is the raw key to add lxc mounts. Useful for mounting proc for example,
+	// for nested containers
+	CfgRawLXCMounts = "lxc.mount.auto"
 )
 
 var (
@@ -46,6 +49,12 @@ var (
 		cfgCloudInitVendorData, cfgNetworkConfigModeData, cfgRawLXC).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations)
 )
+
+// RawLXCOption contains a single option plus its value
+type RawLXCOption struct {
+	Option string
+	Value  string
+}
 
 // Sandbox is an abstraction of a CRI PodSandbox saved as a LXD profile
 type Sandbox struct {
@@ -58,7 +67,7 @@ type Sandbox struct {
 	State     SandboxState
 	CreatedAt time.Time
 	// RawLXCOptions are additional raw.lxc fields
-	RawLXCOptions map[string]string
+	RawLXCOptions []RawLXCOption
 	// UsedBy contains the names of the containers using this profile
 	// It is read only.
 	UsedBy          []string
@@ -319,10 +328,10 @@ manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
 
 	// Apply raw lxc options
 	re := regexp.MustCompile(`\r?\n`)
-	for k, v := range s.RawLXCOptions {
+	for _, lxcOption := range s.RawLXCOptions {
 		// TODO: these variables are probably not sanitized enough! So far we don't allow newlines
-		if !re.Match([]byte(k)) && !re.Match([]byte(v)) {
-			config[cfgRawLXC] += fmt.Sprintf("%s = %s\n", k, v)
+		if !re.Match([]byte(lxcOption.Option)) && !re.Match([]byte(lxcOption.Value)) {
+			config[cfgRawLXC] += fmt.Sprintf("%s = %s\n", lxcOption.Option, lxcOption.Value)
 		}
 	}
 
@@ -373,7 +382,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
 	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
 	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
-	s.RawLXCOptions = make(map[string]string)
+	s.RawLXCOptions = make([]RawLXCOption, 0)
 	s.State = getSandboxState(p.Config[cfgState])
 	s.CreatedAt = time.Unix(0, createdAt)
 	s.SecurityNesting = strings.Split(p.Config[cfgKeepSecurityNesting], ",")
@@ -412,7 +421,10 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 		if len(parts) != 2 {
 			continue
 		}
-		s.RawLXCOptions[strings.TrimSpace(parts[0])] = s.RawLXCOptions[strings.TrimSpace(parts[1])]
+		s.RawLXCOptions = append(s.RawLXCOptions, RawLXCOption{
+			Option: strings.TrimSpace(parts[0]),
+			Value:  strings.TrimSpace(parts[1]),
+		})
 	}
 
 	// get containers using this sandbox

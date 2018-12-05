@@ -22,6 +22,8 @@ const (
 	fieldLXEKernelModules = "x-lxe-kernel-modules"
 	// fieldLXENesting is the key name to specify to allow nesting
 	fieldLXENesting = "x-lxe-nesting"
+	// fieldLXERawMounts is the key name to add raw mounts to the lxc config
+	fieldLXERawMounts = "x-lxe-raw-mounts"
 )
 
 func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {

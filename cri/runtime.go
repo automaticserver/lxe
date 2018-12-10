@@ -396,7 +396,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			Annotations: sb.Annotations,
 			CreatedAt:   sb.CreatedAt.UnixNano(),
 			State: rtApi.PodSandboxState(
-				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(string(sb.State))]),
+				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())]),
 		},
 	}
 
@@ -476,10 +476,8 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 	response := rtApi.ListPodSandboxResponse{}
 	for _, sb := range sandboxes {
 
-		state := rtApi.PodSandboxState_SANDBOX_READY
-		if sb.State == lxf.SandboxNotReady {
-			state = rtApi.PodSandboxState_SANDBOX_NOTREADY
-		}
+		state := rtApi.PodSandboxState(
+			rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())])
 
 		if req.GetFilter() != nil {
 			filter := req.GetFilter()

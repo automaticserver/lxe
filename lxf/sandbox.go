@@ -20,7 +20,6 @@ const (
 	cfgHostname     = "user.host_name"
 	cfgLogDirectory = "user.log_directory"
 	cfgCreatedAt    = "user.created_at"
-	cfgState        = "user.state"
 
 	cfgNetworkConfigNameservers = "user.networkconfig.nameservers"
 	cfgNetworkConfigSearches    = "user.networkconfig.searches"
@@ -70,8 +69,8 @@ type Sandbox struct {
 	RawLXCOptions []RawLXCOption
 	// UsedBy contains the names of the containers using this profile
 	// It is read only.
-	UsedBy          []string
-	// SecurityNesting is an array of containerNames that will have the 
+	UsedBy []string
+	// SecurityNesting is an array of containerNames that will have the
 	// config key `security.nesting` set to true. Set through annotation
 	SecurityNesting []string
 }
@@ -131,7 +130,7 @@ const (
 	SandboxReady    SandboxState = "ready"
 )
 
-func (s SandboxState) toString() string {
+func (s SandboxState) String() string {
 	return string(s)
 }
 
@@ -237,7 +236,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 // if the profile already exists it will be created, otherwise updated
 func (l *LXF) saveSandbox(s *Sandbox) error {
 	config := map[string]string{
-		cfgState:                    s.State.toString(),
+		cfgState:                    s.State.String(),
 		cfgIsCRI:                    strconv.FormatBool(true),
 		cfgCreatedAt:                strconv.FormatInt(s.CreatedAt.UnixNano(), 10),
 		cfgMetaAttempt:              strconv.FormatUint(uint64(s.Metadata.Attempt), 10),

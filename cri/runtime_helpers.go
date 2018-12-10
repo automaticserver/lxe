@@ -27,13 +27,13 @@ const (
 )
 
 func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
-	key := "CONTAINER_" + strings.ToUpper(string(ct.State))
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    ct.Metadata.Name,
 			Attempt: uint32(ct.Metadata.Attempt),
 		},
-		State:       rtApi.ContainerState(rtApi.ContainerState_value[key]),
+		State: rtApi.ContainerState(
+			rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(ct.State.String())]),
 		CreatedAt:   ct.CreatedAt.UnixNano(),
 		StartedAt:   ct.StartedAt.UnixNano(),
 		Id:          ct.ID,

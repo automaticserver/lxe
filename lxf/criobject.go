@@ -12,6 +12,7 @@ const (
 	cfgIsCRI       = "user.cri"
 	cfgLabels      = "user.labels"
 	cfgAnnotations = "user.annotations"
+	cfgState       = "user.state"
 
 	cfgMetaAttempt   = "user.metadata.attempt"
 	cfgMetaName      = "user.metadata.name"

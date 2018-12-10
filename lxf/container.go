@@ -27,19 +27,23 @@ const (
 	cfgAutoStartOnBoot    = "boot.autostart"
 )
 
-// ContainerState says it all
+// ContainerState defines the state of the container, default is ContainerStateCreated
 type ContainerState string
 
 const (
 	// ContainerStateCreated it's there but not started yet
-	ContainerStateCreated = ContainerState("created")
+	ContainerStateCreated ContainerState = "created"
 	// ContainerStateRunning it's there and running
-	ContainerStateRunning = ContainerState("running")
+	ContainerStateRunning ContainerState = "running"
 	// ContainerStateExited it's there but terminated
-	ContainerStateExited = ContainerState("exited")
+	ContainerStateExited ContainerState = "exited"
 	// ContainerStateUnknown it's there but we don't know what it's doing
-	ContainerStateUnknown = ContainerState("unknown")
+	ContainerStateUnknown ContainerState = "unknown"
 )
+
+func (s ContainerState) String() string {
+	return string(s)
+}
 
 var (
 	containerConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgLogPath, cfgIsCRI,

@@ -101,6 +101,7 @@ func (s ImageServer) PullImage(ctx context.Context, req *rtApi.PullImageRequest)
 	hash, err := s.lxf.PullImage(req.GetImage().GetImage())
 	if err != nil {
 		logger.Errorf("failed to pull image %v, %v", req.GetImage().GetImage(), err)
+		return nil, err
 	}
 
 	return &rtApi.PullImageResponse{

@@ -98,6 +98,7 @@ func (l *LXF) CreateContainer(c *Container) error {
 		return fmt.Errorf("container needs a sandbox")
 	}
 
+	c.Config[cfgState] = ContainerStateCreated.String()
 	c.CreatedAt = time.Now()
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
@@ -256,7 +257,6 @@ func makeContainerConfig(c *Container) map[string]string {
 		config[cfgAnnotations+"."+key] = val
 	}
 
-	config[cfgState] = string(ContainerStateCreated)
 	config[cfgCreatedAt] = strconv.FormatInt(c.CreatedAt.UnixNano(), 10)
 	config[cfgStartedAt] = strconv.FormatInt(c.StartedAt.UnixNano(), 10)
 	config[cfgSecurityPrivileged] = strconv.FormatBool(c.Privileged)

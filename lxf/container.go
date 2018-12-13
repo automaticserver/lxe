@@ -100,6 +100,8 @@ func (l *LXF) CreateContainer(c *Container) error {
 
 	c.State = ContainerStateCreated
 	c.CreatedAt = time.Now()
+	c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
 		if !c.Privileged {
@@ -265,7 +267,6 @@ func makeContainerConfig(c *Container) map[string]string {
 	config[cfgMetaName] = c.Metadata.Name
 	config[cfgMetaAttempt] = strconv.FormatUint(uint64(c.Metadata.Attempt), 10)
 	config[cfgVolatileBaseImage] = c.Image
-	config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 
 	if c.State == ContainerStateCreated {
 		config[cfgState] = ContainerStateCreated.String()

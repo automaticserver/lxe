@@ -98,7 +98,7 @@ func (l *LXF) CreateContainer(c *Container) error {
 		return fmt.Errorf("container needs a sandbox")
 	}
 
-	c.Config[cfgState] = ContainerStateCreated.String()
+	c.State = ContainerStateCreated
 	c.CreatedAt = time.Now()
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
@@ -267,10 +267,13 @@ func makeContainerConfig(c *Container) map[string]string {
 	config[cfgVolatileBaseImage] = c.Image
 	config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 
+	if c.State == ContainerStateCreated {
+		config[cfgState] = ContainerStateCreated.String()
+	}
+
 	for k, v := range c.EnvironmentVars {
 		config[cfgEnvironmentPrefix+"."+k] = v
 	}
-	//config[cfgEnvironmentPrefix]
 
 	// and meta-data & cloud-init
 	// fields should not exist when there's nothing

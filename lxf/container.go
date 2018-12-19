@@ -21,6 +21,7 @@ const (
 	cfgSecurityNesting    = "security.nesting"
 	cfgVolatileBaseImage  = "volatile.base_image"
 	cfgStartedAt          = "user.started_at"
+	cfgFinishedAt         = "user.finished_at"
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
@@ -64,6 +65,7 @@ type Container struct {
 	// StartedAt is read only, if not started it will be the zero time
 	StartedAt              time.Time
 	CreatedAt              time.Time
+	FinishedAt             time.Time
 	Privileged             bool
 	CloudInitUserData      string
 	CloudInitMetaData      string
@@ -100,7 +102,7 @@ func (l *LXF) CreateContainer(c *Container) error {
 
 	c.State = ContainerStateCreated
 	c.CreatedAt = time.Now()
-	c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+	// c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
@@ -140,13 +142,15 @@ func (l *LXF) StartContainer(id string) error {
 	delete(ct.Config, cfgState)
 
 	// set started at date
-	ct.Config[cfgStartedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
-
-	c, err := l.GetContainer(id)
-	if err != nil {
-		return err
+	if ct.Config[cfgStartedAt] == "" {
+		ct.Config[cfgStartedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
 	}
-	go l.remountMissingVolumes(c)
+
+	// c, err := l.GetContainer(id)
+	// if err != nil {
+	// 	return err
+	// }
+	// go l.remountMissingVolumes(c)
 
 	return lxo.UpdateContainer(l.server, id, ct.Writable())
 }
@@ -155,7 +159,26 @@ func (l *LXF) StartContainer(id string) error {
 // got deleted in the meantime, otherwise it will return an error.
 // If it's not deleted after 30 seconds it will return an error (might be way to low).
 func (l *LXF) StopContainer(id string) error {
-	return lxo.StopContainer(l.server, id)
+	err := lxo.StopContainer(l.server, id)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Since we now need the full lxe.Container we could ensure the
+	// following steps over that, now it's raw-ish lxd
+	ct, _, err := l.server.GetContainer(id)
+	if err != nil {
+		return err
+	}
+
+	// TODO: probably Exit Code 143? With dockershim this happens when forcing containers to stop
+
+	// set finished at date
+	if ct.Config[cfgFinishedAt] == "" {
+		ct.Config[cfgFinishedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+
+	return lxo.UpdateContainer(l.server, id, ct.Writable())
 }
 
 // DeleteContainer will delete the container
@@ -261,6 +284,7 @@ func makeContainerConfig(c *Container) map[string]string {
 
 	config[cfgCreatedAt] = strconv.FormatInt(c.CreatedAt.UnixNano(), 10)
 	config[cfgStartedAt] = strconv.FormatInt(c.StartedAt.UnixNano(), 10)
+	config[cfgFinishedAt] = strconv.FormatInt(c.FinishedAt.UnixNano(), 10)
 	config[cfgSecurityPrivileged] = strconv.FormatBool(c.Privileged)
 	config[cfgLogPath] = c.LogPath
 	config[cfgIsCRI] = strconv.FormatBool(true)
@@ -336,6 +360,10 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
+	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
 
 	c := &Container{}
 	c.ID = ct.Name
@@ -351,6 +379,7 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 	c.Pid = state.Pid
 	c.CreatedAt = time.Unix(0, createdAt)
 	c.StartedAt = time.Unix(0, startedAt)
+	c.FinishedAt = time.Unix(0, finishedAt)
 	c.Stats = ContainerStats{
 		CPUUsage:        uint64(state.CPU.Usage),
 		MemoryUsage:     uint64(state.Memory.Usage),
@@ -517,7 +546,7 @@ func (l *LXF) containerMonitor(cntMonitorChan chan ContainerMonitorChan) {
 				if i.lastCheck.Add(i.intervalSec).Sub(time.Now()) <= 0 {
 					switch i.task {
 					case "volumes":
-						go l.remountMissingVolumes(i.container)
+						// go l.remountMissingVolumes(i.container)
 						i.lastCheck = time.Now()
 					default:
 						logger.Debugf("containerMonitor: unknown task: %v for object: %+v", i.task, i)

@@ -109,7 +109,7 @@ func New(socket string, configPath string) (*LXF, error) {
 		cntMonitorChan: make(chan ContainerMonitorChan),
 	}
 
-	go lxf.containerMonitor(lxf.cntMonitorChan)
+	// go lxf.containerMonitor(lxf.cntMonitorChan)
 
 	// register LXD eventhandler
 	listener, err := server.GetEvents()

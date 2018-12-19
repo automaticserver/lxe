@@ -374,6 +374,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
 // present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
+	logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("PodSandboxStatus triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.PodSandboxId)
@@ -397,6 +398,9 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			CreatedAt:   sb.CreatedAt.UnixNano(),
 			State: rtApi.PodSandboxState(
 				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())]),
+			Network: &rtApi.PodSandboxNetworkStatus{
+				Ip: "127.0.0.1",
+			},
 		},
 	}
 
@@ -424,9 +428,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		if err != nil {
 			logger.Error("could not find suitable host interface: %v", err)
 		} else {
-			response.Status.Network = &rtApi.PodSandboxNetworkStatus{
-				Ip: ip.String(),
-			}
+			response.Status.Network.Ip = ip.String()
 		}
 	case lxf.NetworkNone:
 		// nothing
@@ -447,11 +449,9 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 				}
 				if cntState != nil { // container found
 					// get the ipv4 address of eth0
-					ip := cntState.GetContainerIPv4Address([]string{network.DefaultInterface})
-					if len(ip) > 0 {
-						response.Status.Network = &rtApi.PodSandboxNetworkStatus{
-							Ip: ip,
-						}
+					containerIP := cntState.GetContainerIPv4Address([]string{network.DefaultInterface})
+					if containerIP != "" {
+						response.Status.Network.Ip = containerIP
 					}
 				}
 			}
@@ -697,6 +697,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 // ContainerStatus returns status of the container. If the container is not
 // present, returns an error.
 func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.ContainerStatusRequest) (*rtApi.ContainerStatusResponse, error) {
+	logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("ContainerStatus triggered: %v", req)
 
 	ct, err := s.lxf.GetContainer(req.ContainerId)

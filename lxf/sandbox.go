@@ -187,7 +187,7 @@ func (l *LXF) StopSandbox(id string) error {
 		return err
 	}
 
-	p.Config[cfgState] = string(SandboxNotReady)
+	p.Config[cfgState] = SandboxNotReady.String()
 	err = l.server.UpdateProfile(id, p.Writable(), "")
 	return err
 }

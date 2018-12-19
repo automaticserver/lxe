@@ -36,6 +36,7 @@ func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
 			rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(ct.State.String())]),
 		CreatedAt:   ct.CreatedAt.UnixNano(),
 		StartedAt:   ct.StartedAt.UnixNano(),
+		FinishedAt:  ct.FinishedAt.UnixNano(),
 		Id:          ct.ID,
 		Labels:      ct.Labels,
 		Annotations: ct.Annotations,
@@ -84,14 +85,12 @@ func toCriStats(lxdStats *lxf.Container) *rtApi.ContainerStats {
 }
 
 func toCriContainer(ct *lxf.Container) *rtApi.Container {
-	stateKey := "CONTAINER_" + strings.ToUpper(string(ct.State))
-	state := rtApi.ContainerState(rtApi.ContainerState_value[stateKey])
-
 	return &rtApi.Container{
 		Id:           ct.ID,
 		PodSandboxId: ct.Sandbox.ID,
 		CreatedAt:    ct.CreatedAt.UnixNano(),
-		State:        state,
+		State: rtApi.ContainerState(
+			rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(ct.State.String())]),
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    ct.Metadata.Name,
 			Attempt: uint32(ct.Metadata.Attempt),

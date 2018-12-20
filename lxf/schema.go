@@ -96,6 +96,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		}
 	}
 
+	ETag := ""
 	containers, err := m.lxf.server.GetContainers()
 	if err != nil {
 		return err
@@ -125,7 +126,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		// If something has changed, update it
 		if counter > 0 {
 			anyChanges = true
-			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable())
+			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable(), ETag)
 			if err != nil {
 				return err
 			}

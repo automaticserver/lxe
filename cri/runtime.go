@@ -332,7 +332,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		return nil, err
 	}
 	for _, cnt := range profile.UsedBy {
-		err = s.lxf.StopContainer(cnt)
+		err = s.lxf.StopContainer(cnt, 30)
 		if err != nil {
 			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
 			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt, err)
@@ -630,7 +630,7 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StopContainer triggered: %v", req)
 
-	err := s.lxf.StopContainer(req.GetContainerId())
+	err := s.lxf.StopContainer(req.GetContainerId(), int(req.GetTimeout()))
 	if err != nil {
 		return nil, err
 	}

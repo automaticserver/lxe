@@ -182,13 +182,13 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 
 // StopSandbox will find a sandbox by id and set it's state to "not ready".
 func (l *LXF) StopSandbox(id string) error {
-	p, _, err := l.server.GetProfile(id)
+	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return err
 	}
 
 	p.Config[cfgState] = SandboxNotReady.String()
-	err = l.server.UpdateProfile(id, p.Writable(), "")
+	err = l.server.UpdateProfile(id, p.Writable(), ETag)
 	return err
 }
 
@@ -348,7 +348,10 @@ manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
 		})
 	}
 	// else profile has to be updated
-	return l.server.UpdateProfile(s.ID, profile, "")
+	if s.ETag == "" {
+		return fmt.Errorf("Update profile not allowed with empty ETag")
+	}
+	return l.server.UpdateProfile(s.ID, profile, s.ETag)
 }
 
 // toSandbox will take a profile and convert it to a sandbox.

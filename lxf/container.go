@@ -133,7 +133,7 @@ func (l *LXF) StartContainer(id string) error {
 
 	// TODO: Since we now need the full lxe.Container we could ensure the
 	// following steps over that, now it's raw-ish lxd
-	ct, _, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return err
 	}
@@ -152,21 +152,21 @@ func (l *LXF) StartContainer(id string) error {
 	// }
 	// go l.remountMissingVolumes(c)
 
-	return lxo.UpdateContainer(l.server, id, ct.Writable())
+	return lxo.UpdateContainer(l.server, id, ct.Writable(), ETag)
 }
 
 // StopContainer will try to stop the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
 // If it's not deleted after 30 seconds it will return an error (might be way to low).
-func (l *LXF) StopContainer(id string) error {
-	err := lxo.StopContainer(l.server, id)
+func (l *LXF) StopContainer(id string, timeout int) error {
+	err := lxo.StopContainer(l.server, id, timeout, 2)
 	if err != nil {
 		return err
 	}
 
 	// TODO: Since we now need the full lxe.Container we could ensure the
 	// following steps over that, now it's raw-ish lxd
-	ct, _, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func (l *LXF) StopContainer(id string) error {
 		ct.Config[cfgFinishedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
 	}
 
-	return lxo.UpdateContainer(l.server, id, ct.Writable())
+	return lxo.UpdateContainer(l.server, id, ct.Writable(), ETag)
 }
 
 // DeleteContainer will delete the container
@@ -188,6 +188,7 @@ func (l *LXF) DeleteContainer(id string) error {
 
 // ListContainers returns a list of all available containers
 func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
+	ETag := ""
 	cts, err := l.server.GetContainers()
 	if err != nil {
 		return nil, err
@@ -197,7 +198,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 		if !IsCRI(ct) {
 			continue
 		}
-		res, err := l.toContainer(&ct)
+		res, err := l.toContainer(&ct, ETag)
 		if err != nil {
 			return nil, err
 		}
@@ -209,7 +210,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 
 // GetContainer returns the container identified by id
 func (l *LXF) GetContainer(id string) (*Container, error) {
-	ct, _, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +219,7 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 
-	return l.toContainer(ct)
+	return l.toContainer(ct, ETag)
 }
 
 // saveContainer
@@ -267,7 +268,10 @@ func (l *LXF) saveContainer(c *Container) error {
 		})
 	}
 	// else container has to be updated
-	return lxo.UpdateContainer(l.server, c.ID, contPut)
+	if c.ETag == "" {
+		return fmt.Errorf("Update container not allowed with empty ETag")
+	}
+	return lxo.UpdateContainer(l.server, c.ID, contPut, c.ETag)
 }
 
 func makeContainerConfig(c *Container) map[string]string {
@@ -339,7 +343,7 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
+func (l *LXF) toContainer(ct *api.Container, ETag string) (*Container, error) {
 	state, _, err := l.server.GetContainerState(ct.Name)
 	if err != nil {
 		return nil, err
@@ -367,6 +371,7 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 
 	c := &Container{}
 	c.ID = ct.Name
+	c.ETag = ETag
 	c.Metadata = ContainerMetadata{
 		Name:    ct.Config[cfgMetaName],
 		Attempt: uint32(attempts),

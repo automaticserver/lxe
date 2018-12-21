@@ -13,6 +13,7 @@ import (
 	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/lxf/lxo"
 	"github.com/lxc/lxe/network"
+	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
@@ -489,6 +490,8 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	}
 
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
+	logger.Infof("DEBUG: Container start event %v", containerID)
+	time.Sleep(10 * time.Second)
 	cnt, err := l.GetContainer(containerID)
 	if err != nil {
 		if IsErrorNotFound(err) {
@@ -500,7 +503,7 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	}
 
 	// add container to queue in order to recheck if mounts are okay
-	l.AddMonitorTask(cnt, "volumes", 0, true)
+	//l.AddMonitorTask(cnt, "volumes", 0, true)
 
 	switch cnt.Sandbox.NetworkConfig.Mode {
 	case NetworkCNI:
@@ -623,6 +626,7 @@ func (l *LXF) remountMissingVolumes(container *Container) {
 // CreateID creates the unique container id based on Kubernetes container and sandbox values
 // This is currently not expected to be a long term stable hashing for these informations
 func (c *Container) CreateID() string {
+	uuid.GetUUID()
 	var parts []string
 	parts = append(parts, "k8s")
 	parts = append(parts, c.Metadata.Name)
@@ -642,10 +646,9 @@ func (c *Container) GetContainerIPv4Address(ifs []string) string {
 	for _, i := range ifs {
 		if netif, ok := c.Network[i]; ok {
 			for _, addr := range netif.Addresses {
-				if addr.Family != "inet" {
-					continue
+				if addr.Family == "inet" {
+					return addr.Address
 				}
-				return addr.Address
 			}
 		}
 	}

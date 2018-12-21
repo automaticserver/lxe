@@ -194,7 +194,7 @@ func (l *LXF) StopSandbox(id string) error {
 
 // GetSandbox will find a sandbox by id and return it.
 func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
-	p, _, err := l.server.GetProfile(id)
+	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 	if !IsCRI(p) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
-	return l.toSandbox(p)
+	return l.toSandbox(p, ETag)
 }
 
 // DeleteSandbox will delete the given sandbox
@@ -212,6 +212,7 @@ func (l *LXF) DeleteSandbox(name string) error {
 
 // ListSandboxes will return a list with all the available sandboxes
 func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
+	ETag := ""
 	ps, err := l.server.GetProfiles()
 	if err != nil {
 		return nil, err
@@ -222,7 +223,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 		if !IsCRI(p) {
 			continue
 		}
-		sb, err2 := l.toSandbox(&p)
+		sb, err2 := l.toSandbox(&p, ETag)
 		if err2 != nil {
 			return nil, err2
 		}
@@ -355,7 +356,7 @@ manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
+func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
@@ -367,6 +368,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 
 	s := &Sandbox{}
 	s.ID = p.Name
+	s.ETag = ETag
 	s.Hostname = p.Config[cfgHostname]
 	s.LogDirectory = p.Config[cfgLogDirectory]
 	s.Metadata = SandboxMetadata{

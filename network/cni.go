@@ -90,7 +90,7 @@ func getDefaultCNINetwork(confDir string, binDirs []string) (*cniNetwork, error)
 }
 
 // AttachCNIInterface will setup the Pod Networking using CNI
-func AttachCNIInterface(namespace string, name string, containerID string, processID int64) ([]byte, error) {
+func AttachCNIInterface(namespace string, sandboxname string, containerID string, processID int64) ([]byte, error) {
 
 	cniNetwork, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
 	if err != nil {
@@ -109,7 +109,7 @@ func AttachCNIInterface(namespace string, name string, containerID string, proce
 		Args: [][2]string{
 			{"IgnoreUnknown", "1"},
 			{"K8S_POD_NAMESPACE", namespace},
-			{"K8S_POD_NAME", name},
+			{"K8S_POD_NAME", sandboxname},
 			{"K8S_POD_INFRA_CONTAINER_ID", containerID},
 		},
 	}
@@ -132,25 +132,70 @@ func AttachCNIInterface(namespace string, name string, containerID string, proce
 	return resultstr, nil
 }
 
-// DetachCNIInterface will teardown the Pod Networking
-func DetachCNIInterface() {
+// ReattachCNIInterface attaches a interface to a container using the result of the previous configuration
+func ReattachCNIInterface(namespace string, sandboxname string, containerID string, processID int64, prevConf string) ([]byte, error) {
+	prevResult := new(types020.Result)
+	err := json.Unmarshal([]byte(prevConf), &prevResult)
+	if err != nil {
+		logger.Errorf("unable to unmarshal cniJSON %v: %v", prevConf, err)
+	}
+
+	cniNetwork, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
+	if err != nil {
+		return nil, err
+	}
+
+	cni := cniNetwork.CNIConfig
+	net := cniNetwork.NetworkConfig.Plugins[0]
+
+	podNSPath := fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(processID, 10))
+
+	rt := &libcni.RuntimeConf{
+		ContainerID: containerID,
+		NetNS:       podNSPath,
+		IfName:      DefaultInterface,
+		Args: [][2]string{
+			{"IgnoreUnknown", "1"},
+			{"K8S_POD_NAMESPACE", namespace},
+			{"K8S_POD_NAME", sandboxname},
+			{"K8S_POD_INFRA_CONTAINER_ID", containerID},
+		},
+	}
+
+	net, err = libcni.InjectConf(net, map[string]interface{}{
+		"prevResult": prevResult,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	logger.Infof("DEBUG cniConf: %+v | %+v | %+v", *net.Network, string(net.Bytes), rt)
+
+	addNetworkResult, err := cni.AddNetwork(net, rt)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := types020.GetResult(addNetworkResult)
+	if err != nil {
+		return nil, err
+	}
+
+	resultstr, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return resultstr, nil
 }
 
-// Status of the Pod Networking
-func Status() {
-}
-
-// Name of the Pod Networking
-func Name() {
-}
-
-// ReattachCNIInterface attaches a interface to a container using the provided configuration
+// ReattachCNIInterfaceOld attaches a interface to a container using the provided configuration
 // namespace and sandboxname is not in use, but stays for now to match AttachCNIInterface
-func ReattachCNIInterface(namespace string, sandboxname string, containerID string, processID int64, previousconf string) error {
+func ReattachCNIInterfaceOld(namespace string, sandboxname string, containerID string, processID int64, previousconf string) error {
 	cniResult202 := new(types020.Result)
 	err := json.Unmarshal([]byte(previousconf), &cniResult202)
 	if err != nil {
-		logger.Debugf("unable to unmarshal cniJSON %v: %v", previousconf, err)
+		logger.Errorf("unable to unmarshal cniJSON %v: %v", previousconf, err)
 	}
 
 	logger.Debugf("reattaching CNI interface to container: %v", containerID)
@@ -230,6 +275,18 @@ func ReattachCNIInterface(namespace string, sandboxname string, containerID stri
 	}
 
 	return nil
+}
+
+// DetachCNIInterface will teardown the Pod Networking
+func DetachCNIInterface() {
+}
+
+// Status of the Pod Networking
+func Status() {
+}
+
+// Name of the Pod Networking
+func Name() {
 }
 
 func cmdExec(cmd string, args ...string) error {

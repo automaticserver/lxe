@@ -457,20 +457,8 @@ func extractEnvVars(config map[string]string) map[string]string {
 	return envVars
 }
 
-func (l *LXF) lifecycleEventHandler(message interface{}) {
-	msg, err := json.Marshal(&message)
-	if err != nil {
-		logger.Errorf("unable to marshal json event: %v", message)
-		return
-	}
-
-	event := api.Event{}
-	err = json.Unmarshal(msg, &event)
-	if err != nil {
-		logger.Errorf("unable to unmarshal to json event: %v", message)
-		return
-	}
-
+// lifecycleEventHandler is registered to the lxd event handler for listening to container start events
+func (l *LXF) lifecycleEventHandler(event api.Event) {
 	// we should always only get lifecycle events due to the handler setup
 	// but just in case ...
 	if event.Type != "lifecycle" {
@@ -478,9 +466,9 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	}
 
 	eventLifecycle := api.EventLifecycle{}
-	err = json.Unmarshal(event.Metadata, &eventLifecycle)
+	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
-		logger.Errorf("unable to unmarshal to json lifecycle event: %v", message)
+		logger.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
 		return
 	}
 
@@ -520,7 +508,7 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 			}
 		} else {
 			// existing container, reattach cni
-			err = network.ReattachCNIInterface(
+			_, err = network.ReattachCNIInterface(
 				cnt.Sandbox.Metadata.Namespace,
 				cnt.Sandbox.Metadata.Name,
 				cnt.ID,
@@ -623,20 +611,9 @@ func (l *LXF) remountMissingVolumes(container *Container) {
 	}
 }
 
-// CreateID creates the unique container id based on Kubernetes container and sandbox values
-// This is currently not expected to be a long term stable hashing for these informations
+// CreateID creates a unique container id
 func (c *Container) CreateID() string {
-	uuid.GetUUID()
-	var parts []string
-	parts = append(parts, "k8s")
-	parts = append(parts, c.Metadata.Name)
-	parts = append(parts, c.Sandbox.Metadata.Name)
-	parts = append(parts, c.Sandbox.Metadata.Namespace)
-	parts = append(parts, strconv.FormatUint(uint64(c.Sandbox.Metadata.Attempt), 10))
-	parts = append(parts, c.Sandbox.Metadata.UID)
-	name := strings.Join(parts, "-")
-
-	bin := md5.Sum([]byte(name)) // nolint: gosec #nosec
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
 	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 

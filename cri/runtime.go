@@ -151,17 +151,26 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	// Find out which network mode should be used
 	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) ==
 		string(lxf.NetworkHost) {
+		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
 		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
 	} else if sb.Annotations[fieldLXEBridge] != "" {
+		// explicit (external managed) bridge requested
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
 		sb.NetworkConfig.ModeData = map[string]string{
 			"bridge": sb.Annotations[fieldLXEBridge],
 		}
-	} else {
-		// TODO: if is CNI ready?
+	} else if s.criConfig.LXENetworkPlugin == NetworkPluginCNI {
+		// lxe is configured to manage network with cni
 		sb.NetworkConfig.Mode = lxf.NetworkCNI
-		// else lxf.NetworkNone
+	} else {
+		// default is to use the predefined lxd bridge managed by lxe
+		sb.NetworkConfig.Mode = lxf.NetworkBridged
+		sb.NetworkConfig.ModeData = map[string]string{
+			"bridge":            LXEBridge,
+			"interface-name":    network.DefaultInterface,
+			"interface-address": "dhcp",
+		}
 	}
 
 	// If HostPort is defined, set forwardings from that port to the container
@@ -917,7 +926,14 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context,
 	req *rtApi.UpdateRuntimeConfigRequest) (*rtApi.UpdateRuntimeConfigResponse, error) {
 
 	logger.Debugf("UpdateRuntimeConfig triggered: %v", req)
-	logger.Errorf("UpdateRuntimeConfig() must be implemented to talk to CNI")
+
+	podCIDR := req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr()
+	err := s.lxf.EnsureBridge(LXEBridge, podCIDR, true)
+	if err != nil {
+		logger.Errorf("UpdateRuntimeConfig: %v", err)
+		return nil, err
+	}
+
 	return &rtApi.UpdateRuntimeConfigResponse{}, nil
 }
 

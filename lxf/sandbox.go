@@ -14,6 +14,7 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/network"
+	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
@@ -143,15 +144,32 @@ func getSandboxState(str string) SandboxState {
 
 // networkConfigData is used as root element to serialize to cloud config
 type networkConfigData struct {
-	Version int                  `json:"version"`
-	Config  []NetworkConfigEntry `json:"config"`
+	Version int           `json:"version"`
+	Config  []interface{} `json:"config"`
 }
 
-// NetworkConfigEntry is an entry in the v1 network config, currently limited to nameserver
+// NetworkConfigEntry is an entry in the v1 network config
 type NetworkConfigEntry struct {
-	Type    string   `json:"type"`
+	Type string `json:"type"`
+}
+
+// NetworkConfigEntryNameserver is a nameserver entry
+type NetworkConfigEntryNameserver struct {
+	NetworkConfigEntry
 	Address []string `json:"address"`
 	Search  []string `json:"search"`
+}
+
+// NetworkConfigEntryPhysical is a nameserver entry
+type NetworkConfigEntryPhysical struct {
+	NetworkConfigEntry
+	Name    string                             `json:"name"`
+	Subnets []NetworkConfigEntryPhysicalSubnet `json:"subnets"`
+}
+
+// NetworkConfigEntryPhysicalSubnet is a subnet entry in the v1 network config of a physical device
+type NetworkConfigEntryPhysicalSubnet struct {
+	Type string `json:"type"`
 }
 
 // CreateSandbox will create the provided sandbox and put it into state ready
@@ -167,12 +185,6 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 			NicType: "bridged",
 			Parent:  s.NetworkConfig.ModeData["bridge"],
 		})
-	case NetworkHost:
-		fallthrough
-	case NetworkCNI:
-		fallthrough
-	case NetworkNone:
-		fallthrough
 	default:
 		// do nothing
 	}
@@ -277,18 +289,32 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 	}
 
 	// write cloud-init network config
-	highestSearch := ""
 	if len(s.NetworkConfig.Nameservers) > 0 &&
 		len(s.NetworkConfig.Searches) > 0 {
 		data := networkConfigData{
 			Version: 1,
-			Config: []NetworkConfigEntry{
-				NetworkConfigEntry{
-					Type:    "nameserver",
+			Config: []interface{}{
+				NetworkConfigEntryNameserver{
+					NetworkConfigEntry: NetworkConfigEntry{
+						Type: "nameserver",
+					},
 					Address: s.NetworkConfig.Nameservers,
 					Search:  s.NetworkConfig.Searches,
 				},
 			},
+		}
+		if s.NetworkConfig.ModeData["interface-name"] != "" {
+			data.Config = append(data.Config, NetworkConfigEntryPhysical{
+				NetworkConfigEntry: NetworkConfigEntry{
+					Type: "physical",
+				},
+				Name: s.NetworkConfig.ModeData["interface-name"],
+				Subnets: []NetworkConfigEntryPhysicalSubnet{
+					NetworkConfigEntryPhysicalSubnet{
+						Type: s.NetworkConfig.ModeData["interface-address"],
+					},
+				},
+			})
 		}
 
 		yml, err := yaml.Marshal(data)
@@ -297,15 +323,13 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 		}
 
 		config[cfgCloudInitNetworkConfig] = string(yml)
-		highestSearch = "." + s.NetworkConfig.Searches[0]
 	}
 
 	// write cloud-init vendor data if we have hostname and search
-	if s.Hostname != "" && highestSearch != "" {
+	if s.Hostname != "" {
 		config[cfgCloudInitVendorData] = fmt.Sprintf(`#cloud-config
 hostname: %s
-fqdn: %s
-manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
+manage_etc_hosts: true`, s.Hostname)
 	}
 
 	devices := map[string]map[string]string{}
@@ -399,7 +423,7 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 		s.NetworkConfig.ModeData = make(map[string]string)
 	}
 
-	// Hint: cloud-init network config & vendor-data are write-only so not readed
+	// Hint: cloud-init network config & vendor-data are write-only so not read
 
 	// get devices
 	s.Proxies, err = device.GetProxiesFromMap(p.Devices)
@@ -449,17 +473,8 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	return s, nil
 }
 
-// CreateID creates the unique sandbox id based on Kubernetes sandbox values
-// This is currently not expected to be a long term stable hashing for these informations
+// CreateID creates a unique profile id
 func (s *Sandbox) CreateID() string {
-	var parts []string
-	parts = append(parts, "k8s")
-	parts = append(parts, s.Metadata.Name)
-	parts = append(parts, s.Metadata.Namespace)
-	parts = append(parts, strconv.FormatUint(uint64(s.Metadata.Attempt), 10))
-	parts = append(parts, s.Metadata.UID)
-	name := strings.Join(parts, "-")
-
-	bin := md5.Sum([]byte(name)) // nolint: gosec #nosec
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
 	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }

@@ -16,6 +16,8 @@ func (l *LXF) EnsureBridge(name, cidr string, nat bool) error {
 	}
 	net.IP[3]++
 
+	// TODO: disable dnsmasq sending dns server via dhcp, we don't need/want it. keyword: raw.dnsmasq in networking
+
 	put := api.NetworkPut{
 		Description: "managed by LXE, default bridge",
 		Config: map[string]string{

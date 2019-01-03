@@ -13,6 +13,7 @@ import (
 	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/lxf/lxo"
 	"github.com/lxc/lxe/network"
+	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
@@ -21,6 +22,7 @@ const (
 	cfgSecurityNesting    = "security.nesting"
 	cfgVolatileBaseImage  = "volatile.base_image"
 	cfgStartedAt          = "user.started_at"
+	cfgFinishedAt         = "user.finished_at"
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
@@ -64,6 +66,7 @@ type Container struct {
 	// StartedAt is read only, if not started it will be the zero time
 	StartedAt              time.Time
 	CreatedAt              time.Time
+	FinishedAt             time.Time
 	Privileged             bool
 	CloudInitUserData      string
 	CloudInitMetaData      string
@@ -100,7 +103,7 @@ func (l *LXF) CreateContainer(c *Container) error {
 
 	c.State = ContainerStateCreated
 	c.CreatedAt = time.Now()
-	c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+	// c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 
 	switch c.Sandbox.NetworkConfig.Mode {
 	case NetworkHost:
@@ -131,7 +134,7 @@ func (l *LXF) StartContainer(id string) error {
 
 	// TODO: Since we now need the full lxe.Container we could ensure the
 	// following steps over that, now it's raw-ish lxd
-	ct, _, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return err
 	}
@@ -140,22 +143,43 @@ func (l *LXF) StartContainer(id string) error {
 	delete(ct.Config, cfgState)
 
 	// set started at date
-	ct.Config[cfgStartedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
-
-	c, err := l.GetContainer(id)
-	if err != nil {
-		return err
+	if ct.Config[cfgStartedAt] == "" {
+		ct.Config[cfgStartedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
 	}
-	go l.remountMissingVolumes(c)
 
-	return lxo.UpdateContainer(l.server, id, ct.Writable())
+	// c, err := l.GetContainer(id)
+	// if err != nil {
+	// 	return err
+	// }
+	// go l.remountMissingVolumes(c)
+
+	return lxo.UpdateContainer(l.server, id, ct.Writable(), ETag)
 }
 
 // StopContainer will try to stop the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
 // If it's not deleted after 30 seconds it will return an error (might be way to low).
-func (l *LXF) StopContainer(id string) error {
-	return lxo.StopContainer(l.server, id)
+func (l *LXF) StopContainer(id string, timeout int) error {
+	err := lxo.StopContainer(l.server, id, timeout, 2)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Since we now need the full lxe.Container we could ensure the
+	// following steps over that, now it's raw-ish lxd
+	ct, ETag, err := l.server.GetContainer(id)
+	if err != nil {
+		return err
+	}
+
+	// TODO: probably Exit Code 143? With dockershim this happens when forcing containers to stop
+
+	// set finished at date
+	if ct.Config[cfgFinishedAt] == "" {
+		ct.Config[cfgFinishedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+
+	return lxo.UpdateContainer(l.server, id, ct.Writable(), ETag)
 }
 
 // DeleteContainer will delete the container
@@ -165,6 +189,7 @@ func (l *LXF) DeleteContainer(id string) error {
 
 // ListContainers returns a list of all available containers
 func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
+	ETag := ""
 	cts, err := l.server.GetContainers()
 	if err != nil {
 		return nil, err
@@ -174,7 +199,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 		if !IsCRI(ct) {
 			continue
 		}
-		res, err := l.toContainer(&ct)
+		res, err := l.toContainer(&ct, ETag)
 		if err != nil {
 			return nil, err
 		}
@@ -186,7 +211,7 @@ func (l *LXF) ListContainers() ([]*Container, error) { // nolint:dupl
 
 // GetContainer returns the container identified by id
 func (l *LXF) GetContainer(id string) (*Container, error) {
-	ct, _, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +220,7 @@ func (l *LXF) GetContainer(id string) (*Container, error) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
 
-	return l.toContainer(ct)
+	return l.toContainer(ct, ETag)
 }
 
 // saveContainer
@@ -244,7 +269,10 @@ func (l *LXF) saveContainer(c *Container) error {
 		})
 	}
 	// else container has to be updated
-	return lxo.UpdateContainer(l.server, c.ID, contPut)
+	if c.ETag == "" {
+		return fmt.Errorf("Update container not allowed with empty ETag")
+	}
+	return lxo.UpdateContainer(l.server, c.ID, contPut, c.ETag)
 }
 
 func makeContainerConfig(c *Container) map[string]string {
@@ -261,6 +289,7 @@ func makeContainerConfig(c *Container) map[string]string {
 
 	config[cfgCreatedAt] = strconv.FormatInt(c.CreatedAt.UnixNano(), 10)
 	config[cfgStartedAt] = strconv.FormatInt(c.StartedAt.UnixNano(), 10)
+	config[cfgFinishedAt] = strconv.FormatInt(c.FinishedAt.UnixNano(), 10)
 	config[cfgSecurityPrivileged] = strconv.FormatBool(c.Privileged)
 	config[cfgLogPath] = c.LogPath
 	config[cfgIsCRI] = strconv.FormatBool(true)
@@ -315,7 +344,7 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
+func (l *LXF) toContainer(ct *api.Container, ETag string) (*Container, error) {
 	state, _, err := l.server.GetContainerState(ct.Name)
 	if err != nil {
 		return nil, err
@@ -336,9 +365,14 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
+	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
 
 	c := &Container{}
 	c.ID = ct.Name
+	c.ETag = ETag
 	c.Metadata = ContainerMetadata{
 		Name:    ct.Config[cfgMetaName],
 		Attempt: uint32(attempts),
@@ -351,6 +385,7 @@ func (l *LXF) toContainer(ct *api.Container) (*Container, error) {
 	c.Pid = state.Pid
 	c.CreatedAt = time.Unix(0, createdAt)
 	c.StartedAt = time.Unix(0, startedAt)
+	c.FinishedAt = time.Unix(0, finishedAt)
 	c.Stats = ContainerStats{
 		CPUUsage:        uint64(state.CPU.Usage),
 		MemoryUsage:     uint64(state.Memory.Usage),
@@ -422,20 +457,8 @@ func extractEnvVars(config map[string]string) map[string]string {
 	return envVars
 }
 
-func (l *LXF) lifecycleEventHandler(message interface{}) {
-	msg, err := json.Marshal(&message)
-	if err != nil {
-		logger.Errorf("unable to marshal json event: %v", message)
-		return
-	}
-
-	event := api.Event{}
-	err = json.Unmarshal(msg, &event)
-	if err != nil {
-		logger.Errorf("unable to unmarshal to json event: %v", message)
-		return
-	}
-
+// lifecycleEventHandler is registered to the lxd event handler for listening to container start events
+func (l *LXF) lifecycleEventHandler(event api.Event) {
 	// we should always only get lifecycle events due to the handler setup
 	// but just in case ...
 	if event.Type != "lifecycle" {
@@ -443,13 +466,14 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	}
 
 	eventLifecycle := api.EventLifecycle{}
-	err = json.Unmarshal(event.Metadata, &eventLifecycle)
+	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
-		logger.Errorf("unable to unmarshal to json lifecycle event: %v", message)
+		logger.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
 		return
 	}
 
 	// we are only interested in container started events
+	// TODO: Unregister IP address when container is stopping if network-plugin is CNI
 	if eventLifecycle.Action != "container-started" {
 		return
 	}
@@ -466,32 +490,19 @@ func (l *LXF) lifecycleEventHandler(message interface{}) {
 	}
 
 	// add container to queue in order to recheck if mounts are okay
-	l.AddMonitorTask(cnt, "volumes", 0, true)
+	//l.AddMonitorTask(cnt, "volumes", 0, true)
 
 	switch cnt.Sandbox.NetworkConfig.Mode {
 	case NetworkCNI:
-		if len(cnt.Sandbox.NetworkConfig.ModeData) == 0 {
-			// new container, attach cni
-			result, err := network.AttachCNIInterface(cnt.Sandbox.Metadata.Namespace, cnt.Sandbox.Metadata.Name, cnt.ID, cnt.Pid)
-			if err != nil {
-				logger.Errorf("unable to attach CNI interface to container (%v): %v", cnt.ID, err)
-			}
-			cnt.Sandbox.NetworkConfig.ModeData["result"] = string(result)
-			err = l.saveSandbox(cnt.Sandbox)
-			if err != nil {
-				logger.Errorf("unable to save sandbox after attaching CNI interface to container (%v): %v", cnt.ID, err)
-			}
-		} else {
-			// existing container, reattach cni
-			err = network.ReattachCNIInterface(
-				cnt.Sandbox.Metadata.Namespace,
-				cnt.Sandbox.Metadata.Name,
-				cnt.ID,
-				cnt.Pid,
-				cnt.Sandbox.NetworkConfig.ModeData["result"])
-			if err != nil {
-				logger.Errorf("unable to reattach CNI settings to container (%v): %v", cnt.ID, err)
-			}
+		// attach interface using CNI
+		result, err := network.AttachCNIInterface(cnt.Sandbox.Metadata.Namespace, cnt.Sandbox.Metadata.Name, cnt.ID, cnt.Pid)
+		if err != nil {
+			logger.Errorf("unable to attach CNI interface to container (%v): %v", cnt.ID, err)
+		}
+		cnt.Sandbox.NetworkConfig.ModeData["result"] = string(result)
+		err = l.saveSandbox(cnt.Sandbox)
+		if err != nil {
+			logger.Errorf("unable to save sandbox after attaching CNI interface to container (%v): %v", cnt.ID, err)
 		}
 	default:
 		// nothing to do, all other modes need no help after starting
@@ -517,7 +528,7 @@ func (l *LXF) containerMonitor(cntMonitorChan chan ContainerMonitorChan) {
 				if i.lastCheck.Add(i.intervalSec).Sub(time.Now()) <= 0 {
 					switch i.task {
 					case "volumes":
-						go l.remountMissingVolumes(i.container)
+						// go l.remountMissingVolumes(i.container)
 						i.lastCheck = time.Now()
 					default:
 						logger.Debugf("containerMonitor: unknown task: %v for object: %+v", i.task, i)
@@ -586,19 +597,9 @@ func (l *LXF) remountMissingVolumes(container *Container) {
 	}
 }
 
-// CreateID creates the unique container id based on Kubernetes container and sandbox values
-// This is currently not expected to be a long term stable hashing for these informations
+// CreateID creates a unique container id
 func (c *Container) CreateID() string {
-	var parts []string
-	parts = append(parts, "k8s")
-	parts = append(parts, c.Metadata.Name)
-	parts = append(parts, c.Sandbox.Metadata.Name)
-	parts = append(parts, c.Sandbox.Metadata.Namespace)
-	parts = append(parts, strconv.FormatUint(uint64(c.Sandbox.Metadata.Attempt), 10))
-	parts = append(parts, c.Sandbox.Metadata.UID)
-	name := strings.Join(parts, "-")
-
-	bin := md5.Sum([]byte(name)) // nolint: gosec #nosec
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
 	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
@@ -608,10 +609,9 @@ func (c *Container) GetContainerIPv4Address(ifs []string) string {
 	for _, i := range ifs {
 		if netif, ok := c.Network[i]; ok {
 			for _, addr := range netif.Addresses {
-				if addr.Family != "inet" {
-					continue
+				if addr.Family == "inet" {
+					return addr.Address
 				}
-				return addr.Address
 			}
 		}
 	}

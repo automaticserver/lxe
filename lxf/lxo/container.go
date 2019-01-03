@@ -10,16 +10,16 @@ import (
 // StopContainer will try to stop the container with provided name.
 // It will retry for half a minute and return success when it's stopped.
 // It will also return success when the container does not exist.
-func StopContainer(server lxd.ContainerServer, id string) error {
-	tries := 10
+func StopContainer(server lxd.ContainerServer, id string, timeout, retries int) error {
+	ETag := ""
 	var lastErr error
-	for i := 1; i <= tries; i++ {
+	for i := 1; i <= retries; i++ {
 		lxdReq := api.ContainerStatePut{
 			Action:  "stop",
-			Timeout: 3,
-			Force:   i == tries,
+			Timeout: timeout,
+			Force:   i == retries,
 		}
-		op, err := server.UpdateContainerState(id, lxdReq, "")
+		op, err := server.UpdateContainerState(id, lxdReq, ETag)
 		if err != nil {
 			if err.Error() == "not found" { // it's not around, that's ok with us
 				return nil
@@ -40,11 +40,12 @@ func StopContainer(server lxd.ContainerServer, id string) error {
 // StartContainer will start the container and wait till operation is done or
 // return an error
 func StartContainer(server lxd.ContainerServer, id string) error {
+	ETag := ""
 	lxdReq := api.ContainerStatePut{
 		Action:  "start",
 		Timeout: -1,
 	}
-	op, err := server.UpdateContainerState(id, lxdReq, "")
+	op, err := server.UpdateContainerState(id, lxdReq, ETag)
 	if err != nil {
 		return err
 	}
@@ -64,8 +65,8 @@ func CreateContainer(server lxd.ContainerServer, container api.ContainersPost) e
 
 // UpdateContainer will create the container and wait till operation is done or
 // return an error
-func UpdateContainer(server lxd.ContainerServer, id string, container api.ContainerPut) error {
-	op, err := server.UpdateContainer(id, container, "")
+func UpdateContainer(server lxd.ContainerServer, id string, container api.ContainerPut, ETag string) error {
+	op, err := server.UpdateContainer(id, container, ETag)
 	if err != nil {
 		return err
 	}

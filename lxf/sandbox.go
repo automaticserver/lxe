@@ -14,6 +14,8 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/network"
+	utilNet "k8s.io/apimachinery/pkg/util/net"
+	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
@@ -143,15 +145,32 @@ func getSandboxState(str string) SandboxState {
 
 // networkConfigData is used as root element to serialize to cloud config
 type networkConfigData struct {
-	Version int                  `json:"version"`
-	Config  []NetworkConfigEntry `json:"config"`
+	Version int           `json:"version"`
+	Config  []interface{} `json:"config"`
 }
 
-// NetworkConfigEntry is an entry in the v1 network config, currently limited to nameserver
+// NetworkConfigEntry is an entry in the v1 network config
 type NetworkConfigEntry struct {
-	Type    string   `json:"type"`
+	Type string `json:"type"`
+}
+
+// NetworkConfigEntryNameserver is a nameserver entry
+type NetworkConfigEntryNameserver struct {
+	NetworkConfigEntry
 	Address []string `json:"address"`
 	Search  []string `json:"search"`
+}
+
+// NetworkConfigEntryPhysical is a nameserver entry
+type NetworkConfigEntryPhysical struct {
+	NetworkConfigEntry
+	Name    string                             `json:"name"`
+	Subnets []NetworkConfigEntryPhysicalSubnet `json:"subnets"`
+}
+
+// NetworkConfigEntryPhysicalSubnet is a subnet entry in the v1 network config of a physical device
+type NetworkConfigEntryPhysicalSubnet struct {
+	Type string `json:"type"`
 }
 
 // CreateSandbox will create the provided sandbox and put it into state ready
@@ -167,12 +186,6 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 			NicType: "bridged",
 			Parent:  s.NetworkConfig.ModeData["bridge"],
 		})
-	case NetworkHost:
-		fallthrough
-	case NetworkCNI:
-		fallthrough
-	case NetworkNone:
-		fallthrough
 	default:
 		// do nothing
 	}
@@ -182,19 +195,19 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 
 // StopSandbox will find a sandbox by id and set it's state to "not ready".
 func (l *LXF) StopSandbox(id string) error {
-	p, _, err := l.server.GetProfile(id)
+	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return err
 	}
 
-	p.Config[cfgState] = string(SandboxNotReady)
-	err = l.server.UpdateProfile(id, p.Writable(), "")
+	p.Config[cfgState] = SandboxNotReady.String()
+	err = l.server.UpdateProfile(id, p.Writable(), ETag)
 	return err
 }
 
 // GetSandbox will find a sandbox by id and return it.
 func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
-	p, _, err := l.server.GetProfile(id)
+	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +215,7 @@ func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
 	if !IsCRI(p) {
 		return nil, fmt.Errorf(ErrorNotFound)
 	}
-	return l.toSandbox(p)
+	return l.toSandbox(p, ETag)
 }
 
 // DeleteSandbox will delete the given sandbox
@@ -212,6 +225,7 @@ func (l *LXF) DeleteSandbox(name string) error {
 
 // ListSandboxes will return a list with all the available sandboxes
 func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
+	ETag := ""
 	ps, err := l.server.GetProfiles()
 	if err != nil {
 		return nil, err
@@ -222,7 +236,7 @@ func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
 		if !IsCRI(p) {
 			continue
 		}
-		sb, err2 := l.toSandbox(&p)
+		sb, err2 := l.toSandbox(&p, ETag)
 		if err2 != nil {
 			return nil, err2
 		}
@@ -276,18 +290,32 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 	}
 
 	// write cloud-init network config
-	highestSearch := ""
 	if len(s.NetworkConfig.Nameservers) > 0 &&
 		len(s.NetworkConfig.Searches) > 0 {
 		data := networkConfigData{
 			Version: 1,
-			Config: []NetworkConfigEntry{
-				NetworkConfigEntry{
-					Type:    "nameserver",
+			Config: []interface{}{
+				NetworkConfigEntryNameserver{
+					NetworkConfigEntry: NetworkConfigEntry{
+						Type: "nameserver",
+					},
 					Address: s.NetworkConfig.Nameservers,
 					Search:  s.NetworkConfig.Searches,
 				},
 			},
+		}
+		if s.NetworkConfig.ModeData["interface-name"] != "" {
+			data.Config = append(data.Config, NetworkConfigEntryPhysical{
+				NetworkConfigEntry: NetworkConfigEntry{
+					Type: "physical",
+				},
+				Name: s.NetworkConfig.ModeData["interface-name"],
+				Subnets: []NetworkConfigEntryPhysicalSubnet{
+					NetworkConfigEntryPhysicalSubnet{
+						Type: s.NetworkConfig.ModeData["interface-address"],
+					},
+				},
+			})
 		}
 
 		yml, err := yaml.Marshal(data)
@@ -296,15 +324,13 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 		}
 
 		config[cfgCloudInitNetworkConfig] = string(yml)
-		highestSearch = "." + s.NetworkConfig.Searches[0]
 	}
 
 	// write cloud-init vendor data if we have hostname and search
-	if s.Hostname != "" && highestSearch != "" {
+	if s.Hostname != "" {
 		config[cfgCloudInitVendorData] = fmt.Sprintf(`#cloud-config
 hostname: %s
-fqdn: %s
-manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
+manage_etc_hosts: true`, s.Hostname)
 	}
 
 	devices := map[string]map[string]string{}
@@ -348,11 +374,14 @@ manage_etc_hosts: true`, s.Hostname, s.Hostname+highestSearch)
 		})
 	}
 	// else profile has to be updated
-	return l.server.UpdateProfile(s.ID, profile, "")
+	if s.ETag == "" {
+		return fmt.Errorf("Update profile not allowed with empty ETag")
+	}
+	return l.server.UpdateProfile(s.ID, profile, s.ETag)
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
+func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
@@ -364,6 +393,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 
 	s := &Sandbox{}
 	s.ID = p.Name
+	s.ETag = ETag
 	s.Hostname = p.Config[cfgHostname]
 	s.LogDirectory = p.Config[cfgLogDirectory]
 	s.Metadata = SandboxMetadata{
@@ -394,7 +424,7 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 		s.NetworkConfig.ModeData = make(map[string]string)
 	}
 
-	// Hint: cloud-init network config & vendor-data are write-only so not readed
+	// Hint: cloud-init network config & vendor-data are write-only so not read
 
 	// get devices
 	s.Proxies, err = device.GetProxiesFromMap(p.Devices)
@@ -444,17 +474,46 @@ func (l *LXF) toSandbox(p *api.Profile) (*Sandbox, error) {
 	return s, nil
 }
 
-// CreateID creates the unique sandbox id based on Kubernetes sandbox values
-// This is currently not expected to be a long term stable hashing for these informations
-func (s *Sandbox) CreateID() string {
-	var parts []string
-	parts = append(parts, "k8s")
-	parts = append(parts, s.Metadata.Name)
-	parts = append(parts, s.Metadata.Namespace)
-	parts = append(parts, strconv.FormatUint(uint64(s.Metadata.Attempt), 10))
-	parts = append(parts, s.Metadata.UID)
-	name := strings.Join(parts, "-")
+// GetSandboxIP returns the ip address of the sandbox
+func (l *LXF) GetSandboxIP(s *Sandbox) (string, error) {
+	switch s.NetworkConfig.Mode {
+	case NetworkHost:
+		ip, err := utilNet.ChooseHostInterface()
+		if err != nil {
+			return "", fmt.Errorf("looking up host interface failed: %v", err)
+		}
+		return ip.String(), nil
+	case NetworkNone:
+		return "", nil
+	case NetworkBridged:
+		fallthrough
+	case NetworkCNI:
+		fallthrough
+	default:
+		for _, cntName := range s.UsedBy {
+			c, err := l.GetContainer(cntName)
+			if err != nil {
+				if IsErrorNotFound(err) {
+					continue
+				}
+				return "", fmt.Errorf("looking up container failed: %v", err)
+			}
+			// ignore any non-running containers
+			if c.State != ContainerStateRunning {
+				continue
+			}
+			// get the ipv4 address of eth0
+			ip := c.GetContainerIPv4Address([]string{network.DefaultInterface})
+			if ip != "" {
+				return ip, nil
+			}
+		}
+	}
+	return "", nil
+}
 
-	bin := md5.Sum([]byte(name)) // nolint: gosec #nosec
+// CreateID creates a unique profile id
+func (s *Sandbox) CreateID() string {
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
 	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }

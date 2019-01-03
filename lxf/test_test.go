@@ -149,7 +149,7 @@ func (lt *lxfTest) startContainer(id string) {
 }
 
 func (lt *lxfTest) stopContainer(id string) {
-	err := lt.lxf.StopContainer(id)
+	err := lt.lxf.StopContainer(id, 30)
 	if err != nil {
 		lt.t.Errorf("failed to stop container '%v', %v", id, err)
 	}

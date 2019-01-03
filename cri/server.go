@@ -11,9 +11,17 @@ import (
 	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
+// NetworkPlugin defines how the pod network should be setup.
+// NetworkPluginDefault creates and manages a `LXEBridge` bridge which the containers are attached to
+// NetworkPluginCNI uses the kubernetes cni tools to let it attach interfaces to containers
+const (
+	NetworkPluginDefault = ""
+	NetworkPluginCNI     = "cni"
+	LXEBridge            = "lxebr0"
+)
+
 // LXEConfig are a few config options that LXE will need to interface with LXD
 type LXEConfig struct {
-	Domain                     string // gRPC Domain under which this server will be reachable to kubectl
 	UnixSocket                 string // Unix socket this LXE will be reachable under
 	LXDSocket                  string // Unix socket target LXD is reachable under
 	LXDRemoteConfig            string // Path where the lxd remote config can be found
@@ -21,20 +29,21 @@ type LXEConfig struct {
 	LXEStreamingServerEndpoint string // IP or Interface for Streaming Server. Guessed by default if not present
 	LXEStreamingPort           string // Port where LXE's Http Server will listen
 	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
+	LXENetworkPlugin           string // The network plugin to use as described above
 }
 
 // NewLXEConfig returns lxe daemon config for the above options
-func NewLXEConfig(socket, lxdSocket, lxdRemoteConfig, lxdImageRemote,
-	lxeStreamingServerEndpoint, lxeStreamingPort, lxeHostnetworkFile string) (*LXEConfig, error) {
+func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStreamingServerEndpoint, lxeStreamingPort,
+	lxeHostnetworkFile, lxeNetworkPlugin string) (*LXEConfig, error) {
 	return &LXEConfig{
-		Domain:                     "lxd",
-		UnixSocket:                 socket,
+		UnixSocket:                 lxeSocket,
 		LXDSocket:                  lxdSocket,
 		LXDRemoteConfig:            lxdRemoteConfig,
 		LXDImageRemote:             lxdImageRemote,
 		LXEStreamingServerEndpoint: lxeStreamingServerEndpoint,
 		LXEStreamingPort:           lxeStreamingPort,
 		LXEHostnetworkFile:         lxeHostnetworkFile,
+		LXENetworkPlugin:           lxeNetworkPlugin,
 	}, nil
 }
 

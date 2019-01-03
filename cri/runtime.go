@@ -151,17 +151,26 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	// Find out which network mode should be used
 	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) ==
 		string(lxf.NetworkHost) {
+		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
 		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
 	} else if sb.Annotations[fieldLXEBridge] != "" {
+		// explicit (external managed) bridge requested
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
 		sb.NetworkConfig.ModeData = map[string]string{
 			"bridge": sb.Annotations[fieldLXEBridge],
 		}
-	} else {
-		// TODO: if is CNI ready?
+	} else if s.criConfig.LXENetworkPlugin == NetworkPluginCNI {
+		// lxe is configured to manage network with cni
 		sb.NetworkConfig.Mode = lxf.NetworkCNI
-		// else lxf.NetworkNone
+	} else {
+		// default is to use the predefined lxd bridge managed by lxe
+		sb.NetworkConfig.Mode = lxf.NetworkBridged
+		sb.NetworkConfig.ModeData = map[string]string{
+			"bridge":            LXEBridge,
+			"interface-name":    network.DefaultInterface,
+			"interface-address": "dhcp",
+		}
 	}
 
 	// If HostPort is defined, set forwardings from that port to the container
@@ -285,7 +294,7 @@ func setRaw(s *[]lxf.RawLXCOption, key, value string) {
 	err := lxf.SetRaw(s, key, value)
 	if err != nil {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Infof("empty Annotation for %s", serr.Where)
+			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
 			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
 		}
@@ -332,7 +341,7 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		return nil, err
 	}
 	for _, cnt := range profile.UsedBy {
-		err = s.lxf.StopContainer(cnt)
+		err = s.lxf.StopContainer(cnt, 30)
 		if err != nil {
 			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
 			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt, err)
@@ -374,6 +383,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
 // present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
+	//logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("PodSandboxStatus triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.PodSandboxId)
@@ -397,6 +407,9 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			CreatedAt:   sb.CreatedAt.UnixNano(),
 			State: rtApi.PodSandboxState(
 				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())]),
+			Network: &rtApi.PodSandboxNetworkStatus{
+				Ip: "127.0.0.1",
+			},
 		},
 	}
 
@@ -418,44 +431,12 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	}
 
 	// TODO: these should be encapsulated inside lxf - something like sandbox.GetIP()?
-	switch sb.NetworkConfig.Mode {
-	case lxf.NetworkHost:
-		ip, err := utilNet.ChooseHostInterface()
-		if err != nil {
-			logger.Error("could not find suitable host interface: %v", err)
-		} else {
-			response.Status.Network = &rtApi.PodSandboxNetworkStatus{
-				Ip: ip.String(),
-			}
-		}
-	case lxf.NetworkNone:
-		// nothing
-	case lxf.NetworkBridged:
-		fallthrough
-	case lxf.NetworkCNI:
-		fallthrough
-	default:
-		if len(sb.UsedBy) > 0 {
-			cntName := sb.UsedBy[0]
-			if cntName != "" {
-				cntState, err := s.lxf.GetContainer(cntName)
-				if err != nil {
-					if !lxf.IsErrorNotFound(err) {
-						logger.Errorf("PodSandboxStatus: GetContainerState(%v):  %v", req, err)
-						return nil, err
-					}
-				}
-				if cntState != nil { // container found
-					// get the ipv4 address of eth0
-					ip := cntState.GetContainerIPv4Address([]string{network.DefaultInterface})
-					if len(ip) > 0 {
-						response.Status.Network = &rtApi.PodSandboxNetworkStatus{
-							Ip: ip,
-						}
-					}
-				}
-			}
-		}
+	ip, err := s.lxf.GetSandboxIP(sb)
+	if err != nil {
+		logger.Errorf("could not look up sandbox ip: %v", err)
+	}
+	if ip != "" {
+		response.Status.Network.Ip = ip
 	}
 
 	logger.Debugf("PodSandboxStatus responded: %v", response)
@@ -618,6 +599,32 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 		return nil, err
 	}
 
+	// Wait until container has a ip address
+	// This was an attempt to omit the `Ip: "127.0.0.1"` in the status return, since kubelet is not happy when it takes too
+	// long to assign an IP to a sandbox, but this didn't help. kubelet stops it right after container finally obtained one
+	// c, err := s.lxf.GetContainer(req.ContainerId)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// tick := time.Tick(500 * time.Millisecond)
+	// timeout := time.After(30 * time.Second)
+	// for {
+	// 	select {
+	// 	case <-tick:
+	// 		ip, err := s.lxf.GetSandboxIP(c.Sandbox)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		if ip != "" {
+	// 			return &rtApi.StartContainerResponse{}, nil
+	// 		}
+	// 	case <-timeout:
+	// 		err := fmt.Errorf("Container %v hasn't got IP within time", req.ContainerId)
+	// 		logger.Error(err.Error())
+	// 		return nil, err
+	// 	}
+	// }
+
 	return &rtApi.StartContainerResponse{}, nil
 }
 
@@ -630,7 +637,7 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StopContainer triggered: %v", req)
 
-	err := s.lxf.StopContainer(req.GetContainerId())
+	err := s.lxf.StopContainer(req.GetContainerId(), int(req.GetTimeout()))
 	if err != nil {
 		return nil, err
 	}
@@ -697,6 +704,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 // ContainerStatus returns status of the container. If the container is not
 // present, returns an error.
 func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.ContainerStatusRequest) (*rtApi.ContainerStatusResponse, error) {
+	//logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("ContainerStatus triggered: %v", req)
 
 	ct, err := s.lxf.GetContainer(req.ContainerId)
@@ -916,7 +924,14 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context,
 	req *rtApi.UpdateRuntimeConfigRequest) (*rtApi.UpdateRuntimeConfigResponse, error) {
 
 	logger.Debugf("UpdateRuntimeConfig triggered: %v", req)
-	logger.Errorf("UpdateRuntimeConfig() must be implemented to talk to CNI")
+
+	podCIDR := req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr()
+	err := s.lxf.EnsureBridge(LXEBridge, podCIDR, true)
+	if err != nil {
+		logger.Errorf("UpdateRuntimeConfig: %v", err)
+		return nil, err
+	}
+
 	return &rtApi.UpdateRuntimeConfigResponse{}, nil
 }
 

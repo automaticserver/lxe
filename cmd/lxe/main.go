@@ -38,6 +38,7 @@ type cmdGlobal struct {
 	flagLXEStreamServerEndpoint string
 	flagLXEStreamingPort        int
 	flagLXEHostnetworkFile      string
+	flagLXENetworkPlugin        string
 }
 
 func (c *cmdGlobal) Run(cmd *cobra.Command, args []string) error {
@@ -70,7 +71,6 @@ func main() {
 	// daemon command (main)
 	daemonCmd := cmdDaemon{}
 	app := daemonCmd.Command()
-	app.SilenceUsage = true
 
 	// Workaround for main command
 	app.Args = cobra.ArbitraryArgs
@@ -101,6 +101,9 @@ func main() {
 		44124, "Port where LXE's Streaming HTTP Server will listen.")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXEHostnetworkFile, "hostnetwork-file",
 		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
+	app.PersistentFlags().StringVar(&globalCmd.flagLXENetworkPlugin, "network-plugin",
+		"", "The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.")
+
 	// Run the main command and handle errors
 	err := app.Execute()
 	if err != nil {

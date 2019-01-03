@@ -96,6 +96,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		}
 	}
 
+	ETag := ""
 	containers, err := m.lxf.server.GetContainers()
 	if err != nil {
 		return err
@@ -125,7 +126,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		// If something has changed, update it
 		if counter > 0 {
 			anyChanges = true
-			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable())
+			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable(), ETag)
 			if err != nil {
 				return err
 			}
@@ -196,7 +197,7 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 	if c.Config[cfgSchema] == "0.2" {
 		delete(c.Config, cfgOldIsContainer)
 		delete(c.Config, cfgOldContainerName)
-		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		// c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
 		if c.Config[cfgCreatedAt] == "" {
 			if c.Config[cfgStartedAt] == "" {
 				c.Config[cfgCreatedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -207,9 +208,9 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 		if c.Config[cfgStartedAt] == "" {
 			c.Config[cfgStartedAt] = "0"
 		}
-		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
-		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
-		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		if c.Config[cfgFinishedAt] == "" {
+			c.Config[cfgFinishedAt] = "0"
+		}
 		c.Config[cfgSchema] = "0.3"
 		return true
 	}

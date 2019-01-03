@@ -473,6 +473,7 @@ func (l *LXF) lifecycleEventHandler(event api.Event) {
 	}
 
 	// we are only interested in container started events
+	// TODO: Unregister IP address when container is stopping if network-plugin is CNI
 	if eventLifecycle.Action != "container-started" {
 		return
 	}
@@ -495,28 +496,15 @@ func (l *LXF) lifecycleEventHandler(event api.Event) {
 
 	switch cnt.Sandbox.NetworkConfig.Mode {
 	case NetworkCNI:
-		if len(cnt.Sandbox.NetworkConfig.ModeData) == 0 {
-			// new container, attach cni
-			result, err := network.AttachCNIInterface(cnt.Sandbox.Metadata.Namespace, cnt.Sandbox.Metadata.Name, cnt.ID, cnt.Pid)
-			if err != nil {
-				logger.Errorf("unable to attach CNI interface to container (%v): %v", cnt.ID, err)
-			}
-			cnt.Sandbox.NetworkConfig.ModeData["result"] = string(result)
-			err = l.saveSandbox(cnt.Sandbox)
-			if err != nil {
-				logger.Errorf("unable to save sandbox after attaching CNI interface to container (%v): %v", cnt.ID, err)
-			}
-		} else {
-			// existing container, reattach cni
-			_, err = network.ReattachCNIInterface(
-				cnt.Sandbox.Metadata.Namespace,
-				cnt.Sandbox.Metadata.Name,
-				cnt.ID,
-				cnt.Pid,
-				cnt.Sandbox.NetworkConfig.ModeData["result"])
-			if err != nil {
-				logger.Errorf("unable to reattach CNI settings to container (%v): %v", cnt.ID, err)
-			}
+		// attach interface using CNI
+		result, err := network.AttachCNIInterface(cnt.Sandbox.Metadata.Namespace, cnt.Sandbox.Metadata.Name, cnt.ID, cnt.Pid)
+		if err != nil {
+			logger.Errorf("unable to attach CNI interface to container (%v): %v", cnt.ID, err)
+		}
+		cnt.Sandbox.NetworkConfig.ModeData["result"] = string(result)
+		err = l.saveSandbox(cnt.Sandbox)
+		if err != nil {
+			logger.Errorf("unable to save sandbox after attaching CNI interface to container (%v): %v", cnt.ID, err)
 		}
 	default:
 		// nothing to do, all other modes need no help after starting

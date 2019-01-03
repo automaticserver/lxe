@@ -5,13 +5,10 @@ import (
 	"strconv"
 
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 )
 
 // EnsureBridge ensures the bridge exists with the defined options
 func (l *LXF) EnsureBridge(name, cidr string, nat bool) error {
-	logger.Infof("DEBUG EnsureBridge: %v | %v | %v", name, cidr, nat)
-
 	// Always use first address in range for the bridge
 	_, net, err := net.ParseCIDR(cidr)
 	if err != nil {

@@ -14,6 +14,7 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/network"
+	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
@@ -471,6 +472,44 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	}
 
 	return s, nil
+}
+
+// GetSandboxIP returns the ip address of the sandbox
+func (l *LXF) GetSandboxIP(s *Sandbox) (string, error) {
+	switch s.NetworkConfig.Mode {
+	case NetworkHost:
+		ip, err := utilNet.ChooseHostInterface()
+		if err != nil {
+			return "", fmt.Errorf("looking up host interface failed: %v", err)
+		}
+		return ip.String(), nil
+	case NetworkNone:
+		return "", nil
+	case NetworkBridged:
+		fallthrough
+	case NetworkCNI:
+		fallthrough
+	default:
+		for _, cntName := range s.UsedBy {
+			c, err := l.GetContainer(cntName)
+			if err != nil {
+				if IsErrorNotFound(err) {
+					continue
+				}
+				return "", fmt.Errorf("looking up container failed: %v", err)
+			}
+			// ignore any non-running containers
+			if c.State != ContainerStateRunning {
+				continue
+			}
+			// get the ipv4 address of eth0
+			ip := c.GetContainerIPv4Address([]string{network.DefaultInterface})
+			if ip != "" {
+				return ip, nil
+			}
+		}
+	}
+	return "", nil
 }
 
 // CreateID creates a unique profile id

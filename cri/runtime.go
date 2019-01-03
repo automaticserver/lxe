@@ -431,40 +431,12 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	}
 
 	// TODO: these should be encapsulated inside lxf - something like sandbox.GetIP()?
-	switch sb.NetworkConfig.Mode {
-	case lxf.NetworkHost:
-		ip, err := utilNet.ChooseHostInterface()
-		if err != nil {
-			logger.Error("could not find suitable host interface: %v", err)
-		} else {
-			response.Status.Network.Ip = ip.String()
-		}
-	case lxf.NetworkNone:
-		// nothing
-	case lxf.NetworkBridged:
-		fallthrough
-	case lxf.NetworkCNI:
-		fallthrough
-	default:
-		if len(sb.UsedBy) > 0 {
-			cntName := sb.UsedBy[0]
-			if cntName != "" {
-				cntState, err := s.lxf.GetContainer(cntName)
-				if err != nil {
-					if !lxf.IsErrorNotFound(err) {
-						logger.Errorf("PodSandboxStatus: GetContainerState(%v):  %v", req, err)
-						return nil, err
-					}
-				}
-				if cntState != nil { // container found
-					// get the ipv4 address of eth0
-					containerIP := cntState.GetContainerIPv4Address([]string{network.DefaultInterface})
-					if containerIP != "" {
-						response.Status.Network.Ip = containerIP
-					}
-				}
-			}
-		}
+	ip, err := s.lxf.GetSandboxIP(sb)
+	if err != nil {
+		logger.Errorf("could not look up sandbox ip: %v", err)
+	}
+	if ip != "" {
+		response.Status.Network.Ip = ip
 	}
 
 	logger.Debugf("PodSandboxStatus responded: %v", response)

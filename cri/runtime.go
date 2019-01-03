@@ -294,7 +294,7 @@ func setRaw(s *[]lxf.RawLXCOption, key, value string) {
 	err := lxf.SetRaw(s, key, value)
 	if err != nil {
 		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Infof("empty Annotation for %s", serr.Where)
+			logger.Debugf("empty Annotation for %s", serr.Where)
 		} else {
 			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
 		}
@@ -383,7 +383,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
 // present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
-	logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
+	//logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("PodSandboxStatus triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.PodSandboxId)
@@ -599,6 +599,32 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 		return nil, err
 	}
 
+	// Wait until container has a ip address
+	// This was an attempt to omit the `Ip: "127.0.0.1"` in the status return, since kubelet is not happy when it takes too
+	// long to assign an IP to a sandbox, but this didn't help. kubelet stops it right after container finally obtained one
+	// c, err := s.lxf.GetContainer(req.ContainerId)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// tick := time.Tick(500 * time.Millisecond)
+	// timeout := time.After(30 * time.Second)
+	// for {
+	// 	select {
+	// 	case <-tick:
+	// 		ip, err := s.lxf.GetSandboxIP(c.Sandbox)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		if ip != "" {
+	// 			return &rtApi.StartContainerResponse{}, nil
+	// 		}
+	// 	case <-timeout:
+	// 		err := fmt.Errorf("Container %v hasn't got IP within time", req.ContainerId)
+	// 		logger.Error(err.Error())
+	// 		return nil, err
+	// 	}
+	// }
+
 	return &rtApi.StartContainerResponse{}, nil
 }
 
@@ -678,7 +704,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 // ContainerStatus returns status of the container. If the container is not
 // present, returns an error.
 func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.ContainerStatusRequest) (*rtApi.ContainerStatusResponse, error) {
-	logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
+	//logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("ContainerStatus triggered: %v", req)
 
 	ct, err := s.lxf.GetContainer(req.ContainerId)

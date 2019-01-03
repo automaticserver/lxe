@@ -479,8 +479,6 @@ func (l *LXF) lifecycleEventHandler(event api.Event) {
 	}
 
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
-	logger.Infof("DEBUG: Container start event %v", containerID)
-	time.Sleep(10 * time.Second)
 	cnt, err := l.GetContainer(containerID)
 	if err != nil {
 		if IsErrorNotFound(err) {

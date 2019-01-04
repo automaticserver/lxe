@@ -78,6 +78,13 @@ func NewServer(criConfig *LXEConfig) *Server {
 		os.Exit(shared.ExitCodeSchemaMigrationFailure)
 	}
 
+	// Initialize lxd bridge for lxe is created with new generated cidr if missing
+	err = lxf.EnsureBridge(LXEBridge, "", true, true)
+	if err != nil {
+		logger.Critf("Unable to setup bridge %v: %v", LXEBridge, err)
+		os.Exit(shared.ExitCodeUnspecified)
+	}
+
 	// for now we bind the http on every interface
 	streamServerAddr := ":" + criConfig.LXEStreamingPort
 	runtimeServer, err := NewRuntimeServer(criConfig, streamServerAddr, lxf)

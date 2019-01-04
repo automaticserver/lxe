@@ -5,6 +5,7 @@ set -ex
 #cluster_domain="cluster.local"
 #cluster_servicesubnet="10.96.0.0/12"
 #cluster_podsubnet="10.244.0.0/16"
+kubernetes_version=1.12.4-00
 
 # remove existing lxd and lxc packages
 apt-get purge lxd* lxc* liblxc* -y
@@ -38,7 +39,7 @@ apt-get install cri-tools
 crictl version
 
 # install and configure kubelet and create certificates and credentials
-apt-get install kubeadm kubelet kubectl -o Dpkg::Options::="--force-confold" --force-yes -y
+apt-get install kubeadm="$kubernetes_version" kubelet="$kubernetes_version" kubectl="$kubernetes_version" -o Dpkg::Options::="--force-confold" --force-yes -y
 kubeadm alpha phase certs all --config /etc/kubernetes/kubeadm.conf
 kubeadm alpha phase kubeconfig all --config /etc/kubernetes/kubeadm.conf
 mkdir -p ~/.kube

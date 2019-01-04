@@ -182,9 +182,10 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 	switch s.NetworkConfig.Mode {
 	case NetworkBridged:
 		s.Nics = append(s.Nics, device.Nic{
-			Name:    network.DefaultInterface,
-			NicType: "bridged",
-			Parent:  s.NetworkConfig.ModeData["bridge"],
+			Name:        network.DefaultInterface,
+			NicType:     "bridged",
+			Parent:      s.NetworkConfig.ModeData["bridge"],
+			IPv4Address: s.NetworkConfig.ModeData["interface-address"],
 		})
 	default:
 		// do nothing
@@ -304,15 +305,15 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 				},
 			},
 		}
-		if s.NetworkConfig.ModeData["interface-name"] != "" {
+		if s.NetworkConfig.Mode == NetworkBridged && s.NetworkConfig.ModeData["interface-address"] != "" {
 			data.Config = append(data.Config, NetworkConfigEntryPhysical{
 				NetworkConfigEntry: NetworkConfigEntry{
 					Type: "physical",
 				},
-				Name: s.NetworkConfig.ModeData["interface-name"],
+				Name: network.DefaultInterface,
 				Subnets: []NetworkConfigEntryPhysicalSubnet{
 					NetworkConfigEntryPhysicalSubnet{
-						Type: s.NetworkConfig.ModeData["interface-address"],
+						Type: "dhcp",
 					},
 				},
 			})
@@ -486,6 +487,10 @@ func (l *LXF) GetSandboxIP(s *Sandbox) (string, error) {
 	case NetworkNone:
 		return "", nil
 	case NetworkBridged:
+		// if statically assigned ip exists, return that
+		if s.NetworkConfig.ModeData["interface-address"] != "" {
+			return s.NetworkConfig.ModeData["interface-address"], nil
+		}
 		fallthrough
 	case NetworkCNI:
 		fallthrough

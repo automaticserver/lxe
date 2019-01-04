@@ -15,7 +15,6 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
 	"github.com/lxc/lxe/lxf/device"
-	"github.com/lxc/lxe/network"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
@@ -165,11 +164,15 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		sb.NetworkConfig.Mode = lxf.NetworkCNI
 	} else {
 		// default is to use the predefined lxd bridge managed by lxe
+		randIP, err := s.lxf.FindFreeIP(LXEBridge)
+		if err != nil {
+			logger.Errorf("unable to find a free ip: %v", err)
+			return nil, err
+		}
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
 		sb.NetworkConfig.ModeData = map[string]string{
 			"bridge":            LXEBridge,
-			"interface-name":    network.DefaultInterface,
-			"interface-address": "dhcp",
+			"interface-address": randIP.String(),
 		}
 	}
 
@@ -408,7 +411,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			State: rtApi.PodSandboxState(
 				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())]),
 			Network: &rtApi.PodSandboxNetworkStatus{
-				Ip: "127.0.0.1",
+				Ip: "",
 			},
 		},
 	}
@@ -430,7 +433,6 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		}
 	}
 
-	// TODO: these should be encapsulated inside lxf - something like sandbox.GetIP()?
 	ip, err := s.lxf.GetSandboxIP(sb)
 	if err != nil {
 		logger.Errorf("could not look up sandbox ip: %v", err)
@@ -922,11 +924,11 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 // UpdateRuntimeConfig updates the runtime configuration based on the given request.
 func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context,
 	req *rtApi.UpdateRuntimeConfigRequest) (*rtApi.UpdateRuntimeConfigResponse, error) {
-
+	//logger.Infof("UpdateRuntimeConfig called: PodCIDR %v", req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr())
 	logger.Debugf("UpdateRuntimeConfig triggered: %v", req)
 
 	podCIDR := req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr()
-	err := s.lxf.EnsureBridge(LXEBridge, podCIDR, true)
+	err := s.lxf.EnsureBridge(LXEBridge, podCIDR, true, false)
 	if err != nil {
 		logger.Errorf("UpdateRuntimeConfig: %v", err)
 		return nil, err

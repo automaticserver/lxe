@@ -4,18 +4,20 @@ const nicType = "nic"
 
 // Nic device
 type Nic struct {
-	Name    string
-	NicType string
-	Parent  string
+	Name        string
+	NicType     string
+	Parent      string
+	IPv4Address string
 }
 
 // ToMap serializes itself into a lxd device map entry
 func (b Nic) ToMap() (map[string]string, error) {
 	return map[string]string{
-		"type":    nicType,
-		"name":    b.Name,
-		"nictype": b.NicType,
-		"parent":  b.Parent,
+		"type":         nicType,
+		"name":         b.Name,
+		"nictype":      b.NicType,
+		"parent":       b.Parent,
+		"ipv4.address": b.IPv4Address,
 	}, nil
 }
 
@@ -27,8 +29,9 @@ func (b Nic) GetName() string {
 // NicFromMap create a new nic from map entries
 func NicFromMap(dev map[string]string) (Nic, error) {
 	return Nic{
-		Name:    dev["name"],
-		NicType: dev["nictype"],
-		Parent:  dev["parent"],
+		Name:        dev["name"],
+		NicType:     dev["nictype"],
+		Parent:      dev["parent"],
+		IPv4Address: dev["ipv4.address"],
 	}, nil
 }

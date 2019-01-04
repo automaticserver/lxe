@@ -25,7 +25,7 @@ apt-get update
 # install lxe via deb using latest github release
 apt-get install kubernetes-cni socat ebtables -y
 rm lxe*.debian-lxd-snap.deb || true
-wget https://github.com/automaticserver/lxe/releases/download/v0.1.2/lxe_0.1.2.debian-lxd-snap.deb
+wget https://github.com/automaticserver/lxe/releases/download/v0.1.3/lxe_0.1.3.debian-lxd-snap.deb
 dpkg -i lxe*.debian-lxd-snap.deb
 systemctl status lxe | cat
 

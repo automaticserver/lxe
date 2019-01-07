@@ -521,13 +521,6 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	cnt.Image = req.GetConfig().GetImage().GetImage()
 	cnt.Config = make(map[string]string)
 
-	// if the container was moved, we need to clear out these fields
-	// TODO: make the a mapping of device.* fields by key, so it would override existings
-	cnt.Blocks = []device.Block{}
-	cnt.Disks = []device.Disk{}
-	cnt.Nics = []device.Nic{}
-	cnt.Proxies = []device.Proxy{}
-
 	for _, mnt := range req.GetConfig().GetMounts() {
 		// resolve host path symlinks
 		hostPath, err := filepath.EvalSymlinks(mnt.GetHostPath())

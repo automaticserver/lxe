@@ -206,10 +206,10 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 			}
 		}
 		if c.Config[cfgStartedAt] == "" {
-			c.Config[cfgStartedAt] = "0"
+			c.Config[cfgStartedAt] = strconv.FormatInt(time.Time{}.UnixNano, 10)
 		}
 		if c.Config[cfgFinishedAt] == "" {
-			c.Config[cfgFinishedAt] = "0"
+			c.Config[cfgFinishedAt] = strconv.FormatInt(time.Time{}.UnixNano, 10)
 		}
 		c.Config[cfgSchema] = "0.3"
 		return true

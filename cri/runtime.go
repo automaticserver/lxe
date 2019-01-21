@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/pkg/pools"
+	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
@@ -140,7 +141,6 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	sb.Labels = req.GetConfig().GetLabels()
 	sb.Annotations = req.GetConfig().GetAnnotations()
 	sb.Config = map[string]string{}
-	sb.RawLXCOptions = make([]lxf.RawLXCOption, 0)
 
 	if req.GetConfig().GetDnsConfig() != nil {
 		sb.NetworkConfig.Nameservers = req.GetConfig().GetDnsConfig().GetServers()
@@ -152,7 +152,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		string(lxf.NetworkHost) {
 		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
-		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCInclude, s.criConfig.LXEHostnetworkFile)
+		lxf.AppendIfSet(&sb.Config, "raw.lxc", "lxc.include = "+s.criConfig.LXEHostnetworkFile)
 	} else if sb.Annotations[fieldLXEBridge] != "" {
 		// explicit (external managed) bridge requested
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
@@ -219,21 +219,19 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		}
 	}
 
-	// The following fields allow to specify lxc config not directly represented by the PodSpec
-	setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCNamespaces, sb.Annotations[fieldLXENamespaces])
-
-	setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCKernelModules, sb.Annotations[fieldLXEKernelModules])
-
-	for _, mountOption := range strings.Split(sb.Annotations[fieldLXERawMounts], ",") {
-		setRaw(&sb.RawLXCOptions, lxf.CfgRawLXCMounts, strings.TrimSpace(mountOption))
+	// The following fields allow to specify lxd/lxc config not directly represented by the PodSpec
+	var addConfig AdditionalLXDConfig
+	err = yaml.Unmarshal([]byte(sb.Annotations[fieldLXEAdditionalLXDConfig]), &addConfig)
+	if err != nil {
+		return nil, err
 	}
-
-	sb.SecurityNesting = strings.Split(sb.Annotations[fieldLXENesting], ",")
+	for k, v := range addConfig {
+		lxf.AppendIfSet(&sb.Config, k, v)
+	}
 
 	// TODO: Refactor...
 	if req.Config.Linux != nil {
-		err = lxf.SetIfSet(&sb.Config, "user.linux.cgroup_parent", req.Config.Linux.CgroupParent)
-		testErrorEmptyAnnotation(err)
+		lxf.SetIfSet(&sb.Config, "user.linux.cgroup_parent", req.Config.Linux.CgroupParent)
 
 		for key, value := range req.Config.Linux.Sysctls {
 			sb.Config["user.linux.sysctls."+key] = value
@@ -264,17 +262,16 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 					strconv.FormatInt(req.Config.Linux.SecurityContext.RunAsUser.Value, 10)
 			}
 
-			err = lxf.SetIfSet(&sb.Config, "user.linux.security_context.seccomp_profile_path",
+			lxf.SetIfSet(&sb.Config, "user.linux.security_context.seccomp_profile_path",
 				req.Config.Linux.SecurityContext.SeccompProfilePath)
-			testErrorEmptyAnnotation(err)
 
 			if req.Config.Linux.SecurityContext.SelinuxOptions != nil {
 				sci := "user.linux.security_context.namespace_options"
 				sco := req.Config.Linux.SecurityContext.SelinuxOptions
-				testErrorEmptyAnnotation(lxf.SetIfSet(&sb.Config, sci+".role", sco.Role))
-				testErrorEmptyAnnotation(lxf.SetIfSet(&sb.Config, sci+".level", sco.Level))
-				testErrorEmptyAnnotation(lxf.SetIfSet(&sb.Config, sci+".user", sco.User))
-				testErrorEmptyAnnotation(lxf.SetIfSet(&sb.Config, sci+".type", sco.Type))
+				lxf.SetIfSet(&sb.Config, sci+".role", sco.Role)
+				lxf.SetIfSet(&sb.Config, sci+".level", sco.Level)
+				lxf.SetIfSet(&sb.Config, sci+".user", sco.User)
+				lxf.SetIfSet(&sb.Config, sci+".type", sco.Type)
 			}
 		}
 	}
@@ -290,28 +287,6 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	return &rtApi.RunPodSandboxResponse{
 		PodSandboxId: sb.ID,
 	}, nil
-}
-
-// setRaw calls the lxf.SetRaw method and handles logging
-func setRaw(s *[]lxf.RawLXCOption, key, value string) {
-	err := lxf.SetRaw(s, key, value)
-	if err != nil {
-		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Debugf("empty Annotation for %s", serr.Where)
-		} else {
-			logger.Errorf("error occured while adding pod.spec.annotation to raw.lxc: %s", err.Error())
-		}
-	}
-}
-
-func testErrorEmptyAnnotation(err error) {
-	if err != nil {
-		if serr, ok := err.(*lxf.EmptyAnnotationWarning); ok {
-			logger.Debugf("empty Annotation for %s", serr.Where)
-		} else {
-			logger.Errorf("error occurred while adding pod.spec.annotation to raw.lxc: %s", err)
-		}
-	}
 }
 
 // StopPodSandbox stops any running process that is part of the sandbox and

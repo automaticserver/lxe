@@ -15,16 +15,6 @@ type WriteCloserBuffer struct {
 	*bytes.Buffer
 }
 
-// EmptyAnnotationWarning is returned when the annotation given on call for the function
-// is actually empty.
-type EmptyAnnotationWarning struct {
-	Where string
-}
-
-func (e *EmptyAnnotationWarning) Error() string {
-	return fmt.Sprintf("Empty Annotation found for %s", e.Where)
-}
-
 // Close does nothing
 func (m WriteCloserBuffer) Close() error {
 	fmt.Println("closed closer")
@@ -37,22 +27,20 @@ func NewWriteCloserBuffer() *WriteCloserBuffer {
 }
 
 // SetIfSet sets a key in a map[string]string with the value, if the value is not empty
-func SetIfSet(s *map[string]string, where string, what string) error {
-	if what != "" {
-		(*s)[where] = what
-		return nil
+func SetIfSet(s *map[string]string, key, value string) {
+	if value != "" {
+		(*s)[key] = value
 	}
-	return &EmptyAnnotationWarning{where}
 }
 
-// SetRaw takes a key and a value (where, what) and puts them into the RawLXCOptions set
-func SetRaw(s *[]RawLXCOption, key, value string) error {
+// AppendIfSet sets a key in a map[string]string with the value, if the value is not empty. And if there was
+// already a value, append it after a newline
+func AppendIfSet(s *map[string]string, key, value string) {
 	if value != "" {
-		*s = append(*s, RawLXCOption{
-			Option: key,
-			Value:  value,
-		})
-		return nil
+		if (*s)[key] == "" {
+			SetIfSet(s, key, value)
+		} else {
+			SetIfSet(s, key, (*s)[key]+"\n"+value)
+		}
 	}
-	return &EmptyAnnotationWarning{key}
 }

@@ -3,7 +3,6 @@ package lxf
 import (
 	"crypto/md5" // nolint: gosec #nosec (no sensitive data)
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -29,25 +28,12 @@ const (
 	cfgNetworkConfigModeData    = "user.networkconfig.modedata"
 	cfgCloudInitNetworkConfig   = "user.network-config" // write-only field
 	cfgCloudInitVendorData      = "user.vendor-data"    // write-only field
-	cfgKeepSecurityNesting      = "user.security.nesting"
-
-	cfgRawLXC = "raw.lxc"
-
-	// CfgRawLXCInclude is the raw lxc config field name for the include file
-	CfgRawLXCInclude = "lxc.include"
-	// CfgRawLXCNamespaces is the lxc config field name for what namespaces to keep
-	CfgRawLXCNamespaces = "lxc.namespace.keep"
-	// CfgRawLXCKernelModules is the lxc config field name for what kernel modules to load
-	CfgRawLXCKernelModules = "linux.kernel_modules"
-	// CfgRawLXCMounts is the raw key to add lxc mounts. Useful for mounting proc for example,
-	// for nested containers
-	CfgRawLXCMounts = "lxc.mount.auto"
 )
 
 var (
 	sandboxConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgHostname, cfgLogDirectory, cfgCreatedAt,
 		cfgState, cfgIsCRI, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
-		cfgCloudInitVendorData, cfgNetworkConfigModeData, cfgRawLXC).
+		cfgCloudInitVendorData, cfgNetworkConfigModeData).
 		WithReservedPrefixes(cfgLabels, cfgAnnotations)
 )
 
@@ -67,14 +53,9 @@ type Sandbox struct {
 	// State is readonly
 	State     SandboxState
 	CreatedAt time.Time
-	// RawLXCOptions are additional raw.lxc fields
-	RawLXCOptions []RawLXCOption
 	// UsedBy contains the names of the containers using this profile
 	// It is read only.
 	UsedBy []string
-	// SecurityNesting is an array of containerNames that will have the
-	// config key `security.nesting` set to true. Set through annotation
-	SecurityNesting []string
 }
 
 // SandboxMetadata contains common metadata values
@@ -263,7 +244,6 @@ func (l *LXF) saveSandbox(s *Sandbox) error {
 		cfgNetworkConfigNameservers: strings.Join(s.NetworkConfig.Nameservers, ","),
 		cfgNetworkConfigSearches:    strings.Join(s.NetworkConfig.Searches, ","),
 		cfgNetworkConfigMode:        s.NetworkConfig.Mode.toString(),
-		cfgKeepSecurityNesting:      strings.Join(s.SecurityNesting, ","),
 	}
 
 	// write NetworkConfigData as yaml
@@ -352,15 +332,6 @@ manage_etc_hosts: true`, s.Hostname)
 		return err
 	}
 
-	// Apply raw lxc options
-	re := regexp.MustCompile(`\r?\n`)
-	for _, lxcOption := range s.RawLXCOptions {
-		// TODO: these variables are probably not sanitized enough! So far we don't allow newlines
-		if !re.Match([]byte(lxcOption.Option)) && !re.Match([]byte(lxcOption.Value)) {
-			config[cfgRawLXC] += fmt.Sprintf("%s = %s\n", lxcOption.Option, lxcOption.Value)
-		}
-	}
-
 	config[cfgSchema] = SchemaVersionProfile
 	profile := api.ProfilePut{
 		Config:  config,
@@ -412,10 +383,8 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
 	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
 	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
-	s.RawLXCOptions = make([]RawLXCOption, 0)
 	s.State = getSandboxState(p.Config[cfgState])
 	s.CreatedAt = time.Unix(0, createdAt)
-	s.SecurityNesting = strings.Split(p.Config[cfgKeepSecurityNesting], ",")
 
 	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
 	if err != nil {
@@ -443,18 +412,6 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	s.Nics, err = device.GetNicsFromMap(p.Devices)
 	if err != nil {
 		return nil, err
-	}
-
-	// get raw lxc options
-	for _, line := range strings.Split(strings.TrimSuffix(p.Config[cfgRawLXC], "\n"), "\n") {
-		parts := strings.Split(line, "=")
-		if len(parts) != 2 {
-			continue
-		}
-		s.RawLXCOptions = append(s.RawLXCOptions, RawLXCOption{
-			Option: strings.TrimSpace(parts[0]),
-			Value:  strings.TrimSpace(parts[1]),
-		})
 	}
 
 	// get containers using this sandbox

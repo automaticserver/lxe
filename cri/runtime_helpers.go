@@ -12,19 +12,16 @@ import (
 )
 
 const (
-	// The following fields are not covered by PodSpec but sometimes required to be defined
-
 	// fieldLXEBridge is the key name to specify the bridge to be used as parent
+	// TODO: to be removed once specifyable with CNI
 	fieldLXEBridge = "x-lxe-bridge"
-	// fieldLXENamespaces is the key name to specify namespaces
-	fieldLXENamespaces = "x-lxe-namespaces"
-	// fieldLXEKernelModules is the key name to specify kernel modules
-	fieldLXEKernelModules = "x-lxe-kernel-modules"
-	// fieldLXENesting is the key name to specify to allow nesting
-	fieldLXENesting = "x-lxe-nesting"
-	// fieldLXERawMounts is the key name to add raw mounts to the lxc config
-	fieldLXERawMounts = "x-lxe-raw-mounts"
+	// fieldLXEAdditionalLXDConfig is the name of the field which contains various additional lxd config options
+	fieldLXEAdditionalLXDConfig = "x-lxe-additional-lxd-config"
 )
+
+// LXDAdditionalConfig contains additional config options not present in PodSpec
+// Key names and values must match the key names specified by LXD
+type AdditionalLXDConfig map[string]string
 
 func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
 	status := rtApi.ContainerStatus{

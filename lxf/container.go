@@ -317,12 +317,6 @@ func makeContainerConfig(c *Container) map[string]string {
 		config[cfgCloudInitNetworkConfig] = c.CloudInitNetworkConfig
 	}
 
-	for _, containerName := range c.Sandbox.SecurityNesting {
-		if containerName == c.Metadata.Name {
-			config[cfgSecurityNesting] = strconv.FormatBool(true)
-		}
-	}
-
 	return config
 }
 

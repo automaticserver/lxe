@@ -495,14 +495,11 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 			return nil, err
 		}
 
-		optional := (strings.HasPrefix(mnt.GetContainerPath(), "/var/run/") ||
-			(strings.HasPrefix(mnt.GetContainerPath(), "/dev/termination-log")))
-
 		c.Disks = append(c.Disks, device.Disk{
 			Path:     mnt.GetContainerPath(),
 			Source:   hostPath,
 			Readonly: mnt.GetReadonly(),
-			Optional: optional,
+			Optional: false,
 		})
 	}
 
@@ -614,13 +611,13 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 	logger.Debugf("ListContainers triggered: %v", req)
 
 	var response rtApi.ListContainersResponse
-	ctslist, err := s.lxf.ListContainers()
+	cl, err := s.lxf.ListContainers()
 	if err != nil {
 		logger.Errorf("Unable to get list of containers: %v", err)
 		return nil, err
 	}
 
-	for _, c := range ctslist {
+	for _, c := range cl {
 		if req.GetFilter() != nil {
 			filter := req.GetFilter()
 			if filter.GetId() != "" && filter.GetId() != c.ID {

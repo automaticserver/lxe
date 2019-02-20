@@ -3,16 +3,21 @@ package lxf
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
+	"github.com/lxc/lxe/lxf/device"
 	"github.com/lxc/lxe/network"
 )
 
 // NewContainer creates a local representation of a container
 func (l *Client) NewContainer(sandboxID string) (c *Container, err error) {
+	c = &Container{}
 	c.client = l
+
 	c.sandbox, err = l.GetSandbox(sandboxID)
 	if err != nil {
 		return nil, err
@@ -29,12 +34,13 @@ func (l *Client) ListContainers() ([]*Container, error) {
 	if err != nil {
 		return nil, NewContainerError("lxdApi", err)
 	}
+
 	result := []*Container{}
 	for _, ct := range cts {
 		if !IsCRI(ct) {
 			continue
 		}
-		res, err := toContainer(&ct, ETag)
+		res, err := l.toContainer(&ct, ETag)
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +61,7 @@ func (l *Client) GetContainer(id string) (*Container, error) {
 		return nil, NewContainerError(id, fmt.Errorf(ErrorLXDNotFound))
 	}
 
-	return toContainer(ct, ETag)
+	return l.toContainer(ct, ETag)
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
@@ -92,9 +98,6 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
-	// add container to queue in order to recheck if mounts are okay
-	//l.AddMonitorTask(c, "volumes", 0, true)
-
 	s, err := c.Sandbox()
 	if err != nil {
 		return
@@ -115,4 +118,86 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 	default:
 		// nothing to do, all other modes need no help after starting
 	}
+}
+
+// toContainer will convert an lxd container to lxf format
+func (l *Client) toContainer(ct *api.Container, ETag string) (c *Container, err error) {
+	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
+	if err != nil {
+		return nil, err
+	}
+	privileged, err := strconv.ParseBool(ct.Config[cfgSecurityPrivileged])
+	if err != nil {
+		return nil, err
+	}
+	createdAt, err := strconv.ParseInt(ct.Config[cfgCreatedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	startedAt, err := strconv.ParseInt(ct.Config[cfgStartedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	c = &Container{}
+	c.client = l
+
+	c.ID = ct.Name
+	c.ETag = ETag
+	c.Image = ct.Config[cfgVolatileBaseImage]
+	c.Metadata = ContainerMetadata{
+		Name:    ct.Config[cfgMetaName],
+		Attempt: uint32(attempts),
+	}
+	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
+	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
+	c.Config = containerConfigStore.UnreservedMap(ct.Config)
+	c.LogPath = ct.Config[cfgLogPath]
+
+	c.CreatedAt = time.Unix(0, createdAt)
+	c.StartedAt = time.Unix(0, startedAt)
+	c.FinishedAt = time.Unix(0, finishedAt)
+
+	c.Environment = extractEnvVars(ct.Config)
+	c.Privileged = privileged
+	c.CloudInitUserData = ct.Config[cfgCloudInitUserData]
+	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
+	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
+
+	c.Proxies, err = device.GetProxiesFromMap(ct.Devices)
+	if err != nil {
+		return nil, err
+	}
+	c.Disks, err = device.GetDisksFromMap(ct.Devices)
+	if err != nil {
+		return nil, err
+	}
+	c.Blocks, err = device.GetBlocksFromMap(ct.Devices)
+	if err != nil {
+		return nil, err
+	}
+	c.Nics, err = device.GetNicsFromMap(ct.Devices)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range ct.Profiles {
+		if v != defaultProfile {
+			c.Profiles = append(c.Profiles, v)
+		}
+	}
+	if len(c.Profiles) == 0 {
+		return nil, fmt.Errorf("Container '%v' has no sandbox", c.ID)
+	}
+
+	c.State, err = c.getState()
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }

@@ -78,7 +78,8 @@ type Container struct {
 	// State contains the current state of this container
 	State *ContainerState
 	// LogPath TODO, not really in use, can it be removed?
-	LogPath                string
+	LogPath string
+	// CloudInit fields
 	CloudInitUserData      string
 	CloudInitMetaData      string
 	CloudInitNetworkConfig string
@@ -150,11 +151,7 @@ func (c *Container) Sandbox() (*Sandbox, error) {
 
 func (c *Container) getSandbox() (*Sandbox, error) {
 	if len(c.Profiles) > 0 {
-		profile := c.Profiles[0]
-		if profile == "default" {
-			return nil, fmt.Errorf("Container '%v' cannot have default as the only profile", c.ID)
-		}
-		sandbox, err := c.client.GetSandbox(profile)
+		sandbox, err := c.client.GetSandbox(c.Profiles[0])
 		if err != nil {
 			return nil, err
 		}
@@ -200,17 +197,13 @@ func (c *Container) getState() (*ContainerState, error) {
 
 // Apply will save the changes of an existing container
 func (c *Container) Apply() error {
-	s, err := c.Sandbox()
-	if err != nil {
-		return err
-	}
-	switch s.NetworkConfig.Mode {
-	case NetworkHost:
-		if !c.Privileged {
-			return fmt.Errorf("`podSpec.hostNetwork: true` can only be used together with `containerSpec.securityContext.privileged: true`")
-		}
-	default:
-		// do nothing
+	c.validate()
+
+	// A new container gets also some default values
+	// except ID, which is generated inline in unexported method apply()
+	if c.ID == "" {
+		c.Config[cfgState] = ContainerStateCreated.String()
+		c.CreatedAt = time.Now()
 	}
 
 	return c.apply()
@@ -248,6 +241,23 @@ func (c *Container) Stop(timeout int) error {
 // Delete the container
 func (c *Container) Delete() error {
 	return c.client.opwait.DeleteContainer(c.ID)
+}
+
+// validate checks for misconfigurations
+func (c *Container) validate() error {
+	s, err := c.Sandbox()
+	if err != nil {
+		return err
+	}
+	switch s.NetworkConfig.Mode {
+	case NetworkHost:
+		if !c.Privileged {
+			return fmt.Errorf("`podSpec.hostNetwork: true` can only be used together with `containerSpec.securityContext.privileged: true`")
+		}
+	default:
+		// do nothing
+	}
+	return nil
 }
 
 // apply saves the changes to LXD
@@ -289,8 +299,6 @@ func (c *Container) apply() error {
 	if c.ID == "" {
 		// container has to be created
 		c.ID = c.CreateID()
-		c.Config[cfgState] = ContainerStateCreated.String()
-		c.CreatedAt = time.Now()
 		return c.client.opwait.CreateContainer(api.ContainersPost{
 			Name:         c.ID,
 			ContainerPut: contPut,
@@ -305,6 +313,27 @@ func (c *Container) apply() error {
 		return fmt.Errorf("Update container not allowed with empty ETag")
 	}
 	return c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
+}
+
+// CreateID creates a unique container id
+func (c *Container) CreateID() string {
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
+	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
+}
+
+// GetInetAddress returns the IPv4 address of the first matching interface in the parameter list
+// empty string if nothing was found
+func (c *Container) GetInetAddress(ifs []string) string {
+	for _, i := range ifs {
+		if netif, ok := c.State.Network[i]; ok {
+			for _, addr := range netif.Addresses {
+				if addr.Family == "inet" {
+					return addr.Address
+				}
+			}
+		}
+	}
+	return ""
 }
 
 func makeContainerConfig(c *Container) map[string]string {
@@ -365,86 +394,6 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 	return devices, device.AddNicsToMap(devices, c.Nics...)
 }
 
-// toContainer will convert an lxd container to lxf format
-func toContainer(ct *api.Container, ETag string) (*Container, error) {
-	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
-	}
-	privileged, err := strconv.ParseBool(ct.Config[cfgSecurityPrivileged])
-	if err != nil {
-		return nil, err
-	}
-	createdAt, err := strconv.ParseInt(ct.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	startedAt, err := strconv.ParseInt(ct.Config[cfgStartedAt], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	c := &Container{}
-	c.ID = ct.Name
-	c.ETag = ETag
-	c.Metadata = ContainerMetadata{
-		Name:    ct.Config[cfgMetaName],
-		Attempt: uint32(attempts),
-	}
-	c.LogPath = ct.Config[cfgLogPath]
-	c.Image = ct.Config[cfgVolatileBaseImage]
-	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
-	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
-	c.Config = containerConfigStore.UnreservedMap(ct.Config)
-
-	c.CreatedAt = time.Unix(0, createdAt)
-	c.StartedAt = time.Unix(0, startedAt)
-	c.FinishedAt = time.Unix(0, finishedAt)
-
-	c.Environment = extractEnvVars(ct.Config)
-	c.Privileged = privileged
-	c.CloudInitUserData = ct.Config[cfgCloudInitUserData]
-	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
-	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
-
-	c.Proxies, err = device.GetProxiesFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Disks, err = device.GetDisksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Blocks, err = device.GetBlocksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Nics, err = device.GetNicsFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, v := range ct.Profiles {
-		if v != defaultProfile {
-			c.Profiles = append(c.Profiles, v)
-		}
-	}
-	if len(c.Profiles) == 0 {
-		return nil, fmt.Errorf("Container '%v' has no sandbox", c.ID)
-	}
-
-	c.State, err = c.getState()
-	if err != nil {
-		return nil, err
-	}
-
-	return c, nil
-}
-
 // extractEnvVars extracts all the config options that start with "environment."
 // and returns the environment variables + values
 func extractEnvVars(config map[string]string) map[string]string {
@@ -457,25 +406,4 @@ func extractEnvVars(config map[string]string) map[string]string {
 		}
 	}
 	return envVars
-}
-
-// CreateID creates a unique container id
-func (c *Container) CreateID() string {
-	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
-	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
-}
-
-// GetInetAddress returns the IPv4 address of the first matching interface in the parameter list
-// empty string if nothing was found
-func (c *Container) GetInetAddress(ifs []string) string {
-	for _, i := range ifs {
-		if netif, ok := c.State.Network[i]; ok {
-			for _, addr := range netif.Addresses {
-				if addr.Family == "inet" {
-					return addr.Address
-				}
-			}
-		}
-	}
-	return ""
 }

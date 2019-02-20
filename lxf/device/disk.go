@@ -31,11 +31,8 @@ func (d Disk) ToMap() (map[string]string, error) {
 	return def, nil
 }
 
-// GetName will return the path with prefix because it's unique, except for "/" root will be returned
+// GetName will return the path with prefix
 func (d Disk) GetName() string {
-	if d.Path == "/" {
-		return "root"
-	}
 	return diskType + "-" + d.Path
 }
 

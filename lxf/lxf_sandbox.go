@@ -28,11 +28,11 @@ func (l *Client) ListSandboxes() ([]*Sandbox, error) {
 		if !IsCRI(p) {
 			continue
 		}
-		sb, err2 := l.toSandbox(&p, ETag)
-		if err2 != nil {
-			return nil, err2
+		s, err := l.toSandbox(&p, ETag)
+		if err != nil {
+			return nil, err
 		}
-		sandboxes = append(sandboxes, sb)
+		sandboxes = append(sandboxes, s)
 	}
 
 	return sandboxes, nil

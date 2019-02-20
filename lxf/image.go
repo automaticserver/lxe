@@ -8,7 +8,6 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxe/lxf/lxo"
 )
 
 // Image is here to translate the relevant data from lxd image to cri image
@@ -19,7 +18,7 @@ type Image struct {
 }
 
 // PullImage copies the given image from the remote server
-func (l *LXF) PullImage(name string) (string, error) {
+func (l *Client) PullImage(name string) (string, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		return "", err
@@ -44,7 +43,7 @@ func (l *LXF) PullImage(name string) (string, error) {
 		AutoUpdate:  true,  // Maybe bug: currently NOT a technical requirement to know where the source is
 	}
 
-	err = lxo.CopyImage(l.server, imgServer, *image, &args)
+	err = l.opwait.CopyImage(imgServer, *image, &args)
 	if err != nil {
 		return "", fmt.Errorf("unable to pull requested image (%v) from server %v, %v",
 			image, imageID.Remote, err)
@@ -54,7 +53,7 @@ func (l *LXF) PullImage(name string) (string, error) {
 }
 
 // RemoveImage will remove the given alias
-func (l *LXF) RemoveImage(name string) error {
+func (l *Client) RemoveImage(name string) error {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		return err
@@ -68,9 +67,9 @@ func (l *LXF) RemoveImage(name string) error {
 		return err
 	}
 
-	err = lxo.DeleteImage(l.server, hash)
+	err = l.opwait.DeleteImage(hash)
 	if err != nil {
-		if IsErrorNotFound(err) {
+		if err.Error() == ErrorLXDNotFound {
 			return nil
 		}
 		return err
@@ -81,7 +80,7 @@ func (l *LXF) RemoveImage(name string) error {
 
 // Create the specified image alis, update if already exist
 // from github.com/lxc/lxd/lxc/image.go:172 + changes
-func (l *LXF) ensureImageAlias(alias string, fingerprint string) error {
+func (l *Client) ensureImageAlias(alias string, fingerprint string) error {
 	current, err := l.server.GetImageAliases()
 	if err != nil {
 		return err
@@ -120,7 +119,7 @@ func (l *LXF) ensureImageAlias(alias string, fingerprint string) error {
 }
 
 // ListImages will list all local images from the lxd server
-func (l *LXF) ListImages(filter string) ([]Image, error) {
+func (l *Client) ListImages(filter string) ([]Image, error) {
 	var response = []Image{}
 	imglist, err := l.server.GetImages()
 	if err != nil {
@@ -147,11 +146,11 @@ func (l *LXF) ListImages(filter string) ([]Image, error) {
 
 // GetImage will fetch information about the image identified by name
 // It will only work on local images.
-func (l *LXF) GetImage(name string) (*Image, error) {
+func (l *Client) GetImage(name string) (*Image, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "doesn't exist") {
-			return nil, fmt.Errorf(ErrorNotFound)
+			return nil, fmt.Errorf("TODO Image error not found")
 		}
 		return nil, err
 	}
@@ -161,7 +160,7 @@ func (l *LXF) GetImage(name string) (*Image, error) {
 		return nil, fmt.Errorf("failed to resolve image %v, %v", name, err)
 	}
 	if !found {
-		return nil, fmt.Errorf(ErrorNotFound)
+		return nil, fmt.Errorf("TODO Image error not found")
 	}
 
 	img, _, err := l.server.GetImage(hash)
@@ -188,7 +187,7 @@ type FSPoolUsage struct {
 }
 
 // GetFSPoolUsage returns a list of usage information about the used storage pools
-func (l *LXF) GetFSPoolUsage() ([]FSPoolUsage, error) {
+func (l *Client) GetFSPoolUsage() ([]FSPoolUsage, error) {
 	pools, err := l.server.GetStoragePools()
 	if err != nil {
 		return nil, err
@@ -225,14 +224,14 @@ func (i ImageID) Tag() string {
 // Hash returns the hash from the combined local tag or if it's
 // already a hash this one.
 // It it's not found second return will be false and error will be zero.
-func (i ImageID) Hash(l *LXF) (string, bool, error) {
+func (i ImageID) Hash(l *Client) (string, bool, error) {
 	exists, _, err := l.server.GetImageAlias(i.Tag())
 	if err != nil {
-		if IsErrorNotFound(err) {
+		if err.Error() == ErrorLXDNotFound {
 			// it still might be a hash, check that
 			_, _, err = l.server.GetImage(i.Alias)
 			if err != nil {
-				if IsErrorNotFound(err) {
+				if err.Error() == ErrorLXDNotFound {
 					return "", false, nil
 				}
 				return "", false, err
@@ -248,7 +247,7 @@ func (i ImageID) Hash(l *LXF) (string, bool, error) {
 
 // parseImage will take an external image and split it up into
 // remote and tag
-func (l *LXF) parseImage(name string) (ImageID, error) {
+func (l *Client) parseImage(name string) (ImageID, error) {
 	img, err := convertDockerImageNameToLXC(name)
 	if err != nil {
 		return ImageID{}, err

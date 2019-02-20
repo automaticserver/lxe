@@ -6,7 +6,6 @@ import (
 
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf/lxo"
 )
 
 // Schema Version this package is currently expecting
@@ -22,11 +21,11 @@ const (
 
 // MigrationWorkspace manages schema of lxd objects
 type MigrationWorkspace struct {
-	lxf *LXF
+	lxf *Client
 }
 
 // Migration initializes the migration workspace
-func (l *LXF) Migration() *MigrationWorkspace {
+func (l *Client) Migration() *MigrationWorkspace {
 	return &MigrationWorkspace{
 		lxf: l,
 	}
@@ -126,7 +125,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		// If something has changed, update it
 		if counter > 0 {
 			anyChanges = true
-			err := lxo.UpdateContainer(m.lxf.server, c.Name, c.Writable(), ETag)
+			err := m.lxf.opwait.UpdateContainer(c.Name, c.Writable(), ETag)
 			if err != nil {
 				return err
 			}

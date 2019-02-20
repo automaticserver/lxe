@@ -45,6 +45,7 @@ type RawLXCOption struct {
 
 // Sandbox is an abstraction of a CRI PodSandbox saved as a LXD profile
 type Sandbox struct {
+	LXDObject
 	CRIObject
 	Hostname      string
 	LogDirectory  string
@@ -155,7 +156,7 @@ type NetworkConfigEntryPhysicalSubnet struct {
 }
 
 // CreateSandbox will create the provided sandbox and put it into state ready
-func (l *LXF) CreateSandbox(s *Sandbox) error {
+func (l *Client) CreateSandbox(s *Sandbox) error {
 	s.State = SandboxReady
 	s.CreatedAt = time.Now()
 
@@ -176,7 +177,7 @@ func (l *LXF) CreateSandbox(s *Sandbox) error {
 }
 
 // StopSandbox will find a sandbox by id and set it's state to "not ready".
-func (l *LXF) StopSandbox(id string) error {
+func (l *Client) StopSandbox(id string) error {
 	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return err
@@ -187,50 +188,14 @@ func (l *LXF) StopSandbox(id string) error {
 	return err
 }
 
-// GetSandbox will find a sandbox by id and return it.
-func (l *LXF) GetSandbox(id string) (*Sandbox, error) {
-	p, ETag, err := l.server.GetProfile(id)
-	if err != nil {
-		return nil, err
-	}
-
-	if !IsCRI(p) {
-		return nil, fmt.Errorf(ErrorNotFound)
-	}
-	return l.toSandbox(p, ETag)
-}
-
 // DeleteSandbox will delete the given sandbox
-func (l *LXF) DeleteSandbox(name string) error {
+func (l *Client) DeleteSandbox(name string) error {
 	return l.server.DeleteProfile(name)
-}
-
-// ListSandboxes will return a list with all the available sandboxes
-func (l *LXF) ListSandboxes() ([]*Sandbox, error) { // nolint:dupl
-	ETag := ""
-	ps, err := l.server.GetProfiles()
-	if err != nil {
-		return nil, err
-	}
-
-	sandboxes := []*Sandbox{}
-	for _, p := range ps {
-		if !IsCRI(p) {
-			continue
-		}
-		sb, err2 := l.toSandbox(&p, ETag)
-		if err2 != nil {
-			return nil, err2
-		}
-		sandboxes = append(sandboxes, sb)
-	}
-
-	return sandboxes, nil
 }
 
 // saveSandbox will take a sandbox and saves it as a profile
 // if the profile already exists it will be created, otherwise updated
-func (l *LXF) saveSandbox(s *Sandbox) error {
+func (l *Client) saveSandbox(s *Sandbox) error {
 	config := map[string]string{
 		cfgState:                    s.State.String(),
 		cfgIsCRI:                    strconv.FormatBool(true),
@@ -353,7 +318,7 @@ manage_etc_hosts: true`, s.Hostname)
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
+func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
@@ -433,7 +398,7 @@ func (l *LXF) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 }
 
 // GetSandboxIP returns the ip address of the sandbox
-func (l *LXF) GetSandboxIP(s *Sandbox) (string, error) {
+func (l *Client) GetSandboxIP(s *Sandbox) (string, error) {
 	switch s.NetworkConfig.Mode {
 	case NetworkHost:
 		ip, err := utilNet.ChooseHostInterface()
@@ -455,17 +420,20 @@ func (l *LXF) GetSandboxIP(s *Sandbox) (string, error) {
 		for _, cntName := range s.UsedBy {
 			c, err := l.GetContainer(cntName)
 			if err != nil {
-				if IsErrorNotFound(err) {
+				if err.Error() == ErrorLXDNotFound {
+					// TODO: we might get a Container Not Found error (once implemented)
 					continue
 				}
 				return "", fmt.Errorf("looking up container failed: %v", err)
 			}
+
 			// ignore any non-running containers
-			if c.State != ContainerStateRunning {
+			if c.State.Name != ContainerStateRunning {
 				continue
 			}
+
 			// get the ipv4 address of eth0
-			ip := c.GetContainerIPv4Address([]string{network.DefaultInterface})
+			ip := c.GetInetAddress([]string{network.DefaultInterface})
 			if ip != "" {
 				return ip, nil
 			}

@@ -12,7 +12,7 @@ import (
 
 // EnsureBridge ensures the bridge exists with the defined options
 // cidr is an expected ipv4 cidr or can be empty to automatically assign a cidr
-func (l *LXF) EnsureBridge(name, cidr string, nat, createOnly bool) error {
+func (l *Client) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 	var address string
 	if cidr == "" {
 		address = "auto"
@@ -43,7 +43,7 @@ func (l *LXF) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 
 	network, ETag, err := l.server.GetNetwork(name)
 	if err != nil {
-		if IsErrorNotFound(err) {
+		if err.Error() == ErrorLXDNotFound {
 			return l.server.CreateNetwork(api.NetworksPost{
 				Name:       name,
 				Type:       "bridge",
@@ -71,7 +71,7 @@ func (l *LXF) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 
 // FindFreeIP generates a IP within the range of the provided lxd managed bridge which does
 // not exist in the current leases
-func (l *LXF) FindFreeIP(bridge string) (net.IP, error) {
+func (l *Client) FindFreeIP(bridge string) (net.IP, error) {
 	network, _, err := l.server.GetNetwork(bridge)
 	if err != nil {
 		return nil, err

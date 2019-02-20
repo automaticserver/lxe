@@ -64,7 +64,7 @@ func NewServer(criConfig *LXEConfig) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	lxf, err := lxf.New(criConfig.LXDSocket, configPath)
+	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath)
 	if err != nil {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)

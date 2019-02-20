@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/containernetworking/cni/libcni"
-	"github.com/containernetworking/cni/pkg/types/020"
+	types020 "github.com/containernetworking/cni/pkg/types/020"
 	"github.com/lxc/lxd/shared/logger"
 )
 

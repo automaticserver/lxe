@@ -15,12 +15,12 @@ type ImageServer struct {
 	lxdConfig     *config.Config
 	criConfig     *LXEConfig
 	runtimeRemote string
-	lxf           *lxf.LXF
+	lxf           *lxf.Client
 }
 
 // NewImageServer returns a new ImageServer backed by LXD
 // we only need one connection — until we start distinguishing runtime & image service
-func NewImageServer(s *RuntimeServer, lxf *lxf.LXF) (*ImageServer, error) {
+func NewImageServer(s *RuntimeServer, lxf *lxf.Client) (*ImageServer, error) {
 	i := ImageServer{
 		lxdConfig: s.lxdConfig,
 		criConfig: s.criConfig,
@@ -74,7 +74,7 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 
 	img, err := s.lxf.GetImage(req.GetImage().GetImage())
 	if err != nil {
-		if lxf.IsErrorNotFound(err) {
+		if err.Error() == "TODO ERROR TYPE" {
 			return &rtApi.ImageStatusResponse{}, nil
 		}
 		logger.Errorf("failed to get image status %v, %v", req.GetImage().GetImage(), err)

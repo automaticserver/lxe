@@ -34,7 +34,7 @@ type streamService struct {
 // RuntimeServer is the PoC implementation of the CRI RuntimeServer
 type RuntimeServer struct {
 	rtApi.RuntimeServiceServer
-	lxf       *lxf.LXF
+	lxf       *lxf.Client
 	stream    streamService
 	lxdConfig *config.Config
 	criConfig *LXEConfig
@@ -43,7 +43,7 @@ type RuntimeServer struct {
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
 func NewRuntimeServer(
 	criConfig *LXEConfig,
-	streamServerAddr string, lxf *lxf.LXF) (*RuntimeServer, error) {
+	streamServerAddr string, lxf *lxf.Client) (*RuntimeServer, error) {
 	var err error
 
 	runtime := RuntimeServer{
@@ -88,17 +88,6 @@ func NewRuntimeServer(
 		err := runtime.stream.streamServer.Start(true)
 		if err != nil {
 			panic(fmt.Errorf("error serving execs or portforwards: %v", err))
-		}
-	}()
-
-	// schedule rescan for missing volumes
-	go func() {
-		containers, err := lxf.ListContainers()
-		if err != nil {
-			return
-		}
-		for _, c := range containers {
-			lxf.AddMonitorTask(c, "volumes", 0, true)
 		}
 	}()
 
@@ -304,7 +293,7 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 
 	_, err := s.cleanupSandbox(req.PodSandboxId)
 	if err != nil {
-		if lxf.IsErrorNotFound(err) {
+		if err.Error() == "TODO ERROR TYPE" {
 			return &rtApi.StopPodSandboxResponse{}, nil
 		}
 		return nil, err
@@ -319,10 +308,13 @@ func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
 		return nil, err
 	}
 	for _, cnt := range profile.UsedBy {
-		err = s.lxf.StopContainer(cnt, 30)
+		c, err := s.lxf.GetContainer(cnt)
 		if err != nil {
-			logger.Errorf("StopPodSandbox: StopContainer(%v): %v", cnt, err)
-			return nil, fmt.Errorf("Stopping container %s failed, %v", cnt, err)
+			return nil, err
+		}
+		err = c.Stop(30)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -337,14 +329,18 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 
 	profile, err := s.cleanupSandbox(req.PodSandboxId)
 	if err != nil {
-		if lxf.IsErrorNotFound(err) {
+		if err.Error() == "TODO ERROR TYPE" {
 			return &rtApi.RemovePodSandboxResponse{}, nil
 		}
 		return nil, err
 	}
 
 	for _, cnt := range profile.UsedBy {
-		err := s.lxf.DeleteContainer(cnt)
+		c, err := s.lxf.GetContainer(cnt)
+		if err != nil {
+			return nil, err
+		}
+		err = c.Delete()
 		if err != nil {
 			return nil, err
 		}
@@ -434,15 +430,12 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 	response := rtApi.ListPodSandboxResponse{}
 	for _, sb := range sandboxes {
 
-		state := rtApi.PodSandboxState(
-			rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())])
-
 		if req.GetFilter() != nil {
 			filter := req.GetFilter()
 			if filter.GetId() != "" && filter.GetId() != sb.ID {
 				continue
 			}
-			if filter.GetState() != nil && state != filter.GetState().GetState() {
+			if filter.GetState() != nil && filter.GetState().GetState() != stateSandboxAsCri(sb.State) {
 				continue
 			}
 			if !CompareFilterMap(sb.Labels, filter.GetLabelSelector()) {
@@ -450,6 +443,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 			}
 		}
 
+		// TODO: toSandboxCRI()
 		pod := rtApi.PodSandbox{
 			Id:        sb.ID,
 			CreatedAt: sb.CreatedAt.UnixNano(),
@@ -459,7 +453,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 				Namespace: sb.Metadata.Namespace,
 				Uid:       sb.Metadata.UID,
 			},
-			State:       state,
+			State:       stateSandboxAsCri(sb.State),
 			Labels:      sb.Labels,
 			Annotations: sb.Annotations,
 		}
@@ -476,25 +470,22 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
 	logger.Debugf("CreateContainer triggered: %v", req)
 
-	sandbox, err := s.lxf.GetSandbox(req.GetPodSandboxId())
+	c, err := s.lxf.NewContainer(req.GetPodSandboxId())
 	if err != nil {
+		logger.Errorf("CreateContainer: could not find sandbox with id: %v", req.GetPodSandboxId())
 		return nil, err
 	}
 
-	cnt := &lxf.Container{
-		Sandbox: sandbox,
-	}
-
-	cnt.Labels = req.GetConfig().GetLabels()
-	cnt.Annotations = req.GetConfig().GetAnnotations()
+	c.Labels = req.GetConfig().GetLabels()
+	c.Annotations = req.GetConfig().GetAnnotations()
 	meta := req.GetConfig().GetMetadata()
-	cnt.Metadata = lxf.ContainerMetadata{
+	c.Metadata = lxf.ContainerMetadata{
 		Attempt: meta.GetAttempt(),
 		Name:    meta.GetName(),
 	}
-	cnt.LogPath = req.GetConfig().GetLogPath()
-	cnt.Image = req.GetConfig().GetImage().GetImage()
-	cnt.Config = make(map[string]string)
+	c.LogPath = req.GetConfig().GetLogPath()
+	c.Image = req.GetConfig().GetImage().GetImage()
+	c.Config = make(map[string]string)
 
 	for _, mnt := range req.GetConfig().GetMounts() {
 		// resolve host path symlinks
@@ -507,7 +498,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 		optional := (strings.HasPrefix(mnt.GetContainerPath(), "/var/run/") ||
 			(strings.HasPrefix(mnt.GetContainerPath(), "/dev/termination-log")))
 
-		cnt.Disks = append(cnt.Disks, device.Disk{
+		c.Disks = append(c.Disks, device.Disk{
 			Path:     mnt.GetContainerPath(),
 			Source:   hostPath,
 			Readonly: mnt.GetReadonly(),
@@ -516,45 +507,45 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	}
 
 	for _, dev := range req.GetConfig().GetDevices() {
-		cnt.Blocks = append(cnt.Blocks, device.Block{
+		c.Blocks = append(c.Blocks, device.Block{
 			Source: dev.GetHostPath(),
 			Path:   dev.GetContainerPath(),
 		})
 	}
 
-	cnt.Privileged = req.GetConfig().GetLinux().GetSecurityContext().GetPrivileged()
+	c.Privileged = req.GetConfig().GetLinux().GetSecurityContext().GetPrivileged()
 
 	// get metadata & cloud-init if defined
 	otherEnvs := make(map[string]string)
 	for _, env := range req.GetConfig().GetEnvs() {
 		if env.GetKey() == "user-data" {
-			cnt.CloudInitUserData = env.GetValue()
+			c.CloudInitUserData = env.GetValue()
 		} else if env.GetKey() == "meta-data" {
-			cnt.CloudInitMetaData = env.GetValue()
+			c.CloudInitMetaData = env.GetValue()
 		} else if env.GetKey() == "network-config" {
-			cnt.CloudInitNetworkConfig = env.GetValue()
+			c.CloudInitNetworkConfig = env.GetValue()
 		} else {
 			otherEnvs[env.GetKey()] = env.GetValue()
 		}
 	}
-	cnt.EnvironmentVars = otherEnvs
+	c.Environment = otherEnvs
 
 	// append other envs below metadata
-	if cnt.CloudInitMetaData != "" && len(otherEnvs) > 0 {
-		cnt.CloudInitMetaData += "\n"
+	if c.CloudInitMetaData != "" && len(otherEnvs) > 0 {
+		c.CloudInitMetaData += "\n"
 	}
 
-	err = s.lxf.CreateContainer(cnt)
+	err = c.Apply()
 	if err != nil {
-		logger.Errorf("failed to create container: %v", err)
+		logger.Errorf("CreateContainer: failed to create container: %v", err)
 		return nil, err
 	}
 
-	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", cnt.ID, req.GetPodSandboxId())
+	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", c.ID, req.GetPodSandboxId())
 
 	return &rtApi.CreateContainerResponse{
-		ContainerId: cnt.ID,
-	}, err
+		ContainerId: c.ID,
+	}, nil
 }
 
 // StartContainer starts the container.
@@ -564,36 +555,14 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 	logger.Infof("StartContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StartContainer triggered: %v", req)
 
-	err := s.lxf.StartContainer(req.ContainerId)
+	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
 		return nil, err
 	}
-
-	// Wait until container has a ip address
-	// This was an attempt to omit the `Ip: "127.0.0.1"` in the status return, since kubelet is not happy when it takes too
-	// long to assign an IP to a sandbox, but this didn't help. kubelet stops it right after container finally obtained one
-	// c, err := s.lxf.GetContainer(req.ContainerId)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// tick := time.Tick(500 * time.Millisecond)
-	// timeout := time.After(30 * time.Second)
-	// for {
-	// 	select {
-	// 	case <-tick:
-	// 		ip, err := s.lxf.GetSandboxIP(c.Sandbox)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		if ip != "" {
-	// 			return &rtApi.StartContainerResponse{}, nil
-	// 		}
-	// 	case <-timeout:
-	// 		err := fmt.Errorf("Container %v hasn't got IP within time", req.ContainerId)
-	// 		logger.Error(err.Error())
-	// 		return nil, err
-	// 	}
-	// }
+	err = c.Start()
+	if err != nil {
+		return nil, err
+	}
 
 	return &rtApi.StartContainerResponse{}, nil
 }
@@ -607,7 +576,11 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("StopContainer triggered: %v", req)
 
-	err := s.lxf.StopContainer(req.GetContainerId(), int(req.GetTimeout()))
+	c, err := s.lxf.GetContainer(req.GetContainerId())
+	if err != nil {
+		return nil, err
+	}
+	err = c.Stop(int(req.Timeout))
 	if err != nil {
 		return nil, err
 	}
@@ -624,7 +597,11 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 	logger.Infof("RemoveContainer called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("RemoveContainer triggered: %v", req)
 
-	err := s.lxf.DeleteContainer(req.GetContainerId())
+	c, err := s.lxf.GetContainer(req.GetContainerId())
+	if err != nil {
+		return nil, err
+	}
+	err = c.Delete()
 	if err != nil {
 		return nil, err
 	}
@@ -643,28 +620,24 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 		return nil, err
 	}
 
-	for _, cinfo := range ctslist {
-		rspCnt := toCriContainer(cinfo)
-		rspCnt.Image = &rtApi.ImageSpec{Image: cinfo.Image}
-		rspCnt.ImageRef = cinfo.Image
-
+	for _, c := range ctslist {
 		if req.GetFilter() != nil {
 			filter := req.GetFilter()
-			if filter.GetId() != "" && filter.GetId() != cinfo.ID {
+			if filter.GetId() != "" && filter.GetId() != c.ID {
 				continue
 			}
-			if filter.GetState() != nil && filter.GetState().GetState() != rspCnt.State {
+			if filter.GetState() != nil && filter.GetState().GetState() != stateContainerAsCri(c.State.Name) {
 				continue
 			}
-			if filter.GetPodSandboxId() != "" && filter.GetPodSandboxId() != cinfo.Sandbox.ID {
+			if filter.GetPodSandboxId() != "" && filter.GetPodSandboxId() != c.Profiles[0] {
 				continue
 			}
-			if !CompareFilterMap(rspCnt.Labels, filter.GetLabelSelector()) {
+			if !CompareFilterMap(c.Labels, filter.GetLabelSelector()) {
 				continue
 			}
 		}
 
-		response.Containers = append(response.Containers, rspCnt)
+		response.Containers = append(response.Containers, toCriContainer(c))
 	}
 
 	logger.Debugf("ListContainers responded: %v", response)
@@ -677,9 +650,9 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 	//logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
 	logger.Debugf("ContainerStatus triggered: %v", req)
 
-	ct, err := s.lxf.GetContainer(req.ContainerId)
+	ct, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("Unable to GetContainerStatus(%q) containers: %v", req.ContainerId, err)
+		logger.Errorf("Unable to GetContainerStatus(%q) containers: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
@@ -712,10 +685,10 @@ func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.Reopen
 func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest) (*rtApi.ExecSyncResponse, error) {
 	logger.Debugf("ExecSync triggered: %v", req)
 
-	out, err := s.lxf.ExecSync(req.ContainerId, req.Cmd)
+	out, err := s.lxf.ExecSync(req.GetContainerId(), req.Cmd)
 	if err != nil {
 		logger.Errorf("exec-sync '%v' failed to execute on container '%v', %v",
-			strings.Join(req.Cmd, " "), req.ContainerId, err)
+			strings.Join(req.Cmd, " "), req.GetContainerId(), err)
 		return nil, err
 	}
 
@@ -846,9 +819,9 @@ func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerS
 	logger.Debugf("ContainerStats triggered: %v", req)
 	response := rtApi.ContainerStatsResponse{}
 
-	cntStat, err := s.lxf.GetContainer(req.ContainerId)
+	cntStat, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("ContainerStats: GetContainerState(%v): %v", req.ContainerId, err)
+		logger.Errorf("ContainerStats: GetContainerState(%v): %v", req.GetContainerId(), err)
 		return nil, err
 	}
 	response.Stats = toCriStats(cntStat)

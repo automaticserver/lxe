@@ -19,26 +19,25 @@ const (
 	fieldLXEAdditionalLXDConfig = "x-lxe-additional-lxd-config"
 )
 
-// LXDAdditionalConfig contains additional config options not present in PodSpec
+// AdditionalLXDConfig contains additional config options not present in PodSpec
 // Key names and values must match the key names specified by LXD
 type AdditionalLXDConfig map[string]string
 
-func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
+func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    ct.Metadata.Name,
-			Attempt: uint32(ct.Metadata.Attempt),
+			Name:    c.Metadata.Name,
+			Attempt: uint32(c.Metadata.Attempt),
 		},
-		State: rtApi.ContainerState(
-			rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(ct.State.String())]),
-		CreatedAt:   ct.CreatedAt.UnixNano(),
-		StartedAt:   ct.StartedAt.UnixNano(),
-		FinishedAt:  ct.FinishedAt.UnixNano(),
-		Id:          ct.ID,
-		Labels:      ct.Labels,
-		Annotations: ct.Annotations,
-		Image:       &rtApi.ImageSpec{Image: ct.Image},
-		ImageRef:    ct.Image,
+		State:       stateContainerAsCri(c.State.Name),
+		CreatedAt:   c.CreatedAt.UnixNano(),
+		StartedAt:   c.StartedAt.UnixNano(),
+		FinishedAt:  c.FinishedAt.UnixNano(),
+		Id:          c.ID,
+		Labels:      c.Labels,
+		Annotations: c.Annotations,
+		Image:       &rtApi.ImageSpec{Image: c.Image},
+		ImageRef:    c.Image,
 	}
 
 	return &rtApi.ContainerStatusResponse{
@@ -47,29 +46,29 @@ func toCriStatusResponse(ct *lxf.Container) *rtApi.ContainerStatusResponse {
 	}
 }
 
-func toCriStats(lxdStats *lxf.Container) *rtApi.ContainerStats {
+func toCriStats(c *lxf.Container) *rtApi.ContainerStats {
 	now := time.Now().UnixNano()
 
 	cpu := rtApi.CpuUsage{
 		Timestamp:            now,
-		UsageCoreNanoSeconds: &rtApi.UInt64Value{Value: lxdStats.Stats.CPUUsage},
+		UsageCoreNanoSeconds: &rtApi.UInt64Value{Value: c.State.Stats.CPUUsage},
 	}
 	memory := rtApi.MemoryUsage{
 		Timestamp:       now,
-		WorkingSetBytes: &rtApi.UInt64Value{Value: lxdStats.Stats.MemoryUsage},
+		WorkingSetBytes: &rtApi.UInt64Value{Value: c.State.Stats.MemoryUsage},
 	}
 	disk := rtApi.FilesystemUsage{
 		Timestamp: now,
-		UsedBytes: &rtApi.UInt64Value{Value: lxdStats.Stats.FilesystemUsage},
+		UsedBytes: &rtApi.UInt64Value{Value: c.State.Stats.FilesystemUsage},
 	}
 	attribs := rtApi.ContainerAttributes{
-		Id: lxdStats.ID,
+		Id: c.ID,
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    lxdStats.Metadata.Name,
-			Attempt: uint32(lxdStats.Metadata.Attempt),
+			Name:    c.Metadata.Name,
+			Attempt: uint32(c.Metadata.Attempt),
 		},
-		Labels:      lxdStats.Labels,
-		Annotations: lxdStats.Annotations,
+		Labels:      c.Labels,
+		Annotations: c.Annotations,
 	}
 
 	response := rtApi.ContainerStats{
@@ -81,20 +80,33 @@ func toCriStats(lxdStats *lxf.Container) *rtApi.ContainerStats {
 	return &response
 }
 
-func toCriContainer(ct *lxf.Container) *rtApi.Container {
+func toCriContainer(c *lxf.Container) *rtApi.Container {
+
 	return &rtApi.Container{
-		Id:           ct.ID,
-		PodSandboxId: ct.Sandbox.ID,
-		CreatedAt:    ct.CreatedAt.UnixNano(),
-		State: rtApi.ContainerState(
-			rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(ct.State.String())]),
+		Id:           c.ID,
+		PodSandboxId: c.Profiles[0],
+		Image:        &rtApi.ImageSpec{Image: c.Image},
+		ImageRef:     c.Image,
+		CreatedAt:    c.CreatedAt.UnixNano(),
+		State:        stateContainerAsCri(c.State.Name),
 		Metadata: &rtApi.ContainerMetadata{
-			Name:    ct.Metadata.Name,
-			Attempt: uint32(ct.Metadata.Attempt),
+			Name:    c.Metadata.Name,
+			Attempt: uint32(c.Metadata.Attempt),
 		},
-		Labels:      ct.Labels,
-		Annotations: ct.Annotations,
+		Labels:      c.Labels,
+		Annotations: c.Annotations,
 	}
+	// TODO: more fields?
+}
+
+func stateContainerAsCri(s lxf.ContainerStateName) rtApi.ContainerState {
+	return rtApi.ContainerState(
+		rtApi.ContainerState_value["CONTAINER_"+strings.ToUpper(s.String())])
+}
+
+func stateSandboxAsCri(s lxf.SandboxState) rtApi.PodSandboxState {
+	return rtApi.PodSandboxState(
+		rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(s.String())])
 }
 
 func nameSpaceOptionToString(no rtApi.NamespaceMode) string {

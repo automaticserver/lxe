@@ -8,7 +8,6 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxe/lxf/lxo"
 )
 
 // ExecResponse returns the stdout and err from an exec call
@@ -19,13 +18,13 @@ type ExecResponse struct {
 }
 
 // ExecSync runs a command on a container and blocks till it's finished
-func (l *LXF) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
+func (l *Client) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 	tempStderr := NewWriteCloserBuffer()
 	tempStdout := NewWriteCloserBuffer()
 
 	dataDone := make(chan bool)
 
-	op, err := lxo.ExecContainer(l.server, cid, lxdApi.ContainerExecPost{
+	op, err := l.opwait.ExecContainer(cid, lxdApi.ContainerExecPost{
 		Command:     cmd,
 		Interactive: false,
 		Width:       0,
@@ -59,7 +58,7 @@ func (l *LXF) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 // streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible
 // to provide a sink which doesn't block.
-func (l *LXF) Exec(cid string, cmd []string,
+func (l *Client) Exec(cid string, cmd []string,
 	stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
 
 	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface

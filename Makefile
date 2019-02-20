@@ -16,26 +16,15 @@ GO111MODULE=on
 all: build test lint
 
 .PHONY: build
-build: mod version
+build: version
 	go build -v $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
 
 .PHONY: clean
 clean: package-clean
 	rm -r bin || true
 
-.PHONY: mod
-mod:
-	go mod download
-	go mod tidy
-	go mod vendor
-	go mod verify
-
-.PHONY: mod-update
-mod-update:
-	go get -u all
-
 .PHONY: debug
-debug: mod version
+debug: version
 	go build -v -tags logdebug $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
 
 bin/gometalinter:

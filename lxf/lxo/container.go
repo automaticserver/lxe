@@ -10,7 +10,7 @@ import (
 // StopContainer will try to stop the container with provided name.
 // It will retry for half a minute and return success when it's stopped.
 // It will also return success when the container does not exist.
-func StopContainer(server lxd.ContainerServer, id string, timeout, retries int) error {
+func (l *LXO) StopContainer(id string, timeout, retries int) error {
 	ETag := ""
 	var lastErr error
 	for i := 1; i <= retries; i++ {
@@ -19,7 +19,7 @@ func StopContainer(server lxd.ContainerServer, id string, timeout, retries int) 
 			Timeout: timeout,
 			Force:   i == retries,
 		}
-		op, err := server.UpdateContainerState(id, lxdReq, ETag)
+		op, err := l.server.UpdateContainerState(id, lxdReq, ETag)
 		if err != nil {
 			if err.Error() == "not found" { // it's not around, that's ok with us
 				return nil
@@ -39,13 +39,13 @@ func StopContainer(server lxd.ContainerServer, id string, timeout, retries int) 
 
 // StartContainer will start the container and wait till operation is done or
 // return an error
-func StartContainer(server lxd.ContainerServer, id string) error {
+func (l *LXO) StartContainer(id string) error {
 	ETag := ""
 	lxdReq := api.ContainerStatePut{
 		Action:  "start",
 		Timeout: -1,
 	}
-	op, err := server.UpdateContainerState(id, lxdReq, ETag)
+	op, err := l.server.UpdateContainerState(id, lxdReq, ETag)
 	if err != nil {
 		return err
 	}
@@ -55,8 +55,8 @@ func StartContainer(server lxd.ContainerServer, id string) error {
 
 // CreateContainer will create the container and wait till operation is done or
 // return an error
-func CreateContainer(server lxd.ContainerServer, container api.ContainersPost) error {
-	op, err := server.CreateContainer(container)
+func (l *LXO) CreateContainer(container api.ContainersPost) error {
+	op, err := l.server.CreateContainer(container)
 	if err != nil {
 		return err
 	}
@@ -65,8 +65,8 @@ func CreateContainer(server lxd.ContainerServer, container api.ContainersPost) e
 
 // UpdateContainer will create the container and wait till operation is done or
 // return an error
-func UpdateContainer(server lxd.ContainerServer, id string, container api.ContainerPut, ETag string) error {
-	op, err := server.UpdateContainer(id, container, ETag)
+func (l *LXO) UpdateContainer(id string, container api.ContainerPut, ETag string) error {
+	op, err := l.server.UpdateContainer(id, container, ETag)
 	if err != nil {
 		return err
 	}
@@ -75,8 +75,8 @@ func UpdateContainer(server lxd.ContainerServer, id string, container api.Contai
 
 // DeleteContainer will delete the container and wait till operation is done or
 // return an error
-func DeleteContainer(server lxd.ContainerServer, id string) error {
-	op, err := server.DeleteContainer(id)
+func (l *LXO) DeleteContainer(id string) error {
+	op, err := l.server.DeleteContainer(id)
 	if err != nil {
 		return err
 	}
@@ -85,8 +85,8 @@ func DeleteContainer(server lxd.ContainerServer, id string) error {
 
 // ExecContainer runs a command on a container and wait till operation is done or
 // return an error
-func ExecContainer(server lxd.ContainerServer, id string, containerExec api.ContainerExecPost, execArgs *lxd.ContainerExecArgs) (lxd.Operation, error) {
-	op, err := server.ExecContainer(id, containerExec, execArgs)
+func (l *LXO) ExecContainer(id string, containerExec api.ContainerExecPost, execArgs *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	op, err := l.server.ExecContainer(id, containerExec, execArgs)
 	if err != nil {
 		return op, err
 	}

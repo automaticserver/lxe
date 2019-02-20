@@ -22,7 +22,6 @@ const (
 
 // CRIObject contains common properties of containers and sandboxes
 type CRIObject struct {
-	LXDObject
 	// Labels and Annotations to be saved provided by CRI
 	Labels      map[string]string
 	Annotations map[string]string

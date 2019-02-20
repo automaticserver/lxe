@@ -27,7 +27,7 @@ func (l *Client) ListContainers() ([]*Container, error) {
 	ETag := ""
 	cts, err := l.server.GetContainers()
 	if err != nil {
-		return nil, err
+		return nil, NewContainerError("lxdApi", err)
 	}
 	result := []*Container{}
 	for _, ct := range cts {
@@ -48,11 +48,11 @@ func (l *Client) ListContainers() ([]*Container, error) {
 func (l *Client) GetContainer(id string) (*Container, error) {
 	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
-		return nil, err
+		return nil, NewContainerError(id, err)
 	}
 
 	if !IsCRI(ct) {
-		return nil, fmt.Errorf("TODO: container not found")
+		return nil, NewContainerError(id, fmt.Errorf(ErrorLXDNotFound))
 	}
 
 	return toContainer(ct, ETag)

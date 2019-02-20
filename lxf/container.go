@@ -25,6 +25,9 @@ const (
 	cfgEnvironmentPrefix  = "environment"
 	cfgAutoStartOnBoot    = "boot.autostart"
 	cfgVolatile           = "volatile"
+
+	rootDevice     = "root"
+	defaultProfile = "default"
 )
 
 var (
@@ -171,10 +174,9 @@ func (c *Container) getState() (*ContainerState, error) {
 	cs.Pid = state.Pid
 	cs.Network = state.Network
 	cs.Stats = ContainerStats{
-		CPUUsage:    uint64(state.CPU.Usage),
-		MemoryUsage: uint64(state.Memory.Usage),
-		// TODO: "root" is a magic constant
-		FilesystemUsage: uint64(state.Disk["root"].Usage),
+		CPUUsage:        uint64(state.CPU.Usage),
+		MemoryUsage:     uint64(state.Memory.Usage),
+		FilesystemUsage: uint64(state.Disk[rootDevice].Usage),
 	}
 
 	// Map status code of LXD to CRI
@@ -279,8 +281,7 @@ func (c *Container) apply() error {
 
 	config[cfgSchema] = SchemaVersionContainer
 	contPut := api.ContainerPut{
-		// TODO: magic constant
-		Profiles: []string{c.Profiles[0], "default"},
+		Profiles: []string{c.Profiles[0], defaultProfile},
 		Config:   config,
 		Devices:  devices,
 	}
@@ -428,8 +429,7 @@ func toContainer(ct *api.Container, ETag string) (*Container, error) {
 	}
 
 	for _, v := range ct.Profiles {
-		// TODO: magic constant
-		if v != "default" {
+		if v != defaultProfile {
 			c.Profiles = append(c.Profiles, v)
 		}
 	}

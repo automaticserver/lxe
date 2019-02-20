@@ -150,7 +150,7 @@ func (l *Client) GetImage(name string) (*Image, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "doesn't exist") {
-			return nil, fmt.Errorf("TODO Image error not found")
+			return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
 		}
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func (l *Client) GetImage(name string) (*Image, error) {
 		return nil, fmt.Errorf("failed to resolve image %v, %v", name, err)
 	}
 	if !found {
-		return nil, fmt.Errorf("TODO Image error not found")
+		return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
 	}
 
 	img, _, err := l.server.GetImage(hash)

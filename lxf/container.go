@@ -16,15 +16,12 @@ import (
 const (
 	cfgLogPath            = "user.log_path"
 	cfgSecurityPrivileged = "security.privileged"
-	cfgSecurityNesting    = "security.nesting"
-	cfgVolatileBaseImage  = "volatile.base_image"
+	cfgVolatileBaseImage  = cfgVolatile + ".base_image"
 	cfgStartedAt          = "user.started_at"
 	cfgFinishedAt         = "user.finished_at"
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
-	cfgAutoStartOnBoot    = "boot.autostart"
-	cfgVolatile           = "volatile"
 
 	rootDevice     = "root"
 	defaultProfile = "default"
@@ -32,22 +29,21 @@ const (
 
 var (
 	containerConfigStore = NewConfigStore().WithReserved(
-		cfgSchema,
-		cfgLogPath,
-		cfgIsCRI,
-		cfgSecurityPrivileged,
-		cfgSecurityNesting,
-		cfgMetaName,
-		cfgMetaAttempt,
-		cfgCreatedAt,
-		cfgStartedAt,
-		cfgCloudInitUserData,
-		cfgCloudInitMetaData,
-		cfgCloudInitNetworkConfig,
+		append([]string{
+			cfgLogPath,
+			cfgSecurityPrivileged,
+			cfgStartedAt,
+			cfgFinishedAt,
+			cfgCloudInitUserData,
+			cfgCloudInitMetaData,
+			cfgCloudInitNetworkConfig,
+		}, reservedConfigCRI...,
+		)...,
 	).WithReservedPrefixes(
-		cfgLabels,
-		cfgAnnotations,
-		cfgVolatile,
+		append([]string{
+			cfgEnvironmentPrefix,
+		}, reservedConfigPrefixesCRI...,
+		)...,
 	)
 )
 
@@ -58,7 +54,7 @@ type Container struct {
 	// Profiles of the container. First entry is always the sandbox profile
 	// The default profile is always excluded and managed according to the settings automatically
 	Profiles []string
-	// Image defines the image to be used, can be the hash or local alias
+	// Image defines the image to use, can be the hash or local alias
 	Image string
 	// Privileged defines if the container is run privileged
 	Privileged bool
@@ -69,15 +65,13 @@ type Container struct {
 	CRIObject
 	// Metadata contains user defined data
 	Metadata ContainerMetadata
-	// CreatedAt is when the container was created
-	CreatedAt time.Time
 	// StartedAt is when the container was started
 	StartedAt time.Time
 	// FinishedAt is when the container was exited
 	FinishedAt time.Time
 	// State contains the current state of this container
 	State *ContainerState
-	// LogPath TODO, not really in use, can it be removed?
+	// LogPath TODO, to be implemented?
 	LogPath string
 	// CloudInit fields
 	CloudInitUserData      string
@@ -195,9 +189,12 @@ func (c *Container) getState() (*ContainerState, error) {
 	return cs, nil
 }
 
-// Apply will save the changes of an existing container
+// Apply will save the changes of a container
 func (c *Container) Apply() error {
-	c.validate()
+	err := c.validate()
+	if err != nil {
+		return err
+	}
 
 	// A new container gets also some default values
 	// except ID, which is generated inline in unexported method apply()
@@ -206,36 +203,35 @@ func (c *Container) Apply() error {
 		c.CreatedAt = time.Now()
 	}
 
+	if c.State == nil {
+		c.State = &ContainerState{}
+	}
+
 	return c.apply()
 }
 
 // Start the container
 func (c *Container) Start() error {
-	err := c.client.opwait.StartContainer(c.ID)
+	// delete created mark if exists, so next stopping state can be exited
+	delete(c.Config, cfgState)
+	c.StartedAt = time.Now()
+	err := c.apply()
 	if err != nil {
 		return err
 	}
-
-	// delete created mark if exists, so next stopping state can be exited
-	delete(c.Config, cfgState)
-	// and add started time
-	c.StartedAt = time.Now()
-
-	return c.apply()
+	return c.client.opwait.StartContainer(c.ID)
 }
 
 // Stop will try to stop the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
-// If it's not deleted after 30 seconds it will return an error (might be way to low).
+// If it's not deleted within timeout it will return an error.
 func (c *Container) Stop(timeout int) error {
-	err := c.client.opwait.StopContainer(c.ID, timeout, 2)
+	c.FinishedAt = time.Now()
+	err := c.apply()
 	if err != nil {
 		return err
 	}
-
-	c.FinishedAt = time.Now()
-
-	return c.apply()
+	return c.client.opwait.StopContainer(c.ID, timeout, 2)
 }
 
 // Delete the container

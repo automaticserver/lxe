@@ -116,7 +116,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	logger.Debugf("RunPodSandbox triggered: %v", req)
 
 	var err error
-	sb := &lxf.Sandbox{}
+	sb := s.lxf.NewSandbox()
 
 	sb.Hostname = req.GetConfig().GetHostname()
 	sb.LogDirectory = req.GetConfig().GetLogDirectory()
@@ -155,7 +155,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		// default is to use the predefined lxd bridge managed by lxe
 		randIP, err := s.lxf.FindFreeIP(LXEBridge)
 		if err != nil {
-			logger.Errorf("unable to find a free ip: %v", err)
+			logger.Errorf("RunPodSandbox: SandboxName %v unable to find a free ip: %v", req.GetConfig().GetMetadata().GetName(), err)
 			return nil, err
 		}
 		sb.NetworkConfig.Mode = lxf.NetworkBridged
@@ -212,6 +212,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 	var addConfig AdditionalLXDConfig
 	err = yaml.Unmarshal([]byte(sb.Annotations[fieldLXEAdditionalLXDConfig]), &addConfig)
 	if err != nil {
+		logger.Errorf("RunPodSandbox: SandboxName %v Unmarshal additional LXD config: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err
 	}
 	for k, v := range addConfig {
@@ -265,9 +266,9 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		}
 	}
 
-	err = s.lxf.CreateSandbox(sb)
+	err = sb.Apply()
 	if err != nil {
-		logger.Errorf("failed to create sandbox, %v", err)
+		logger.Errorf("RunPodSandbox: SandboxName %v failed to create sandbox: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err
 	}
 
@@ -291,34 +292,28 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 	logger.Infof("StopPodSandbox called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("StopPodSandbox triggered: %v", req)
 
-	_, err := s.cleanupSandbox(req.PodSandboxId)
+	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
-		if err.Error() == "TODO ERROR TYPE" {
-			return &rtApi.StopPodSandboxResponse{}, nil
-		}
+		logger.Errorf("StopPodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
+	err = s.stopContainers(sb)
+	if err != nil {
+		// if err.Error() == "TODO ERROR TYPE" {
+		// 	return &rtApi.StopPodSandboxResponse{}, nil
+		// }
+		return nil, err
+	}
+
+	err = sb.Stop()
+	if err != nil {
+		logger.Errorf("StopPodSandbox: SandboxID %v Trying to stop: %v", req.GetPodSandboxId(), err)
+		return nil, err
+	}
+
+	logger.Infof("StopPodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
 	return &rtApi.StopPodSandboxResponse{}, nil
-}
-
-func (s RuntimeServer) cleanupSandbox(name string) (*lxf.Sandbox, error) {
-	profile, err := s.lxf.GetSandbox(name)
-	if err != nil {
-		return nil, err
-	}
-	for _, cnt := range profile.UsedBy {
-		c, err := s.lxf.GetContainer(cnt)
-		if err != nil {
-			return nil, err
-		}
-		err = c.Stop(30)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return profile, s.lxf.StopSandbox(name)
 }
 
 // RemovePodSandbox removes the sandbox.
@@ -327,31 +322,59 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	logger.Infof("RemovePodSandbox called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("RemovePodSandbox triggered: %v", req)
 
-	profile, err := s.cleanupSandbox(req.PodSandboxId)
+	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
-		if err.Error() == "TODO ERROR TYPE" {
-			return &rtApi.RemovePodSandboxResponse{}, nil
-		}
+		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
+		return nil, err
+	}
+	err = s.stopContainers(sb)
+	if err != nil {
+		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
+		return nil, err
+	}
+	err = s.deleteContainers(sb)
+	if err != nil {
+		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
-	for _, cnt := range profile.UsedBy {
-		c, err := s.lxf.GetContainer(cnt)
+	err = sb.Delete()
+	if err != nil {
+		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete: %v", req.GetPodSandboxId(), err)
+		return nil, err
+	}
+
+	logger.Infof("RemovePodSandbox successful: SandboxID %v", req.GetPodSandboxId())
+
+	return &rtApi.RemovePodSandboxResponse{}, nil
+}
+
+func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
+	cl, err := sb.Containers()
+	if err != nil {
+		return err
+	}
+	for _, c := range cl {
+		err = c.Stop(30)
 		if err != nil {
-			return nil, err
+			return err
 		}
+	}
+	return nil
+}
+
+func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
+	cl, err := sb.Containers()
+	if err != nil {
+		return err
+	}
+	for _, c := range cl {
 		err = c.Delete()
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
-
-	err = s.lxf.DeleteSandbox(req.GetPodSandboxId())
-	if err != nil {
-		logger.Errorf("RemovePodSandbox: DeleteProfile(%v): %v", req.GetPodSandboxId(), err)
-		return nil, err
-	}
-	return &rtApi.RemovePodSandboxResponse{}, nil
+	return nil
 }
 
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
@@ -360,9 +383,9 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	//logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
 	logger.Debugf("PodSandboxStatus triggered: %v", req)
 
-	sb, err := s.lxf.GetSandbox(req.PodSandboxId)
+	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
-		logger.Errorf("PodSandboxStatus: GetProfile(%v):  %v", req, err)
+		logger.Errorf("PodSandboxStatus: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
@@ -379,8 +402,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 			Labels:      sb.Labels,
 			Annotations: sb.Annotations,
 			CreatedAt:   sb.CreatedAt.UnixNano(),
-			State: rtApi.PodSandboxState(
-				rtApi.PodSandboxState_value["SANDBOX_"+strings.ToUpper(sb.State.String())]),
+			State:       stateSandboxAsCri(sb.State),
 			Network: &rtApi.PodSandboxNetworkStatus{
 				Ip: "",
 			},
@@ -404,10 +426,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		}
 	}
 
-	ip, err := s.lxf.GetSandboxIP(sb)
-	if err != nil {
-		logger.Errorf("could not look up sandbox ip: %v", err)
-	}
+	ip := sb.GetInetAddress()
 	if ip != "" {
 		response.Status.Network.Ip = ip
 	}
@@ -423,7 +442,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 
 	sandboxes, err := s.lxf.ListSandboxes()
 	if err != nil {
-		logger.Errorf("ListSandbox(%v): %v", req, err)
+		logger.Errorf("ListPodSandbox: Trying to list sandbox: %v", err)
 		return nil, err
 	}
 
@@ -470,11 +489,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
 	logger.Debugf("CreateContainer triggered: %v", req)
 
-	c, err := s.lxf.NewContainer(req.GetPodSandboxId())
-	if err != nil {
-		logger.Errorf("CreateContainer: could not find sandbox with id: %v", req.GetPodSandboxId())
-		return nil, err
-	}
+	c := s.lxf.NewContainer(req.GetPodSandboxId())
 
 	c.Labels = req.GetConfig().GetLabels()
 	c.Annotations = req.GetConfig().GetAnnotations()
@@ -491,7 +506,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 		// resolve host path symlinks
 		hostPath, err := filepath.EvalSymlinks(mnt.GetHostPath())
 		if err != nil {
-			logger.Errorf("CreateContainer: could not eval symlink (%v): %v", req, err)
+			logger.Errorf("CreateContainer: ContainerName %v could not eval symlink: %v", req.GetConfig().GetMetadata().GetName(), err)
 			return nil, err
 		}
 
@@ -532,9 +547,9 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 		c.CloudInitMetaData += "\n"
 	}
 
-	err = c.Apply()
+	err := c.Apply()
 	if err != nil {
-		logger.Errorf("CreateContainer: failed to create container: %v", err)
+		logger.Errorf("CreateContainer: ContainerName %v trying to create container: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err
 	}
 
@@ -554,12 +569,16 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
+		logger.Errorf("StartContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 	err = c.Start()
 	if err != nil {
+		logger.Errorf("StartContainer: ContainerID %v trying to start container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
+
+	logger.Infof("StartContainer successful: ContainerID %v", c.ID)
 
 	return &rtApi.StartContainerResponse{}, nil
 }
@@ -575,12 +594,16 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
+		logger.Errorf("StopContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 	err = c.Stop(int(req.Timeout))
 	if err != nil {
+		logger.Errorf("StopContainer: ContainerID %v trying to stop container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
+
+	logger.Infof("StopContainer successful: ContainerID %v", c.ID)
 
 	return &rtApi.StopContainerResponse{}, nil
 }
@@ -596,12 +619,16 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
+		logger.Errorf("RemoveContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 	err = c.Delete()
 	if err != nil {
+		logger.Errorf("RemoveContainer: ContainerID %v trying to remove container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
+
+	logger.Infof("RemoveContainer successful: ContainerID %v", c.ID)
 
 	return &rtApi.RemoveContainerResponse{}, nil
 }
@@ -613,7 +640,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 	var response rtApi.ListContainersResponse
 	cl, err := s.lxf.ListContainers()
 	if err != nil {
-		logger.Errorf("Unable to get list of containers: %v", err)
+		logger.Errorf("ListContainers: trying to get container list: %v", err)
 		return nil, err
 	}
 
@@ -649,7 +676,7 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 
 	ct, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("Unable to GetContainerStatus(%q) containers: %v", req.GetContainerId(), err)
+		logger.Errorf("ContainerStatus: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
@@ -684,8 +711,7 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 
 	out, err := s.lxf.ExecSync(req.GetContainerId(), req.Cmd)
 	if err != nil {
-		logger.Errorf("exec-sync '%v' failed to execute on container '%v', %v",
-			strings.Join(req.Cmd, " "), req.GetContainerId(), err)
+		logger.Errorf("ExecSync: ContainerID %v trying to exec '%v': %v", req.GetContainerId(), strings.Join(req.Cmd, " "), err)
 		return nil, err
 	}
 
@@ -702,7 +728,8 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 
 	resp, err := s.stream.streamServer.GetExec(req)
 	if err != nil {
-		return nil, fmt.Errorf("unable to prepare exec endpoint")
+		logger.Errorf("Exec: ContainerID %v preparing exec endpoint: %v", req.GetContainerId(), err)
+		return nil, err
 	}
 
 	logger.Debugf("Exec responded: %v", resp)
@@ -740,11 +767,14 @@ func (s RuntimeServer) PortForward(ctx context.Context, req *rtApi.PortForwardRe
 
 	resp, err = s.stream.streamServer.GetPortForward(req)
 	if err != nil {
-		return nil, fmt.Errorf("unable to prepare portforward endpoint")
+		logger.Errorf("PortForward: preparing pendpoint: %v", err)
+		return nil, err
 	}
 
 	return resp, nil
 }
+
+// TODO: extract streamService in own file
 
 func (ss streamService) PortForward(podSandboxID string, port int32, stream io.ReadWriteCloser) error {
 	pod, err := ss.runtimeServer.PodSandboxStatus(nil, &rtApi.PodSandboxStatusRequest{PodSandboxId: podSandboxID})
@@ -790,7 +820,8 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	// when the command (socat) exits.
 	inPipe, err := command.StdinPipe()
 	if err != nil {
-		return fmt.Errorf("unable to do port forwarding: error creating stdin pipe: %v", err)
+		logger.Errorf("PortForward: unable to do port forwarding: %v", err)
+		return err
 	}
 	go func() {
 		_, err = pools.Copy(inPipe, stream)
@@ -818,7 +849,7 @@ func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerS
 
 	cntStat, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("ContainerStats: GetContainerState(%v): %v", req.GetContainerId(), err)
+		logger.Errorf("ContainerStats: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 	response.Stats = toCriStats(cntStat)
@@ -838,7 +869,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 	if req.Filter != nil && req.Filter.Id != "" {
 		c, err := s.lxf.GetContainer(req.Filter.Id)
 		if err != nil {
-			logger.Errorf("ListContainerStats: ContainerStats(%v): %v", req.Filter.Id, err)
+			logger.Errorf("ListContainerStats: ContainerID %v trying to get container: %v", req.GetFilter().GetId(), err)
 			return nil, err
 		}
 		response.Stats = append(response.Stats, toCriStats(c))
@@ -847,7 +878,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 
 	cts, err := s.lxf.ListContainers()
 	if err != nil {
-		logger.Errorf("ContainerStats: list containers failed, %v", err)
+		logger.Errorf("ListContainerStats: trying to list containers: %v", err)
 		return nil, err
 	}
 
@@ -878,19 +909,17 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context,
 // Status returns the status of the runtime.
 func (s RuntimeServer) Status(ctx context.Context, req *rtApi.StatusRequest) (*rtApi.StatusResponse, error) {
 	logger.Debugf("Status triggered: %v", req)
-	// Use vendored strings
-	runtimeReadyConditionString := rtApi.RuntimeReady
-	networkReadyConditionString := rtApi.NetworkReady
 
+	// TODO: actually check services!
 	response := &rtApi.StatusResponse{
 		Status: &rtApi.RuntimeStatus{
 			Conditions: []*rtApi.RuntimeCondition{
 				{
-					Type:   runtimeReadyConditionString,
+					Type:   rtApi.RuntimeReady,
 					Status: true,
 				},
 				{
-					Type:   networkReadyConditionString,
+					Type:   rtApi.NetworkReady,
 					Status: true,
 				},
 			},

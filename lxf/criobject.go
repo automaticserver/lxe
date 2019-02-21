@@ -2,6 +2,7 @@ package lxf
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/lxc/lxd/shared/api"
 )
@@ -9,15 +10,30 @@ import (
 // nolint: gosec #nosec (no sensitive data)
 
 const (
-	cfgIsCRI       = "user.cri"
-	cfgLabels      = "user.labels"
-	cfgAnnotations = "user.annotations"
-	cfgState       = "user.state"
+	cfgIsCRI         = "user.cri"
+	cfgLabels        = "user.labels"
+	cfgAnnotations   = "user.annotations"
+	cfgState         = "user.state"
+	cfgMetadata      = "user.metadata"
+	cfgMetaAttempt   = cfgMetadata + ".attempt"
+	cfgMetaName      = cfgMetadata + ".name"
+	cfgMetaNamespace = cfgMetadata + ".namespace"
+	cfgMetaUID       = cfgMetadata + ".uid"
+	cfgVolatile      = "volatile"
+)
 
-	cfgMetaAttempt   = "user.metadata.attempt"
-	cfgMetaName      = "user.metadata.name"
-	cfgMetaNamespace = "user.metadata.namespace"
-	cfgMetaUID       = "user.metadata.uid"
+var (
+	reservedConfigCRI = []string{
+		cfgSchema,
+		cfgIsCRI,
+		cfgCreatedAt,
+	}
+	reservedConfigPrefixesCRI = []string{
+		cfgVolatile,
+		cfgLabels,
+		cfgAnnotations,
+		cfgMetadata,
+	}
 )
 
 // CRIObject contains common properties of containers and sandboxes
@@ -25,6 +41,8 @@ type CRIObject struct {
 	// Labels and Annotations to be saved provided by CRI
 	Labels      map[string]string
 	Annotations map[string]string
+	// CreatedAt is when the resource was created
+	CreatedAt time.Time
 }
 
 // IsCRI checks if a object is a cri object

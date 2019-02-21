@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/ghodss/yaml"
-	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
@@ -18,46 +17,68 @@ import (
 )
 
 const (
-	cfgHostname     = "user.host_name"
-	cfgLogDirectory = "user.log_directory"
-	cfgCreatedAt    = "user.created_at"
-
-	cfgNetworkConfigNameservers = "user.networkconfig.nameservers"
-	cfgNetworkConfigSearches    = "user.networkconfig.searches"
-	cfgNetworkConfigMode        = "user.networkconfig.mode"
-	cfgNetworkConfigModeData    = "user.networkconfig.modedata"
+	cfgHostname                 = "user.host_name"
+	cfgLogDirectory             = "user.log_directory"
+	cfgCreatedAt                = "user.created_at"
+	cfgNetworkConfig            = "user.networkconfig"
+	cfgNetworkConfigNameservers = cfgNetworkConfig + ".nameservers"
+	cfgNetworkConfigSearches    = cfgNetworkConfig + ".searches"
+	cfgNetworkConfigMode        = cfgNetworkConfig + ".mode"
+	cfgNetworkConfigModeData    = cfgNetworkConfig + ".modedata"
 	cfgCloudInitNetworkConfig   = "user.network-config" // write-only field
 	cfgCloudInitVendorData      = "user.vendor-data"    // write-only field
 )
 
 var (
-	sandboxConfigStore = NewConfigStore().WithReserved(cfgSchema, cfgHostname, cfgLogDirectory, cfgCreatedAt,
-		cfgState, cfgIsCRI, cfgMetaAttempt, cfgMetaName, cfgMetaNamespace, cfgMetaUID, cfgCloudInitNetworkConfig,
-		cfgCloudInitVendorData, cfgNetworkConfigModeData).
-		WithReservedPrefixes(cfgLabels, cfgAnnotations)
+	sandboxConfigStore = NewConfigStore().WithReserved(
+		append([]string{
+			cfgLogDirectory,
+			cfgState,
+			cfgHostname,
+			cfgCloudInitNetworkConfig,
+			cfgCloudInitVendorData,
+			cfgNetworkConfigModeData,
+		}, reservedConfigCRI...,
+		)...,
+	).WithReservedPrefixes(
+		reservedConfigPrefixesCRI...,
+	)
 )
-
-// RawLXCOption contains a single option plus its value
-type RawLXCOption struct {
-	Option string
-	Value  string
-}
 
 // Sandbox is an abstraction of a CRI PodSandbox saved as a LXD profile
 type Sandbox struct {
+	// LXDObject inherits common CRI fields
 	LXDObject
-	CRIObject
-	Hostname      string
-	LogDirectory  string
-	Metadata      SandboxMetadata
-	NetworkConfig NetworkConfig
-	// State is readonly
-	State     SandboxState
-	CreatedAt time.Time
 	// UsedBy contains the names of the containers using this profile
 	// It is read only.
 	UsedBy []string
+
+	// CRIObject inherits common CRI fields
+	CRIObject
+	// Metadata contains user defined data
+	Metadata SandboxMetadata
+	// Hostname to be set for containers if defined
+	Hostname string
+	// NetworkConfig to be applied for the sandbox and it's containers
+	NetworkConfig NetworkConfig
+	// State contains the current state of this sandbox
+	State SandboxState
+	// LogDirectory TODO, to be implemented?
+	LogDirectory string
+
+	// sandbox is the parent sandbox of this container
+	containers []*Container
 }
+
+// SandboxState defines the state of the sandbox
+type SandboxState string
+
+// These are valid sandbox statuses. SandboxReady means a resource is in the condition.
+// SandboxNotReady means a resource is not in the condition.
+const (
+	SandboxNotReady SandboxState = "notready"
+	SandboxReady    SandboxState = "ready"
+)
 
 // SandboxMetadata contains common metadata values
 type SandboxMetadata struct {
@@ -91,7 +112,7 @@ const (
 	NetworkNone    NetworkMode = "none"
 )
 
-func (s NetworkMode) toString() string {
+func (s NetworkMode) String() string {
 	return string(s)
 }
 
@@ -103,16 +124,6 @@ func getNetworkMode(str string) NetworkMode {
 	}
 	return NetworkNone
 }
-
-// SandboxState defines the state of the sandbox, default is SandboxReady
-type SandboxState string
-
-// These are valid sandbox statuses. SandboxReady means a resource is in the condition.
-// SandboxNotReady means a resource is not in the condition.
-const (
-	SandboxNotReady SandboxState = "notready"
-	SandboxReady    SandboxState = "ready"
-)
 
 func (s SandboxState) String() string {
 	return string(s)
@@ -155,10 +166,40 @@ type NetworkConfigEntryPhysicalSubnet struct {
 	Type string `json:"type"`
 }
 
-// CreateSandbox will create the provided sandbox and put it into state ready
-func (l *Client) CreateSandbox(s *Sandbox) error {
-	s.State = SandboxReady
-	s.CreatedAt = time.Now()
+// Containers looks up all assigned containters
+// Implemented as lazy loading, and returns same result if already looked up
+// Not thread safe! But it's expected the pointers stay in the same routine
+func (s *Sandbox) Containers() ([]*Container, error) {
+	var err error
+	if s.containers == nil {
+		s.containers, err = s.getContainers()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.containers, nil
+}
+
+func (s *Sandbox) getContainers() ([]*Container, error) {
+	var cl []*Container
+	for _, cntName := range s.UsedBy {
+		c, err := s.client.GetContainer(cntName)
+		if err != nil {
+			return nil, err
+		}
+		cl = append(cl, c)
+	}
+	return cl, nil
+}
+
+// Apply will save the changes of a sandbox
+func (s *Sandbox) Apply() error {
+	// A new sandbox gets also some default values
+	// except ID, which is generated inline in unexported method apply()
+	if s.ID == "" {
+		s.State = SandboxReady
+		s.CreatedAt = time.Now()
+	}
 
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode {
@@ -173,29 +214,23 @@ func (l *Client) CreateSandbox(s *Sandbox) error {
 		// do nothing
 	}
 
-	return l.saveSandbox(s)
+	return s.apply()
 }
 
-// StopSandbox will find a sandbox by id and set it's state to "not ready".
-func (l *Client) StopSandbox(id string) error {
-	p, ETag, err := l.server.GetProfile(id)
-	if err != nil {
-		return err
-	}
+// Stop set the sandbox state to SandboxNotReady
+func (s *Sandbox) Stop() error {
+	s.State = SandboxNotReady
 
-	p.Config[cfgState] = SandboxNotReady.String()
-	err = l.server.UpdateProfile(id, p.Writable(), ETag)
-	return err
+	return s.apply()
 }
 
-// DeleteSandbox will delete the given sandbox
-func (l *Client) DeleteSandbox(name string) error {
-	return l.server.DeleteProfile(name)
+// Delete will delete the given sandbox
+func (s *Sandbox) Delete() error {
+	return s.client.server.DeleteProfile(s.ID)
 }
 
-// saveSandbox will take a sandbox and saves it as a profile
-// if the profile already exists it will be created, otherwise updated
-func (l *Client) saveSandbox(s *Sandbox) error {
+// apply saves the changes to LXD
+func (s *Sandbox) apply() error {
 	config := map[string]string{
 		cfgState:                    s.State.String(),
 		cfgIsCRI:                    strconv.FormatBool(true),
@@ -208,7 +243,7 @@ func (l *Client) saveSandbox(s *Sandbox) error {
 		cfgLogDirectory:             s.LogDirectory,
 		cfgNetworkConfigNameservers: strings.Join(s.NetworkConfig.Nameservers, ","),
 		cfgNetworkConfigSearches:    strings.Join(s.NetworkConfig.Searches, ","),
-		cfgNetworkConfigMode:        s.NetworkConfig.Mode.toString(),
+		cfgNetworkConfigMode:        s.NetworkConfig.Mode.String(),
 	}
 
 	// write NetworkConfigData as yaml
@@ -305,7 +340,7 @@ manage_etc_hosts: true`, s.Hostname)
 
 	if s.ID == "" { // profile has to be created
 		s.ID = s.CreateID()
-		return l.server.CreateProfile(api.ProfilesPost{
+		return s.client.server.CreateProfile(api.ProfilesPost{
 			Name:       s.ID,
 			ProfilePut: profile,
 		})
@@ -314,119 +349,44 @@ manage_etc_hosts: true`, s.Hostname)
 	if s.ETag == "" {
 		return fmt.Errorf("Update profile not allowed with empty ETag")
 	}
-	return l.server.UpdateProfile(s.ID, profile, s.ETag)
+	return s.client.server.UpdateProfile(s.ID, profile, s.ETag)
 }
 
-// toSandbox will take a profile and convert it to a sandbox.
-func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
-	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
-	}
-	createdAt, err := strconv.ParseInt(p.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	s := &Sandbox{}
-	s.ID = p.Name
-	s.ETag = ETag
-	s.Hostname = p.Config[cfgHostname]
-	s.LogDirectory = p.Config[cfgLogDirectory]
-	s.Metadata = SandboxMetadata{
-		Attempt:   uint32(attempts),
-		Name:      p.Config[cfgMetaName],
-		Namespace: p.Config[cfgMetaNamespace],
-		UID:       p.Config[cfgMetaUID],
-	}
-	s.NetworkConfig = NetworkConfig{
-		Nameservers: strings.Split(p.Config[cfgNetworkConfigNameservers], ","),
-		Searches:    strings.Split(p.Config[cfgNetworkConfigSearches], ","),
-		Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
-		// ModeData:    make(map[string]string),
-	}
-	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
-	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
-	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
-	s.State = getSandboxState(p.Config[cfgState])
-	s.CreatedAt = time.Unix(0, createdAt)
-
-	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
-	if err != nil {
-		return nil, err
-	}
-	if len(s.NetworkConfig.ModeData) == 0 {
-		s.NetworkConfig.ModeData = make(map[string]string)
-	}
-
-	// Hint: cloud-init network config & vendor-data are write-only so not read
-
-	// get devices
-	s.Proxies, err = device.GetProxiesFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Disks, err = device.GetDisksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Blocks, err = device.GetBlocksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Nics, err = device.GetNicsFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	// get containers using this sandbox
-	for _, name := range p.UsedBy {
-		name = strings.TrimPrefix(name, "/1.0/containers/")
-		name = strings.TrimSuffix(name, "?project=default")
-		if strings.Contains(name, shared.SnapshotDelimiter) {
-			// this is a snapshot so dont parse this entry
-			continue
-		}
-		c, _, err := l.server.GetContainer(name)
-		if err != nil {
-			return nil, err
-		}
-		s.UsedBy = append(s.UsedBy, c.Name)
-	}
-
-	return s, nil
+// CreateID creates a unique profile id
+func (s *Sandbox) CreateID() string {
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
+	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
-// GetSandboxIP returns the ip address of the sandbox
-func (l *Client) GetSandboxIP(s *Sandbox) (string, error) {
+// GetInetAddress returns the ip address of the sandbox
+// empty string if nothing was found
+func (s *Sandbox) GetInetAddress() string {
 	switch s.NetworkConfig.Mode {
 	case NetworkHost:
 		ip, err := utilNet.ChooseHostInterface()
 		if err != nil {
-			return "", fmt.Errorf("looking up host interface failed: %v", err)
+			// TODO: additional debug output
+			return ""
 		}
-		return ip.String(), nil
+		return ip.String()
 	case NetworkNone:
-		return "", nil
+		return ""
 	case NetworkBridged:
 		// if statically assigned ip exists, return that
 		if s.NetworkConfig.ModeData["interface-address"] != "" {
-			return s.NetworkConfig.ModeData["interface-address"], nil
+			return s.NetworkConfig.ModeData["interface-address"]
 		}
+		// otherwise look into containers (= fallthrough)
 		fallthrough
 	case NetworkCNI:
 		fallthrough
 	default:
-		for _, cntName := range s.UsedBy {
-			c, err := l.GetContainer(cntName)
-			if err != nil {
-				if err.Error() == ErrorLXDNotFound {
-					// TODO: we might get a Container Not Found error (once implemented)
-					continue
-				}
-				return "", fmt.Errorf("looking up container failed: %v", err)
-			}
-
+		cl, err := s.Containers()
+		if err != nil {
+			// TODO: additional debug output
+			return ""
+		}
+		for _, c := range cl {
 			// ignore any non-running containers
 			if c.State.Name != ContainerStateRunning {
 				continue
@@ -435,15 +395,9 @@ func (l *Client) GetSandboxIP(s *Sandbox) (string, error) {
 			// get the ipv4 address of eth0
 			ip := c.GetInetAddress([]string{network.DefaultInterface})
 			if ip != "" {
-				return ip, nil
+				return ip
 			}
 		}
 	}
-	return "", nil
-}
-
-// CreateID creates a unique profile id
-func (s *Sandbox) CreateID() string {
-	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
-	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
+	return ""
 }

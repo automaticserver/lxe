@@ -62,7 +62,7 @@ require (
 	gopkg.in/macaroon.v2 v2.0.0 // indirect
 	gopkg.in/retry.v1 v1.0.2 // indirect
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5 // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
+	gopkg.in/yaml.v2 v2.2.2
 	// These imports do not use SemVer (Tags are "kubernetes-1.12.1")
 	k8s.io/api v0.0.0-20181130031204-d04500c8c3dd // indirect
 	k8s.io/apimachinery v0.0.0-20181220065808-98853ca904e8

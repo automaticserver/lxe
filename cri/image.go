@@ -74,8 +74,11 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 
 	img, err := s.lxf.GetImage(req.GetImage().GetImage())
 	if err != nil {
-		if err.Error() == "TODO ERROR TYPE" {
-			return &rtApi.ImageStatusResponse{}, nil
+		// If the image can't be found, return no error with empty result
+		if serr, ok := err.(lxf.ImageError); ok {
+			if serr.Error() == lxf.ErrorLXDNotFound {
+				return &rtApi.ImageStatusResponse{}, nil
+			}
 		}
 		logger.Errorf("failed to get image status %v, %v", req.GetImage().GetImage(), err)
 		return nil, err

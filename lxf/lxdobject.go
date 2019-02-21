@@ -2,17 +2,6 @@ package lxf
 
 import "github.com/lxc/lxe/lxf/device"
 
-// nolint: gosec #nosec (no sensitive data)
-
-const (
-	// ErrorMultipleFound is the error string in cases, where it's unexpected to find multiple
-	// ErrorMultipleFound = "multiple found"
-
-	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found
-	// Unfortunately there is no constant in the lxd source we could've used
-	ErrorLXDNotFound = "not found"
-)
-
 // LXDObject contains common properties of containers and sandboxes without CRI influence
 type LXDObject struct {
 	// client holds the lxf.Client representing as a lxd client

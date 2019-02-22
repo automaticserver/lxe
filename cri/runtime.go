@@ -43,7 +43,8 @@ type RuntimeServer struct {
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
 func NewRuntimeServer(
 	criConfig *LXEConfig,
-	streamServerAddr string, lxf *lxf.Client) (*RuntimeServer, error) {
+	streamServerAddr string,
+	lxf *lxf.Client) (*RuntimeServer, error) {
 	var err error
 
 	runtime := RuntimeServer{

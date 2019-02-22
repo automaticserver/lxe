@@ -72,7 +72,8 @@ func NewServer(criConfig *LXEConfig) *Server {
 	logger.Infof("Connected to LXD via %q", criConfig.LXDSocket)
 
 	// Ensure profile and container schema migration
-	err = lxf.Migration().Ensure()
+	migration := lxf.Migration()
+	err = migration.Ensure()
 	if err != nil {
 		logger.Critf("Migration failed: %v", err)
 		os.Exit(shared.ExitCodeSchemaMigrationFailure)

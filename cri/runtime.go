@@ -194,7 +194,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 			}
 			containerIP := "127.0.0.1"
 
-			sb.Proxies = append(sb.Proxies, device.Proxy{
+			sb.Proxies.Add(device.Proxy{
 				Listen: device.ProxyEndpoint{
 					Protocol: protocol,
 					Address:  hostIP,
@@ -241,7 +241,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 			}
 
 			if req.Config.Linux.SecurityContext.ReadonlyRootfs {
-				sb.Disks = append(sb.Disks, device.Disk{
+				sb.Disks.Add(device.Disk{
 					Path:     "/",
 					Readonly: true,
 					Pool:     "default",
@@ -520,7 +520,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 			return nil, err
 		}
 
-		c.Disks = append(c.Disks, device.Disk{
+		c.Disks.Add(device.Disk{
 			Path:     mnt.GetContainerPath(),
 			Source:   hostPath,
 			Readonly: mnt.GetReadonly(),
@@ -529,7 +529,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	}
 
 	for _, dev := range req.GetConfig().GetDevices() {
-		c.Blocks = append(c.Blocks, device.Block{
+		c.Blocks.Add(device.Block{
 			Source: dev.GetHostPath(),
 			Path:   dev.GetContainerPath(),
 		})

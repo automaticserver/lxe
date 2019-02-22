@@ -15,10 +15,10 @@ type LXDObject struct {
 	// trying to modify the state
 	//StateETag string
 	// Devices
-	Proxies []device.Proxy
-	Disks   []device.Disk
-	Blocks  []device.Block
-	Nics    []device.Nic
+	Proxies device.Proxies
+	Disks   device.Disks
+	Blocks  device.Blocks
+	Nics    device.Nics
 	// Config contains options not provided by a own property
 	Config map[string]string
 }

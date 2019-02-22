@@ -189,14 +189,14 @@ func (c *Container) getState() (*ContainerState, error) {
 	return cs, nil
 }
 
-// refresh loads the container again from LXD, usually required to obtain new ETag after change
-// Also means new pointer
+// refresh loads the container again from LXD to obtain new ETag
+// Will not load new data!
 func (c *Container) refresh() error {
-	var err error
-	c, err = c.client.GetContainer(c.ID)
+	r, err := c.client.GetContainer(c.ID, true)
 	if err != nil {
 		return err
 	}
+	c.ETag = r.ETag
 	return nil
 }
 

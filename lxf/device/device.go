@@ -47,15 +47,15 @@ func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 }
 
 // GetDisksFromMap will // GetProxiesFromMap will add the proxies to the map
-func GetDisksFromMap(maps map[string]map[string]string) ([]Disk, error) { // nolint: dupl
-	disks := []Disk{}
+func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // nolint: dupl
+	disks := Disks{}
 	for _, m := range maps {
 		if m["type"] == diskType {
 			p, err := DiskFromMap(m)
 			if err != nil {
 				return nil, err
 			}
-			disks = append(disks, p)
+			disks.Add(p)
 		}
 	}
 	return disks, nil
@@ -71,15 +71,15 @@ func AddProxiesToMap(m map[string]map[string]string, proxies ...Proxy) error {
 }
 
 // GetProxiesFromMap will read all proxy devices from the map
-func GetProxiesFromMap(maps map[string]map[string]string) ([]Proxy, error) { // nolint: dupl
-	proxies := []Proxy{}
+func GetProxiesFromMap(maps map[string]map[string]string) (Proxies, error) { // nolint: dupl
+	proxies := Proxies{}
 	for _, m := range maps {
 		if m["type"] == proxyType {
 			p, err := ProxyFromMap(m)
 			if err != nil {
 				return nil, err
 			}
-			proxies = append(proxies, p)
+			proxies.Add(p)
 		}
 	}
 	return proxies, nil
@@ -96,14 +96,14 @@ func AddBlocksToMap(m map[string]map[string]string, blocks ...Block) error {
 
 // GetBlocksFromMap will read all proxy devices from the map
 func GetBlocksFromMap(maps map[string]map[string]string) ([]Block, error) { // nolint: dupl
-	blocks := []Block{}
+	blocks := Blocks{}
 	for _, m := range maps {
 		if m["type"] == blockType {
 			p, err := BlockFromMap(m)
 			if err != nil {
 				return nil, err
 			}
-			blocks = append(blocks, p)
+			blocks.Add(p)
 		}
 	}
 	return blocks, nil
@@ -120,14 +120,14 @@ func AddNicsToMap(m map[string]map[string]string, nics ...Nic) error {
 
 // GetNicsFromMap will read all proxy devices from the map
 func GetNicsFromMap(maps map[string]map[string]string) ([]Nic, error) { // nolint: dupl
-	nics := []Nic{}
+	nics := Nics{}
 	for _, m := range maps {
 		if m["type"] == nicType {
 			p, err := NicFromMap(m)
 			if err != nil {
 				return nil, err
 			}
-			nics = append(nics, p)
+			nics.Add(p)
 		}
 	}
 	return nics, nil

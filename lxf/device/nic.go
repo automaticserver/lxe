@@ -1,6 +1,23 @@
 package device
 
-const nicType = "nic"
+const (
+	nicType = "nic"
+)
+
+// Nics holds slice of Nic
+// Use it if you want to Add() a entry non-conflicting (see Add())
+type Nics []Nic
+
+// Add a entry to the slice, if the name is the same, will overwrite the existing entry
+func (ns Nics) Add(n Nic) {
+	for k, e := range ns {
+		if e.GetName() == n.GetName() {
+			ns[k] = n
+			return
+		}
+	}
+	ns = append(ns, n)
+}
 
 // Nic device
 type Nic struct {

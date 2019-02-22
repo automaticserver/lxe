@@ -6,15 +6,6 @@ import (
 	"strings"
 )
 
-// Proxy defines a lxd proxy device
-type Proxy struct {
-	Listen      ProxyEndpoint
-	Destination ProxyEndpoint
-}
-
-// Protocol defines the type of a proxy endpoint
-type Protocol int
-
 const (
 	proxyType = "proxy"
 	// ProtocolUndefined is not a valid protocol
@@ -24,6 +15,30 @@ const (
 	// ProtocolUDP makes the endpoint use UDP
 	ProtocolUDP = Protocol(2)
 )
+
+// Proxies holds slice of Proxy
+// Use it if you want to Add() a entry non-conflicting (see Add())
+type Proxies []Proxy
+
+// Add a entry to the slice, if the name is the same, will overwrite the existing entry
+func (ps Proxies) Add(p Proxy) {
+	for k, e := range ps {
+		if e.GetName() == p.GetName() {
+			ps[k] = p
+			return
+		}
+	}
+	ps = append(ps, p)
+}
+
+// Proxy defines a lxd proxy device
+type Proxy struct {
+	Listen      ProxyEndpoint
+	Destination ProxyEndpoint
+}
+
+// Protocol defines the type of a proxy endpoint
+type Protocol int
 
 var (
 	protMapNameVal = map[string]Protocol{
@@ -49,7 +64,7 @@ func (p Proxy) ToMap() (map[string]string, error) {
 
 // GetName will generate a uinique name for the device map
 func (p Proxy) GetName() string {
-	return proxyType + "-" + p.Listen.String()
+	return proxyType + "-" + p.Destination.String()
 }
 
 // ProxyFromMap constructs a Proxy from provided map values

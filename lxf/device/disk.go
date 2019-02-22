@@ -4,7 +4,24 @@ import (
 	"strconv"
 )
 
-const diskType = "disk"
+const (
+	diskType = "disk"
+)
+
+// Disks holds slice of Disk
+// Use it if you want to Add() a entry non-conflicting (see Add())
+type Disks []Disk
+
+// Add a entry to the slice, if the name is the same, will overwrite the existing entry
+func (ds Disks) Add(d Disk) {
+	for k, e := range ds {
+		if e.GetName() == d.GetName() {
+			ds[k] = d
+			return
+		}
+	}
+	ds = append(ds, d)
+}
 
 // Disk mounts a host path into the container
 type Disk struct {

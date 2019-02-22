@@ -189,6 +189,17 @@ func (c *Container) getState() (*ContainerState, error) {
 	return cs, nil
 }
 
+// refresh loads the container again from LXD, usually required to obtain new ETag after change
+// Also means new pointer
+func (c *Container) refresh() error {
+	var err error
+	c, err = c.client.GetContainer(c.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Apply will save the changes of a container
 func (c *Container) Apply() error {
 	err := c.validate()
@@ -207,7 +218,12 @@ func (c *Container) Apply() error {
 		c.State = &ContainerState{}
 	}
 
-	return c.apply()
+	err = c.apply()
+	if err != nil {
+		return err
+	}
+
+	return c.refresh()
 }
 
 // Start the container
@@ -219,19 +235,29 @@ func (c *Container) Start() error {
 	if err != nil {
 		return err
 	}
-	return c.client.opwait.StartContainer(c.ID)
+	err = c.client.opwait.StartContainer(c.ID)
+	if err != nil {
+		return err
+	}
+
+	return c.refresh()
 }
 
 // Stop will try to stop the container, returns nil when container is already deleted or
-// got deleted in the meantime, otherwise it will return an error.
-// If it's not deleted within timeout it will return an error.
+// got stopped in the meantime, otherwise it will return an error.
+// If it's not stopped within timeout it will return an error.
 func (c *Container) Stop(timeout int) error {
 	c.FinishedAt = time.Now()
 	err := c.apply()
 	if err != nil {
 		return err
 	}
-	return c.client.opwait.StopContainer(c.ID, timeout, 2)
+	err = c.client.opwait.StopContainer(c.ID, timeout, 2)
+	if err != nil {
+		return err
+	}
+
+	return c.refresh()
 }
 
 // Delete the container
@@ -257,6 +283,7 @@ func (c *Container) validate() error {
 }
 
 // apply saves the changes to LXD
+// Will not obtain the new ETag!
 func (c *Container) apply() error {
 	// TODO: can't this be done easier?
 	imageID, err := c.client.parseImage(c.Image)

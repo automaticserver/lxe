@@ -237,7 +237,7 @@ func (c *Container) Start() error {
 // Stop will try to stop the container, returns nil when container is already stopped or
 // got stopped in the meantime, otherwise it will return an error.
 func (c *Container) Stop(timeout int) error {
-	err = c.client.opwait.StopContainer(c.ID, timeout, 2)
+	err := c.client.opwait.StopContainer(c.ID, timeout, 2)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
 			return nil

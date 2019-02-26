@@ -301,6 +301,12 @@ func (c *Container) apply() error {
 		return fmt.Errorf("image '%v' not found on local remote", c.Image)
 	}
 
+	// set some default values before generating config
+	if c.ID == "" {
+		c.Config[cfgState] = ContainerStateCreated.String()
+		c.CreatedAt = time.Now()
+	}
+
 	config := makeContainerConfig(c)
 	devices, err := makeContainerDevices(c)
 	if err != nil {
@@ -325,8 +331,6 @@ func (c *Container) apply() error {
 	if c.ID == "" {
 		// container has to be created
 		c.ID = c.CreateID()
-		c.Config[cfgState] = ContainerStateCreated.String()
-		c.CreatedAt = time.Now()
 		return c.client.opwait.CreateContainer(api.ContainersPost{
 			Name:         c.ID,
 			ContainerPut: contPut,

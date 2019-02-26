@@ -197,5 +197,12 @@ func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
 }
 
 func (s RuntimeServer) deleteContainer(c *lxf.Container) error {
-	return c.Delete()
+	err := c.Delete()
+	if err != nil {
+		if lxf.IsContainerNotFound(err) {
+			return nil
+		}
+		return err
+	}
+	return nil
 }

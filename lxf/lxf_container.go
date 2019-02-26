@@ -133,9 +133,20 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 		return nil, fmt.Errorf("Container '%v' has no sandbox", c.ID)
 	}
 
-	c.State, err = c.getState()
-	if err != nil {
-		return nil, err
+	// Map status code of LXD to CRI
+	switch ct.StatusCode {
+	case api.Running:
+		c.StateName = ContainerStateRunning
+	case api.Stopped, api.Aborting, api.Stopping:
+		// we have to differentiate between stopped and created. If "user.state" exists, then it must be
+		// created, otherwise its exited
+		if state, has := c.Config[cfgState]; has && state == string(ContainerStateCreated) {
+			c.StateName = ContainerStateCreated
+		} else {
+			c.StateName = ContainerStateExited
+		}
+	default:
+		c.StateName = ContainerStateUnknown
 	}
 
 	return c, nil
@@ -176,13 +187,19 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 
 	s, err := c.Sandbox()
 	if err != nil {
+		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", containerID, err)
+		return
+	}
+	st, err := c.State()
+	if err != nil {
+		logger.Errorf("lifecycle: ContainerID %v trying to get state: %v", containerID, err)
 		return
 	}
 
 	switch s.NetworkConfig.Mode {
 	case NetworkCNI:
 		// attach interface using CNI
-		result, err := network.AttachCNIInterface(s.Metadata.Namespace, s.Metadata.Name, c.ID, c.State.Pid)
+		result, err := network.AttachCNIInterface(s.Metadata.Namespace, s.Metadata.Name, c.ID, st.Pid)
 		if err != nil {
 			logger.Errorf("unable to attach CNI interface to container (%v): %v", c.ID, err)
 		}

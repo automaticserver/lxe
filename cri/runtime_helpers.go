@@ -29,7 +29,7 @@ func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 			Name:    c.Metadata.Name,
 			Attempt: uint32(c.Metadata.Attempt),
 		},
-		State:       stateContainerAsCri(c.State.Name),
+		State:       stateContainerAsCri(c.StateName),
 		CreatedAt:   c.CreatedAt.UnixNano(),
 		StartedAt:   c.StartedAt.UnixNano(),
 		FinishedAt:  c.FinishedAt.UnixNano(),
@@ -46,20 +46,25 @@ func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 	}
 }
 
-func toCriStats(c *lxf.Container) *rtApi.ContainerStats {
+func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
+	st, err := c.State()
+	if err != nil {
+		return nil, err
+	}
+
 	now := time.Now().UnixNano()
 
 	cpu := rtApi.CpuUsage{
 		Timestamp:            now,
-		UsageCoreNanoSeconds: &rtApi.UInt64Value{Value: c.State.Stats.CPUUsage},
+		UsageCoreNanoSeconds: &rtApi.UInt64Value{Value: st.Stats.CPUUsage},
 	}
 	memory := rtApi.MemoryUsage{
 		Timestamp:       now,
-		WorkingSetBytes: &rtApi.UInt64Value{Value: c.State.Stats.MemoryUsage},
+		WorkingSetBytes: &rtApi.UInt64Value{Value: st.Stats.MemoryUsage},
 	}
 	disk := rtApi.FilesystemUsage{
 		Timestamp: now,
-		UsedBytes: &rtApi.UInt64Value{Value: c.State.Stats.FilesystemUsage},
+		UsedBytes: &rtApi.UInt64Value{Value: st.Stats.FilesystemUsage},
 	}
 	attribs := rtApi.ContainerAttributes{
 		Id: c.ID,
@@ -77,7 +82,7 @@ func toCriStats(c *lxf.Container) *rtApi.ContainerStats {
 		WritableLayer: &disk,
 		Attributes:    &attribs,
 	}
-	return &response
+	return &response, nil
 }
 
 func toCriContainer(c *lxf.Container) *rtApi.Container {
@@ -88,7 +93,7 @@ func toCriContainer(c *lxf.Container) *rtApi.Container {
 		Image:        &rtApi.ImageSpec{Image: c.Image},
 		ImageRef:     c.Image,
 		CreatedAt:    c.CreatedAt.UnixNano(),
-		State:        stateContainerAsCri(c.State.Name),
+		State:        stateContainerAsCri(c.StateName),
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    c.Metadata.Name,
 			Attempt: uint32(c.Metadata.Attempt),

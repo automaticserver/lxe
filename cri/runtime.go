@@ -635,7 +635,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 			if filter.GetId() != "" && filter.GetId() != c.ID {
 				continue
 			}
-			if filter.GetState() != nil && filter.GetState().GetState() != stateContainerAsCri(c.State.Name) {
+			if filter.GetState() != nil && filter.GetState().GetState() != stateContainerAsCri(c.StateName) {
 				continue
 			}
 			if filter.GetPodSandboxId() != "" && filter.GetPodSandboxId() != c.Profiles[0] {
@@ -837,7 +837,11 @@ func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerS
 		logger.Errorf("ContainerStats: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
-	response.Stats = toCriStats(cntStat)
+	response.Stats, err = toCriStats(cntStat)
+	if err != nil {
+		logger.Errorf("ContainerStats: ContainerID %v trying to get stats: %v", req.GetContainerId(), err)
+		return nil, err
+	}
 
 	logger.Debugf("ContainerStats responded: %v", response)
 	return &response, nil
@@ -857,7 +861,12 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 			logger.Errorf("ListContainerStats: ContainerID %v trying to get container: %v", req.GetFilter().GetId(), err)
 			return nil, err
 		}
-		response.Stats = append(response.Stats, toCriStats(c))
+		st, err := toCriStats(c)
+		if err != nil {
+			logger.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", req.GetFilter().GetId(), err)
+			return nil, err
+		}
+		response.Stats = append(response.Stats, st)
 		return &response, nil
 	}
 
@@ -867,8 +876,13 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 		return nil, err
 	}
 
-	for _, ct := range cts {
-		response.Stats = append(response.Stats, toCriStats(ct))
+	for _, c := range cts {
+		st, err := toCriStats(c)
+		if err != nil {
+			logger.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", c.ID, err)
+			return nil, err
+		}
+		response.Stats = append(response.Stats, st)
 	}
 
 	logger.Debugf("ListContainerStats responded: %v", response)

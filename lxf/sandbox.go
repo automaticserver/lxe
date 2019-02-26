@@ -388,7 +388,7 @@ func (s *Sandbox) GetInetAddress() string {
 		}
 		for _, c := range cl {
 			// ignore any non-running containers
-			if c.State.Name != ContainerStateRunning {
+			if c.StateName != ContainerStateRunning {
 				continue
 			}
 

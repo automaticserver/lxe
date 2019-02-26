@@ -69,8 +69,8 @@ type Container struct {
 	StartedAt time.Time
 	// FinishedAt is when the container was exited
 	FinishedAt time.Time
-	// State contains the current state of this container
-	State *ContainerState
+	// StateName of the current container
+	StateName ContainerStateName
 	// LogPath TODO, to be implemented?
 	LogPath string
 	// CloudInit fields
@@ -80,6 +80,8 @@ type Container struct {
 
 	// sandbox is the parent sandbox of this container
 	sandbox *Sandbox
+	// State contains the current additional state info of this container
+	state *ContainerState
 }
 
 // ContainerState holds information about the container state
@@ -87,9 +89,6 @@ type ContainerState struct {
 	// Pid of the container
 	// +readonly
 	Pid int64
-	// State of the current container
-	// +readonly
-	Name ContainerStateName
 	// Stats usage of the current container
 	// +readonly
 	Stats ContainerStats
@@ -154,6 +153,20 @@ func (c *Container) getSandbox() (*Sandbox, error) {
 	return nil, fmt.Errorf("Container '%v' must have at least one profile", c.ID)
 }
 
+// State looks up additional state info
+// Implemented as lazy loading, and returns same result if already looked up
+// Not thread safe! But it's expected the pointers stay in the same routine
+func (c *Container) State() (*ContainerState, error) {
+	var err error
+	if c.state == nil {
+		c.state, err = c.getState()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return c.state, nil
+}
+
 func (c *Container) getState() (*ContainerState, error) {
 	cs := &ContainerState{}
 
@@ -168,22 +181,6 @@ func (c *Container) getState() (*ContainerState, error) {
 		CPUUsage:        uint64(state.CPU.Usage),
 		MemoryUsage:     uint64(state.Memory.Usage),
 		FilesystemUsage: uint64(state.Disk[rootDevice].Usage),
-	}
-
-	// Map status code of LXD to CRI
-	switch state.StatusCode {
-	case api.Running:
-		cs.Name = ContainerStateRunning
-	case api.Stopped, api.Aborting, api.Stopping:
-		// we have to differentiate between stopped and created. If "user.state" exists, then it must be
-		// created, otherwise its exited
-		if state, has := c.Config[cfgState]; has && state == string(ContainerStateCreated) {
-			cs.Name = ContainerStateCreated
-		} else {
-			cs.Name = ContainerStateExited
-		}
-	default:
-		cs.Name = ContainerStateUnknown
 	}
 
 	return cs, nil
@@ -212,10 +209,6 @@ func (c *Container) Apply() error {
 	if c.ID == "" {
 		c.Config[cfgState] = ContainerStateCreated.String()
 		c.CreatedAt = time.Now()
-	}
-
-	if c.State == nil {
-		c.State = &ContainerState{}
 	}
 
 	err = c.apply()
@@ -358,8 +351,12 @@ func (c *Container) CreateID() string {
 // GetInetAddress returns the IPv4 address of the first matching interface in the parameter list
 // empty string if nothing was found
 func (c *Container) GetInetAddress(ifs []string) string {
+	st, err := c.State()
+	if err != nil {
+		return ""
+	}
 	for _, i := range ifs {
-		if netif, ok := c.State.Network[i]; ok {
+		if netif, ok := st.Network[i]; ok {
 			for _, addr := range netif.Addresses {
 				if addr.Family == "inet" {
 					return addr.Address

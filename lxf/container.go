@@ -191,9 +191,6 @@ func (c *Container) getState() (*ContainerState, error) {
 func (c *Container) refresh() error {
 	r, err := c.client.GetContainer(c.ID)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
-			return NewContainerError(c.ID, err)
-		}
 		return err
 	}
 	c.ETag = r.ETag

@@ -356,34 +356,6 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	return &rtApi.RemovePodSandboxResponse{}, nil
 }
 
-func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
-	cl, err := sb.Containers()
-	if err != nil {
-		return err
-	}
-	for _, c := range cl {
-		err = c.Stop(30)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
-	cl, err := sb.Containers()
-	if err != nil {
-		return err
-	}
-	for _, c := range cl {
-		err = c.Delete()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
 // present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
@@ -601,10 +573,13 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
+		if lxf.IsContainerNotFound(err) {
+			return &rtApi.StopContainerResponse{}, nil
+		}
 		logger.Errorf("StopContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
-	err = c.Stop(int(req.Timeout))
+	err = s.stopContainer(c, int(req.Timeout))
 	if err != nil {
 		logger.Errorf("StopContainer: ContainerID %v trying to stop container: %v", req.GetContainerId(), err)
 		return nil, err
@@ -626,10 +601,13 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
+		if lxf.IsContainerNotFound(err) {
+			return &rtApi.RemoveContainerResponse{}, nil
+		}
 		logger.Errorf("RemoveContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
-	err = c.Delete()
+	err = s.deleteContainer(c)
 	if err != nil {
 		logger.Errorf("RemoveContainer: ContainerID %v trying to remove container: %v", req.GetContainerId(), err)
 		return nil, err

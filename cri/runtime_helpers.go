@@ -151,3 +151,46 @@ func getLXDConfigPath(cfg *LXEConfig) (string, error) {
 	}
 	return configPath, nil
 }
+
+func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
+	cl, err := sb.Containers()
+	if err != nil {
+		return err
+	}
+	for _, c := range cl {
+		err := s.stopContainer(c, 30)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
+	err := c.Stop(timeout)
+	if err != nil {
+		if lxf.IsContainerNotFound(err) {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
+	cl, err := sb.Containers()
+	if err != nil {
+		return err
+	}
+	for _, c := range cl {
+		err = s.deleteContainer(c)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s RuntimeServer) deleteContainer(c *lxf.Container) error {
+	return c.Delete()
+}

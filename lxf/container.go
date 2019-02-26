@@ -243,7 +243,7 @@ func (c *Container) Start() error {
 	return c.refresh()
 }
 
-// Stop will try to stop the container, returns nil when container is already deleted or
+// Stop will try to stop the container, returns nil when container is already stopped or
 // got stopped in the meantime, otherwise it will return an error.
 // If it's not stopped within timeout it will return an error.
 func (c *Container) Stop(timeout int) error {
@@ -263,9 +263,17 @@ func (c *Container) Stop(timeout int) error {
 	return c.refresh()
 }
 
-// Delete the container
+// Delete the container, returns nil when container is already stopped or
+// got stopped in the meantime, otherwise it will return an error.
 func (c *Container) Delete() error {
-	return c.client.opwait.DeleteContainer(c.ID)
+	err := c.client.opwait.DeleteContainer(c.ID)
+	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 // validate checks for misconfigurations

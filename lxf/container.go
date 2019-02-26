@@ -191,6 +191,9 @@ func (c *Container) getState() (*ContainerState, error) {
 func (c *Container) refresh() error {
 	r, err := c.client.GetContainer(c.ID)
 	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return NewContainerError(c.ID, err)
+		}
 		return err
 	}
 	c.ETag = r.ETag
@@ -230,6 +233,9 @@ func (c *Container) Start() error {
 	}
 	err = c.client.opwait.StartContainer(c.ID)
 	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return NewContainerError(c.ID, err)
+		}
 		return err
 	}
 
@@ -238,7 +244,6 @@ func (c *Container) Start() error {
 
 // Stop will try to stop the container, returns nil when container is already stopped or
 // got stopped in the meantime, otherwise it will return an error.
-// If it's not stopped within timeout it will return an error.
 func (c *Container) Stop(timeout int) error {
 	c.FinishedAt = time.Now()
 	err := c.apply()
@@ -256,8 +261,8 @@ func (c *Container) Stop(timeout int) error {
 	return c.refresh()
 }
 
-// Delete the container, returns nil when container is already stopped or
-// got stopped in the meantime, otherwise it will return an error.
+// Delete the container, returns nil when container is already deleted or
+// got deleted in the meantime, otherwise it will return an error.
 func (c *Container) Delete() error {
 	err := c.client.opwait.DeleteContainer(c.ID)
 	if err != nil {
@@ -339,7 +344,15 @@ func (c *Container) apply() error {
 	if c.ETag == "" {
 		return fmt.Errorf("Update container not allowed with empty ETag")
 	}
-	return c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
+
+	err = c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
+	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return NewContainerError(c.ID, err)
+		}
+		return err
+	}
+	return nil
 }
 
 // CreateID creates a unique container id

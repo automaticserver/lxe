@@ -224,9 +224,16 @@ func (s *Sandbox) Stop() error {
 	return s.apply()
 }
 
-// Delete will delete the given sandbox
+// Delete will delete the given sandbox, returns nil when sandbox is already deleted
 func (s *Sandbox) Delete() error {
-	return s.client.server.DeleteProfile(s.ID)
+	err := s.client.server.DeleteProfile(s.ID)
+	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 // apply saves the changes to LXD
@@ -349,7 +356,15 @@ manage_etc_hosts: true`, s.Hostname)
 	if s.ETag == "" {
 		return fmt.Errorf("Update profile not allowed with empty ETag")
 	}
-	return s.client.server.UpdateProfile(s.ID, profile, s.ETag)
+
+	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
+	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return NewSandboxError(s.ID, err)
+		}
+		return err
+	}
+	return nil
 }
 
 // CreateID creates a unique profile id

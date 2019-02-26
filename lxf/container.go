@@ -197,18 +197,11 @@ func (c *Container) refresh() error {
 	return nil
 }
 
-// Apply will save the changes of a container
+// Apply will save the changes of a container if validation was successful, refreshes ETag after save
 func (c *Container) Apply() error {
 	err := c.validate()
 	if err != nil {
 		return err
-	}
-
-	// A new container gets also some default values
-	// except ID, which is generated inline in unexported method apply()
-	if c.ID == "" {
-		c.Config[cfgState] = ContainerStateCreated.String()
-		c.CreatedAt = time.Now()
 	}
 
 	err = c.apply()
@@ -221,14 +214,7 @@ func (c *Container) Apply() error {
 
 // Start the container
 func (c *Container) Start() error {
-	// delete created mark if exists, so next stopping state can be exited
-	delete(c.Config, cfgState)
-	c.StartedAt = time.Now()
-	err := c.apply()
-	if err != nil {
-		return err
-	}
-	err = c.client.opwait.StartContainer(c.ID)
+	err := c.client.opwait.StartContainer(c.ID)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
 			return NewContainerError(c.ID, err)
@@ -236,17 +222,21 @@ func (c *Container) Start() error {
 		return err
 	}
 
-	return c.refresh()
+	// when changing state of container, need to refresh ETag
+	err = c.refresh()
+	if err != nil {
+		return err
+	}
+
+	// delete created mark if exists, so next stopping state can be exited
+	delete(c.Config, cfgState)
+	c.StartedAt = time.Now()
+	return c.Apply()
 }
 
 // Stop will try to stop the container, returns nil when container is already stopped or
 // got stopped in the meantime, otherwise it will return an error.
 func (c *Container) Stop(timeout int) error {
-	c.FinishedAt = time.Now()
-	err := c.apply()
-	if err != nil {
-		return err
-	}
 	err = c.client.opwait.StopContainer(c.ID, timeout, 2)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
@@ -255,7 +245,14 @@ func (c *Container) Stop(timeout int) error {
 		return err
 	}
 
-	return c.refresh()
+	// when changing state of container, need to refresh ETag
+	err = c.refresh()
+	if err != nil {
+		return err
+	}
+
+	c.FinishedAt = time.Now()
+	return c.Apply()
 }
 
 // Delete the container, returns nil when container is already deleted or
@@ -328,6 +325,8 @@ func (c *Container) apply() error {
 	if c.ID == "" {
 		// container has to be created
 		c.ID = c.CreateID()
+		c.Config[cfgState] = ContainerStateCreated.String()
+		c.CreatedAt = time.Now()
 		return c.client.opwait.CreateContainer(api.ContainersPost{
 			Name:         c.ID,
 			ContainerPut: contPut,

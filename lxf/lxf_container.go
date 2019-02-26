@@ -165,12 +165,10 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
 	c, err := l.GetContainer(containerID)
 	if err != nil {
-		if serr, ok := err.(ContainerError); ok {
-			if serr.Error() == ErrorLXDNotFound {
-				// The started container is not a cri container, we also get the error not found
-				// So this container can be ignored
-				return
-			}
+		if IsContainerNotFound(err) {
+			// The started container is not a cri container, we also get the error not found
+			// So this container can be ignored
+			return
 		}
 		logger.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
 		return

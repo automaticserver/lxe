@@ -296,16 +296,15 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if serr, ok := err.(lxf.SandboxError); ok {
-			if serr.Error() == lxf.ErrorLXDNotFound {
-				return &rtApi.StopPodSandboxResponse{}, nil
-			}
+		if lxf.IsSandboxNotFound(err) {
+			return &rtApi.StopPodSandboxResponse{}, nil
 		}
 		logger.Errorf("StopPodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 	err = s.stopContainers(sb)
 	if err != nil {
+		logger.Errorf("StopPodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
@@ -329,10 +328,8 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if serr, ok := err.(lxf.SandboxError); ok {
-			if serr.Error() == lxf.ErrorLXDNotFound {
-				return &rtApi.RemovePodSandboxResponse{}, nil
-			}
+		if lxf.IsSandboxNotFound(err) {
+			return &rtApi.RemovePodSandboxResponse{}, nil
 		}
 		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 		return nil, err

@@ -122,10 +122,9 @@ package-deb-lxd-snap: build
 	gzip -9 package/debian-lxd-snap/usr/share/man/man8/$(EXECUTABLE).8
 	
 	cd package/debian-lxd-snap; find . -type f -not -path './DEBIAN/*' -print | cut -c 3- | xargs md5sum > DEBIAN/md5sums
-#eval $$(export installsize=`du -s package/debian-lxd-snap | cut -f1`);
-	$(eval installsize:=22400)
-	VERSION="$(version)" INSTALLSIZE="${installsize}" envsubst < fixtures/packaging/debian-lxd-snap/DEBIAN/control > package/debian-lxd-snap/DEBIAN/control
-	
+	VERSION="$(version)" INSTALLSIZE="\$$INSTALLSIZE" envsubst < fixtures/packaging/debian-lxd-snap/DEBIAN/control > package/debian-lxd-snap/DEBIAN/control
+	du -s package/debian | cut -f1 | awk '{print "Installed-Size: "$$1}' | sed -i -e '/$$INSTALLSIZE/{r /dev/stdin' -e 'd;}' package/debian-lxd-snap/DEBIAN/control
+
 	chmod -R g-w package/debian-lxd-snap/
 	fakeroot dpkg-deb -b package/debian-lxd-snap
 	mv package/debian-lxd-snap.deb package/$(DOMAIN)_$(version).debian-lxd-snap.deb

@@ -254,6 +254,9 @@ func (c *Container) Stop(timeout int) error {
 	}
 	err = c.client.opwait.StopContainer(c.ID, timeout, 2)
 	if err != nil {
+		if err.Error() == ErrorLXDNotFound {
+			return nil
+		}
 		return err
 	}
 

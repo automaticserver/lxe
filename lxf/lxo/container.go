@@ -1,18 +1,15 @@
 package lxo
 
 import (
-	"fmt"
-
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 )
 
 // StopContainer will try to stop the container with provided name.
 // It will retry for half a minute and return success when it's stopped.
-// It will also return success when the container does not exist.
 func (l *LXO) StopContainer(id string, timeout, retries int) error {
 	ETag := ""
-	var lastErr error
+	var err error
 	for i := 1; i <= retries; i++ {
 		lxdReq := api.ContainerStatePut{
 			Action:  "stop",
@@ -21,20 +18,20 @@ func (l *LXO) StopContainer(id string, timeout, retries int) error {
 		}
 		op, err := l.server.UpdateContainerState(id, lxdReq, ETag)
 		if err != nil {
-			if err.Error() == "not found" { // it's not around, that's ok with us
-				return nil
-			}
-			return fmt.Errorf("failed to stop container %v, %v", id, err)
+			return err
 		}
 
 		err = op.Wait()
-		if err != nil && err.Error() == "The container is already stopped" {
+		if err != nil {
+			if err.Error() == "The container is already stopped" {
+				return nil
+			}
+			// else try again
+		} else {
 			return nil
 		}
-		lastErr = err
-		// we try again with or without err
 	}
-	return lastErr
+	return err
 }
 
 // StartContainer will start the container and wait till operation is done or

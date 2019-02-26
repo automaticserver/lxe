@@ -42,6 +42,14 @@ func NewContainerError(id string, reason error) ContainerError {
 	}
 }
 
+// IsContainerNotFound checks if error is of type ContainerError where its previous error was not found in LXD
+func IsContainerNotFound(err error) bool {
+	if serr, ok := err.(ContainerError); ok {
+		return serr.Reason.Error() == ErrorLXDNotFound
+	}
+	return false
+}
+
 // SandboxError is an error type for errors related to sandboxes
 type SandboxError struct {
 	lxfError
@@ -58,6 +66,14 @@ func NewSandboxError(id string, reason error) SandboxError {
 	}
 }
 
+// IsSandboxNotFound checks if error is of type SandboxError where its previous error was not found in LXD
+func IsSandboxNotFound(err error) bool {
+	if serr, ok := err.(SandboxError); ok {
+		return serr.Reason.Error() == ErrorLXDNotFound
+	}
+	return false
+}
+
 // ImageError is an error type for errors related to images
 type ImageError struct {
 	lxfError
@@ -72,4 +88,12 @@ func NewImageError(id string, reason error) ImageError {
 	return ImageError{
 		lxfError: newLxfError(id, reason),
 	}
+}
+
+// IsImageNotFound checks if error is of type ImageError where its previous error was not found in LXD
+func IsImageNotFound(err error) bool {
+	if serr, ok := err.(ImageError); ok {
+		return serr.Reason.Error() == ErrorLXDNotFound
+	}
+	return false
 }

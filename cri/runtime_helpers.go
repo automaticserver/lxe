@@ -172,6 +172,10 @@ func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
 }
 
 func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
+	// if container is not running, no stopping needed
+	if c.StateName != lxf.ContainerStateRunning {
+		return nil
+	}
 	err := c.Stop(timeout)
 	if err != nil {
 		if lxf.IsContainerNotFound(err) {

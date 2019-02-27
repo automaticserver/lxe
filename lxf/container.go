@@ -22,6 +22,7 @@ const (
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
+	cfgAutoStartOnBoot    = "boot.autostart"
 
 	rootDevice     = "root"
 	defaultProfile = "default"
@@ -301,12 +302,6 @@ func (c *Container) apply() error {
 		return fmt.Errorf("image '%v' not found on local remote", c.Image)
 	}
 
-	// set some default values before generating config
-	if c.ID == "" {
-		c.Config[cfgState] = ContainerStateCreated.String()
-		c.CreatedAt = time.Now()
-	}
-
 	config := makeContainerConfig(c)
 	devices, err := makeContainerDevices(c)
 	if err != nil {
@@ -381,6 +376,12 @@ func (c *Container) GetInetAddress(ifs []string) string {
 }
 
 func makeContainerConfig(c *Container) map[string]string {
+	// default values for new containers
+	if c.ID == "" {
+		c.Config[cfgState] = ContainerStateCreated.String()
+		c.CreatedAt = time.Now()
+	}
+
 	config := map[string]string{}
 
 	// write labels
@@ -401,6 +402,7 @@ func makeContainerConfig(c *Container) map[string]string {
 	config[cfgMetaName] = c.Metadata.Name
 	config[cfgMetaAttempt] = strconv.FormatUint(uint64(c.Metadata.Attempt), 10)
 	config[cfgVolatileBaseImage] = c.Image
+	config[cfgAutoStartOnBoot] = strconv.FormatBool(false)
 
 	for k, v := range c.Environment {
 		config[cfgEnvironmentPrefix+"."+k] = v

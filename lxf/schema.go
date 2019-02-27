@@ -196,7 +196,7 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 	if c.Config[cfgSchema] == "0.2" {
 		delete(c.Config, cfgOldIsContainer)
 		delete(c.Config, cfgOldContainerName)
-		// c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(true)
+		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(false)
 		if c.Config[cfgCreatedAt] == "" {
 			if c.Config[cfgStartedAt] == "" {
 				c.Config[cfgCreatedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)

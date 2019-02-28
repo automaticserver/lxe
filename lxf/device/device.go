@@ -1,6 +1,9 @@
 package device
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 // Device defines needed methods for all devices for translation
 // from and to maps
@@ -56,6 +59,7 @@ func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // noli
 				return nil, err
 			}
 			disks.Add(p)
+			log.Print(p)
 		}
 	}
 	return disks, nil

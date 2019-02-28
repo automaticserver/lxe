@@ -13,14 +13,14 @@ const (
 type Disks []Disk
 
 // Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ds Disks) Add(d Disk) {
-	for k, e := range ds {
+func (ds *Disks) Add(d Disk) {
+	for k, e := range *ds {
 		if e.GetName() == d.GetName() {
-			ds[k] = d
+			(*ds)[k] = d
 			return
 		}
 	}
-	ds = append(ds, d)
+	*ds = append(*ds, d)
 }
 
 // Disk mounts a host path into the container

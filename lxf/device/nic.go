@@ -9,14 +9,14 @@ const (
 type Nics []Nic
 
 // Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ns Nics) Add(n Nic) {
-	for k, e := range ns {
+func (ns *Nics) Add(n Nic) {
+	for k, e := range *ns {
 		if e.GetName() == n.GetName() {
-			ns[k] = n
+			(*ns)[k] = n
 			return
 		}
 	}
-	ns = append(ns, n)
+	*ns = append(*ns, n)
 }
 
 // Nic device

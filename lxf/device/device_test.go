@@ -1,10 +1,15 @@
 package device
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 // nolint: dupl
 func TestAddDiskToMap(t *testing.T) {
-	disk := &Disk{}
+	disk := &Disk{
+		Path: "/",
+	}
 	s := map[string]map[string]string{}
 
 	err := AddToMap(s, disk)
@@ -19,7 +24,9 @@ func TestAddDiskToMap(t *testing.T) {
 
 // nolint: dupl
 func TestGetDisksFromMap(t *testing.T) {
-	disk := &Disk{}
+	disk := &Disk{
+		Path: "/",
+	}
 	s := map[string]map[string]string{}
 
 	err := AddToMap(s, disk)
@@ -28,6 +35,9 @@ func TestGetDisksFromMap(t *testing.T) {
 	}
 
 	disks, err := GetDisksFromMap(s)
+
+	log.Print(disks, s)
+
 	if err != nil {
 		t.Errorf("could not read disk from map, %v", err)
 	}

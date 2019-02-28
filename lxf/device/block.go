@@ -9,14 +9,14 @@ const (
 type Blocks []Block
 
 // Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (bs Blocks) Add(b Block) {
-	for k, e := range bs {
+func (bs *Blocks) Add(b Block) {
+	for k, e := range *bs {
 		if e.GetName() == b.GetName() {
-			bs[k] = b
+			(*bs)[k] = b
 			return
 		}
 	}
-	bs = append(bs, b)
+	*bs = append(*bs, b)
 }
 
 // Block device

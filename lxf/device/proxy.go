@@ -21,14 +21,14 @@ const (
 type Proxies []Proxy
 
 // Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ps Proxies) Add(p Proxy) {
-	for k, e := range ps {
+func (ps *Proxies) Add(p Proxy) {
+	for k, e := range *ps {
 		if e.GetName() == p.GetName() {
-			ps[k] = p
+			(*ps)[k] = p
 			return
 		}
 	}
-	ps = append(ps, p)
+	*ps = append(*ps, p)
 }
 
 // Proxy defines a lxd proxy device

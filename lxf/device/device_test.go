@@ -1,20 +1,43 @@
 package device
 
 import (
-	"log"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func TestGenericAddToMapErrorOnMultiple(t *testing.T) {
+	disk := Disk{
+		Path: "/",
+	}
+	disk2 := Disk{
+		Path: "/foo",
+	}
+
+	s := map[string]map[string]string{}
+
+	err := AddDisksToMap(s, disk)
+	assert.NoError(t, err)
+
+	// error when there exists one already conflicting
+	err = AddDisksToMap(s, disk)
+	assert.Error(t, err)
+
+	// error when input is conflicting
+	err = AddDisksToMap(s, disk2, disk2)
+	assert.Error(t, err)
+}
 
 // nolint: dupl
 func TestAddDiskToMap(t *testing.T) {
-	disk := &Disk{
+	disk := Disk{
 		Path: "/",
 	}
 	s := map[string]map[string]string{}
 
-	err := AddToMap(s, disk)
+	err := AddDisksToMap(s, disk)
 	if err != nil {
-		t.Errorf("could not serialize disk to map")
+		t.Errorf("could not serialize disk to map: %v", err)
 	}
 
 	if len(s) != 1 {
@@ -24,19 +47,17 @@ func TestAddDiskToMap(t *testing.T) {
 
 // nolint: dupl
 func TestGetDisksFromMap(t *testing.T) {
-	disk := &Disk{
+	disk := Disk{
 		Path: "/",
 	}
 	s := map[string]map[string]string{}
 
-	err := AddToMap(s, disk)
+	err := AddDisksToMap(s, disk)
 	if err != nil {
-		t.Errorf("could not serialize disk to map")
+		t.Errorf("could not serialize disk to map: %v", err)
 	}
 
 	disks, err := GetDisksFromMap(s)
-
-	log.Print(disks, s)
 
 	if err != nil {
 		t.Errorf("could not read disk from map, %v", err)
@@ -47,13 +68,29 @@ func TestGetDisksFromMap(t *testing.T) {
 }
 
 // nolint: dupl
+func TestGetDisksWithOverrideAdd(t *testing.T) {
+	var disks Disks
+	disk := Disk{
+		Path: "/",
+	}
+
+	disks.Add(disk)
+	disks.Add(disk)
+
+	assert.Len(t, disks, 1)
+}
+
+// nolint: dupl
 func TestAddProxyToMap(t *testing.T) {
-	proxy := &Proxy{}
+	proxy := Proxy{
+		Destination: ProxyEndpoint{Protocol: ProtocolTCP, Port: 8000},
+		Listen:      ProxyEndpoint{Protocol: ProtocolTCP, Port: 80},
+	}
 	s := map[string]map[string]string{}
 
-	err := AddToMap(s, proxy)
+	err := AddProxiesToMap(s, proxy)
 	if err != nil {
-		t.Errorf("could not serialize proxy to map")
+		t.Errorf("could not serialize proxy to map: %v", err)
 	}
 
 	if len(s) != 1 {
@@ -63,15 +100,15 @@ func TestAddProxyToMap(t *testing.T) {
 
 // nolint: dupl
 func TestGetProxiesFromMap(t *testing.T) {
-	proxy := &Proxy{
+	proxy := Proxy{
 		Destination: ProxyEndpoint{Protocol: ProtocolTCP, Port: 8000},
 		Listen:      ProxyEndpoint{Protocol: ProtocolTCP, Port: 80},
 	}
 	s := map[string]map[string]string{}
 
-	err := AddToMap(s, proxy)
+	err := AddProxiesToMap(s, proxy)
 	if err != nil {
-		t.Errorf("could not serialize proxy to map")
+		t.Errorf("could not serialize proxy to map: %v", err)
 	}
 
 	proxies, err := GetProxiesFromMap(s)
@@ -84,16 +121,117 @@ func TestGetProxiesFromMap(t *testing.T) {
 }
 
 // nolint: dupl
-func TestAddBlockToMap(t *testing.T) {
-	block := &Block{}
+func TestGetProxiesWithOverrideAdd(t *testing.T) {
+	var proxies Proxies
+	proxy := Proxy{
+		Destination: ProxyEndpoint{Protocol: ProtocolTCP, Port: 8000},
+		Listen:      ProxyEndpoint{Protocol: ProtocolTCP, Port: 80},
+	}
+
+	proxies.Add(proxy)
+	proxies.Add(proxy)
+
+	assert.Len(t, proxies, 1)
+}
+
+// nolint: dupl
+func TestAddBlocksToMap(t *testing.T) {
+	block := Block{
+		Path: "/",
+	}
 	s := map[string]map[string]string{}
 
-	err := AddToMap(s, block)
+	err := AddBlocksToMap(s, block)
 	if err != nil {
-		t.Errorf("could not serialize block to map")
+		t.Errorf("could not serialize block to map: %v", err)
 	}
 
 	if len(s) != 1 {
 		t.Errorf("device map should have one entry")
 	}
+}
+
+// nolint: dupl
+func TestGetBlocksFromMap(t *testing.T) {
+	block := Block{
+		Path: "/",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddBlocksToMap(s, block)
+	if err != nil {
+		t.Errorf("could not serialize block to map: %v", err)
+	}
+
+	blocks, err := GetBlocksFromMap(s)
+	if err != nil {
+		t.Errorf("could not read block from map, %v", err)
+	}
+	if len(blocks) != 1 {
+		t.Errorf("expected one block but there are %v", len(blocks))
+	}
+}
+
+// nolint: dupl
+func TestGetBlocksWithOverrideAdd(t *testing.T) {
+	var blocks Blocks
+	block := Block{
+		Path: "/",
+	}
+
+	blocks.Add(block)
+	blocks.Add(block)
+
+	assert.Len(t, blocks, 1)
+}
+
+// nolint: dupl
+func TestAddNicsToMap(t *testing.T) {
+	nic := Nic{
+		Name: "eth0",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddNicsToMap(s, nic)
+	if err != nil {
+		t.Errorf("could not serialize nic to map: %v", err)
+	}
+
+	if len(s) != 1 {
+		t.Errorf("device map should have one entry")
+	}
+}
+
+// nolint: dupl
+func TestGetNicsFromMap(t *testing.T) {
+	nic := Nic{
+		Name: "eth0",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddNicsToMap(s, nic)
+	if err != nil {
+		t.Errorf("could not serialize nic to map: %v", err)
+	}
+
+	nics, err := GetNicsFromMap(s)
+	if err != nil {
+		t.Errorf("could not read nic from map, %v", err)
+	}
+	if len(nics) != 1 {
+		t.Errorf("expected one nic but there are %v", len(nics))
+	}
+}
+
+// nolint: dupl
+func TestGetNicsWithOverrideAdd(t *testing.T) {
+	var nics Nics
+	nic := Nic{
+		Name: "eth0",
+	}
+
+	nics.Add(nic)
+	nics.Add(nic)
+
+	assert.Len(t, nics, 1)
 }

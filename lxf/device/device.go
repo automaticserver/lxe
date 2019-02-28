@@ -2,7 +2,6 @@ package device
 
 import (
 	"fmt"
-	"log"
 )
 
 // Device defines needed methods for all devices for translation
@@ -49,7 +48,7 @@ func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 	return AddToMap(m, devs...)
 }
 
-// GetDisksFromMap will // GetProxiesFromMap will add the proxies to the map
+// GetDisksFromMap will will add the proxies to the map
 func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // nolint: dupl
 	disks := Disks{}
 	for _, m := range maps {
@@ -59,7 +58,6 @@ func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // noli
 				return nil, err
 			}
 			disks.Add(p)
-			log.Print(p)
 		}
 	}
 	return disks, nil

@@ -204,7 +204,7 @@ func (s *Sandbox) Apply() error {
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode {
 	case NetworkBridged:
-		s.Nics = append(s.Nics, device.Nic{
+		s.Nics.Add(device.Nic{
 			Name:        network.DefaultInterface,
 			NicType:     "bridged",
 			Parent:      s.NetworkConfig.ModeData["bridge"],

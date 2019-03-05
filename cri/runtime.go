@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/url"
 	"os/exec"
-	"path/filepath"
+	"path"
 	"strconv"
 	"strings"
 
@@ -244,7 +244,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 				sb.Disks.Add(device.Disk{
 					Path:     "/",
 					Readonly: true,
-					Pool:     "default",
+					// TODO magic constant, and also, is ist always default?
+					Pool: "default",
 				})
 			}
 
@@ -482,15 +483,13 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	c.Config = make(map[string]string)
 
 	for _, mnt := range req.GetConfig().GetMounts() {
-		// resolve host path symlinks
-		hostPath, err := filepath.EvalSymlinks(mnt.GetHostPath())
-		if err != nil {
-			logger.Errorf("CreateContainer: ContainerName %v could not eval symlink: %v", req.GetConfig().GetMetadata().GetName(), err)
-			return nil, err
+		hostPath := mnt.GetHostPath()
+		containerPath := mnt.GetContainerPath()
+		if strings.HasPrefix(containerPath, "/var/run") {
+			containerPath = path.Join("/run", strings.TrimLeft(containerPath, "/var/run"))
 		}
-
 		c.Disks.Add(device.Disk{
-			Path:     mnt.GetContainerPath(),
+			Path:     containerPath,
 			Source:   hostPath,
 			Readonly: mnt.GetReadonly(),
 			Optional: false,

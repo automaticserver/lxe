@@ -64,7 +64,7 @@ func (p Proxy) ToMap() (map[string]string, error) {
 
 // GetName will generate a uinique name for the device map
 func (p Proxy) GetName() string {
-	return proxyType + "-" + p.Destination.String()
+	return proxyType + "-" + p.Listen.String()
 }
 
 // ProxyFromMap constructs a Proxy from provided map values

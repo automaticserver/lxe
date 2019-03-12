@@ -6,6 +6,7 @@ import (
 
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
+	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxe/lxf/lxo"
 )
 
@@ -108,4 +109,12 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	}
 
 	return client, nil
+}
+
+func (c *Client) GetRuntimeInfo() (*api.Server, error) {
+	server, _, err := c.server.GetServer()
+	if err != nil {
+		return nil, err
+	}
+	return server, nil
 }

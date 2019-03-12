@@ -104,11 +104,22 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 		logger.Errorf("unable to get server environment")
 		return nil, err
 	}
+
+	metaprefix := "+"
+	if strings.Contains(server.Environment.DriverVersion, "+") {
+		metaprefix = "."
+	}
+	versionmeta := fmt.Sprintf("%s%s-%s.%s-%s", metaprefix, server.Environment.Server,
+		strings.Replace(server.Environment.ServerVersion, ".", "-", -1), Domain,
+		strings.Replace(Version, ".", "-", -1),
+	)
+
 	return &rtApi.VersionResponse{
 		Version:           criVersion,
 		RuntimeName:       server.Environment.Driver,
-		RuntimeVersion:    server.Environment.DriverVersion,
-		RuntimeApiVersion: server.APIVersion,
+		RuntimeVersion:    server.Environment.DriverVersion + versionmeta,
+		// api version is only 1.0, so need to add .0 for semver compatibility
+		RuntimeApiVersion: server.APIVersion + ".0",
 	}, nil
 }
 

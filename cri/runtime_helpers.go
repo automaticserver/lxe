@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxe/lxf"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -64,7 +65,11 @@ func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
 	}
 	disk := rtApi.FilesystemUsage{
 		Timestamp: now,
-		UsedBytes: &rtApi.UInt64Value{Value: st.Stats.FilesystemUsage},
+		FsId: &rtApi.FilesystemIdentifier{
+			Mountpoint: path.Join(shared.VarPath("container"), c.ID, "rootfs"),
+		},
+		UsedBytes:  &rtApi.UInt64Value{Value: st.Stats.FilesystemUsage}, // TODO: root seems not visible? or does it depend?
+		InodesUsed: &rtApi.UInt64Value{Value: 0},                        // TODO: do we have to find out?
 	}
 	attribs := rtApi.ContainerAttributes{
 		Id: c.ID,

@@ -1,7 +1,10 @@
 package cri
 
 import (
+	"time"
+
 	"github.com/lxc/lxd/lxc/config"
+	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
 	"golang.org/x/net/context"
@@ -129,20 +132,29 @@ func (s ImageServer) RemoveImage(ctx context.Context, req *rtApi.RemoveImageRequ
 func (s ImageServer) ImageFsInfo(ctx context.Context, req *rtApi.ImageFsInfoRequest) (*rtApi.ImageFsInfoResponse, error) {
 	logger.Debugf("ImageFsInfo(%v) triggered", req)
 
-	poolUsage, err := s.lxf.GetFSPoolUsage()
-	if err != nil {
-		logger.Errorf("ImageFsInfo: GetFSPoolUsage(): %v", err)
-		return nil, err
-	}
+	// Images are not saved in pools (for now?)
+	// poolUsage, err := s.lxf.GetFSPoolUsage()
+	// if err != nil {
+	// 	logger.Errorf("ImageFsInfo: GetFSPoolUsage(): %v", err)
+	// 	return nil, err
+	// }
 	response := rtApi.ImageFsInfoResponse{}
-	for _, i := range poolUsage {
-		fs := &rtApi.FilesystemUsage{
-			Timestamp:  i.Timestamp,
-			FsId:       &rtApi.FilesystemIdentifier{Mountpoint: i.FsID},
-			UsedBytes:  &rtApi.UInt64Value{Value: i.UsedBytes},
-			InodesUsed: &rtApi.UInt64Value{Value: i.InodesUsed},
-		}
-		response.ImageFilesystems = append(response.ImageFilesystems, fs)
-	}
+	// for _, i := range poolUsage {
+	// 	fs := &rtApi.FilesystemUsage{
+	// 		Timestamp:  i.Timestamp,
+	// 		FsId:       &rtApi.FilesystemIdentifier{Mountpoint: i.FsID},
+	// 		UsedBytes:  &rtApi.UInt64Value{Value: i.UsedBytes},
+	// 		InodesUsed: &rtApi.UInt64Value{Value: i.InodesUsed},
+	// 	}
+	// 	response.ImageFilesystems = append(response.ImageFilesystems, fs)
+	// }
+
+	// TODO: UsedBytes, InodesUsed
+	response.ImageFilesystems = append(response.ImageFilesystems, &rtApi.FilesystemUsage{
+		Timestamp:  time.Now().UnixNano(),
+		FsId:       &rtApi.FilesystemIdentifier{Mountpoint: shared.VarPath("images")},
+		UsedBytes:  &rtApi.UInt64Value{Value: 0},
+		InodesUsed: &rtApi.UInt64Value{Value: 0},
+	})
 	return &response, nil
 }

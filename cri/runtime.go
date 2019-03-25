@@ -99,26 +99,20 @@ func NewRuntimeServer(
 func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (*rtApi.VersionResponse, error) {
 	logger.Debugf("Version triggered: %v", req)
 	criVersion := "0.1.0"
+
+	// according to containerd CRI implementation RuntimeName=ShimName, RuntimeVersion=ShimVersion, RuntimeApiVersion=someAPIVersion
+	// The actual runtime name and version is not present
 	server, err := s.lxf.GetRuntimeInfo()
 	if err != nil {
 		logger.Errorf("unable to get server environment")
 		return nil, err
 	}
 
-	metaprefix := "+"
-	if strings.Contains(server.Environment.DriverVersion, "+") {
-		metaprefix = "."
-	}
-	versionmeta := fmt.Sprintf("%s%s-%s.%s-%s", metaprefix, server.Environment.Server,
-		strings.Replace(server.Environment.ServerVersion, ".", "-", -1), Domain,
-		strings.Replace(Version, ".", "-", -1),
-	)
-
 	return &rtApi.VersionResponse{
-		Version:           criVersion,
-		RuntimeName:       server.Environment.Driver,
-		RuntimeVersion:    server.Environment.DriverVersion + versionmeta,
-		// api version is only 1.0, so need to add .0 for semver compatibility
+		Version:        criVersion,
+		RuntimeName:    Domain,
+		RuntimeVersion: Version,
+		// api version is only X.X, so need to add .0 for semver requirement
 		RuntimeApiVersion: server.APIVersion + ".0",
 	}, nil
 }

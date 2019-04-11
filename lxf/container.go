@@ -22,7 +22,6 @@ const (
 	cfgCloudInitUserData  = "user.user-data"
 	cfgCloudInitMetaData  = "user.meta-data"
 	cfgEnvironmentPrefix  = "environment"
-	cfgAutoStartOnBoot    = "boot.autostart"
 
 	rootDevice     = "root"
 	defaultProfile = "default"
@@ -402,7 +401,6 @@ func makeContainerConfig(c *Container) map[string]string {
 	config[cfgMetaName] = c.Metadata.Name
 	config[cfgMetaAttempt] = strconv.FormatUint(uint64(c.Metadata.Attempt), 10)
 	config[cfgVolatileBaseImage] = c.Image
-	config[cfgAutoStartOnBoot] = strconv.FormatBool(false)
 
 	for k, v := range c.Environment {
 		config[cfgEnvironmentPrefix+"."+k] = v

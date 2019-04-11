@@ -12,7 +12,7 @@ import (
 const (
 	cfgSchema              = "user.lxe.schema"
 	SchemaVersionProfile   = "0.3"
-	SchemaVersionContainer = "0.3"
+	SchemaVersionContainer = "0.4"
 
 	cfgOldIsSandbox     = "user.is_cri_sandbox"
 	cfgOldIsContainer   = "user.is_cri_container"
@@ -121,6 +121,9 @@ func (m *MigrationWorkspace) Ensure() error {
 		if m.ensureContainerZeroThree(c) {
 			counter++
 		}
+		if m.ensureContainerZeroFour(c) {
+			counter++
+		}
 
 		// If something has changed, update it
 		if counter > 0 {
@@ -196,7 +199,6 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 	if c.Config[cfgSchema] == "0.2" {
 		delete(c.Config, cfgOldIsContainer)
 		delete(c.Config, cfgOldContainerName)
-		c.Config[cfgAutoStartOnBoot] = strconv.FormatBool(false)
 		if c.Config[cfgCreatedAt] == "" {
 			if c.Config[cfgStartedAt] == "" {
 				c.Config[cfgCreatedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -211,6 +213,17 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 			c.Config[cfgFinishedAt] = strconv.FormatInt(time.Time{}.UnixNano(), 10)
 		}
 		c.Config[cfgSchema] = "0.3"
+		return true
+	}
+	return false
+}
+
+// boot.autostart is not managed by lxe anymore, keep field as-is
+// WARNING: intentionally changed migration to 0.3 to not force-setting that field if
+// someone is coming from 0.2 or below
+func (m *MigrationWorkspace) ensureContainerZeroFour(c *api.Container) bool {
+	if c.Config[cfgSchema] == "0.3" {
+		c.Config[cfgSchema] = "0.4"
 		return true
 	}
 	return false

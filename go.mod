@@ -70,7 +70,7 @@ require (
 	// We need to use the master branch as long as commit a6d1c60475b25ad is not in a tag
 	k8s.io/client-go v10.0.0+incompatible
 	k8s.io/klog v0.1.0 // indirect
-	k8s.io/kubernetes v1.13.1
+	k8s.io/kubernetes v1.14.1
 	// Repo does not have any tags at all
 	k8s.io/utils v0.0.0-20181115163542-0d26856f57b3 // indirect
 	sigs.k8s.io/yaml v1.1.0 // indirect

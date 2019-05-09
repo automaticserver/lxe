@@ -39,6 +39,27 @@ func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 		Annotations: c.Annotations,
 		Image:       &rtApi.ImageSpec{Image: c.Image},
 		ImageRef:    c.Image,
+		Mounts:      []*rtApi.Mount{},
+	}
+
+	for _, d := range c.Disks {
+		status.Mounts = append(status.Mounts, &rtApi.Mount{
+			ContainerPath:  d.Path,
+			HostPath:       d.Source,
+			Readonly:       d.Readonly,
+			SelinuxRelabel: false, // though don't know what this means
+			Propagation:    rtApi.MountPropagation_PROPAGATION_PRIVATE,
+		})
+	}
+
+	for _, b := range c.Blocks {
+		status.Mounts = append(status.Mounts, &rtApi.Mount{
+			ContainerPath:  b.Path,
+			HostPath:       b.Source,
+			Readonly:       false,                                                // probably always that?
+			SelinuxRelabel: false,                                                // though don't know what this means
+			Propagation:    rtApi.MountPropagation_PROPAGATION_HOST_TO_CONTAINER, // unsure
+		})
 	}
 
 	return &rtApi.ContainerStatusResponse{

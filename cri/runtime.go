@@ -495,8 +495,13 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	for _, mnt := range req.GetConfig().GetMounts() {
 		hostPath := mnt.GetHostPath()
 		containerPath := mnt.GetContainerPath()
+		// cannot use /var/run as most distros symlink that to /run and lxd doesn't like mounts there because of that
 		if strings.HasPrefix(containerPath, "/var/run") {
 			containerPath = path.Join("/run", strings.TrimLeft(containerPath, "/var/run"))
+		}
+		// cannot use /run as most distros mount a tmpfs on top of that so mounts from lxd are not visible in the container
+		if strings.HasPrefix(containerPath, "/run") {
+			containerPath = path.Join("/mnt", strings.TrimLeft(containerPath, "/run"))
 		}
 		c.Disks.Add(device.Disk{
 			Path:     containerPath,

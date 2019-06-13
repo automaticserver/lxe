@@ -39,6 +39,7 @@ type cmdGlobal struct {
 	flagLXEStreamingPort        int
 	flagLXEHostnetworkFile      string
 	flagLXENetworkPlugin        string
+	flagLXEBrDHCPRange          string
 }
 
 func (c *cmdGlobal) Run(cmd *cobra.Command, args []string) error {
@@ -103,7 +104,8 @@ func main() {
 		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
 	app.PersistentFlags().StringVar(&globalCmd.flagLXENetworkPlugin, "network-plugin",
 		"", "The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.")
-
+	app.PersistentFlags().StringVar(&globalCmd.flagLXEBrDHCPRange, "bridge-dhcp-range",
+		"", "Which DHCP range to configure ind the 'lxebr0' lxd bridge. Only applies if network-plugin is set to ''. If empty, uses random range provided by lxd. Not required, if kubernetes will set the range using CRI UpdateRuntimeconfig")
 	// Run the main command and handle errors
 	err := app.Execute()
 	if err != nil {

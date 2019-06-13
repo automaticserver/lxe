@@ -30,11 +30,12 @@ type LXEConfig struct {
 	LXEStreamingPort           string // Port where LXE's Http Server will listen
 	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
 	LXENetworkPlugin           string // The network plugin to use as described above
+	LXEBrDHCPRange             string // Which DHCP Range to configure to lxebr0
 }
 
 // NewLXEConfig returns lxe daemon config for the above options
 func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStreamingServerEndpoint, lxeStreamingPort,
-	lxeHostnetworkFile, lxeNetworkPlugin string) (*LXEConfig, error) {
+	lxeHostnetworkFile, lxeNetworkPlugin, lxeBrDHCPRange string) (*LXEConfig, error) {
 	return &LXEConfig{
 		UnixSocket:                 lxeSocket,
 		LXDSocket:                  lxdSocket,
@@ -44,6 +45,7 @@ func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStre
 		LXEStreamingPort:           lxeStreamingPort,
 		LXEHostnetworkFile:         lxeHostnetworkFile,
 		LXENetworkPlugin:           lxeNetworkPlugin,
+		LXEBrDHCPRange:             lxeBrDHCPRange,
 	}, nil
 }
 
@@ -80,7 +82,7 @@ func NewServer(criConfig *LXEConfig) *Server {
 	}
 
 	// Initialize lxd bridge for lxe is created with new generated cidr if missing
-	err = lxf.EnsureBridge(LXEBridge, "", true, true)
+	err = lxf.EnsureBridge(LXEBridge, criConfig.LXEBrDHCPRange, true, true)
 	if err != nil {
 		logger.Critf("Unable to setup bridge %v: %v", LXEBridge, err)
 		os.Exit(shared.ExitCodeUnspecified)

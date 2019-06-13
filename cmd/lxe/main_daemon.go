@@ -65,6 +65,7 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 		strconv.Itoa(c.global.flagLXEStreamingPort),
 		c.global.flagLXEHostnetworkFile,
 		c.global.flagLXENetworkPlugin,
+		c.global.flagLXEBrDHCPRange,
 	)
 	if err != nil {
 		return err

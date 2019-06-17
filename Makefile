@@ -123,7 +123,7 @@ package-deb-lxd-snap: build
 	
 	cd package/debian-lxd-snap; find . -type f -not -path './DEBIAN/*' -print | cut -c 3- | xargs md5sum > DEBIAN/md5sums
 	VERSION="$(version)" INSTALLSIZE="\$$INSTALLSIZE" envsubst < fixtures/packaging/debian-lxd-snap/DEBIAN/control > package/debian-lxd-snap/DEBIAN/control
-	du -s package/debian | cut -f1 | awk '{print "Installed-Size: "$$1}' | sed -i -e '/$$INSTALLSIZE/{r /dev/stdin' -e 'd;}' package/debian-lxd-snap/DEBIAN/control
+	du -s package/debian-lxd-snap | cut -f1 | awk '{print "Installed-Size: "$$1}' | sed -i -e '/$$INSTALLSIZE/{r /dev/stdin' -e 'd;}' package/debian-lxd-snap/DEBIAN/control
 
 	chmod -R g-w package/debian-lxd-snap/
 	fakeroot dpkg-deb -b package/debian-lxd-snap

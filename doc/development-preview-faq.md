@@ -41,6 +41,10 @@ separator          := /[_.]|[-]*/
 | images/ubuntu/14.04 | docker.io/images/ubuntu/14.04 | images/ubuntu/14.04:latest | images/ubuntu/14.04 | images/ubuntu/14.04 | images:ubuntu/14.04 |
 | missingremote/example/ubuntu/14.04 | docker.io/missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04:latest | missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04 | [notfound] |
 
+## Environment variables
+
+Environment variables defined in the ContainerSpec of the PodSpec are passed to the [lxd container config](https://lxd.readthedocs.io/en/latest/containers/) as `config.environment.*`, which are passed to the init process of the container (see `cat /proc/1/environ`) and usually the init system does not forward these. In systemd, you could use [PassEnvironment](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#PassEnvironment=) to make these visible for your unit.
+q
 ## TBD
 
 - only one container per pod (for now)

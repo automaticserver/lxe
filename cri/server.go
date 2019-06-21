@@ -89,7 +89,7 @@ func NewServer(criConfig *LXEConfig) *Server {
 	}
 
 	// for now we bind the http on every interface
-	streamServerAddr := ":" + criConfig.LXEStreamingPort
+	streamServerAddr := criConfig.LXEStreamingServerEndpoint + ":" + criConfig.LXEStreamingPort
 	runtimeServer, err := NewRuntimeServer(criConfig, streamServerAddr, lxf)
 	if err != nil {
 		logger.Critf("Unable to start runtime server: %v", err)

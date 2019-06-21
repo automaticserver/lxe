@@ -108,13 +108,16 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 		return nil, err
 	}
 
-	return &rtApi.VersionResponse{
+	response := &rtApi.VersionResponse{
 		Version:        criVersion,
 		RuntimeName:    Domain,
 		RuntimeVersion: Version,
 		// api version is only X.X, so need to add .0 for semver requirement
 		RuntimeApiVersion: server.APIVersion + ".0",
-	}, nil
+	}
+
+	logger.Debugf("Version responded: %v", response)
+	return response, nil
 }
 
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure
@@ -286,9 +289,12 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 
 	logger.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
 
-	return &rtApi.RunPodSandboxResponse{
+	response := &rtApi.RunPodSandboxResponse{
 		PodSandboxId: sb.ID,
-	}, nil
+	}
+
+	logger.Debugf("RunPodSandbox responded: %v", response)
+	return response, nil
 }
 
 // StopPodSandbox stops any running process that is part of the sandbox and
@@ -327,7 +333,10 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 
 	logger.Infof("StopPodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
-	return &rtApi.StopPodSandboxResponse{}, nil
+	response := &rtApi.StopPodSandboxResponse{}
+
+	logger.Debugf("StopPodSandbox responded: %v", response)
+	return response, nil
 }
 
 // RemovePodSandbox removes the sandbox.
@@ -364,7 +373,10 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 
 	logger.Infof("RemovePodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
-	return &rtApi.RemovePodSandboxResponse{}, nil
+	response := &rtApi.RemovePodSandboxResponse{}
+
+	logger.Debugf("RemovePodSandbox responded: %v", response)
+	return response, nil
 }
 
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
@@ -379,7 +391,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		return nil, err
 	}
 
-	response := rtApi.PodSandboxStatusResponse{
+	response := &rtApi.PodSandboxStatusResponse{
 		Status: &rtApi.PodSandboxStatus{
 			Id: sb.ID,
 			Metadata: &rtApi.PodSandboxMetadata{
@@ -422,7 +434,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	}
 
 	logger.Debugf("PodSandboxStatus responded: %v", response)
-	return &response, nil
+	return response, nil
 }
 
 // ListPodSandbox returns a list of PodSandboxes.
@@ -436,7 +448,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 		return nil, err
 	}
 
-	response := rtApi.ListPodSandboxResponse{}
+	response := &rtApi.ListPodSandboxResponse{}
 	for _, sb := range sandboxes {
 
 		if req.GetFilter() != nil {
@@ -469,7 +481,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context,
 		response.Items = append(response.Items, &pod)
 	}
 	logger.Debugf("ListPodSandbox responded: %v", response)
-	return &response, nil
+	return response, nil
 }
 
 // CreateContainer creates a new container in specified PodSandbox
@@ -548,9 +560,12 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 
 	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", c.ID, req.GetPodSandboxId())
 
-	return &rtApi.CreateContainerResponse{
+	response := &rtApi.CreateContainerResponse{
 		ContainerId: c.ID,
-	}, nil
+	}
+
+	logger.Debugf("CreateContainer responded: %v", response)
+	return response, nil
 }
 
 // StartContainer starts the container.
@@ -573,7 +588,10 @@ func (s RuntimeServer) StartContainer(ctx context.Context,
 
 	logger.Infof("StartContainer successful: ContainerID %v", c.ID)
 
-	return &rtApi.StartContainerResponse{}, nil
+	response := &rtApi.StartContainerResponse{}
+
+	logger.Debugf("StartContainer responded: %v", response)
+	return response, nil
 }
 
 // StopContainer stops a running container with a grace period (i.e., timeout).
@@ -601,7 +619,10 @@ func (s RuntimeServer) StopContainer(ctx context.Context,
 
 	logger.Infof("StopContainer successful: ContainerID %v", c.ID)
 
-	return &rtApi.StopContainerResponse{}, nil
+	response := &rtApi.StopContainerResponse{}
+
+	logger.Debugf("StopContainer responded: %v", response)
+	return response, nil
 }
 
 // RemoveContainer removes the container. If the container is running, the
@@ -629,14 +650,17 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 
 	logger.Infof("RemoveContainer successful: ContainerID %v", c.ID)
 
-	return &rtApi.RemoveContainerResponse{}, nil
+	response := &rtApi.RemoveContainerResponse{}
+
+	logger.Debugf("RemoveContainer responded: %v", response)
+	return response, nil
 }
 
 // ListContainers lists all containers by filters.
 func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContainersRequest) (*rtApi.ListContainersResponse, error) {
 	logger.Debugf("ListContainers triggered: %v", req)
 
-	var response rtApi.ListContainersResponse
+	response := &rtApi.ListContainersResponse{}
 	cl, err := s.lxf.ListContainers()
 	if err != nil {
 		logger.Errorf("ListContainers: trying to get container list: %v", err)
@@ -664,7 +688,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 	}
 
 	logger.Debugf("ListContainers responded: %v", response)
-	return &response, nil
+	return response, nil
 }
 
 // ContainerStatus returns status of the container. If the container is not
@@ -714,11 +738,14 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 		return nil, err
 	}
 
-	return &rtApi.ExecSyncResponse{
+	response := &rtApi.ExecSyncResponse{
 		Stderr:   out.StdErr,
 		Stdout:   out.StdOut,
 		ExitCode: int32(out.Code),
-	}, nil
+	}
+
+	logger.Debugf("ExecSync responded: %v", response)
+	return response, nil
 }
 
 // Exec prepares a streaming endpoint to execute a command in the container.
@@ -769,6 +796,8 @@ func (s RuntimeServer) PortForward(ctx context.Context, req *rtApi.PortForwardRe
 		logger.Errorf("PortForward: preparing pendpoint: %v", err)
 		return nil, err
 	}
+
+	logger.Debugf("PortForward responded: %v", resp)
 
 	return resp, nil
 }
@@ -844,7 +873,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 // exist, the call returns an error.
 func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerStatsRequest) (*rtApi.ContainerStatsResponse, error) {
 	logger.Debugf("ContainerStats triggered: %v", req)
-	response := rtApi.ContainerStatsResponse{}
+	response := &rtApi.ContainerStatsResponse{}
 
 	cntStat, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
@@ -858,7 +887,7 @@ func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerS
 	}
 
 	logger.Debugf("ContainerStats responded: %v", response)
-	return &response, nil
+	return response, nil
 }
 
 // ListContainerStats returns stats of all running containers.
@@ -867,7 +896,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 
 	logger.Debugf("ListContainerStats triggered: %v", req)
 
-	response := rtApi.ListContainerStatsResponse{}
+	response := &rtApi.ListContainerStatsResponse{}
 
 	if req.Filter != nil && req.Filter.Id != "" {
 		c, err := s.lxf.GetContainer(req.Filter.Id)
@@ -881,7 +910,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 			return nil, err
 		}
 		response.Stats = append(response.Stats, st)
-		return &response, nil
+		return response, nil
 	}
 
 	cts, err := s.lxf.ListContainers()
@@ -900,7 +929,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context,
 	}
 
 	logger.Debugf("ListContainerStats responded: %v", response)
-	return &response, nil
+	return response, nil
 }
 
 // UpdateRuntimeConfig updates the runtime configuration based on the given request.
@@ -916,7 +945,10 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context,
 		return nil, err
 	}
 
-	return &rtApi.UpdateRuntimeConfigResponse{}, nil
+	response := &rtApi.UpdateRuntimeConfigResponse{}
+
+	logger.Debugf("UpdateRuntimeConfig responded: %v", response)
+	return response, nil
 }
 
 // Status returns the status of the runtime.

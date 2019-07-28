@@ -15,7 +15,7 @@ There are no official builds right now. Migration of our internal pipeline to a 
 
 ## Installing LXE from source
 
-LXE uses [Go Modules](https://github.com/golang/go/wiki/Modules) so the minimum Go version required is 1.11. Clone this repo to your wished location.
+LXE uses [Go Modules](https://github.com/golang/go/wiki/Modules) so the minimum Go version required is 1.11. Clone this repo to your wished location. If you checked it out within `$GOPATH`, use `GO111MODULE=on` with the `make` commands.
 
 ### Building
 

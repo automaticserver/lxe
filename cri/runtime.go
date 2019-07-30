@@ -43,7 +43,6 @@ type RuntimeServer struct {
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
 func NewRuntimeServer(
 	criConfig *LXEConfig,
-	streamServerAddr string,
 	lxf *lxf.Client) (*RuntimeServer, error) {
 	var err error
 
@@ -62,6 +61,7 @@ func NewRuntimeServer(
 
 	runtime.lxf = lxf
 
+	streamServerAddr := criConfig.LXEStreamingServerEndpoint + ":" + criConfig.LXEStreamingPort
 	outboundIP, err := utilNet.ChooseHostInterface()
 	if err != nil {
 		logger.Errorf("could not find suitable host interface: %v", err)

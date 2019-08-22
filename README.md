@@ -2,7 +2,7 @@
 
 [![Gitter](https://badges.gitter.im/automaticserver-lxe.svg)](https://gitter.im/automaticserver-lxe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-LXE is a shim of the Kubernetes [Container Runtime Interface](https://github.com/kubernetes/community/blob/master/contributors/devel/container-runtime-interface.md) for LXD.
+LXE is a shim of the Kubernetes [Container Runtime Interface](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md) for LXD.
 This project is currently under heavy development, expect incompatible changes. The name of this project can change - we're open for suggestions - lxe was only an internal codename.
 
 ## Requirements

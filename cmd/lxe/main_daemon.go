@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -62,7 +61,7 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 		c.global.flagLXDRemoteConfig,
 		c.global.flagLXDImageRemote,
 		c.global.flagLXEStreamServerEndpoint,
-		strconv.Itoa(c.global.flagLXEStreamingPort),
+		c.global.flagLXEStreamingPort,
 		c.global.flagLXEHostnetworkFile,
 		c.global.flagLXENetworkPlugin,
 		c.global.flagLXEBrDHCPRange,

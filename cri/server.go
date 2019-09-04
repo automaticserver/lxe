@@ -27,14 +27,14 @@ type LXEConfig struct {
 	LXDRemoteConfig            string // Path where the lxd remote config can be found
 	LXDImageRemote             string // Remote to use when ImageSpec doesn't provide an explicit remote
 	LXEStreamingServerEndpoint string // IP or Interface for Streaming Server. Guessed by default if not present
-	LXEStreamingPort           string // Port where LXE's Http Server will listen
+	LXEStreamingPort           int    // Port where LXE's Http Server will listen
 	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
 	LXENetworkPlugin           string // The network plugin to use as described above
 	LXEBrDHCPRange             string // Which DHCP Range to configure to lxebr0
 }
 
 // NewLXEConfig returns lxe daemon config for the above options
-func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStreamingServerEndpoint, lxeStreamingPort,
+func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStreamingServerEndpoint string, lxeStreamingPort int,
 	lxeHostnetworkFile, lxeNetworkPlugin, lxeBrDHCPRange string) (*LXEConfig, error) {
 	return &LXEConfig{
 		UnixSocket:                 lxeSocket,

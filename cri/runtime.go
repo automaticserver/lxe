@@ -61,7 +61,7 @@ func NewRuntimeServer(
 
 	runtime.lxf = lxf
 
-	streamServerAddr := criConfig.LXEStreamingServerEndpoint + ":" + criConfig.LXEStreamingPort
+	streamServerAddr := criConfig.LXEStreamingServerEndpoint + ":" + strconv.Itoa(criConfig.LXEStreamingPort)
 	outboundIP, err := utilNet.ChooseHostInterface()
 	if err != nil {
 		logger.Errorf("could not find suitable host interface: %v", err)
@@ -73,7 +73,7 @@ func NewRuntimeServer(
 	streamServerConfig.Addr = streamServerAddr
 	streamServerConfig.BaseURL = &url.URL{
 		Scheme: "http",
-		Host:   outboundIP.String() + ":" + criConfig.LXEStreamingPort,
+		Host:   outboundIP.String() + ":" + strconv.Itoa(criConfig.LXEStreamingPort),
 	}
 	runtime.stream.runtimeServer = &runtime
 	runtime.stream.streamServer, err = streaming.NewServer(streamServerConfig, runtime.stream)

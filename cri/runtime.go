@@ -162,20 +162,27 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		sb.NetworkConfig.ModeData = map[string]string{
 			"bridge": sb.Annotations[fieldLXEBridge],
 		}
-	} else if s.criConfig.LXENetworkPlugin == NetworkPluginCNI {
-		// lxe is configured to manage network with cni
-		sb.NetworkConfig.Mode = lxf.NetworkCNI
 	} else {
-		// default is to use the predefined lxd bridge managed by lxe
-		randIP, err := s.lxf.FindFreeIP(LXEBridge)
-		if err != nil {
-			logger.Errorf("RunPodSandbox: SandboxName %v unable to find a free ip: %v", req.GetConfig().GetMetadata().GetName(), err)
-			return nil, err
-		}
-		sb.NetworkConfig.Mode = lxf.NetworkBridged
-		sb.NetworkConfig.ModeData = map[string]string{
-			"bridge":            LXEBridge,
-			"interface-address": randIP.String(),
+		// manage network according to selected network plugin
+		switch s.criConfig.LXENetworkPlugin {
+		case NetworkPluginDefault:
+			// default is to use the predefined lxd bridge managed by lxe
+			randIP, err := s.lxf.FindFreeIPBridgeLXD(LXEBridge)
+			if err != nil {
+				logger.Errorf("RunPodSandbox: SandboxName %v unable to find a free ip: %v", req.GetConfig().GetMetadata().GetName(), err)
+				return nil, err
+			}
+			sb.NetworkConfig.Mode = lxf.NetworkBridged
+			sb.NetworkConfig.ModeData = map[string]string{
+				"bridge":            LXEBridge,
+				"interface-address": randIP.String(),
+			}
+		case NetworkPluginCNI:
+			// lxe is configured to manage network with cni
+			sb.NetworkConfig.Mode = lxf.NetworkCNI
+		default:
+			// unkown plugin name provided
+			return nil, fmt.Errorf("Unknown network plugin name configured: %v", s.criConfig.LXENetworkPlugin)
 		}
 	}
 

@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"math/rand"
@@ -71,53 +72,83 @@ func (l *Client) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 
 // FindFreeIP generates a IP within the range of the provided lxd managed bridge which does
 // not exist in the current leases
-func (l *Client) FindFreeIP(bridge string) (net.IP, error) {
+func (l *Client) FindFreeIPBridgeLXD(bridge string) (net.IP, error) {
 	network, _, err := l.server.GetNetwork(bridge)
 	if err != nil {
 		return nil, err
 	}
 	if network.Config["ipv4.dhcp.ranges"] != "" {
+		// actually we can now using FindFreeIP() below, but not good enough, as this field can yield multiple ranges
 		return nil, fmt.Errorf("Not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", bridge)
 	}
 
-	leases, err := l.server.GetNetworkLeases(bridge)
+	rawLeases, err := l.server.GetNetworkLeases(bridge)
 	if err != nil {
 		return nil, err
+	}
+	var leases []net.IP
+	for _, rawIP := range rawLeases {
+		leases = append(leases, net.ParseIP(rawIP.Address))
 	}
 
 	bridgeIP, bridgeNet, err := net.ParseCIDR(network.Config["ipv4.address"])
 	if err != nil {
 		return nil, err
 	}
+	leases = append(leases, bridgeIP) // also exclude bridge ip
 
+	return FindFreeIP(bridgeNet, leases, nil, nil), nil
+}
+
+// FindFreeIP tries to find an available IP address within given subnet, respecting reserved addresses in leases and
+// must be between the start and end address. Network and broadcast IP are also reserved and automatically added to
+// leases. If start or end is nil their closest available address from the subnet is selected.
+func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
+	// put non-usable addresses also to leases, so they can't be selected
+	networkIP := subnet.IP
 	broadcastIP := make(net.IP, 4)
 	for i := range broadcastIP {
-		broadcastIP[i] = bridgeNet.IP[i] | ^bridgeNet.Mask[i]
+		broadcastIP[i] = subnet.IP[i] | ^subnet.Mask[i]
+	}
+	leases = append(leases, networkIP, broadcastIP)
+
+	// defaults for start and end to usable addresses if not explicitly defined
+	if start == nil {
+		start = networkIP
+		start[3]++
+	}
+	if end == nil {
+		end = broadcastIP
+		end[3]--
 	}
 
-	var ip net.IP
 	// Until a usable IP is found...
+	// TODO: detect if there's never a possible address and return nil?
+	var ip net.IP
 	for {
-		// select randomly an ip address within the specified range
-		randIP := make(net.IP, 4)
-		binary.LittleEndian.PutUint32(randIP, rand.Uint32())
-		for i, v := range randIP {
-			randIP[i] = bridgeNet.IP[i] + (v &^ bridgeNet.Mask[i])
+		// randomly select an ip address within the specified subnet
+		trial := make(net.IP, 4)
+		binary.LittleEndian.PutUint32(trial, rand.Uint32())
+		for i, v := range trial {
+			trial[i] = networkIP[i] + (v &^ subnet.Mask[i])
 		}
 
-		// not allowed to be the bridge ip, network address or broadcast address
-		if randIP.String() == bridgeIP.String() || randIP.String() == bridgeNet.IP.String() || randIP.String() == broadcastIP.String() {
+		// not allowed if outside explicitly defined range
+		if bytes.Compare(trial, start) < 0 || bytes.Compare(trial, end) > 0 {
 			continue
 		}
-		// not allowed to exist in current leases
+
+		// not allowed if already exists in current leases
 		for _, lease := range leases {
-			if randIP.String() == lease.Address {
+			if trial.Equal(lease) {
 				continue
 			}
 		}
-		// if reached here, ip is fine
-		ip = randIP
+
+		// IP is fine :)
+		ip = trial
 		break
 	}
-	return ip, nil
+
+	return ip
 }

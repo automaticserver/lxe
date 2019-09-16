@@ -22,9 +22,6 @@ const (
 
 	// DefaultInterface for all containers
 	DefaultInterface = "eth0"
-
-	// DefaultCNIInterface the default CNI Interface (usually a bridge)
-	DefaultCNIInterface = "cni0"
 )
 
 // getDefaultCNINetwork is borrowed from k8s' dockershim

@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os/exec"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,20 +27,14 @@ const (
 	DefaultCNIInterface = "cni0"
 )
 
-type cniNetwork struct {
-	name          string
-	NetworkConfig *libcni.NetworkConfigList
-	CNIConfig     libcni.CNI
-}
-
 // getDefaultCNINetwork is borrowed from k8s' dockershim
-func getDefaultCNINetwork(confDir string, binDirs []string) (*cniNetwork, error) {
+func getDefaultCNINetwork(confDir string, binDirs []string) (libcni.CNI, *libcni.NetworkConfigList, error) {
 	files, err := libcni.ConfFiles(confDir, []string{".conf", ".conflist", ".json"})
 	switch {
 	case err != nil:
-		return nil, err
+		return nil, nil, err
 	case len(files) == 0:
-		return nil, fmt.Errorf("No networks found in %s", confDir)
+		return nil, nil, fmt.Errorf("No networks found in %s", confDir)
 	}
 
 	sort.Strings(files)
@@ -78,26 +71,17 @@ func getDefaultCNINetwork(confDir string, binDirs []string) (*cniNetwork, error)
 			continue
 		}
 
-		network := &cniNetwork{
-			name:          confList.Name,
-			NetworkConfig: confList,
-			CNIConfig:     &libcni.CNIConfig{Path: binDirs},
-		}
-		return network, nil
+		return &libcni.CNIConfig{Path: binDirs}, confList, nil
 	}
-	return nil, fmt.Errorf("No valid networks found in %s", confDir)
+	return nil, nil, fmt.Errorf("No valid networks found in %s", confDir)
 }
 
 // AttachCNIInterface will setup the Pod Networking using CNI
 func AttachCNIInterface(namespace string, sandboxname string, containerID string, processID int64) ([]byte, error) {
-
-	cniNetwork, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
+	cni, netList, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
 	if err != nil {
 		return nil, err
 	}
-
-	cni := cniNetwork.CNIConfig
-	netList := cniNetwork.NetworkConfig
 
 	rt, err := getRuntimeConf(namespace, sandboxname, containerID, processID)
 	if err != nil {
@@ -126,14 +110,10 @@ func AttachCNIInterface(namespace string, sandboxname string, containerID string
 
 // DetachCNIInterface will teardown the Pod Networking
 func DetachCNIInterface(namespace string, sandboxname string, containerID string, processID int64) error {
-
-	cniNetwork, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
+	cni, netList, err := getDefaultCNINetwork(defaultCNIconfPath, []string{defaultCNIbinPath})
 	if err != nil {
 		return err
 	}
-
-	cni := cniNetwork.CNIConfig
-	netList := cniNetwork.NetworkConfig
 
 	rt, err := getRuntimeConf(namespace, sandboxname, containerID, processID)
 	if err != nil {
@@ -173,14 +153,4 @@ func Status() {
 
 // Name of the Pod Networking
 func Name() {
-}
-
-func cmdExec(cmd string, args ...string) error {
-	c := exec.Command(cmd, args...) // nolint: gosec
-	logger.Debugf("%v", c.Args)
-	err := c.Run()
-	if err != nil {
-		return fmt.Errorf("%s: %v", err.Error(), c)
-	}
-	return nil
 }

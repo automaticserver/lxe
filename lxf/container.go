@@ -258,6 +258,9 @@ func (c *Container) Stop(timeout int) error {
 // Delete the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
 func (c *Container) Delete() error {
+	// Try to release networking resources, don't throw error if something went wrong
+	_ = c.releaseNetworkingResources()
+
 	err := c.client.opwait.DeleteContainer(c.ID)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
@@ -265,6 +268,25 @@ func (c *Container) Delete() error {
 		}
 		return err
 	}
+	return nil
+}
+
+func (c *Container) releaseNetworkingResources() error {
+	s, err := c.Sandbox()
+	if err != nil {
+		return err
+	}
+
+	switch s.NetworkConfig.Mode {
+	case NetworkCNI:
+		err := c.client.DetachCNI(c)
+		if err != nil {
+			return err
+		}
+	default:
+		// nothing to do, all other modes need no help after starting
+	}
+
 	return nil
 }
 

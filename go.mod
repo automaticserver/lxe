@@ -2,7 +2,7 @@ module github.com/lxc/lxe
 
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
-	github.com/containernetworking/cni v0.6.0
+	github.com/containernetworking/cni v0.7.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all

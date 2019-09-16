@@ -10,7 +10,6 @@ import (
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
-	"github.com/lxc/lxe/network"
 )
 
 // NewContainer creates a local representation of a container
@@ -138,8 +137,8 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 	case api.Running:
 		c.StateName = ContainerStateRunning
 	case api.Stopped, api.Aborting, api.Stopping:
-		// we have to differentiate between stopped and created. If "user.state" exists, then it must be
-		// created, otherwise its exited
+		// we have to differentiate between stopped and created. If "user.state" exists, then it must be created, otherwise
+		// its exited
 		if state, has := c.Config[cfgState]; has && state == string(ContainerStateCreated) {
 			c.StateName = ContainerStateCreated
 		} else {
@@ -154,8 +153,7 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
 func (l *Client) lifecycleEventHandler(event api.Event) {
-	// we should always only get lifecycle events due to the handler setup
-	// but just in case ...
+	// we should always only get lifecycle events due to the handler setup but just in case ...
 	if event.Type != "lifecycle" {
 		return
 	}
@@ -167,9 +165,8 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
-	// we are only interested in container started events
-	// TODO: Unregister IP address when container is stopping if network-plugin is CNI
-	if eventLifecycle.Action != "container-started" {
+	// Early exit. We are only interested in container started and stopped events
+	if eventLifecycle.Action != "container-started" && eventLifecycle.Action != "container-stopped" {
 		return
 	}
 
@@ -177,38 +174,45 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 	c, err := l.GetContainer(containerID)
 	if err != nil {
 		if IsContainerNotFound(err) {
-			// The started container is not a cri container, we also get the error not found
-			// So this container can be ignored
+			// If the started container is not a cri container, we also get the error not found. So this container can be
+			// ignored
 			return
 		}
 		logger.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
 		return
 	}
 
+	switch eventLifecycle.Action {
+	case "container-started":
+		l.containerStartedEvent(c, event)
+	case "container-stopped":
+		l.containerStoppedEvent(c, event)
+	default:
+		// nothing to do, no other lifecycle events should get here
+	}
+}
+
+func (l *Client) containerStartedEvent(c *Container, e api.Event) {
 	s, err := c.Sandbox()
 	if err != nil {
-		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", containerID, err)
-		return
-	}
-	st, err := c.State()
-	if err != nil {
-		logger.Errorf("lifecycle: ContainerID %v trying to get state: %v", containerID, err)
+		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", c.ID, err)
 		return
 	}
 
 	switch s.NetworkConfig.Mode {
 	case NetworkCNI:
-		// attach interface using CNI
-		result, err := network.AttachCNIInterface(s.Metadata.Namespace, s.Metadata.Name, c.ID, st.Pid)
+		err := l.AttachCNI(c)
 		if err != nil {
 			logger.Errorf("unable to attach CNI interface to container (%v): %v", c.ID, err)
 		}
-		s.NetworkConfig.ModeData["result"] = string(result)
-		err = s.apply()
-		if err != nil {
-			logger.Errorf("unable to save sandbox after attaching CNI interface to container (%v): %v", c.ID, err)
-		}
 	default:
 		// nothing to do, all other modes need no help after starting
+	}
+}
+
+func (l *Client) containerStoppedEvent(c *Container, e api.Event) {
+	err := c.releaseNetworkingResources()
+	if err != nil {
+		logger.Errorf("unable to detach CNI interface from container (%v): %v", c.ID, err)
 	}
 }

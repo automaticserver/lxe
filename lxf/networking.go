@@ -115,12 +115,10 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 
 	// defaults for start and end to usable addresses if not explicitly defined
 	if start == nil {
-		start = networkIP
-		start[3]++
+		start = net.IPv4(networkIP[0], networkIP[1], networkIP[2], networkIP[3]+1)
 	}
 	if end == nil {
-		end = broadcastIP
-		end[3]--
+		end = net.IPv4(broadcastIP[0], broadcastIP[1], broadcastIP[2], broadcastIP[3]-1)
 	}
 
 	// Until a usable IP is found...
@@ -137,7 +135,7 @@ OUTER:
 		trial := net.IPv4(trialB[0], trialB[1], trialB[2], trialB[3])
 
 		// not allowed if outside explicitly defined range
-		if bytes.Compare(trial, start) < 0 || bytes.Compare(trial, end) > 0 {
+		if bytes.Compare(trial, start) <= 0 || bytes.Compare(trial, end) >= 0 {
 			continue
 		}
 

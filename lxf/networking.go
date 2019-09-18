@@ -126,13 +126,15 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 	// Until a usable IP is found...
 	// TODO: detect if there's never a possible address and return nil?
 	var ip net.IP
+OUTER:
 	for {
-		// randomly select an ip address within the specified subnet
-		trial := make(net.IP, 4)
-		binary.LittleEndian.PutUint32(trial, rand.Uint32())
-		for i, v := range trial {
-			trial[i] = networkIP[i] + (v &^ subnet.Mask[i])
+		// randomly select an[ ip address within the specified subnet
+		trialB := make([]byte, 4)
+		binary.LittleEndian.PutUint32(trialB, rand.Uint32())
+		for i, v := range trialB {
+			trialB[i] = subnet.IP[i] + (v &^ subnet.Mask[i])
 		}
+		trial := net.IPv4(trialB[0], trialB[1], trialB[2], trialB[3])
 
 		// not allowed if outside explicitly defined range
 		if bytes.Compare(trial, start) < 0 || bytes.Compare(trial, end) > 0 {
@@ -142,7 +144,7 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 		// not allowed if already exists in current leases
 		for _, lease := range leases {
 			if trial.Equal(lease) {
-				continue
+				continue OUTER
 			}
 		}
 

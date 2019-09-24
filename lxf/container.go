@@ -3,6 +3,7 @@ package lxf
 import (
 	"crypto/md5" // nolint: gosec #nosec (no sensitive data)
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -10,18 +11,26 @@ import (
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
+	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
-	cfgLogPath            = "user.log_path"
-	cfgSecurityPrivileged = "security.privileged"
-	cfgVolatileBaseImage  = cfgVolatile + ".base_image"
-	cfgStartedAt          = "user.started_at"
-	cfgFinishedAt         = "user.finished_at"
-	cfgCloudInitUserData  = "user.user-data"
-	cfgCloudInitMetaData  = "user.meta-data"
-	cfgEnvironmentPrefix  = "environment"
+	cfgLogPath              = "user.log_path"
+	cfgSecurityPrivileged   = "security.privileged"
+	cfgVolatileBaseImage    = cfgVolatile + ".base_image"
+	cfgStartedAt            = "user.started_at"
+	cfgFinishedAt           = "user.finished_at"
+	cfgCloudInitUserData    = "user.user-data"
+	cfgCloudInitMetaData    = "user.meta-data"
+	cfgEnvironmentPrefix    = "environment"
+	cfgResourcesCPUPrefix   = "user.resources.cpu"
+	cfgResourcesCPUShares   = cfgResourcesCPUPrefix + ".shares"
+	cfgResourcesCPUQuota    = cfgResourcesCPUPrefix + ".quota"
+	cfgResourcesCPUPeriod   = cfgResourcesCPUPrefix + ".period"
+	cfgResourcesMemoryLimit = "user.resources.memory.limit"
+	cfgLimitCPUAllowance    = "limits.cpu.allowance"
+	cfgLimitMemory          = "limits.memory"
 
 	rootDevice     = "root"
 	defaultProfile = "default"
@@ -77,6 +86,8 @@ type Container struct {
 	CloudInitUserData      string
 	CloudInitMetaData      string
 	CloudInitNetworkConfig string
+	// Resources contain cgroup information for handling resource constraints for the container
+	Resources *opencontainers.LinuxResources
 
 	// sandbox is the parent sandbox of this container
 	sandbox *Sandbox
@@ -438,6 +449,31 @@ func makeContainerConfig(c *Container) map[string]string {
 	}
 	if c.CloudInitNetworkConfig != "" {
 		config[cfgCloudInitNetworkConfig] = c.CloudInitNetworkConfig
+	}
+
+	if c.Resources != nil {
+		if c.Resources.CPU != nil {
+			if c.Resources.CPU.Shares != nil {
+				config[cfgResourcesCPUShares] = strconv.FormatUint(*c.Resources.CPU.Shares, 10)
+			}
+			if c.Resources.CPU.Quota != nil {
+				config[cfgResourcesCPUQuota] = strconv.FormatInt(*c.Resources.CPU.Quota, 10)
+			}
+			if c.Resources.CPU.Period != nil {
+				config[cfgResourcesCPUPeriod] = strconv.FormatUint(*c.Resources.CPU.Period, 10)
+			}
+			if c.Resources.CPU.Quota != nil && *c.Resources.CPU.Quota > 0 && c.Resources.CPU.Period != nil && *c.Resources.CPU.Period > 0 {
+				config[cfgLimitCPUAllowance] = fmt.Sprintf("%dms/%dms",
+					int(math.Ceil(float64(*c.Resources.CPU.Quota)/1000)),
+					int(math.Ceil(float64(*c.Resources.CPU.Period)/1000)),
+				)
+			}
+		}
+		if c.Resources.Memory != nil {
+			if c.Resources.Memory.Limit != nil && *c.Resources.Memory.Limit > 0 {
+				config[cfgLimitMemory] = strconv.FormatInt(*c.Resources.Memory.Limit, 10)
+			}
+		}
 	}
 
 	return config

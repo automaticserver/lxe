@@ -16,6 +16,7 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
 	"github.com/lxc/lxe/lxf/device"
+	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
@@ -557,6 +558,20 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	// append other envs below metadata
 	if c.CloudInitMetaData != "" && len(otherEnvs) > 0 {
 		c.CloudInitMetaData += "\n"
+	}
+
+	// process limits
+	resrc := req.GetConfig().GetLinux().GetResources()
+	if resrc != nil {
+		c.Resources = &opencontainers.LinuxResources{}
+		c.Resources.CPU = &opencontainers.LinuxCPU{}
+		c.Resources.Memory = &opencontainers.LinuxMemory{}
+		shares := uint64(resrc.CpuShares)
+		c.Resources.CPU.Shares = &shares
+		c.Resources.CPU.Quota = &resrc.CpuQuota
+		period := uint64(resrc.CpuPeriod)
+		c.Resources.CPU.Period = &period
+		c.Resources.Memory.Limit = &resrc.MemoryLimitInBytes
 	}
 
 	err := c.Apply()

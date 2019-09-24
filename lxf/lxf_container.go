@@ -10,6 +10,7 @@ import (
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf/device"
+	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 )
 
 // NewContainer creates a local representation of a container
@@ -121,6 +122,38 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 	c.Nics, err = device.GetNicsFromMap(ct.Devices)
 	if err != nil {
 		return nil, err
+	}
+
+	c.Resources = &opencontainers.LinuxResources{}
+	c.Resources.CPU = &opencontainers.LinuxCPU{}
+	if sharesS := ct.Config[cfgResourcesCPUShares]; sharesS != "" {
+		shares, err := strconv.ParseUint(sharesS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		c.Resources.CPU.Shares = &shares
+	}
+	if quotaS := ct.Config[cfgResourcesCPUQuota]; quotaS != "" {
+		quota, err := strconv.ParseInt(quotaS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		c.Resources.CPU.Quota = &quota
+	}
+	if periodS := ct.Config[cfgResourcesCPUPeriod]; periodS != "" {
+		period, err := strconv.ParseUint(periodS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		c.Resources.CPU.Period = &period
+	}
+	c.Resources.Memory = &opencontainers.LinuxMemory{}
+	if memoryS := ct.Config[cfgResourcesMemoryLimit]; memoryS != "" {
+		memory, err := strconv.ParseInt(memoryS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		c.Resources.Memory.Limit = &memory
 	}
 
 	for _, v := range ct.Profiles {

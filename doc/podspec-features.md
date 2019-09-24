@@ -51,7 +51,7 @@ The following table provides an overview of the current implementation of the [`
 | `name` | yes |  |  |
 | `ports` | yes |  | `config.devices.*.type=proxy` |
 | `readinessProbe` | - |  |  |
-| `resources` | yes | see [limits.md](limits.md) | `limits.*` |
+| `resources` | yes | see [limits.md](limits.md) | `config.limits.*` |
 | `securityContext` | incomplete* | yet only `securityContext.privileged` | `config.security.privileged` |
 | `stdin` | ? |  |  |
 | `stdinOnce` | ? |  |  |

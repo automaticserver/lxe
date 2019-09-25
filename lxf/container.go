@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/automaticserver/lxe/lxf/device"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
@@ -31,9 +31,6 @@ const (
 	cfgResourcesMemoryLimit = "user.resources.memory.limit"
 	cfgLimitCPUAllowance    = "limits.cpu.allowance"
 	cfgLimitMemory          = "limits.memory"
-
-	rootDevice     = "root"
-	defaultProfile = "default"
 )
 
 var (
@@ -153,9 +150,14 @@ func (c *Container) Sandbox() (*Sandbox, error) {
 	return c.sandbox, nil
 }
 
+// SandboxID returns the last profile name which is the sandbox profile name
+func (c *Container) SandboxID() string {
+	return c.Profiles[len(c.Profiles)-1]
+}
+
 func (c *Container) getSandbox() (*Sandbox, error) {
 	if len(c.Profiles) > 0 {
-		sandbox, err := c.client.GetSandbox(c.Profiles[0])
+		sandbox, err := c.client.GetSandbox(c.SandboxID())
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +193,7 @@ func (c *Container) getState() (*ContainerState, error) {
 	cs.Stats = ContainerStats{
 		CPUUsage:        uint64(state.CPU.Usage),
 		MemoryUsage:     uint64(state.Memory.Usage),
-		FilesystemUsage: uint64(state.Disk[rootDevice].Usage),
+		FilesystemUsage: uint64(state.Disk[lxdInitDefaultDiskName].Usage),
 	}
 
 	return cs, nil
@@ -350,7 +352,7 @@ func (c *Container) apply() error {
 
 	config[cfgSchema] = SchemaVersionContainer
 	contPut := api.ContainerPut{
-		Profiles: []string{c.Profiles[0], defaultProfile},
+		Profiles: c.Profiles,
 		Config:   config,
 		Devices:  devices,
 	}

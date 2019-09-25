@@ -12,7 +12,7 @@ import (
 const (
 	cfgSchema              = "user.lxe.schema"
 	SchemaVersionProfile   = "0.3"
-	SchemaVersionContainer = "0.4"
+	SchemaVersionContainer = "0.5"
 
 	cfgOldIsSandbox     = "user.is_cri_sandbox"
 	cfgOldIsContainer   = "user.is_cri_container"
@@ -124,6 +124,9 @@ func (m *MigrationWorkspace) Ensure() error {
 		if m.ensureContainerZeroFour(c) {
 			counter++
 		}
+		if m.ensureContainerZeroFive(c) {
+			counter++
+		}
 
 		// If something has changed, update it
 		if counter > 0 {
@@ -224,6 +227,17 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 func (m *MigrationWorkspace) ensureContainerZeroFour(c *api.Container) bool {
 	if c.Config[cfgSchema] == "0.3" {
 		c.Config[cfgSchema] = "0.4"
+		return true
+	}
+	return false
+}
+
+// Implemented variable length of profiles. The order of profiles in schema <= 0.4 was wrong.
+// Move the first profile, which was the sandbox, to the last position, otherwise preserve position
+func (m *MigrationWorkspace) ensureContainerZeroFive(c *api.Container) bool {
+	if c.Config[cfgSchema] == "0.4" {
+		c.Profiles = append(c.Profiles[1:], c.Profiles[0])
+		c.Config[cfgSchema] = "0.5"
 		return true
 	}
 	return false

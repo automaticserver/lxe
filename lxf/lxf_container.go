@@ -7,16 +7,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/automaticserver/lxe/lxf/device"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 )
 
 // NewContainer creates a local representation of a container
-func (l *Client) NewContainer(sandboxID string) *Container {
+func (l *Client) NewContainer(sandboxID string, additionalProfiles ...string) *Container {
 	c := &Container{}
 	c.client = l
+	c.Profiles = append(c.Profiles, additionalProfiles...)
 	c.Profiles = append(c.Profiles, sandboxID)
 	return c
 }
@@ -123,6 +124,10 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 	if err != nil {
 		return nil, err
 	}
+	c.Nones, err = device.GetNonesFromMap(ct.Devices)
+	if err != nil {
+		return nil, err
+	}
 
 	c.Resources = &opencontainers.LinuxResources{}
 	c.Resources.CPU = &opencontainers.LinuxCPU{}
@@ -156,11 +161,7 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 		c.Resources.Memory.Limit = &memory
 	}
 
-	for _, v := range ct.Profiles {
-		if v != defaultProfile {
-			c.Profiles = append(c.Profiles, v)
-		}
-	}
+	c.Profiles = ct.Profiles
 	if len(c.Profiles) == 0 {
 		return nil, fmt.Errorf("Container '%v' has no sandbox", c.ID)
 	}

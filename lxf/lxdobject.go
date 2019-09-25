@@ -19,6 +19,7 @@ type LXDObject struct {
 	Disks   device.Disks
 	Blocks  device.Blocks
 	Nics    device.Nics
+	Nones   device.Nones
 	// Config contains options not provided by a own property
 	Config map[string]string
 }

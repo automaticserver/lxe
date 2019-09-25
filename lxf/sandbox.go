@@ -7,16 +7,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/network"
 	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/network"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
 const (
+	// Default device name of the root disk when initializing lxd
+	lxdInitDefaultDiskName = "root"
+	// Default device name of the nic interface when initializing lxd
+	lxdInitDefaultNicName = "eth0"
+
 	cfgHostname                 = "user.host_name"
 	cfgLogDirectory             = "user.log_directory"
 	cfgCreatedAt                = "user.created_at"
@@ -214,6 +219,11 @@ func (s *Sandbox) Apply() error {
 		// do nothing
 	}
 
+	// Always stop inheriting default eth0 device
+	s.Nones.Add(device.None{
+		Name: lxdInitDefaultNicName,
+	})
+
 	return s.apply()
 }
 
@@ -335,6 +345,10 @@ manage_etc_hosts: true`, s.Hostname)
 		return err
 	}
 	err = device.AddNicsToMap(devices, s.Nics...)
+	if err != nil {
+		return err
+	}
+	err = device.AddNonesToMap(devices, s.Nones...)
 	if err != nil {
 		return err
 	}

@@ -10,11 +10,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/automaticserver/lxe/lxf"
-	"github.com/automaticserver/lxe/lxf/device"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
@@ -483,7 +483,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
 	logger.Debugf("CreateContainer triggered: %v", req)
 
-	c := s.lxf.NewContainer(req.GetPodSandboxId())
+	c := s.lxf.NewContainer(req.GetPodSandboxId(), s.criConfig.LXDProfiles...)
 
 	c.Labels = req.GetConfig().GetLabels()
 	c.Annotations = req.GetConfig().GetAnnotations()
@@ -682,7 +682,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 			if filter.GetState() != nil && filter.GetState().GetState() != stateContainerAsCri(c.StateName) {
 				continue
 			}
-			if filter.GetPodSandboxId() != "" && filter.GetPodSandboxId() != c.Profiles[0] {
+			if filter.GetPodSandboxId() != "" && filter.GetPodSandboxId() != c.SandboxID() {
 				continue
 			}
 			if !CompareFilterMap(c.Labels, filter.GetLabelSelector()) {

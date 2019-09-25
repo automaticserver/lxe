@@ -39,7 +39,7 @@ func AddToMap(m map[string]map[string]string, devs ...Device) error {
 	return nil
 }
 
-// AddDisksToMap Will add the disks to the map
+// AddDisksToMap will add the disks to the map
 func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 	devs := []Device{}
 	for _, d := range disks {
@@ -48,7 +48,7 @@ func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 	return AddToMap(m, devs...)
 }
 
-// GetDisksFromMap will will add the proxies to the map
+// GetDisksFromMap will read all disk devices to the map
 func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // nolint: dupl
 	disks := Disks{}
 	for _, m := range maps {
@@ -63,7 +63,7 @@ func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // noli
 	return disks, nil
 }
 
-// AddProxiesToMap Will add the proxies to the map
+// AddProxiesToMap will add the proxies to the map
 func AddProxiesToMap(m map[string]map[string]string, proxies ...Proxy) error {
 	devs := []Device{}
 	for _, d := range proxies {
@@ -87,7 +87,7 @@ func GetProxiesFromMap(maps map[string]map[string]string) (Proxies, error) { // 
 	return proxies, nil
 }
 
-// AddBlocksToMap Will add the block devices to the map
+// AddBlocksToMap will add the block devices to the map
 func AddBlocksToMap(m map[string]map[string]string, blocks ...Block) error {
 	devs := []Device{}
 	for _, d := range blocks {
@@ -96,7 +96,7 @@ func AddBlocksToMap(m map[string]map[string]string, blocks ...Block) error {
 	return AddToMap(m, devs...)
 }
 
-// GetBlocksFromMap will read all proxy devices from the map
+// GetBlocksFromMap will read all block devices from the map
 func GetBlocksFromMap(maps map[string]map[string]string) ([]Block, error) { // nolint: dupl
 	blocks := Blocks{}
 	for _, m := range maps {
@@ -111,7 +111,7 @@ func GetBlocksFromMap(maps map[string]map[string]string) ([]Block, error) { // n
 	return blocks, nil
 }
 
-// AddNicsToMap Will add the nic devices to the map
+// AddNicsToMap will add the nic devices to the map
 func AddNicsToMap(m map[string]map[string]string, nics ...Nic) error {
 	devs := []Device{}
 	for _, d := range nics {
@@ -120,7 +120,7 @@ func AddNicsToMap(m map[string]map[string]string, nics ...Nic) error {
 	return AddToMap(m, devs...)
 }
 
-// GetNicsFromMap will read all proxy devices from the map
+// GetNicsFromMap will read all nic devices from the map
 func GetNicsFromMap(maps map[string]map[string]string) ([]Nic, error) { // nolint: dupl
 	nics := Nics{}
 	for _, m := range maps {
@@ -133,4 +133,28 @@ func GetNicsFromMap(maps map[string]map[string]string) ([]Nic, error) { // nolin
 		}
 	}
 	return nics, nil
+}
+
+// AddNonesToMap will add the none devices to the map
+func AddNonesToMap(m map[string]map[string]string, nones ...None) error {
+	devs := []Device{}
+	for _, n := range nones {
+		devs = append(devs, n)
+	}
+	return AddToMap(m, devs...)
+}
+
+// GetNonesFromMap will read all none devices from the map
+func GetNonesFromMap(maps map[string]map[string]string) ([]None, error) { // nolint: dupl
+	nones := Nones{}
+	for k, m := range maps {
+		if m["type"] == noneType {
+			p, err := NoneFromMap(m, k)
+			if err != nil {
+				return nil, err
+			}
+			nones.Add(p)
+		}
+	}
+	return nones, nil
 }

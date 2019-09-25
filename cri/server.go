@@ -4,9 +4,9 @@ import (
 	"net"
 	"os"
 
-	"github.com/lxc/lxd/shared/logger"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/shared"
+	"github.com/lxc/lxd/shared/logger"
 	"google.golang.org/grpc"
 	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -54,7 +54,7 @@ func NewServer(criConfig *Config) *Server {
 
 	if criConfig.LXENetworkPlugin == NetworkPluginDefault {
 		// Initialize lxd bridge for lxe is created with new generated cidr if missing
-		err = lxf.EnsureBridge(LXEBridge, criConfig.LXEBrDHCPRange, true, true)
+		err = lxf.EnsureBridge(LXEBridge, criConfig.LXEBridgeDHCPRange, true, true)
 		if err != nil {
 			logger.Critf("Unable to setup bridge %v: %v", LXEBridge, err)
 			os.Exit(shared.ExitCodeUnspecified)

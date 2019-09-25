@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lxc/lxd/shared"
 	"github.com/automaticserver/lxe/lxf"
+	"github.com/lxc/lxd/shared"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
@@ -103,7 +103,7 @@ func toCriContainer(c *lxf.Container) *rtApi.Container {
 
 	return &rtApi.Container{
 		Id:           c.ID,
-		PodSandboxId: c.Profiles[0],
+		PodSandboxId: c.SandboxID(),
 		Image:        &rtApi.ImageSpec{Image: c.Image},
 		ImageRef:     c.Image,
 		CreatedAt:    c.CreatedAt.UnixNano(),

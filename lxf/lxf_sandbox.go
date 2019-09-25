@@ -118,6 +118,10 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.Nones, err = device.GetNonesFromMap(p.Devices)
+	if err != nil {
+		return nil, err
+	}
 
 	// get containers using this sandbox
 	for _, name := range p.UsedBy {

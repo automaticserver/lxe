@@ -235,3 +235,54 @@ func TestGetNicsWithOverrideAdd(t *testing.T) {
 
 	assert.Len(t, nics, 1)
 }
+
+// nolint: dupl
+func TestAddNonesToMap(t *testing.T) {
+	none := None{
+		Name: "eth0",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddNonesToMap(s, none)
+	if err != nil {
+		t.Errorf("could not serialize none to map: %v", err)
+	}
+
+	if len(s) != 1 {
+		t.Errorf("device map should have one entry")
+	}
+}
+
+// nolint: dupl
+func TestGetNonesFromMap(t *testing.T) {
+	none := None{
+		Name: "eth0",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddNonesToMap(s, none)
+	if err != nil {
+		t.Errorf("could not serialize none to map: %v", err)
+	}
+
+	nones, err := GetNonesFromMap(s)
+	if err != nil {
+		t.Errorf("could not read none from map, %v", err)
+	}
+	if len(nones) != 1 {
+		t.Errorf("expected one none but there are %v", len(nones))
+	}
+}
+
+// nolint: dupl
+func TestGetNonesWithOverrideAdd(t *testing.T) {
+	var nones Nones
+	none := None{
+		Name: "eth0",
+	}
+
+	nones.Add(none)
+	nones.Add(none)
+
+	assert.Len(t, nones, 1)
+}

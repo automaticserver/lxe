@@ -2,13 +2,24 @@ package cri
 
 // Config options that LXE will need to interface with LXD
 type Config struct {
-	UnixSocket                 string // Unix socket this LXE will be reachable under
-	LXDSocket                  string // Unix socket target LXD is reachable under
-	LXDRemoteConfig            string // Path where the lxd remote config can be found
-	LXDImageRemote             string // Remote to use when ImageSpec doesn't provide an explicit remote
-	LXEStreamingServerEndpoint string // IP or Interface for Streaming Server. Guessed by default if not present
-	LXEStreamingPort           int    // Port where LXE's Http Server will listen
-	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
-	LXENetworkPlugin           string // The network plugin to use as described above
-	LXEBrDHCPRange             string // Which DHCP Range to configure to lxebr0
+	// UnixSocket this LXE will be reachable under
+	UnixSocket string
+	// LXDSocket where LXD is reachable under
+	LXDSocket string
+	// LXDRemoteConfig file path where lxd remote settings are stored
+	LXDRemoteConfig string
+	// LXDImageRemote to use by default when ImageSpec doesn't provide an explicit remote
+	LXDImageRemote string
+	// LXDProfiles which all cri containers inherit
+	LXDProfiles []string
+	// LXEStreamingServerEndpoint containts the listen address for the streaming server
+	LXEStreamingServerEndpoint string
+	// LXEStreamingPort is the port for the streaming server
+	LXEStreamingPort int
+	// LXEHostnetworkFile file path to use for lxc's raw.include
+	LXEHostnetworkFile string
+	// Which LXENetworkPlugin to use
+	LXENetworkPlugin string
+	// LXEBridgeDHCPRange to configure for lxebr0 if NetworkPlugin is default
+	LXEBridgeDHCPRange string
 }

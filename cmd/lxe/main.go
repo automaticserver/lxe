@@ -79,6 +79,7 @@ func main() {
 	app.PersistentFlags().StringArrayVar(&globalCmd.flagLogTrace, "trace", []string{}, "Log tracing targets."+"``")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages.")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages.")
+
 	// lxd / lxe specific flags
 	app.PersistentFlags().StringVar(&globalCmd.cri.UnixSocket, "socket",
 		"/var/run/lxe.sock", "The unix socket under which LXE will expose its service to Kubernetes.")
@@ -88,6 +89,8 @@ func main() {
 		"", "Path to the LXD remote config. (guessed by default)")
 	app.PersistentFlags().StringVar(&globalCmd.cri.LXDImageRemote, "lxd-image-remote",
 		"local", "Use this remote when ImageSpec doesn't provide an explicit remote.")
+	app.PersistentFlags().StringSliceVar(&globalCmd.cri.LXDProfiles, "lxd-profiles",
+		[]string{"default"}, "Set these additional profiles when creating containers.")
 	app.PersistentFlags().StringVar(&globalCmd.cri.LXEStreamingServerEndpoint, "streaming-endpoint",
 		"", "IP or Interface for Streaming Server. (guessed by default)")
 	app.PersistentFlags().IntVar(&globalCmd.cri.LXEStreamingPort, "streaming-port",
@@ -96,8 +99,9 @@ func main() {
 		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
 	app.PersistentFlags().StringVar(&globalCmd.cri.LXENetworkPlugin, "network-plugin",
 		"", "The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBrDHCPRange, "bridge-dhcp-range",
-		"", "Which DHCP range to configure in the 'lxebr0' lxd bridge. Only applies if network-plugin is set to '' and does not exist yet! If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig")
+	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBridgeDHCPRange, "bridge-dhcp-range",
+		"", "Which DHCP range to configure in the 'lxebr0' lxd bridge. Only applies if network-plugin is set to '' and does not exist yet. If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig")
+
 	// Run the main command and handle errors
 	err := app.Execute()
 	if err != nil {

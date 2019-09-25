@@ -1,6 +1,6 @@
 package lxf
 
-import "github.com/lxc/lxe/lxf/device"
+import "github.com/automaticserver/lxe/lxf/device"
 
 // LXDObject contains common properties of containers and sandboxes without CRI influence
 type LXDObject struct {

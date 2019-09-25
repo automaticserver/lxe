@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxe/network"
+	"github.com/automaticserver/lxe/network"
 )
 
 // EnsureBridge ensures the bridge exists with the defined options

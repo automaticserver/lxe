@@ -13,8 +13,8 @@ import (
 	"github.com/docker/docker/pkg/pools"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf"
-	"github.com/lxc/lxe/lxf/device"
+	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf/device"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
@@ -37,12 +37,12 @@ type RuntimeServer struct {
 	lxf       *lxf.Client
 	stream    streamService
 	lxdConfig *config.Config
-	criConfig *LXEConfig
+	criConfig *Config
 }
 
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
 func NewRuntimeServer(
-	criConfig *LXEConfig,
+	criConfig *Config,
 	lxf *lxf.Client) (*RuntimeServer, error) {
 	var err error
 
@@ -249,7 +249,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 				sb.Disks.Add(device.Disk{
 					Path:     "/",
 					Readonly: true,
-					// TODO magic constant, and also, is ist always default?
+					// TODO magic constant, and also, is it always default?
 					Pool: "default",
 				})
 			}

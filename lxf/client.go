@@ -7,7 +7,7 @@ import (
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxe/lxf/lxo"
+	"github.com/automaticserver/lxe/lxf/lxo"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.

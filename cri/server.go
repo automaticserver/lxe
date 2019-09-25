@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf"
-	"github.com/lxc/lxe/shared"
+	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/shared"
 	"google.golang.org/grpc"
 	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -20,44 +20,15 @@ const (
 	LXEBridge            = "lxebr0"
 )
 
-// LXEConfig are a few config options that LXE will need to interface with LXD
-type LXEConfig struct {
-	UnixSocket                 string // Unix socket this LXE will be reachable under
-	LXDSocket                  string // Unix socket target LXD is reachable under
-	LXDRemoteConfig            string // Path where the lxd remote config can be found
-	LXDImageRemote             string // Remote to use when ImageSpec doesn't provide an explicit remote
-	LXEStreamingServerEndpoint string // IP or Interface for Streaming Server. Guessed by default if not present
-	LXEStreamingPort           int    // Port where LXE's Http Server will listen
-	LXEHostnetworkFile         string // Path to the hostnetwork file for lxc raw include
-	LXENetworkPlugin           string // The network plugin to use as described above
-	LXEBrDHCPRange             string // Which DHCP Range to configure to lxebr0
-}
-
-// NewLXEConfig returns lxe daemon config for the above options
-func NewLXEConfig(lxeSocket, lxdSocket, lxdRemoteConfig, lxdImageRemote, lxeStreamingServerEndpoint string, lxeStreamingPort int,
-	lxeHostnetworkFile, lxeNetworkPlugin, lxeBrDHCPRange string) (*LXEConfig, error) {
-	return &LXEConfig{
-		UnixSocket:                 lxeSocket,
-		LXDSocket:                  lxdSocket,
-		LXDRemoteConfig:            lxdRemoteConfig,
-		LXDImageRemote:             lxdImageRemote,
-		LXEStreamingServerEndpoint: lxeStreamingServerEndpoint,
-		LXEStreamingPort:           lxeStreamingPort,
-		LXEHostnetworkFile:         lxeHostnetworkFile,
-		LXENetworkPlugin:           lxeNetworkPlugin,
-		LXEBrDHCPRange:             lxeBrDHCPRange,
-	}, nil
-}
-
-// Server is a PoC implementation of the kubernetes CRI interface specification
+// Server implements the kubernetes CRI interface specification
 type Server struct {
 	server    *grpc.Server
 	sock      net.Listener
-	criConfig *LXEConfig
+	criConfig *Config
 }
 
 // NewServer creates the CRI server
-func NewServer(criConfig *LXEConfig) *Server {
+func NewServer(criConfig *Config) *Server {
 	grpcServer := grpc.NewServer()
 
 	configPath, err := getLXDConfigPath(criConfig)

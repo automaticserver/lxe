@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 )
 
 var keepImages = []string{

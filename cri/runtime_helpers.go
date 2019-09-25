@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/lxc/lxd/shared"
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
@@ -150,7 +150,7 @@ func CompareFilterMap(base map[string]string, filter map[string]string) bool {
 }
 
 // getLXDConfigPath tries to find the remote configuration file path
-func getLXDConfigPath(cfg *LXEConfig) (string, error) {
+func getLXDConfigPath(cfg *Config) (string, error) {
 	configPath := cfg.LXDRemoteConfig
 	if cfg.LXDRemoteConfig == "" {
 		// Copied from github.com/lxc/lxd/lxc/main.go:56, since there it is unexported

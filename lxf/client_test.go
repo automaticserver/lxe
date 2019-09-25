@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 )
 
 func TestConnection(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 	"golang.org/x/net/context"
 
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
@@ -16,7 +16,7 @@ import (
 type ImageServer struct {
 	rtApi.ImageServiceServer
 	lxdConfig     *config.Config
-	criConfig     *LXEConfig
+	criConfig     *Config
 	runtimeRemote string
 	lxf           *lxf.Client
 }

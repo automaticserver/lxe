@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 )
 
 func TestExecSyncInParallel(t *testing.T) {

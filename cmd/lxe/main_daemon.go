@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/automaticserver/lxe/cri"
 	log "github.com/lxc/lxd/shared/log15"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/cri"
 )
 
 type cmdDaemon struct {
@@ -55,23 +55,9 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 	//defer stop()
 
 	daemonConf := cri.NewDaemonConfig(c.flagGroup, c.global.flagLogTrace)
-	criConf, err := cri.NewLXEConfig(
-		c.global.flagUnixSocket,
-		c.global.flagLXDSocket,
-		c.global.flagLXDRemoteConfig,
-		c.global.flagLXDImageRemote,
-		c.global.flagLXEStreamServerEndpoint,
-		c.global.flagLXEStreamingPort,
-		c.global.flagLXEHostnetworkFile,
-		c.global.flagLXENetworkPlugin,
-		c.global.flagLXEBrDHCPRange,
-	)
-	if err != nil {
-		return err
-	}
-	d := cri.NewDaemon(daemonConf, criConf)
+	d := cri.NewDaemon(daemonConf, &c.global.cri)
 
-	err = d.Init()
+	err := d.Init()
 	if err != nil {
 		return err
 	}

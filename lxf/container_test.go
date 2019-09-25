@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lxc/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf"
 )
 
 const (

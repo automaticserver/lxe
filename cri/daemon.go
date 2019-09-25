@@ -16,7 +16,7 @@ type Daemon struct {
 
 	daemonConfig *DaemonConfig
 	cri          *Server
-	criConfig    *LXEConfig
+	criConfig    *Config
 }
 
 // DaemonConfig holds configuration values for Daemon.
@@ -26,7 +26,7 @@ type DaemonConfig struct {
 }
 
 // NewDaemon returns a new Daemon object with the given configuration.
-func NewDaemon(daemonConfig *DaemonConfig, criConfig *LXEConfig) *Daemon {
+func NewDaemon(daemonConfig *DaemonConfig, criConfig *Config) *Daemon {
 	return &Daemon{
 		daemonConfig: daemonConfig,
 		criConfig:    criConfig,

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/lxc/lxe/lxf"
-	"github.com/lxc/lxe/lxf/device"
+	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf/device"
 )
 
 func TestCreateSandbox(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/lxc/lxe
+module github.com/automaticserver/lxe
 
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect

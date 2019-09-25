@@ -9,7 +9,7 @@ import (
 
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf/device"
+	"github.com/automaticserver/lxe/lxf/device"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 )
 

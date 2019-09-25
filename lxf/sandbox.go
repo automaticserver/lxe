@@ -10,8 +10,8 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxe/lxf/device"
-	"github.com/lxc/lxe/network"
+	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/network"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )

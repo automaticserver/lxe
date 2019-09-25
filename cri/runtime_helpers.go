@@ -12,18 +12,6 @@ import (
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
-const (
-	// fieldLXEBridge is the key name to specify the bridge to be used as parent
-	// TODO: to be removed once specifyable with CNI
-	fieldLXEBridge = "x-lxe-bridge"
-	// fieldLXEAdditionalLXDConfig is the name of the field which contains various additional lxd config options
-	fieldLXEAdditionalLXDConfig = "x-lxe-additional-lxd-config"
-)
-
-// AdditionalLXDConfig contains additional config options not present in PodSpec
-// Key names and values must match the key names specified by LXD
-type AdditionalLXDConfig map[string]string
-
 func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{

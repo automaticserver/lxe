@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/docker/docker/pkg/pools"
-	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxe/lxf"
@@ -157,12 +156,6 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
 		lxf.AppendIfSet(&sb.Config, "raw.lxc", "lxc.include = "+s.criConfig.LXEHostnetworkFile)
-	} else if sb.Annotations[fieldLXEBridge] != "" {
-		// explicit (external managed) bridge requested
-		sb.NetworkConfig.Mode = lxf.NetworkBridged
-		sb.NetworkConfig.ModeData = map[string]string{
-			"bridge": sb.Annotations[fieldLXEBridge],
-		}
 	} else {
 		// manage network according to selected network plugin
 		switch s.criConfig.LXENetworkPlugin {
@@ -183,7 +176,9 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 			sb.NetworkConfig.Mode = lxf.NetworkCNI
 		default:
 			// unkown plugin name provided
-			return nil, fmt.Errorf("Unknown network plugin name configured: %v", s.criConfig.LXENetworkPlugin)
+			err := fmt.Errorf("Unknown network plugin name configured: %v", s.criConfig.LXENetworkPlugin)
+			logger.Error(err.Error())
+			return nil, err
 		}
 	}
 
@@ -228,17 +223,6 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 				},
 			})
 		}
-	}
-
-	// The following fields allow to specify lxd/lxc config not directly represented by the PodSpec
-	var addConfig AdditionalLXDConfig
-	err = yaml.Unmarshal([]byte(sb.Annotations[fieldLXEAdditionalLXDConfig]), &addConfig)
-	if err != nil {
-		logger.Errorf("RunPodSandbox: SandboxName %v Unmarshal additional LXD config: %v", req.GetConfig().GetMetadata().GetName(), err)
-		return nil, err
-	}
-	for k, v := range addConfig {
-		lxf.AppendIfSet(&sb.Config, k, v)
 	}
 
 	// TODO: Refactor...

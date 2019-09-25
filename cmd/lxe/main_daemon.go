@@ -5,11 +5,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spf13/cobra"
-
 	"github.com/automaticserver/lxe/cri"
 	log "github.com/lxc/lxd/shared/log15"
 	"github.com/lxc/lxd/shared/logger"
+	"github.com/spf13/cobra"
 )
 
 type cmdDaemon struct {

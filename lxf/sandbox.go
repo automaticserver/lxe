@@ -171,7 +171,7 @@ type NetworkConfigEntryPhysicalSubnet struct {
 	Type string `json:"type"`
 }
 
-// Containers looks up all assigned containters
+// Containers looks up all assigned containers
 // Implemented as lazy loading, and returns same result if already looked up
 // Not thread safe! But it's expected the pointers stay in the same routine
 func (s *Sandbox) Containers() ([]*Container, error) {
@@ -302,18 +302,23 @@ func (s *Sandbox) apply() error {
 				},
 			},
 		}
-		if s.NetworkConfig.Mode == NetworkBridged && s.NetworkConfig.ModeData["interface-address"] != "" {
-			data.Config = append(data.Config, NetworkConfigEntryPhysical{
+		if s.NetworkConfig.Mode == NetworkBridged {
+			// because added later, if physical-type is empty, it is dhcp
+			if s.NetworkConfig.ModeData["physical-type"] == "" {
+				s.NetworkConfig.ModeData["physical-type"] = "dhcp"
+			}
+			entry := NetworkConfigEntryPhysical{
 				NetworkConfigEntry: NetworkConfigEntry{
 					Type: "physical",
 				},
 				Name: network.DefaultInterface,
 				Subnets: []NetworkConfigEntryPhysicalSubnet{
 					NetworkConfigEntryPhysicalSubnet{
-						Type: "dhcp",
+						Type: s.NetworkConfig.ModeData["physical-type"],
 					},
 				},
-			})
+			}
+			data.Config = append(data.Config, entry)
 		}
 
 		yml, err := yaml.Marshal(data)

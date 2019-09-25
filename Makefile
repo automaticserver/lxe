@@ -75,6 +75,7 @@ test: $(GOPATH)/bin/overalls
 gccgo:
 	go build -v $(DEBUG) -compiler gccgo ./...
 
+.PHONY: version
 version:
 	@echo "$(VERSION)"
 	@echo "package cri\n// Version of LXE\nconst Version = \"$(VERSION)\"" | gofmt > cri/version.go

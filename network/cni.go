@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/containernetworking/cni/libcni"
-	types "github.com/containernetworking/cni/pkg/types/current"
+	"github.com/containernetworking/cni/pkg/types/current"
 	"github.com/lxc/lxd/shared/logger"
 )
 
@@ -90,7 +90,7 @@ func AttachCNIInterface(namespace string, sandboxname string, containerID string
 		return nil, err
 	}
 
-	result, err := types.NewResultFromResult(addNetworkResult)
+	result, err := current.NewResultFromResult(addNetworkResult)
 	if err != nil {
 		return nil, err
 	}
@@ -133,11 +133,12 @@ func getRuntimeConf(namespace string, sandboxname string, containerID string, pr
 		ContainerID: containerID,
 		NetNS:       podNSPath,
 		IfName:      DefaultInterface,
-		Args: [][2]string{
-			{"IgnoreUnknown", "1"},
-			{"K8S_POD_NAMESPACE", namespace},
-			{"K8S_POD_NAME", sandboxname},
-			{"K8S_POD_INFRA_CONTAINER_ID", containerID},
+		Args:        [][2]string{
+			// Removed, as they all seem to have no purpose
+			// {"IgnoreUnknown", "1"},
+			// {"K8S_POD_NAMESPACE", namespace},
+			// {"K8S_POD_NAME", sandboxname},
+			// {"K8S_POD_INFRA_CONTAINER_ID", containerID},
 		},
 	}
 

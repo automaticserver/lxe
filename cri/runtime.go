@@ -170,6 +170,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 			sb.NetworkConfig.ModeData = map[string]string{
 				"bridge":            LXEBridge,
 				"interface-address": randIP.String(),
+				"physical-type":     "dhcp",
 			}
 		case NetworkPluginCNI:
 			// lxe is configured to manage network with cni

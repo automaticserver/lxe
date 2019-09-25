@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/automaticserver/lxe/lxf/device"
 	yaml "gopkg.in/yaml.v2"
 )
 

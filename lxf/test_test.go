@@ -17,7 +17,7 @@ var keepImages = []string{
 // but swallows returned errors and lets the test fail if not nil
 type lxfTest struct {
 	t   *testing.T
-	lxf *lxf.LXF
+	lxf *lxf.Client
 }
 
 // newLXFTest returns a lxf test facade using the provided test context

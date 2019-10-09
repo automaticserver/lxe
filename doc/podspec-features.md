@@ -8,49 +8,49 @@ The following table provides an overview of the current implementation of the [`
 
 | `PodSpec` property  | In LXE implemented | Notes | Related LXC config |
 | -- | -- | -- | -- |
-| `activeDeadlineSeconds` | - |  |  |
-| `affinity` | - |  |  |
-| `automountServiceAccountToken` | - | implicitly provided with [`CRI Mounts`](https://github.com/kubernetes/kubernetes/blob/release-1.12/pkg/kubelet/apis/cri/runtime/v1alpha2/api.pb.go#L1835) |  |
+| `activeDeadlineSeconds` | - | _not CRI related_ |  |
+| `affinity` | - | _not CRI related_ |  |
+| `automountServiceAccountToken` | yes | implicitly provided with [`CRI Mounts`](https://github.com/kubernetes/kubernetes/blob/release-1.12/pkg/kubelet/apis/cri/runtime/v1alpha2/api.pb.go#L1835) |  |
 | `containers` | yes* | only one container per pod currently, see [FAQ](development-preview-faq.md) | the lxc containers |
-| `dnsConfig` | - |  |  |
-| `dnsPolicy` | - |  |  |
-| `hostAliases` | ? |  |  |
+| `dnsConfig` | yes | see `dnsPolicy` | |
+| `dnsPolicy` | yes | kubelet does all the work and provides the target settings |  |
+| `hostAliases` | yes | kubelet does all the work and provides the hosts file as CRI Mount |  |
 | `hostIPC` | ? |  |  |
 | `hostNetwork` | yes* | if false LXE calls [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration) | if true then `config.raw.lxc.include` to a file containing `lxc.net.0.type=none` |
 | `hostPID` | ? |  |  |
 | `hostname` | yes* | providing hostname using cloud-init vendor-data, see [FAQ](development-preview-faq.md) | unfortunately in LXD the container name *is* the hostname, so providing via `config.user.vendor-data` |
 | `imagePullSecrets` | ? | authentication to LXD servers are different than to docker, see `container.image` |  |
 | `initContainers` | ? |  |  |
-| `nodeName` | - |  |  |
-| `nodeSelector` | - |  |  |
-| `priority` | - |  |  |
-| `priorityClassName` | - |  |  |
-| `readinessGates` | - |  |  |
-| `restartPolicy` | - |  |  |
-| `runtimeClassName` | - |  |  |
-| `schedulerName` | - |  |  |
-| `securityContext` | ? |  |  |
-| `serviceAccount` | - |  |  |
-| `serviceAccountName` | - |  |  |
+| `nodeName` | - | _not CRI related_ |  |
+| `nodeSelector` | - | _not CRI related_ |  |
+| `priority` | - | _not CRI related_ |  |
+| `priorityClassName` | - | _not CRI related_ |  |
+| `readinessGates` | - | _not CRI related_ |  |
+| `restartPolicy` | - | _not CRI related_ |  |
+| `runtimeClassName` | - | _not CRI related_ |  |
+| `schedulerName` | - | _not CRI related_ |  |
+| `securityContext` | incomplete* |  |  |
+| `serviceAccount` | - | _not CRI related_ |  |
+| `serviceAccountName` | - | _not CRI related_ |  |
 | `shareProcessNamespace` | ? |  |  |
-| `subdomain` | - |  |  |
-| `terminationGracePeriodSeconds` | - |  |  |
-| `tolerations` | - |  |  |
-| `volumes` | - | only `container.volumeMounts` are relevant for CRI |  |
+| `subdomain` | - | _Not CRI related_ |  |
+| `terminationGracePeriodSeconds` | - | _Not CRI related_ |  |
+| `tolerations` | - | _Not CRI related_ |  |
+| `volumes` | yes | only `container.volumeMounts` are relevant for CRI |  |
 
 | `Container` property  | In LXE implemented | Notes | Related LXC config |
 | -- | -- | -- | -- |
 | `args` | no* | see below `command` |  |
 | `command` | no* | lxc containers with lxd have no entrypoint-like option, can be differently provided with cloud-init user-data, see [FAQ](development-preview-faq.md) | `config.user.user-data` |
 | `env` | yes* | there are some additional reserved fields for cloud-init: `env.meta-data`, `env.network-config`, `env.user-data` | `config.environment.*` |
-| `envFrom` | - | are merged with `env` before CRI call |  |
+| `envFrom` | yes | kubelet does all the work and are merged with `env` |  |
 | `image` | yes* | only lxc images, see [FAQ](development-preview-faq.md) | the container image |
-| `imagePullPolicy` | -* | see above `image`, lxd has different tag logic than docker |  |
-| `lifecycle` | - |  |  |
-| `livenessProbe` | - |  |  |
+| `imagePullPolicy` | yes | kubelet decides itself when to pull the image through CRI |  |
+| `lifecycle` | - | _not CRI related_ |  |
+| `livenessProbe` | - | _not CRI related_ |  |
 | `name` | yes |  |  |
 | `ports` | yes |  | `config.devices.*.type=proxy` |
-| `readinessProbe` | - |  |  |
+| `readinessProbe` | - | _not CRI related_ |  |
 | `resources` | yes | see [limits.md](limits.md) | `config.limits.*` |
 | `securityContext` | incomplete* | yet only `securityContext.privileged` | `config.security.privileged` |
 | `stdin` | ? |  |  |

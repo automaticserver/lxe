@@ -4,21 +4,23 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/lxo"
+	"github.com/automaticserver/lxe/network"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/automaticserver/lxe/lxf/lxo"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
 type Client struct {
-	server lxd.ContainerServer
-	config *config.Config
-	opwait *lxo.LXO
+	server  lxd.ContainerServer
+	config  *config.Config
+	opwait  *lxo.LXO
+	network network.NetworkPlugin
 }
 
 // NewClient will set up a connection and return the client
-func NewClient(socket string, configPath string) (*Client, error) {
+func NewClient(socket string, configPath string, network network.NetworkPlugin) (*Client, error) {
 	args := lxd.ConnectionArgs{
 		HTTPClient: &http.Client{
 			// this was a byproduct of a bughunt, but i figured using TCP connections with TLS instead of unix sockets
@@ -93,9 +95,10 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	}
 
 	client := &Client{
-		server: server,
-		config: config,
-		opwait: lxo.New(server),
+		server:  server,
+		config:  config,
+		opwait:  lxo.New(server),
+		network: network,
 	}
 
 	// register LXD eventhandler

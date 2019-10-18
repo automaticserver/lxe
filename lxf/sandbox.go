@@ -1,8 +1,10 @@
 package lxf
 
 import (
+	"context"
 	"crypto/md5" // nolint: gosec #nosec (no sensitive data)
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -197,6 +199,17 @@ func (s *Sandbox) getContainers() ([]*Container, error) {
 	return cl, nil
 }
 
+// refresh loads the profile again from LXD to obtain new ETag
+// Will not load new data!
+func (s *Sandbox) refresh() error {
+	r, err := s.client.GetSandbox(s.ID)
+	if err != nil {
+		return err
+	}
+	s.ETag = r.ETag
+	return nil
+}
+
 // Apply will save the changes of a sandbox
 func (s *Sandbox) Apply() error {
 	// A new sandbox gets also some default values
@@ -223,6 +236,34 @@ func (s *Sandbox) Apply() error {
 	s.Nones.Add(device.None{
 		Name: lxdInitDefaultNicName,
 	})
+
+	err := s.apply()
+	if err != nil {
+		return err
+	}
+	err = s.refresh()
+	if err != nil {
+		return err
+	}
+
+	// Apply defined network mode post save
+	switch s.NetworkConfig.Mode {
+	case NetworkCNI:
+		podNet, err := s.client.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, s.ID, nil)
+		if err != nil {
+			return err
+		}
+		result, err := podNet.Setup(context.TODO())
+		if err != nil {
+			return err
+		}
+		s.NetworkConfig.ModeData = map[string]string{
+			"result": string(result),
+		}
+		AppendIfSet(&s.Config, "raw.lxc", fmt.Sprintf("lxc.namespace.share.user=%s", filepath.Join("/run/netns", s.ID)))
+	default:
+		// do nothing
+	}
 
 	return s.apply()
 }

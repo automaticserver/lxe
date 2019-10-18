@@ -4,7 +4,9 @@ import (
 	"net"
 	"os"
 
+	"emperror.dev/errors"
 	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"google.golang.org/grpc"
@@ -37,7 +39,20 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath)
+	var netPlugin network.NetworkPlugin
+	switch criConfig.LXENetworkPlugin {
+	case NetworkPluginCNI:
+		netPlugin, err = network.InitPluginCNI(network.ConfCNI{})
+	case NetworkPluginDefault:
+	default:
+		err = errors.Errorf("Unkown network plugin %s", criConfig.LXENetworkPlugin)
+	}
+	if err != nil {
+		logger.Critf("Unable to initialize network plugin: %v", err)
+		os.Exit(shared.ExitCodeUnspecified)
+	}
+
+	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath, netPlugin)
 	if err != nil {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)

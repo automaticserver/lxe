@@ -52,7 +52,7 @@ func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // nolint: dupl
 	disks := Disks{}
 	for _, m := range maps {
-		if m["type"] == diskType {
+		if m["type"] == DiskType {
 			p, err := DiskFromMap(m)
 			if err != nil {
 				return nil, err
@@ -76,7 +76,7 @@ func AddProxiesToMap(m map[string]map[string]string, proxies ...Proxy) error {
 func GetProxiesFromMap(maps map[string]map[string]string) (Proxies, error) { // nolint: dupl
 	proxies := Proxies{}
 	for _, m := range maps {
-		if m["type"] == proxyType {
+		if m["type"] == ProxyType {
 			p, err := ProxyFromMap(m)
 			if err != nil {
 				return nil, err
@@ -100,7 +100,7 @@ func AddBlocksToMap(m map[string]map[string]string, blocks ...Block) error {
 func GetBlocksFromMap(maps map[string]map[string]string) ([]Block, error) { // nolint: dupl
 	blocks := Blocks{}
 	for _, m := range maps {
-		if m["type"] == blockType {
+		if m["type"] == BlockType {
 			p, err := BlockFromMap(m)
 			if err != nil {
 				return nil, err
@@ -124,7 +124,7 @@ func AddNicsToMap(m map[string]map[string]string, nics ...Nic) error {
 func GetNicsFromMap(maps map[string]map[string]string) ([]Nic, error) { // nolint: dupl
 	nics := Nics{}
 	for _, m := range maps {
-		if m["type"] == nicType {
+		if m["type"] == NicType {
 			p, err := NicFromMap(m)
 			if err != nil {
 				return nil, err
@@ -148,7 +148,7 @@ func AddNonesToMap(m map[string]map[string]string, nones ...None) error {
 func GetNonesFromMap(maps map[string]map[string]string) ([]None, error) { // nolint: dupl
 	nones := Nones{}
 	for k, m := range maps {
-		if m["type"] == noneType {
+		if m["type"] == NoneType {
 			p, err := NoneFromMap(m, k)
 			if err != nil {
 				return nil, err

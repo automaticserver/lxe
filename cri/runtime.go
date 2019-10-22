@@ -183,9 +183,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context,
 		}
 	}
 
-	// If HostPort is defined, set forwardings from that port to the container
-	// In lxd, we can use proxy devices for that
-	// This can be applied to all NetworkModes except HostNetwork
+	// If HostPort is defined, set forwardings from that port to the container. In lxd, we can use proxy devices for that.
+	// This can be applied to all NetworkModes except HostNetwork.
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
 		for _, portMap := range req.Config.PortMappings {
 			// both HostPort and ContainerPort must be defined, otherwise invalid
@@ -521,6 +520,19 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 			Source: dev.GetHostPath(),
 			Path:   dev.GetContainerPath(),
 		})
+	}
+
+	// Apply Rootfs quota using non-standardized field. The device config has to be copied because lxd wants it so.
+	if req.SandboxConfig.Annotations[fieldLXERootfsQuota] != "" {
+		d, n, err := c.GetRootDevice()
+		if err != nil {
+			logger.Errorf("CreateContainer: ContainerName %v trying to copy root device: %v", req.GetConfig().GetMetadata().GetName(), err)
+			return nil, err
+		}
+		c.Disks.Add(*d)
+		if n != nil {
+			c.Nones.Add(*n)
+		}
 	}
 
 	c.Privileged = req.GetConfig().GetLinux().GetSecurityContext().GetPrivileged()

@@ -1,7 +1,7 @@
 package device
 
 const (
-	blockType = "unix-block"
+	BlockType = "unix-block"
 )
 
 // Blocks holds slice of Block
@@ -28,7 +28,7 @@ type Block struct {
 // ToMap serializes itself into a lxd device map entry
 func (b Block) ToMap() (map[string]string, error) {
 	return map[string]string{
-		"type":   blockType,
+		"type":   BlockType,
 		"source": b.Source,
 		"path":   b.Path,
 	}, nil
@@ -36,7 +36,7 @@ func (b Block) ToMap() (map[string]string, error) {
 
 // GetName will generate a uinique name for the device map
 func (b Block) GetName() string {
-	return blockType + "-" + b.Path
+	return BlockType + "-" + b.Path
 }
 
 // BlockFromMap create a new block from map entries

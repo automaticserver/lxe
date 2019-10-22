@@ -1,7 +1,7 @@
 package device
 
 const (
-	noneType = "none"
+	NoneType = "none"
 )
 
 // None holds slice of None
@@ -28,7 +28,7 @@ type None struct {
 // ToMap serializes itself into a lxd device map entry
 func (n None) ToMap() (map[string]string, error) {
 	return map[string]string{
-		"type": noneType,
+		"type": NoneType,
 	}, nil
 }
 

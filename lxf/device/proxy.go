@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	proxyType = "proxy"
+	ProxyType = "proxy"
 	// ProtocolUndefined is not a valid protocol
 	ProtocolUndefined = Protocol(0)
 	// ProtocolTCP makes the endpoint use TCP
@@ -56,7 +56,7 @@ var (
 // ToMap will serialize itself into a lxd device map
 func (p Proxy) ToMap() (map[string]string, error) {
 	return map[string]string{
-		"type":    proxyType,
+		"type":    ProxyType,
 		"listen":  p.Listen.String(),
 		"connect": p.Destination.String(),
 	}, nil
@@ -64,7 +64,7 @@ func (p Proxy) ToMap() (map[string]string, error) {
 
 // GetName will generate a uinique name for the device map
 func (p Proxy) GetName() string {
-	return proxyType + "-" + p.Listen.String()
+	return ProxyType + "-" + p.Listen.String()
 }
 
 // ProxyFromMap constructs a Proxy from provided map values

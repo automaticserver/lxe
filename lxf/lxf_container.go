@@ -60,6 +60,37 @@ func (l *Client) ListContainers() ([]*Container, error) {
 	return cl, nil
 }
 
+// func (l *Client) GetContainerDevicesExpanded(id string) ([]device.Block, []device.Disk, []device.Nic, []device.None, []device.Proxy, error) {
+// 	ct, _, err := l.server.GetContainer(id)
+
+// 	blocks, err := device.GetBlocksFromMap(ct.ExpandedDevices)
+// 	if err != nil {
+// 		return nil, nil, nil, nil, nil, err
+// 	}
+
+// 	disks, err := device.GetDisksFromMap(ct.ExpandedDevices)
+// 	if err != nil {
+// 		return nil, nil, nil, nil, nil, err
+// 	}
+
+// 	nics, err := device.GetNicsFromMap(ct.ExpandedDevices)
+// 	if err != nil {
+// 		return nil, nil, nil, nil, nil, err
+// 	}
+
+// 	nones, err := device.GetNonesFromMap(ct.ExpandedDevices)
+// 	if err != nil {
+// 		return nil, nil, nil, nil, nil, err
+// 	}
+
+// 	proxy, err := device.GetProxiesFromMap(ct.ExpandedDevices)
+// 	if err != nil {
+// 		return nil, nil, nil, nil, nil, err
+// 	}
+
+// 	return blocks, disks, nics, nones, proxy, nil
+// }
+
 // toContainer will convert an lxd container to lxf format
 func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error) {
 	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)

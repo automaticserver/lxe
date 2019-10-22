@@ -1,7 +1,7 @@
 package device
 
 const (
-	nicType = "nic"
+	NicType = "nic"
 )
 
 // Nics holds slice of Nic
@@ -30,7 +30,7 @@ type Nic struct {
 // ToMap serializes itself into a lxd device map entry
 func (b Nic) ToMap() (map[string]string, error) {
 	return map[string]string{
-		"type":         nicType,
+		"type":         NicType,
 		"name":         b.Name,
 		"nictype":      b.NicType,
 		"parent":       b.Parent,
@@ -40,7 +40,7 @@ func (b Nic) ToMap() (map[string]string, error) {
 
 // GetName will generate a uinique name for the device map
 func (b Nic) GetName() string {
-	return nicType + "-" + b.Name
+	return NicType + "-" + b.Name
 }
 
 // NicFromMap create a new nic from map entries

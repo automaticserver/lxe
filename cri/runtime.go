@@ -523,12 +523,13 @@ func (s RuntimeServer) CreateContainer(ctx context.Context,
 	}
 
 	// Apply Rootfs quota using non-standardized field. The device config has to be copied because lxd wants it so.
-	if req.SandboxConfig.Annotations[fieldLXERootfsQuota] != "" {
+	if quota := req.SandboxConfig.Annotations[fieldLXERootfsQuota]; quota != "" {
 		d, n, err := c.GetRootDevice()
 		if err != nil {
 			logger.Errorf("CreateContainer: ContainerName %v trying to copy root device: %v", req.GetConfig().GetMetadata().GetName(), err)
 			return nil, err
 		}
+		d.Size = quota
 		c.Disks.Add(*d)
 		if n != nil {
 			c.Nones.Add(*n)

@@ -483,15 +483,23 @@ func makeContainerConfig(c *Container) map[string]string {
 
 func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 	devices := map[string]map[string]string{}
-	err := device.AddDisksToMap(devices, c.Disks...)
+	err := device.AddBlocksToMap(devices, c.Blocks...)
+	if err != nil {
+		return devices, err
+	}
+	err = device.AddDisksToMap(devices, c.Disks...)
+	if err != nil {
+		return devices, err
+	}
+	err = device.AddNicsToMap(devices, c.Nics...)
+	if err != nil {
+		return devices, err
+	}
+	err = device.AddNonesToMap(devices, c.Nones...)
 	if err != nil {
 		return devices, err
 	}
 	err = device.AddProxiesToMap(devices, c.Proxies...)
-	if err != nil {
-		return devices, err
-	}
-	err = device.AddBlocksToMap(devices, c.Blocks...)
 	if err != nil {
 		return devices, err
 	}

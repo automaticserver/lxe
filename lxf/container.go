@@ -519,38 +519,3 @@ func extractEnvVars(config map[string]string) map[string]string {
 	}
 	return envVars
 }
-
-// GetRootDevice makes a copy from that device which is supposed to represent the rootfs disk (type=disk and path=/)
-// from any assigned profile. Returns additionally a none device if the names won't match. This function is intended to
-// be used before the container exists and because of that lxd's (*Container).ExpandedDevices is not available.
-func (c *Container) GetRootDevice() (*device.Disk, *device.None, error) {
-	// iterate through profiles in reverse
-	for i := range c.Profiles {
-		pName := c.Profiles[len(c.Profiles)-1-i]
-
-		p, _, err := c.client.server.GetProfile(pName)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		for nRaw, dRaw := range p.Devices {
-			if dRaw["type"] == device.DiskType && dRaw["path"] == "/" {
-				d, err := device.DiskFromMap(dRaw)
-				if err != nil {
-					return nil, nil, err
-				}
-				var n *device.None
-				if d.GetName() != nRaw {
-					n = &device.None{
-						Name: nRaw,
-					}
-				}
-
-				return &d, n, nil
-			}
-		}
-
-	}
-
-	return nil, nil, fmt.Errorf("No device applicable for rootfs found in profiles %v", c.Profiles)
-}

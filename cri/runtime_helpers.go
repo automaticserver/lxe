@@ -12,13 +12,6 @@ import (
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
-const (
-	// fieldLXERootfsQuota allows to set the rootfs quota until kubernetes offers a limit option for that. Beware that not
-	// all lxd storage providers support storage quotas: https://lxd.readthedocs.io/en/latest/storage/#feature-comparison.
-	// Also see supported units: https://lxd.readthedocs.io/en/latest/containers/#units-for-storage-and-network-limits
-	fieldLXERootfsQuota = "x-lxe-rootfs-quota"
-)
-
 func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{

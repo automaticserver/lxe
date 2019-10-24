@@ -20,17 +20,18 @@ func (ds *Disks) Add(d Disk) {
 			return
 		}
 	}
+
 	*ds = append(*ds, d)
 }
 
 // Disk mounts a host path into the container
 type Disk struct {
 	Path     string
-	Readonly bool
 	Pool     string
 	Source   string
-	Optional bool
 	Size     string
+	Readonly bool
+	Optional bool
 }
 
 // ToMap serializes itself into a map. Will return an error if the data
@@ -43,12 +44,15 @@ func (d Disk) ToMap() (map[string]string, error) {
 		"readonly": strconv.FormatBool(d.Readonly),
 		"optional": strconv.FormatBool(d.Optional),
 	}
+
 	if d.Pool != "" {
 		def["pool"] = d.Pool
 	}
+
 	if d.Size != "" {
 		def["size"] = d.Size
 	}
+
 	return def, nil
 }
 

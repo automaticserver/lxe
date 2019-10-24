@@ -16,6 +16,7 @@ func (bs *Blocks) Add(b Block) {
 			return
 		}
 	}
+
 	*bs = append(*bs, b)
 }
 

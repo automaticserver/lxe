@@ -13,6 +13,7 @@ func getCRIContainer(cri string) api.Container {
 	if cri != "" {
 		c.Config[cfgIsCRI] = cri
 	}
+
 	return c
 }
 
@@ -21,6 +22,7 @@ func getCRIProfile(cri string) api.Profile {
 	if cri != "" {
 		p.Config[cfgIsCRI] = cri
 	}
+
 	return p
 }
 

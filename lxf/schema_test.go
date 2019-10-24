@@ -11,18 +11,22 @@ import (
 func getSchemaContainer(schema string) api.Container {
 	c := api.Container{}
 	c.Config = make(map[string]string)
+
 	if schema != "" {
 		c.Config[cfgSchema] = schema
 	}
+
 	return c
 }
 
 func getSchemaProfile(schema string) api.Profile {
 	p := api.Profile{}
 	p.Config = make(map[string]string)
+
 	if schema != "" {
 		p.Config[cfgSchema] = schema
 	}
+
 	return p
 }
 

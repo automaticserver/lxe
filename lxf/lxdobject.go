@@ -5,6 +5,7 @@ import "github.com/automaticserver/lxe/lxf/device"
 // LXDObject contains common properties of containers and sandboxes without CRI influence
 type LXDObject struct {
 	// client holds the lxf.Client representing as a lxd client
+	// nolint: structcheck
 	client *Client
 	// ID is a unique generated ID and is read-only
 	ID string
@@ -13,7 +14,7 @@ type LXDObject struct {
 	ETag string
 	// ETag uniquely identifies user modifiable content of the state of this resource, prevents race conditions when
 	// trying to modify the state
-	//StateETag string
+	//Stateetag string
 	// Devices
 	Proxies device.Proxies
 	Disks   device.Disks

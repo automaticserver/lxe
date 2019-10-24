@@ -8,8 +8,8 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/lxc/lxd/shared/api"
 	"github.com/automaticserver/lxe/network"
+	"github.com/lxc/lxd/shared/api"
 )
 
 // EnsureBridge ensures the bridge exists with the defined options
@@ -35,10 +35,8 @@ func (l *Client) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 			"ipv4.dhcp":    strconv.FormatBool(true),
 			"ipv4.nat":     strconv.FormatBool(true),
 			"ipv6.address": "none",
-			// We don't need to recieve a DNS in DHCP, Kubernetes' DNS is always set
-			// disables dns (option -p: https://linux.die.net/man/8/dnsmasq)
-			// > Listen on <port> instead of the standard DNS port (53). Setting this to
-			// > zero completely disables DNS function, leaving only DHCP and/or TFTP.
+			// We don't need to receive a DNS in DHCP, Kubernetes' DNS is always set my requesting a mount for resolv.conf.
+			// This disables dns in dnsmasq (option -p: https://linux.die.net/man/8/dnsmasq)
 			"raw.dnsmasq": `port=0`,
 		},
 	}
@@ -55,9 +53,8 @@ func (l *Client) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 		}
 
 		return err
-	}
-	if network.Type != "bridge" {
-		return fmt.Errorf("Expected %v to be a bridge, but is %v", name, network.Type)
+	} else if network.Type != "bridge" {
+		return fmt.Errorf("expected %v to be a bridge, but is %v", name, network.Type)
 	}
 
 	// don't update when only creation is requested
@@ -68,6 +65,7 @@ func (l *Client) EnsureBridge(name, cidr string, nat, createOnly bool) error {
 	for k, v := range put.Config {
 		network.Config[k] = v
 	}
+
 	return l.server.UpdateNetwork(name, network.Writable(), ETag)
 }
 
@@ -77,17 +75,18 @@ func (l *Client) FindFreeIPBridgeLXD(bridge string) (net.IP, error) {
 	network, _, err := l.server.GetNetwork(bridge)
 	if err != nil {
 		return nil, err
-	}
-	if network.Config["ipv4.dhcp.ranges"] != "" {
+	} else if network.Config["ipv4.dhcp.ranges"] != "" {
 		// actually we can now using FindFreeIP() below, but not good enough, as this field can yield multiple ranges
-		return nil, fmt.Errorf("Not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", bridge)
+		return nil, fmt.Errorf("not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", bridge)
 	}
 
 	rawLeases, err := l.server.GetNetworkLeases(bridge)
 	if err != nil {
 		return nil, err
 	}
-	var leases []net.IP
+
+	leases := []net.IP{}
+
 	for _, rawIP := range rawLeases {
 		leases = append(leases, net.ParseIP(rawIP.Address))
 	}
@@ -96,6 +95,7 @@ func (l *Client) FindFreeIPBridgeLXD(bridge string) (net.IP, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	leases = append(leases, bridgeIP) // also exclude bridge ip
 
 	return FindFreeIP(bridgeNet, leases, nil, nil), nil
@@ -108,15 +108,18 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 	// put non-usable addresses also to leases, so they can't be selected
 	networkIP := subnet.IP
 	broadcastIP := make(net.IP, 4)
+
 	for i := range broadcastIP {
 		broadcastIP[i] = subnet.IP[i] | ^subnet.Mask[i]
 	}
+
 	leases = append(leases, networkIP, broadcastIP)
 
 	// defaults for start and end to usable addresses if not explicitly defined
 	if start == nil {
 		start = net.IPv4(networkIP[0], networkIP[1], networkIP[2], networkIP[3]+1)
 	}
+
 	if end == nil {
 		end = net.IPv4(broadcastIP[0], broadcastIP[1], broadcastIP[2], broadcastIP[3]-1)
 	}
@@ -175,6 +178,7 @@ func (l *Client) AttachCNI(c *Container) error {
 	}
 
 	s.NetworkConfig.ModeData["result"] = string(result)
+
 	err = s.apply()
 	if err != nil {
 		return err
@@ -192,6 +196,7 @@ func (l *Client) DetachCNI(c *Container) error {
 
 	// It's possible that we detach from a container that doesn't exist anymore, in this case still clean up
 	var pid int64
+
 	st, err := c.State()
 	if err != nil {
 		if err.Error() != ErrorLXDNotFound {

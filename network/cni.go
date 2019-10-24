@@ -27,14 +27,14 @@ const (
 // getDefaultCNINetwork is borrowed from k8s' dockershim
 func getDefaultCNINetwork(confDir string, binDirs []string) (libcni.CNI, *libcni.NetworkConfigList, error) {
 	files, err := libcni.ConfFiles(confDir, []string{".conf", ".conflist", ".json"})
-	switch {
-	case err != nil:
+	if err != nil {
 		return nil, nil, err
-	case len(files) == 0:
-		return nil, nil, fmt.Errorf("No networks found in %s", confDir)
+	} else if len(files) == 0 {
+		return nil, nil, fmt.Errorf("no networks found in %s", confDir)
 	}
 
 	sort.Strings(files)
+
 	for _, confFile := range files {
 		var confList *libcni.NetworkConfigList
 		if strings.HasSuffix(confFile, ".conflist") {
@@ -61,8 +61,8 @@ func getDefaultCNINetwork(confDir string, binDirs []string) (libcni.CNI, *libcni
 				logger.Errorf("Error converting CNI config file %s to list: %v", confFile, err)
 				continue
 			}
-
 		}
+
 		if len(confList.Plugins) == 0 {
 			logger.Errorf("CNI config list %s has no networks, skipping", confFile)
 			continue
@@ -70,7 +70,8 @@ func getDefaultCNINetwork(confDir string, binDirs []string) (libcni.CNI, *libcni
 
 		return &libcni.CNIConfig{Path: binDirs}, confList, nil
 	}
-	return nil, nil, fmt.Errorf("No valid networks found in %s", confDir)
+
+	return nil, nil, fmt.Errorf("no valid networks found in %s", confDir)
 }
 
 // AttachCNIInterface will setup the Pod Networking using CNI
@@ -123,7 +124,7 @@ func DetachCNIInterface(namespace string, sandboxname string, containerID string
 // getRuntimeConf returns common libcni runtime conf used to interact with the cni binaries. If the processID is empty,
 // NetNS will be empty, which is useful for deletion when the container doesn't exist anymore (see
 // https://github.com/containernetworking/cni/pull/230)
-func getRuntimeConf(namespace string, sandboxname string, containerID string, processID int64) (*libcni.RuntimeConf, error) {
+func getRuntimeConf(namespace string, sandboxname string, containerID string, processID int64) (*libcni.RuntimeConf, error) { // nolint: unparam
 	podNSPath := ""
 	if processID > 0 {
 		podNSPath = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(processID, 10))

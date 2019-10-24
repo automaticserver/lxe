@@ -1,7 +1,7 @@
 package lxf
 
 import (
-	"crypto/md5" // nolint: gosec #nosec (no sensitive data)
+	"crypto/md5" // nolint: gosec
 	"fmt"
 	"math"
 	"strconv"
@@ -147,6 +147,7 @@ func (c *Container) Sandbox() (*Sandbox, error) {
 			return nil, err
 		}
 	}
+
 	return c.sandbox, nil
 }
 
@@ -161,8 +162,10 @@ func (c *Container) getSandbox() (*Sandbox, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		return sandbox, nil
 	}
+
 	return nil, fmt.Errorf("Container '%v' must have at least one profile", c.ID)
 }
 
@@ -177,6 +180,7 @@ func (c *Container) State() (*ContainerState, error) {
 			return nil, err
 		}
 	}
+
 	return c.state, nil
 }
 
@@ -206,7 +210,9 @@ func (c *Container) refresh() error {
 	if err != nil {
 		return err
 	}
+
 	c.ETag = r.ETag
+
 	return nil
 }
 
@@ -232,6 +238,7 @@ func (c *Container) Start() error {
 		if err.Error() == ErrorLXDNotFound {
 			return NewContainerError(c.ID, err)
 		}
+
 		return err
 	}
 
@@ -244,6 +251,7 @@ func (c *Container) Start() error {
 	// delete created mark if exists, so next stopping state can be exited
 	delete(c.Config, cfgState)
 	c.StartedAt = time.Now()
+
 	return c.Apply()
 }
 
@@ -255,6 +263,7 @@ func (c *Container) Stop(timeout int) error {
 		if err.Error() == ErrorLXDNotFound {
 			return nil
 		}
+
 		return err
 	}
 
@@ -265,6 +274,7 @@ func (c *Container) Stop(timeout int) error {
 	}
 
 	c.FinishedAt = time.Now()
+
 	return c.Apply()
 }
 
@@ -279,8 +289,10 @@ func (c *Container) Delete() error {
 		if err.Error() == ErrorLXDNotFound {
 			return nil
 		}
+
 		return err
 	}
+
 	return nil
 }
 
@@ -290,14 +302,12 @@ func (c *Container) releaseNetworkingResources() error {
 		return err
 	}
 
-	switch s.NetworkConfig.Mode {
+	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
 		err := c.client.DetachCNI(c)
 		if err != nil {
 			return err
 		}
-	default:
-		// nothing to do, all other modes need no help after starting
 	}
 
 	return nil
@@ -309,14 +319,14 @@ func (c *Container) validate() error {
 	if err != nil {
 		return err
 	}
-	switch s.NetworkConfig.Mode {
+
+	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkHost:
 		if !c.Privileged {
 			return fmt.Errorf("`podSpec.hostNetwork: true` can only be used together with `containerSpec.securityContext.privileged: true`")
 		}
-	default:
-		// do nothing
 	}
+
 	return nil
 }
 
@@ -328,15 +338,18 @@ func (c *Container) apply() error {
 	if err != nil {
 		return err
 	}
+
 	hash, found, err := imageID.Hash(c.client)
 	if err != nil {
 		return err
 	}
+
 	if !found {
 		return fmt.Errorf("image '%v' not found on local remote", c.Image)
 	}
 
 	config := makeContainerConfig(c)
+
 	devices, err := makeContainerDevices(c)
 	if err != nil {
 		return err
@@ -360,6 +373,7 @@ func (c *Container) apply() error {
 	if c.ID == "" {
 		// container has to be created
 		c.ID = c.CreateID()
+
 		return c.client.opwait.CreateContainer(api.ContainersPost{
 			Name:         c.ID,
 			ContainerPut: contPut,
@@ -371,7 +385,7 @@ func (c *Container) apply() error {
 	}
 	// else container has to be updated
 	if c.ETag == "" {
-		return fmt.Errorf("Update container not allowed with empty ETag")
+		return fmt.Errorf("update container not allowed with empty ETag")
 	}
 
 	err = c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
@@ -379,14 +393,16 @@ func (c *Container) apply() error {
 		if err.Error() == ErrorLXDNotFound {
 			return NewContainerError(c.ID, err)
 		}
+
 		return err
 	}
+
 	return nil
 }
 
 // CreateID creates a unique container id
 func (c *Container) CreateID() string {
-	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
 	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
@@ -397,6 +413,7 @@ func (c *Container) GetInetAddress(ifs []string) string {
 	if err != nil {
 		return ""
 	}
+
 	for _, i := range ifs {
 		if netif, ok := st.Network[i]; ok {
 			for _, addr := range netif.Addresses {
@@ -406,10 +423,11 @@ func (c *Container) GetInetAddress(ifs []string) string {
 			}
 		}
 	}
+
 	return ""
 }
 
-func makeContainerConfig(c *Container) map[string]string {
+func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 	// default values for new containers
 	if c.ID == "" {
 		c.Config[cfgState] = ContainerStateCreated.String()
@@ -446,9 +464,11 @@ func makeContainerConfig(c *Container) map[string]string {
 	if c.CloudInitMetaData != "" {
 		config[cfgCloudInitMetaData] = c.CloudInitMetaData
 	}
+
 	if c.CloudInitUserData != "" {
 		config[cfgCloudInitUserData] = c.CloudInitUserData
 	}
+
 	if c.CloudInitNetworkConfig != "" {
 		config[cfgCloudInitNetworkConfig] = c.CloudInitNetworkConfig
 	}
@@ -458,12 +478,15 @@ func makeContainerConfig(c *Container) map[string]string {
 			if c.Resources.CPU.Shares != nil {
 				config[cfgResourcesCPUShares] = strconv.FormatUint(*c.Resources.CPU.Shares, 10)
 			}
+
 			if c.Resources.CPU.Quota != nil {
 				config[cfgResourcesCPUQuota] = strconv.FormatInt(*c.Resources.CPU.Quota, 10)
 			}
+
 			if c.Resources.CPU.Period != nil {
 				config[cfgResourcesCPUPeriod] = strconv.FormatUint(*c.Resources.CPU.Period, 10)
 			}
+
 			if c.Resources.CPU.Quota != nil && *c.Resources.CPU.Quota > 0 && c.Resources.CPU.Period != nil && *c.Resources.CPU.Period > 0 {
 				config[cfgLimitCPUAllowance] = fmt.Sprintf("%dms/%dms",
 					int(math.Ceil(float64(*c.Resources.CPU.Quota)/1000)),
@@ -471,6 +494,7 @@ func makeContainerConfig(c *Container) map[string]string {
 				)
 			}
 		}
+
 		if c.Resources.Memory != nil {
 			if c.Resources.Memory.Limit != nil && *c.Resources.Memory.Limit > 0 {
 				config[cfgLimitMemory] = strconv.FormatInt(*c.Resources.Memory.Limit, 10)
@@ -483,26 +507,32 @@ func makeContainerConfig(c *Container) map[string]string {
 
 func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 	devices := map[string]map[string]string{}
+
 	err := device.AddBlocksToMap(devices, c.Blocks...)
 	if err != nil {
 		return devices, err
 	}
+
 	err = device.AddDisksToMap(devices, c.Disks...)
 	if err != nil {
 		return devices, err
 	}
+
 	err = device.AddNicsToMap(devices, c.Nics...)
 	if err != nil {
 		return devices, err
 	}
+
 	err = device.AddNonesToMap(devices, c.Nones...)
 	if err != nil {
 		return devices, err
 	}
+
 	err = device.AddProxiesToMap(devices, c.Proxies...)
 	if err != nil {
 		return devices, err
 	}
+
 	return devices, device.AddNicsToMap(devices, c.Nics...)
 }
 
@@ -510,12 +540,14 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 // and returns the environment variables + values
 func extractEnvVars(config map[string]string) map[string]string {
 	envVars := make(map[string]string)
+
 	for k, v := range config {
 		if strings.HasPrefix(k, cfgEnvironmentPrefix+".") {
-			varName := strings.TrimLeft(k, cfgEnvironmentPrefix+".")
+			varName := strings.TrimPrefix(k, cfgEnvironmentPrefix+".")
 			varValue := v
 			envVars[varName] = varValue
 		}
 	}
+
 	return envVars
 }

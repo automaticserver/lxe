@@ -16,6 +16,7 @@ import (
 func (l *Client) NewSandbox() *Sandbox {
 	s := &Sandbox{}
 	s.client = l
+
 	return s
 }
 
@@ -29,26 +30,32 @@ func (l *Client) GetSandbox(id string) (*Sandbox, error) {
 	if !IsCRI(p) {
 		return nil, NewSandboxError(id, fmt.Errorf(ErrorLXDNotFound))
 	}
+
 	return l.toSandbox(p, ETag)
 }
 
 // ListSandboxes will return a list with all the available sandboxes
 func (l *Client) ListSandboxes() ([]*Sandbox, error) {
-	ETag := ""
+	var ETag string
+
 	ps, err := l.server.GetProfiles()
 	if err != nil {
 		return nil, NewSandboxError("lxdApi", err)
 	}
 
-	sl := []*Sandbox{}
+	var sl = []*Sandbox{}
+
 	for _, p := range ps {
+		p := p // pin!
 		if !IsCRI(p) {
 			continue
 		}
+
 		s, err := l.toSandbox(&p, ETag)
 		if err != nil {
 			return nil, err
 		}
+
 		sl = append(sl, s)
 	}
 
@@ -56,11 +63,12 @@ func (l *Client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
+func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
 	if err != nil {
 		return nil, err
 	}
+
 	createdAt, err := strconv.ParseInt(p.Config[cfgCreatedAt], 10, 64)
 	if err != nil {
 		return nil, err
@@ -70,7 +78,7 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	s.client = l
 
 	s.ID = p.Name
-	s.ETag = ETag
+	s.ETag = etag
 	s.Hostname = p.Config[cfgHostname]
 	s.LogDirectory = p.Config[cfgLogDirectory]
 	s.Metadata = SandboxMetadata{
@@ -95,6 +103,7 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if len(s.NetworkConfig.ModeData) == 0 {
 		s.NetworkConfig.ModeData = make(map[string]string)
 	}
@@ -106,18 +115,22 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	s.Disks, err = device.GetDisksFromMap(p.Devices)
 	if err != nil {
 		return nil, err
 	}
+
 	s.Blocks, err = device.GetBlocksFromMap(p.Devices)
 	if err != nil {
 		return nil, err
 	}
+
 	s.Nics, err = device.GetNicsFromMap(p.Devices)
 	if err != nil {
 		return nil, err
 	}
+
 	s.Nones, err = device.GetNonesFromMap(p.Devices)
 	if err != nil {
 		return nil, err
@@ -127,10 +140,12 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	for _, name := range p.UsedBy {
 		name = strings.TrimPrefix(name, "/1.0/containers/")
 		name = strings.TrimSuffix(name, "?project=default")
+
 		if strings.Contains(name, shared.SnapshotDelimiter) {
 			// this is a snapshot so dont parse this entry
 			continue
 		}
+
 		s.UsedBy = append(s.UsedBy, name)
 	}
 

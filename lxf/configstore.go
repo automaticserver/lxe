@@ -38,22 +38,26 @@ func (c *ConfigStore) IsReserved(key string) bool {
 			return true
 		}
 	}
+
 	for _, res := range c.reservedPrefixes {
 		if key == res || strings.HasPrefix(key, res+".") {
 			return true
 		}
 	}
+
 	return false
 }
 
 // UnreservedMap returns a map with all unresrved entries
 func (c *ConfigStore) UnreservedMap(m map[string]string) map[string]string {
 	r := map[string]string{}
+
 	for k, v := range m {
 		if !c.IsReserved(k) {
 			r[k] = v
 		}
 	}
+
 	return r
 }
 
@@ -61,10 +65,12 @@ func (c *ConfigStore) UnreservedMap(m map[string]string) map[string]string {
 // whereas the keys are striped from the prefix. The . is added implicitly.
 func (c *ConfigStore) StripedPrefixMap(m map[string]string, prefix string) map[string]string {
 	r := map[string]string{}
+
 	for k, v := range m {
 		if strings.HasPrefix(k, prefix+".") {
 			r[strings.TrimPrefix(k, prefix+".")] = v
 		}
 	}
+
 	return r
 }

@@ -19,16 +19,20 @@ func AddToMap(m map[string]map[string]string, devs ...Device) error {
 
 	for _, dev := range devs {
 		name := dev.GetName()
+
 		if _, has := m[name]; has {
 			return fmt.Errorf("there are more than one devices with name %v", name)
 		}
+
 		if _, has := additional[name]; has {
 			return fmt.Errorf("there are more than one devices with name %v", name)
 		}
+
 		dm, err := dev.ToMap()
 		if err != nil {
 			return err
 		}
+
 		additional[name] = dm
 	}
 
@@ -36,6 +40,7 @@ func AddToMap(m map[string]map[string]string, devs ...Device) error {
 	for k, v := range additional {
 		m[k] = v
 	}
+
 	return nil
 }
 
@@ -45,21 +50,25 @@ func AddDisksToMap(m map[string]map[string]string, disks ...Disk) error {
 	for _, d := range disks {
 		devs = append(devs, d)
 	}
+
 	return AddToMap(m, devs...)
 }
 
 // GetDisksFromMap will read all disk devices to the map
 func GetDisksFromMap(maps map[string]map[string]string) (Disks, error) { // nolint: dupl
 	disks := Disks{}
+
 	for _, m := range maps {
 		if m["type"] == DiskType {
 			p, err := DiskFromMap(m)
 			if err != nil {
 				return nil, err
 			}
+
 			disks.Add(p)
 		}
 	}
+
 	return disks, nil
 }
 
@@ -69,21 +78,25 @@ func AddProxiesToMap(m map[string]map[string]string, proxies ...Proxy) error {
 	for _, d := range proxies {
 		devs = append(devs, d)
 	}
+
 	return AddToMap(m, devs...)
 }
 
 // GetProxiesFromMap will read all proxy devices from the map
 func GetProxiesFromMap(maps map[string]map[string]string) (Proxies, error) { // nolint: dupl
 	proxies := Proxies{}
+
 	for _, m := range maps {
 		if m["type"] == ProxyType {
 			p, err := ProxyFromMap(m)
 			if err != nil {
 				return nil, err
 			}
+
 			proxies.Add(p)
 		}
 	}
+
 	return proxies, nil
 }
 
@@ -93,21 +106,25 @@ func AddBlocksToMap(m map[string]map[string]string, blocks ...Block) error {
 	for _, d := range blocks {
 		devs = append(devs, d)
 	}
+
 	return AddToMap(m, devs...)
 }
 
 // GetBlocksFromMap will read all block devices from the map
 func GetBlocksFromMap(maps map[string]map[string]string) ([]Block, error) { // nolint: dupl
 	blocks := Blocks{}
+
 	for _, m := range maps {
 		if m["type"] == BlockType {
 			p, err := BlockFromMap(m)
 			if err != nil {
 				return nil, err
 			}
+
 			blocks.Add(p)
 		}
 	}
+
 	return blocks, nil
 }
 
@@ -117,21 +134,25 @@ func AddNicsToMap(m map[string]map[string]string, nics ...Nic) error {
 	for _, d := range nics {
 		devs = append(devs, d)
 	}
+
 	return AddToMap(m, devs...)
 }
 
 // GetNicsFromMap will read all nic devices from the map
 func GetNicsFromMap(maps map[string]map[string]string) ([]Nic, error) { // nolint: dupl
 	nics := Nics{}
+
 	for _, m := range maps {
 		if m["type"] == NicType {
 			p, err := NicFromMap(m)
 			if err != nil {
 				return nil, err
 			}
+
 			nics.Add(p)
 		}
 	}
+
 	return nics, nil
 }
 
@@ -141,20 +162,24 @@ func AddNonesToMap(m map[string]map[string]string, nones ...None) error {
 	for _, n := range nones {
 		devs = append(devs, n)
 	}
+
 	return AddToMap(m, devs...)
 }
 
 // GetNonesFromMap will read all none devices from the map
 func GetNonesFromMap(maps map[string]map[string]string) ([]None, error) { // nolint: dupl
 	nones := Nones{}
+
 	for k, m := range maps {
 		if m["type"] == NoneType {
 			p, err := NoneFromMap(m, k)
 			if err != nil {
 				return nil, err
 			}
+
 			nones.Add(p)
 		}
 	}
+
 	return nones, nil
 }

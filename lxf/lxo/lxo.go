@@ -11,7 +11,7 @@ type LXO struct {
 }
 
 // New creates LXO
-func New(server lxd.ContainerServer) *LXO {
+func NewClient(server lxd.ContainerServer) *LXO {
 	return &LXO{
 		server: server,
 	}

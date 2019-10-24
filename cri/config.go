@@ -12,7 +12,7 @@ type Config struct {
 	LXDImageRemote string
 	// LXDProfiles which all cri containers inherit
 	LXDProfiles []string
-	// LXEStreamingServerEndpoint containts the listen address for the streaming server
+	// LXEStreamingServerEndpoint contains the listen address for the streaming server
 	LXEStreamingServerEndpoint string
 	// LXEStreamingPort is the port for the streaming server
 	LXEStreamingPort int

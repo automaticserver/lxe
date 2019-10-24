@@ -16,6 +16,7 @@ func (ns *Nics) Add(n Nic) {
 			return
 		}
 	}
+
 	*ns = append(*ns, n)
 }
 

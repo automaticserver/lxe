@@ -47,6 +47,7 @@ func IsContainerNotFound(err error) bool {
 	if serr, ok := err.(ContainerError); ok {
 		return serr.Reason.Error() == ErrorLXDNotFound
 	}
+
 	return false
 }
 
@@ -71,6 +72,7 @@ func IsSandboxNotFound(err error) bool {
 	if serr, ok := err.(SandboxError); ok {
 		return serr.Reason.Error() == ErrorLXDNotFound
 	}
+
 	return false
 }
 
@@ -95,5 +97,6 @@ func IsImageNotFound(err error) bool {
 	if serr, ok := err.(ImageError); ok {
 		return serr.Reason.Error() == ErrorLXDNotFound
 	}
+
 	return false
 }

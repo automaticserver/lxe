@@ -28,6 +28,7 @@ func (ps *Proxies) Add(p Proxy) {
 			return
 		}
 	}
+
 	*ps = append(*ps, p)
 }
 
@@ -73,6 +74,7 @@ func ProxyFromMap(dev map[string]string) (Proxy, error) {
 	if err != nil {
 		return Proxy{}, err
 	}
+
 	d, err := NewProxyEndpoint(dev["connect"])
 	if err != nil {
 		return Proxy{}, err
@@ -88,6 +90,7 @@ func newProtocol(str string) (Protocol, error) {
 	if i, has := protMapNameVal[str]; has && str != "undefined" {
 		return i, nil
 	}
+
 	return ProtocolUndefined, fmt.Errorf("unknown protocol, %v", str)
 }
 
@@ -110,7 +113,7 @@ type ProxyEndpoint struct {
 func NewProxyEndpoint(str string) (ProxyEndpoint, error) {
 	parts := strings.Split(str, ":")
 	if len(parts) != 3 {
-		return ProxyEndpoint{}, fmt.Errorf("Proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
+		return ProxyEndpoint{}, fmt.Errorf("proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
 	}
 
 	prot, err := newProtocol(parts[0])
@@ -120,7 +123,7 @@ func NewProxyEndpoint(str string) (ProxyEndpoint, error) {
 
 	port, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return ProxyEndpoint{}, fmt.Errorf("Port must be an int not %v", parts[2])
+		return ProxyEndpoint{}, fmt.Errorf("port must be an int not %v", parts[2])
 	}
 
 	return ProxyEndpoint{

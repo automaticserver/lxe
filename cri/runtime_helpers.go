@@ -16,7 +16,7 @@ func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 	status := rtApi.ContainerStatus{
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    c.Metadata.Name,
-			Attempt: uint32(c.Metadata.Attempt),
+			Attempt: c.Metadata.Attempt,
 		},
 		State:       stateContainerAsCri(c.StateName),
 		CreatedAt:   c.CreatedAt.UnixNano(),
@@ -84,7 +84,7 @@ func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
 		Id: c.ID,
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    c.Metadata.Name,
-			Attempt: uint32(c.Metadata.Attempt),
+			Attempt: c.Metadata.Attempt,
 		},
 		Labels:      c.Labels,
 		Annotations: c.Annotations,
@@ -96,11 +96,11 @@ func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
 		WritableLayer: &disk,
 		Attributes:    &attribs,
 	}
+
 	return &response, nil
 }
 
 func toCriContainer(c *lxf.Container) *rtApi.Container {
-
 	return &rtApi.Container{
 		Id:           c.ID,
 		PodSandboxId: c.SandboxID(),
@@ -110,12 +110,11 @@ func toCriContainer(c *lxf.Container) *rtApi.Container {
 		State:        stateContainerAsCri(c.StateName),
 		Metadata: &rtApi.ContainerMetadata{
 			Name:    c.Metadata.Name,
-			Attempt: uint32(c.Metadata.Attempt),
+			Attempt: c.Metadata.Attempt,
 		},
 		Labels:      c.Labels,
 		Annotations: c.Annotations,
 	}
-	// TODO: more fields?
 }
 
 func stateContainerAsCri(s lxf.ContainerStateName) rtApi.ContainerState {
@@ -141,33 +140,41 @@ func CompareFilterMap(base map[string]string, filter map[string]string) bool {
 	if filter == nil { // filter can be nil
 		return true
 	}
+
 	for key := range filter {
 		if base[key] != filter[key] {
 			return false
 		}
 	}
+
 	return true
 }
 
 // getLXDConfigPath tries to find the remote configuration file path
 func getLXDConfigPath(cfg *Config) (string, error) {
 	configPath := cfg.LXDRemoteConfig
+
 	if cfg.LXDRemoteConfig == "" {
-		// Copied from github.com/lxc/lxd/lxc/main.go:56, since there it is unexported
+		// Equality to lxd expected, github.com/lxc/lxd/lxc/main.go:56
 		var configDir string
-		if os.Getenv("LXD_CONF") != "" {
+
+		switch {
+		case os.Getenv("LXD_CONF") != "":
 			configDir = os.Getenv("LXD_CONF")
-		} else if os.Getenv("HOME") != "" {
+		case os.Getenv("HOME") != "":
 			configDir = path.Join(os.Getenv("HOME"), ".config", "lxc")
-		} else {
+		default:
 			user, err := user.Current()
 			if err != nil {
 				return "", err
 			}
+
 			configDir = path.Join(user.HomeDir, ".config", "lxc")
 		}
+
 		configPath = os.ExpandEnv(path.Join(configDir, "config.yml"))
 	}
+
 	return configPath, nil
 }
 
@@ -176,12 +183,14 @@ func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
 	if err != nil {
 		return err
 	}
+
 	for _, c := range cl {
 		err := s.stopContainer(c, 30)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -190,13 +199,16 @@ func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
 	if c.StateName != lxf.ContainerStateRunning {
 		return nil
 	}
+
 	err := c.Stop(timeout)
 	if err != nil {
 		if lxf.IsContainerNotFound(err) {
 			return nil
 		}
+
 		return err
 	}
+
 	return nil
 }
 
@@ -205,12 +217,14 @@ func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
 	if err != nil {
 		return err
 	}
+
 	for _, c := range cl {
 		err = s.deleteContainer(c)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -220,7 +234,9 @@ func (s RuntimeServer) deleteContainer(c *lxf.Container) error {
 		if lxf.IsContainerNotFound(err) {
 			return nil
 		}
+
 		return err
 	}
+
 	return nil
 }

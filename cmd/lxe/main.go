@@ -12,50 +12,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Global variables
-var debug bool
-var verbose bool
-
 // Initialize the random number generator
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 type cmdGlobal struct {
-	flagHelp    bool
-	flagVersion bool
-
-	flagLogFile    string
+	flagHelp       bool
+	flagVersion    bool
 	flagLogDebug   bool
 	flagLogSyslog  bool
-	flagLogTrace   []string
 	flagLogVerbose bool
+	flagLogFile    string
+	flagLogTrace   []string
 
 	cri cri.Config
 }
 
 func (c *cmdGlobal) Run(cmd *cobra.Command, args []string) error {
-	// TODO: maybe consider using k8slogs?
-	//import k8slogs "github.com/kubernetes/kubernetes/pkg/kubectl/util/logs"
-	//k8slogs.InitLogs()
-	//#defer k8slogs.FlushLogs()
-
-	// Set logging global variables
-	debug = c.flagLogVerbose
-	verbose = c.flagLogDebug
-
 	// Setup logger
 	syslog := ""
 	if c.flagLogSyslog {
 		syslog = cri.Domain
 	}
 
+	var err error
+
 	handler := noHandler{}
-	log, err := logging.GetLogger(syslog, c.flagLogFile, c.flagLogVerbose, c.flagLogDebug, handler)
+
+	logger.Log, err = logging.GetLogger(syslog, c.flagLogFile, c.flagLogVerbose, c.flagLogDebug, handler)
 	if err != nil {
 		return err
 	}
-	logger.Log = log
 
 	return nil
 }

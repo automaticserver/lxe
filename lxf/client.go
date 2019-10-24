@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/automaticserver/lxe/lxf/lxo"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/automaticserver/lxe/lxf/lxo"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
@@ -82,6 +82,7 @@ func NewClient(socket string, configPath string) (*Client, error) {
 			Timeout: 10 * time.Second,
 		},
 	}
+
 	server, err := lxd.ConnectLXDUnix(socket, &args)
 	if err != nil {
 		return nil, err
@@ -95,7 +96,7 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	client := &Client{
 		server: server,
 		config: config,
-		opwait: lxo.New(server),
+		opwait: lxo.NewClient(server),
 	}
 
 	// register LXD eventhandler
@@ -103,6 +104,7 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = listener.AddHandler([]string{"lifecycle"}, client.lifecycleEventHandler)
 	if err != nil {
 		return nil, err
@@ -111,10 +113,11 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	return client, nil
 }
 
-func (c *Client) GetRuntimeInfo() (*api.Server, error) {
-	server, _, err := c.server.GetServer()
+func (l *Client) GetRuntimeInfo() (*api.Server, error) {
+	server, _, err := l.server.GetServer()
 	if err != nil {
 		return nil, err
 	}
+
 	return server, nil
 }

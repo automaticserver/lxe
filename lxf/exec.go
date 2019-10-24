@@ -58,9 +58,7 @@ func (l *Client) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 // streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible
 // to provide a sink which doesn't block.
-func (l *Client) Exec(cid string, cmd []string,
-	stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
-
+func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
 	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface
 	var stdinCloser io.ReadCloser
 	// kubelet might give us stdin==nil but lxd expects something there otherwise it will segfault
@@ -98,6 +96,7 @@ func (l *Client) Exec(cid string, cmd []string,
 	}
 
 	<-dataDone
+
 	// we close as soon as connections are terminated and all data got sent
 	// it seems they won't be closed automatically but i'm not sure if i miss something
 	if stdout != nil {
@@ -106,6 +105,7 @@ func (l *Client) Exec(cid string, cmd []string,
 			return 0, err
 		}
 	}
+
 	if stderr != nil {
 		err = stderr.Close()
 		if err != nil {

@@ -16,6 +16,7 @@ func (ns *Nones) Add(n None) {
 			return
 		}
 	}
+
 	*ns = append(*ns, n)
 }
 

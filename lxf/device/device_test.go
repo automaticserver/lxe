@@ -62,6 +62,7 @@ func TestGetDisksFromMap(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not read disk from map, %v", err)
 	}
+
 	if len(disks) != 1 {
 		t.Errorf("expected one disk but there are %v", len(disks))
 	}
@@ -70,6 +71,7 @@ func TestGetDisksFromMap(t *testing.T) {
 // nolint: dupl
 func TestGetDisksWithOverrideAdd(t *testing.T) {
 	var disks Disks
+
 	disk := Disk{
 		Path: "/",
 	}
@@ -115,6 +117,7 @@ func TestGetProxiesFromMap(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not read proxy from map, %v", err)
 	}
+
 	if len(proxies) != 1 {
 		t.Errorf("expected one proxy but there are %v", len(proxies))
 	}
@@ -123,6 +126,7 @@ func TestGetProxiesFromMap(t *testing.T) {
 // nolint: dupl
 func TestGetProxiesWithOverrideAdd(t *testing.T) {
 	var proxies Proxies
+
 	proxy := Proxy{
 		Destination: ProxyEndpoint{Protocol: ProtocolTCP, Port: 8000},
 		Listen:      ProxyEndpoint{Protocol: ProtocolTCP, Port: 80},
@@ -167,6 +171,7 @@ func TestGetBlocksFromMap(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not read block from map, %v", err)
 	}
+
 	if len(blocks) != 1 {
 		t.Errorf("expected one block but there are %v", len(blocks))
 	}
@@ -175,6 +180,7 @@ func TestGetBlocksFromMap(t *testing.T) {
 // nolint: dupl
 func TestGetBlocksWithOverrideAdd(t *testing.T) {
 	var blocks Blocks
+
 	block := Block{
 		Path: "/",
 	}
@@ -218,6 +224,7 @@ func TestGetNicsFromMap(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not read nic from map, %v", err)
 	}
+
 	if len(nics) != 1 {
 		t.Errorf("expected one nic but there are %v", len(nics))
 	}
@@ -226,6 +233,7 @@ func TestGetNicsFromMap(t *testing.T) {
 // nolint: dupl
 func TestGetNicsWithOverrideAdd(t *testing.T) {
 	var nics Nics
+
 	nic := Nic{
 		Name: "eth0",
 	}
@@ -269,6 +277,7 @@ func TestGetNonesFromMap(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not read none from map, %v", err)
 	}
+
 	if len(nones) != 1 {
 		t.Errorf("expected one none but there are %v", len(nones))
 	}
@@ -277,6 +286,7 @@ func TestGetNonesFromMap(t *testing.T) {
 // nolint: dupl
 func TestGetNonesWithOverrideAdd(t *testing.T) {
 	var nones Nones
+
 	none := None{
 		Name: "eth0",
 	}

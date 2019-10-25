@@ -23,6 +23,19 @@ func TestLXO_StopContainer_Simple(t *testing.T) {
 	assert.Equal(t, 1, fakeOp.WaitCallCount())
 }
 
+func TestLXO_StopContainer_Error(t *testing.T) {
+	lxo, fake := newFakeClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+
+	fake.UpdateContainerStateReturns(fakeOp, errors.New("something failed"))
+
+	err := lxo.StopContainer("foo", 10, 0)
+	assert.Error(t, err)
+
+	assert.Equal(t, 1, fake.UpdateContainerStateCallCount())
+	assert.Equal(t, 0, fakeOp.WaitCallCount())
+}
+
 func TestLXO_StopContainer_ForceSuccess(t *testing.T) {
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
@@ -85,14 +98,13 @@ func TestLXO_StartContainer_Error(t *testing.T) {
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
-	fake.UpdateContainerStateReturns(fakeOp, nil)
-	fakeOp.WaitReturns(errors.New("something missing"))
+	fake.UpdateContainerStateReturns(fakeOp, errors.New("something missing"))
 
 	err := lxo.StartContainer("foo")
 	assert.Error(t, err)
 
 	assert.Equal(t, 1, fake.UpdateContainerStateCallCount())
-	assert.Equal(t, 1, fakeOp.WaitCallCount())
+	assert.Equal(t, 0, fakeOp.WaitCallCount())
 }
 
 func TestLXO_CreateContainer_Simple(t *testing.T) {

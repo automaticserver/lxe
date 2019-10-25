@@ -13,14 +13,16 @@ func (l *LXO) StopContainer(id string, timeout, retries int) error {
 		etag string
 	)
 
-	for i := 1; i <= retries; i++ {
+	for i := 0; i <= retries; i++ {
 		lxdReq := api.ContainerStatePut{
 			Action:  "stop",
 			Timeout: timeout,
 			Force:   i == retries,
 		}
 
-		op, err := l.server.UpdateContainerState(id, lxdReq, etag)
+		var op lxd.Operation
+
+		op, err = l.server.UpdateContainerState(id, lxdReq, etag)
 		if err != nil {
 			return err
 		}
@@ -96,7 +98,5 @@ func (l *LXO) ExecContainer(id string, containerExec api.ContainerExecPost, exec
 		return op, err
 	}
 
-	err = op.Wait()
-
-	return op, err
+	return op, op.Wait()
 }

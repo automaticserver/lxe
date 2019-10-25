@@ -2,7 +2,9 @@ module github.com/automaticserver/lxe
 
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
-	emperror.dev/errors v0.4.3
+	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
+	github.com/alecthomas/colour v0.0.0-20160524082231-60882d9e2721 // indirect
+	github.com/alecthomas/repr v0.0.0-20181024024818-d37bc2a10ba1 // indirect
 	github.com/containernetworking/cni v0.7.1
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all
@@ -33,6 +35,7 @@ require (
 	github.com/opencontainers/runtime-spec v1.0.1
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478

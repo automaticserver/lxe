@@ -513,6 +513,11 @@ func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
 		return devices, err
 	}
 
+	err = device.AddCharsToMap(devices, c.Chars...)
+	if err != nil {
+		return devices, err
+	}
+
 	err = device.AddDisksToMap(devices, c.Disks...)
 	if err != nil {
 		return devices, err

@@ -41,6 +41,7 @@ generate:
 test:
 	go test ./... -coverprofile go.coverprofile
 	go tool cover -func go.coverprofile
+# | sed 's|^$(shell go list -m)/||'
 
 .PHONY: lint
 lint:

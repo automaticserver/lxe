@@ -347,17 +347,17 @@ manage_etc_hosts: true`, s.Hostname)
 
 	devices := map[string]map[string]string{}
 
-	err = device.AddProxiesToMap(devices, s.Proxies...)
+	err = device.AddBlocksToMap(devices, s.Blocks...)
+	if err != nil {
+		return err
+	}
+
+	err = device.AddCharsToMap(devices, s.Chars...)
 	if err != nil {
 		return err
 	}
 
 	err = device.AddDisksToMap(devices, s.Disks...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddBlocksToMap(devices, s.Blocks...)
 	if err != nil {
 		return err
 	}
@@ -368,6 +368,11 @@ manage_etc_hosts: true`, s.Hostname)
 	}
 
 	err = device.AddNonesToMap(devices, s.Nones...)
+	if err != nil {
+		return err
+	}
+
+	err = device.AddProxiesToMap(devices, s.Proxies...)
 	if err != nil {
 		return err
 	}

@@ -27,8 +27,8 @@ func (ds *Disks) Add(d Disk) {
 // Disk mounts a host path into the container
 type Disk struct {
 	Path     string
-	Pool     string
 	Source   string
+	Pool     string
 	Size     string
 	Readonly bool
 	Optional bool
@@ -37,28 +37,25 @@ type Disk struct {
 // ToMap serializes itself into a map. Will return an error if the data
 // is inconsistent/invalid in some way
 func (d Disk) ToMap() (map[string]string, error) {
-	def := map[string]string{
+	return map[string]string{
 		"type":     DiskType,
 		"path":     d.Path,
 		"source":   d.Source,
+		"pool":     d.Pool,
+		"size":     d.Size,
 		"readonly": strconv.FormatBool(d.Readonly),
 		"optional": strconv.FormatBool(d.Optional),
-	}
-
-	if d.Pool != "" {
-		def["pool"] = d.Pool
-	}
-
-	if d.Size != "" {
-		def["size"] = d.Size
-	}
-
-	return def, nil
+	}, nil
 }
 
 // GetName will return the path with prefix
 func (d Disk) GetName() string {
-	return DiskType + "-" + d.Path
+	suffix := d.Path
+	if d.Path == "" {
+		suffix = d.Source
+	}
+
+	return DiskType + "-" + suffix
 }
 
 // DiskFromMap crrate a new disk from map entries

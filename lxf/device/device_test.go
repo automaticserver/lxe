@@ -296,3 +296,57 @@ func TestGetNonesWithOverrideAdd(t *testing.T) {
 
 	assert.Len(t, nones, 1)
 }
+
+// nolint: dupl
+func TestAddCharToMap(t *testing.T) {
+	char := Char{
+		Path: "/",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddCharsToMap(s, char)
+	if err != nil {
+		t.Errorf("could not serialize char to map: %v", err)
+	}
+
+	if len(s) != 1 {
+		t.Errorf("device map should have one entry")
+	}
+}
+
+// nolint: dupl
+func TestGetCharsFromMap(t *testing.T) {
+	char := Char{
+		Path: "/",
+	}
+	s := map[string]map[string]string{}
+
+	err := AddCharsToMap(s, char)
+	if err != nil {
+		t.Errorf("could not serialize char to map: %v", err)
+	}
+
+	chars, err := GetCharsFromMap(s)
+
+	if err != nil {
+		t.Errorf("could not read char from map, %v", err)
+	}
+
+	if len(chars) != 1 {
+		t.Errorf("expected one char but there are %v", len(chars))
+	}
+}
+
+// nolint: dupl
+func TestGetCharsWithOverrideAdd(t *testing.T) {
+	var chars Chars
+
+	char := Char{
+		Path: "/",
+	}
+
+	chars.Add(char)
+	chars.Add(char)
+
+	assert.Len(t, chars, 1)
+}

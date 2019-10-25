@@ -183,3 +183,31 @@ func GetNonesFromMap(maps map[string]map[string]string) ([]None, error) { // nol
 
 	return nones, nil
 }
+
+// AddCharsToMap will add the chars to the map
+func AddCharsToMap(m map[string]map[string]string, chars ...Char) error {
+	devs := []Device{}
+	for _, d := range chars {
+		devs = append(devs, d)
+	}
+
+	return AddToMap(m, devs...)
+}
+
+// GetCharsFromMap will read all char devices to the map
+func GetCharsFromMap(maps map[string]map[string]string) (Chars, error) { // nolint: dupl
+	chars := Chars{}
+
+	for _, m := range maps {
+		if m["type"] == CharType {
+			p, err := CharFromMap(m)
+			if err != nil {
+				return nil, err
+			}
+
+			chars.Add(p)
+		}
+	}
+
+	return chars, nil
+}

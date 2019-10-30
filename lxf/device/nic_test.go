@@ -43,7 +43,8 @@ func TestNic_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": NicType, "name": "ethX", "nictype": "bridge", "parent": "brX", "ipv4.address": "1.2.3.4"}
 	exp := &Nic{KeyName: "foo", Name: "ethX", NicType: "bridge", Parent: "brX", IPv4Address: "1.2.3.4"}
-	d, err := schema[NicType].FromMap("foo", raw)
+	d := &Nic{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

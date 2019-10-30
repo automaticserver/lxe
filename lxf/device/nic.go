@@ -42,13 +42,18 @@ func (d *Nic) ToMap() (string, map[string]string) {
 	}
 }
 
-// FromMap creates a new device with assigned name (can be empty) and options
-func (d *Nic) FromMap(name string, options map[string]string) (Device, error) {
-	return &Nic{
-		KeyName:     name,
-		Name:        options["name"],
-		NicType:     options["nictype"],
-		Parent:      options["parent"],
-		IPv4Address: options["ipv4.address"],
-	}, nil
+// FromMap loads assigned name (can be empty) and options
+func (d *Nic) FromMap(name string, options map[string]string) error {
+	d.KeyName = name
+	d.Name = options["name"]
+	d.NicType = options["nictype"]
+	d.Parent = options["parent"]
+	d.IPv4Address = options["ipv4.address"]
+
+	return nil
+}
+
+// New creates a new empty device
+func (d *Nic) new() Device {
+	return &Nic{}
 }

@@ -57,7 +57,8 @@ func TestChar_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": CharType, "path": "bar", "source": "baz"}
 	exp := &Char{KeyName: "foo", Path: "bar", Source: "baz"}
-	d, err := schema[CharType].FromMap("foo", raw)
+	d := &Char{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

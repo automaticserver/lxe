@@ -25,6 +25,18 @@ func TestDetect_KnownType(t *testing.T) {
 	assert.Exactly(t, exp, n)
 }
 
+func TestDetect_SameTypeMultiple(t *testing.T) {
+	t.Parallel()
+
+	m, err := Detect("foo", map[string]string{"type": "none"})
+	assert.NoError(t, err)
+
+	n, err := Detect("bar", map[string]string{"type": "none"})
+	assert.NoError(t, err)
+
+	assert.NotEqual(t, m, n)
+}
+
 func TestDevices_Upsert_AddMultiple(t *testing.T) {
 	t.Parallel()
 

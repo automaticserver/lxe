@@ -38,11 +38,16 @@ func (d *Char) ToMap() (string, map[string]string) {
 	}
 }
 
-// FromMap creates a new device with assigned name (can be empty) and options
-func (d *Char) FromMap(name string, options map[string]string) (Device, error) {
-	return &Char{
-		KeyName: name,
-		Path:    options["path"],
-		Source:  options["source"],
-	}, nil
+// FromMap loads assigned name (can be empty) and options
+func (d *Char) FromMap(name string, options map[string]string) error {
+	d.KeyName = name
+	d.Path = options["path"]
+	d.Source = options["source"]
+
+	return nil
+}
+
+// New creates a new empty device
+func (d *Char) new() Device {
+	return &Char{}
 }

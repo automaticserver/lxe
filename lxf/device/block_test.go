@@ -57,7 +57,8 @@ func TestBlock_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": BlockType, "path": "bar", "source": "baz"}
 	exp := &Block{KeyName: "foo", Path: "bar", Source: "baz"}
-	d, err := schema[BlockType].FromMap("foo", raw)
+	d := &Block{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

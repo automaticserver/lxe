@@ -43,7 +43,8 @@ func TestProxy_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": ProxyType, "listen": "tcp:baz:22", "connect": "udp:cba:33"}
 	exp := &Proxy{KeyName: "foo", Listen: &ProxyEndpoint{Protocol: ProtocolTCP, Address: "baz", Port: 22}, Destination: &ProxyEndpoint{Protocol: ProtocolUDP, Address: "cba", Port: 33}}
-	d, err := schema[ProxyType].FromMap("foo", raw)
+	d := &Proxy{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

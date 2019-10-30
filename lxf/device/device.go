@@ -1,6 +1,8 @@
 package device
 
-import "github.com/juju/errors"
+import (
+	"github.com/juju/errors"
+)
 
 var (
 	schema = map[string]Device{
@@ -17,8 +19,10 @@ var (
 type Device interface {
 	// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
 	ToMap() (name string, options map[string]string)
-	// FromMap creates a new device with assigned name (can be empty) and options
-	FromMap(name string, options map[string]string) (Device, error)
+	// FromMap loads assigned name (can be empty) and options
+	FromMap(name string, options map[string]string) error
+	// New creates a new empty device
+	new() Device
 }
 
 // Detects and loads device by type
@@ -28,7 +32,14 @@ func Detect(name string, options map[string]string) (Device, error) {
 		return nil, errors.NotSupportedf("unknown device type: %v", options["type"])
 	}
 
-	return t.FromMap(name, options)
+	d := t.new()
+
+	err := d.FromMap(name, options)
+	if err != nil {
+		return nil, err
+	}
+
+	return d, nil
 }
 
 // Devices allows having a list of devices unique by name

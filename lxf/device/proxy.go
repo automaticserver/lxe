@@ -42,23 +42,28 @@ func (d *Proxy) ToMap() (string, map[string]string) {
 	}
 }
 
-// FromMap creates a new device with assigned name (can be empty) and options
-func (d *Proxy) FromMap(name string, options map[string]string) (Device, error) {
-	li, err := NewProxyEndpoint(options["listen"])
+// New creates a new empty device
+func (d *Proxy) new() Device {
+	return &Proxy{}
+}
+
+// FromMap loads assigned name (can be empty) and options
+func (d *Proxy) FromMap(name string, options map[string]string) error {
+	var err error
+
+	d.KeyName = name
+
+	d.Listen, err = NewProxyEndpoint(options["listen"])
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	de, err := NewProxyEndpoint(options["connect"])
+	d.Destination, err = NewProxyEndpoint(options["connect"])
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &Proxy{
-		KeyName:     name,
-		Listen:      li,
-		Destination: de,
-	}, nil
+	return nil
 }
 
 // Protocol defines the type of a proxy endpoint

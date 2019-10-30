@@ -49,15 +49,20 @@ func (d *Disk) ToMap() (string, map[string]string) {
 	}
 }
 
-// FromMap creates a new device with assigned name (can be empty) and options
-func (d *Disk) FromMap(name string, options map[string]string) (Device, error) {
-	return &Disk{
-		KeyName:  name,
-		Path:     options["path"],
-		Source:   options["source"],
-		Pool:     options["pool"],
-		Size:     options["size"],
-		Readonly: options["readonly"] == "true",
-		Optional: options["optional"] == "true",
-	}, nil
+// FromMap loads assigned name (can be empty) and options
+func (d *Disk) FromMap(name string, options map[string]string) error {
+	d.KeyName = name
+	d.Path = options["path"]
+	d.Source = options["source"]
+	d.Pool = options["pool"]
+	d.Size = options["size"]
+	d.Readonly = options["readonly"] == "true"
+	d.Optional = options["optional"] == "true"
+
+	return nil
+}
+
+// New creates a new empty device
+func (d *Disk) new() Device {
+	return &Disk{}
 }

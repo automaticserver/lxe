@@ -29,7 +29,8 @@ func TestNone_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": NoneType}
 	exp := &None{KeyName: "foo"}
-	d, err := schema[NoneType].FromMap("foo", raw)
+	d := &None{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

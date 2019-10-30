@@ -57,7 +57,8 @@ func TestDisk_FromMap(t *testing.T) {
 
 	raw := map[string]string{"type": DiskType, "path": "bar", "source": "baz", "pool": "pool", "size": "size", "readonly": "true", "optional": "true"}
 	exp := &Disk{KeyName: "foo", Path: "bar", Source: "baz", Pool: "pool", Size: "size", Readonly: true, Optional: true}
-	d, err := schema[DiskType].FromMap("foo", raw)
+	d := &Disk{}
+	err := d.FromMap("foo", raw)
 	assert.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

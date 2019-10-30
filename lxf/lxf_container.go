@@ -120,29 +120,14 @@ func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error)
 	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
 	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
 
-	c.Proxies, err = device.GetProxiesFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
+	// get devices
+	for name, options := range ct.Devices {
+		d, err := device.Detect(name, options)
+		if err != nil {
+			return nil, err
+		}
 
-	c.Disks, err = device.GetDisksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Blocks, err = device.GetBlocksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Nics, err = device.GetNicsFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Nones, err = device.GetNonesFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
+		c.Devices.Upsert(d)
 	}
 
 	c.Resources = &opencontainers.LinuxResources{}

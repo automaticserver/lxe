@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
@@ -350,9 +349,11 @@ func (c *Container) apply() error {
 
 	config := makeContainerConfig(c)
 
-	devices, err := makeContainerDevices(c)
-	if err != nil {
-		return err
+	devices := make(map[string]map[string]string)
+
+	for _, d := range c.Devices {
+		name, options := d.ToMap()
+		devices[name] = options
 	}
 
 	for key, val := range c.Config {
@@ -434,7 +435,7 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 		c.CreatedAt = time.Now()
 	}
 
-	config := map[string]string{}
+	config := make(map[string]string)
 
 	// write labels
 	for key, val := range c.Labels {
@@ -503,42 +504,6 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 	}
 
 	return config
-}
-
-func makeContainerDevices(c *Container) (map[string]map[string]string, error) {
-	devices := map[string]map[string]string{}
-
-	err := device.AddBlocksToMap(devices, c.Blocks...)
-	if err != nil {
-		return devices, err
-	}
-
-	err = device.AddCharsToMap(devices, c.Chars...)
-	if err != nil {
-		return devices, err
-	}
-
-	err = device.AddDisksToMap(devices, c.Disks...)
-	if err != nil {
-		return devices, err
-	}
-
-	err = device.AddNicsToMap(devices, c.Nics...)
-	if err != nil {
-		return devices, err
-	}
-
-	err = device.AddNonesToMap(devices, c.Nones...)
-	if err != nil {
-		return devices, err
-	}
-
-	err = device.AddProxiesToMap(devices, c.Proxies...)
-	if err != nil {
-		return devices, err
-	}
-
-	return devices, device.AddNicsToMap(devices, c.Nics...)
 }
 
 // extractEnvVars extracts all the config options that start with "environment."

@@ -1,49 +1,48 @@
+// nolint: dupl
 package device
+
+import "fmt"
 
 const (
 	BlockType = "unix-block"
 )
 
-// Blocks holds slice of Block
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Blocks []Block
+// Block device representation https://lxd.readthedocs.io/en/latest/containers/#type-unix-block
+type Block struct {
+	KeyName string
+	Path    string
+	Source  string
+}
 
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (bs *Blocks) Add(b Block) {
-	for k, e := range *bs {
-		if e.GetName() == b.GetName() {
-			(*bs)[k] = b
-			return
-		}
+func (d *Block) getName() string {
+	var name string
+
+	switch {
+	case d.KeyName != "":
+		name = d.KeyName
+	case d.Path == "":
+		name = fmt.Sprintf("%s-%s", BlockType, d.Source)
+	default:
+		name = fmt.Sprintf("%s-%s", BlockType, d.Path)
 	}
 
-	*bs = append(*bs, b)
+	return name
 }
 
-// Block device
-type Block struct {
-	Path   string
-	Source string
-}
-
-// ToMap serializes itself into a lxd device map entry
-func (b Block) ToMap() (map[string]string, error) {
-	return map[string]string{
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *Block) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
 		"type":   BlockType,
-		"source": b.Source,
-		"path":   b.Path,
-	}, nil
+		"source": d.Source,
+		"path":   d.Path,
+	}
 }
 
-// GetName will generate a uinique name for the device map
-func (b Block) GetName() string {
-	return BlockType + "-" + b.Path
-}
-
-// BlockFromMap create a new block from map entries
-func BlockFromMap(dev map[string]string) (Block, error) {
-	return Block{
-		Path:   dev["path"],
-		Source: dev["source"],
+// FromMap creates a new device with assigned name (can be empty) and options
+func (d *Block) FromMap(name string, options map[string]string) (Device, error) {
+	return &Block{
+		KeyName: name,
+		Path:    options["path"],
+		Source:  options["source"],
 	}, nil
 }

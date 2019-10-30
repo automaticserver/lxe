@@ -220,13 +220,13 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 
 			containerIP := "127.0.0.1"
 
-			sb.Proxies.Add(device.Proxy{
-				Listen: device.ProxyEndpoint{
+			sb.Devices.Upsert(&device.Proxy{
+				Listen: &device.ProxyEndpoint{
 					Protocol: protocol,
 					Address:  hostIP,
 					Port:     hostPort,
 				},
-				Destination: device.ProxyEndpoint{
+				Destination: &device.ProxyEndpoint{
 					Protocol: protocol,
 					Address:  containerIP,
 					Port:     containerPort,
@@ -258,7 +258,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 			}
 
 			if req.Config.Linux.SecurityContext.ReadonlyRootfs {
-				sb.Disks.Add(device.Disk{
+				sb.Devices.Upsert(&device.Disk{
 					Path:     "/",
 					Readonly: true,
 					// TODO magic constant, and also, is it always default?
@@ -529,7 +529,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 			containerPath = path.Join("/mnt", strings.TrimPrefix(containerPath, "/run"))
 		}
 
-		c.Disks.Add(device.Disk{
+		c.Devices.Upsert(&device.Disk{
 			Path:     containerPath,
 			Source:   hostPath,
 			Readonly: mnt.GetReadonly(),
@@ -538,7 +538,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 	}
 
 	for _, dev := range req.GetConfig().GetDevices() {
-		c.Blocks.Add(device.Block{
+		c.Devices.Upsert(&device.Block{
 			Source: dev.GetHostPath(),
 			Path:   dev.GetContainerPath(),
 		})

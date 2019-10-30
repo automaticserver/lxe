@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -30,24 +31,25 @@ func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {
 		Mounts:      []*rtApi.Mount{},
 	}
 
-	for _, d := range c.Disks {
-		status.Mounts = append(status.Mounts, &rtApi.Mount{
-			ContainerPath:  d.Path,
-			HostPath:       d.Source,
-			Readonly:       d.Readonly,
-			SelinuxRelabel: false, // though don't know what this means
-			Propagation:    rtApi.MountPropagation_PROPAGATION_PRIVATE,
-		})
-	}
-
-	for _, b := range c.Blocks {
-		status.Mounts = append(status.Mounts, &rtApi.Mount{
-			ContainerPath:  b.Path,
-			HostPath:       b.Source,
-			Readonly:       false,                                                // probably always that?
-			SelinuxRelabel: false,                                                // though don't know what this means
-			Propagation:    rtApi.MountPropagation_PROPAGATION_HOST_TO_CONTAINER, // unsure
-		})
+	for _, dev := range c.Devices {
+		switch d := dev.(type) {
+		case *device.Block:
+			status.Mounts = append(status.Mounts, &rtApi.Mount{
+				ContainerPath:  d.Path,
+				HostPath:       d.Source,
+				Readonly:       false,                                                // probably always that?
+				SelinuxRelabel: false,                                                // though don't know what this means
+				Propagation:    rtApi.MountPropagation_PROPAGATION_HOST_TO_CONTAINER, // unsure
+			})
+		case *device.Disk:
+			status.Mounts = append(status.Mounts, &rtApi.Mount{
+				ContainerPath:  d.Path,
+				HostPath:       d.Source,
+				Readonly:       d.Readonly,
+				SelinuxRelabel: false, // though don't know what this means
+				Propagation:    rtApi.MountPropagation_PROPAGATION_PRIVATE,
+			})
+		}
 	}
 
 	return &rtApi.ContainerStatusResponse{

@@ -1,55 +1,48 @@
+// nolint: dupl
 package device
 
+import "fmt"
+
 const (
-	CharType = "char"
+	CharType = "unix-char"
 )
 
-// Chars holds slice of Char
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Chars []Char
-
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ds *Chars) Add(d Char) {
-	for k, e := range *ds {
-		if e.GetName() == d.GetName() {
-			(*ds)[k] = d
-			return
-		}
-	}
-
-	*ds = append(*ds, d)
-}
-
-// Char mounts a host path into the container
+// Char device representation https://lxd.readthedocs.io/en/latest/containers/#type-unix-char
 type Char struct {
-	Path   string
-	Source string
+	KeyName string
+	Path    string
+	Source  string
 }
 
-// ToMap serializes itself into a map. Will return an error if the data
-// is inconsistent/invalid in some way
-func (d Char) ToMap() (map[string]string, error) {
-	return map[string]string{
-		"type":   CharType,
-		"path":   d.Path,
-		"source": d.Source,
-	}, nil
-}
+func (d *Char) getName() string {
+	var name string
 
-// GetName will return the path with prefix
-func (d Char) GetName() string {
-	suffix := d.Path
-	if d.Path == "" {
-		suffix = d.Source
+	switch {
+	case d.KeyName != "":
+		name = d.KeyName
+	case d.Path == "":
+		name = fmt.Sprintf("%s-%s", CharType, d.Source)
+	default:
+		name = fmt.Sprintf("%s-%s", CharType, d.Path)
 	}
 
-	return CharType + "-" + suffix
+	return name
 }
 
-// CharFromMap crrate a new char from map entries
-func CharFromMap(dev map[string]string) (Char, error) {
-	return Char{
-		Path:   dev["path"],
-		Source: dev["source"],
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *Char) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
+		"type":   CharType,
+		"source": d.Source,
+		"path":   d.Path,
+	}
+}
+
+// FromMap creates a new device with assigned name (can be empty) and options
+func (d *Char) FromMap(name string, options map[string]string) (Device, error) {
+	return &Char{
+		KeyName: name,
+		Path:    options["path"],
+		Source:  options["source"],
 	}, nil
 }

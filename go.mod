@@ -19,7 +19,7 @@ require (
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/json-iterator/go v1.1.5 // indirect
-	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 // indirect
+	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5
 	github.com/juju/go4 v0.0.0-20160222163258-40d72ab9641a // indirect
 	github.com/juju/persistent-cookiejar v0.0.0-20171026135701-d5e5a8405ef9 // indirect
 	github.com/juju/retry v0.0.0-20180821225755-9058e192b216 // indirect

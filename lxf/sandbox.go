@@ -215,7 +215,7 @@ func (s *Sandbox) Apply() error {
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkBridged:
-		s.Nics.Add(device.Nic{
+		s.Devices.Upsert(&device.Nic{
 			Name:        network.DefaultInterface,
 			NicType:     "bridged",
 			Parent:      s.NetworkConfig.ModeData["bridge"],
@@ -224,8 +224,8 @@ func (s *Sandbox) Apply() error {
 	}
 
 	// Always stop inheriting default eth0 device
-	s.Nones.Add(device.None{
-		Name: lxdInitDefaultNicName,
+	s.Devices.Upsert(&device.None{
+		KeyName: lxdInitDefaultNicName,
 	})
 
 	return s.apply()
@@ -345,36 +345,11 @@ hostname: %s
 manage_etc_hosts: true`, s.Hostname)
 	}
 
-	devices := map[string]map[string]string{}
+	devices := make(map[string]map[string]string)
 
-	err = device.AddBlocksToMap(devices, s.Blocks...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddCharsToMap(devices, s.Chars...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddDisksToMap(devices, s.Disks...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddNicsToMap(devices, s.Nics...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddNonesToMap(devices, s.Nones...)
-	if err != nil {
-		return err
-	}
-
-	err = device.AddProxiesToMap(devices, s.Proxies...)
-	if err != nil {
-		return err
+	for _, d := range s.Devices {
+		name, options := d.ToMap()
+		devices[name] = options
 	}
 
 	config[cfgSchema] = SchemaVersionProfile

@@ -111,29 +111,13 @@ func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	// cloud-init network config & vendor-data are write-only so not read
 
 	// get devices
-	s.Proxies, err = device.GetProxiesFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
+	for name, options := range p.Devices {
+		d, err := device.Detect(name, options)
+		if err != nil {
+			return nil, err
+		}
 
-	s.Disks, err = device.GetDisksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	s.Blocks, err = device.GetBlocksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	s.Nics, err = device.GetNicsFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-
-	s.Nones, err = device.GetNonesFromMap(p.Devices)
-	if err != nil {
-		return nil, err
+		s.Devices.Upsert(d)
 	}
 
 	// get containers using this sandbox

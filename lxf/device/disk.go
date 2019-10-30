@@ -1,6 +1,8 @@
+// nolint: dupl
 package device
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -8,24 +10,9 @@ const (
 	DiskType = "disk"
 )
 
-// Disks holds slice of Disk
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Disks []Disk
-
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ds *Disks) Add(d Disk) {
-	for k, e := range *ds {
-		if e.GetName() == d.GetName() {
-			(*ds)[k] = d
-			return
-		}
-	}
-
-	*ds = append(*ds, d)
-}
-
-// Disk mounts a host path into the container
+// Disk device representation https://lxd.readthedocs.io/en/latest/containers/#type-disk
 type Disk struct {
+	KeyName  string
 	Path     string
 	Source   string
 	Pool     string
@@ -34,10 +21,24 @@ type Disk struct {
 	Optional bool
 }
 
-// ToMap serializes itself into a map. Will return an error if the data
-// is inconsistent/invalid in some way
-func (d Disk) ToMap() (map[string]string, error) {
-	return map[string]string{
+func (d *Disk) getName() string {
+	var name string
+
+	switch {
+	case d.KeyName != "":
+		name = d.KeyName
+	case d.Path == "":
+		name = fmt.Sprintf("%s-%s", DiskType, d.Source)
+	default:
+		name = fmt.Sprintf("%s-%s", DiskType, d.Path)
+	}
+
+	return name
+}
+
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *Disk) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
 		"type":     DiskType,
 		"path":     d.Path,
 		"source":   d.Source,
@@ -45,26 +46,18 @@ func (d Disk) ToMap() (map[string]string, error) {
 		"size":     d.Size,
 		"readonly": strconv.FormatBool(d.Readonly),
 		"optional": strconv.FormatBool(d.Optional),
-	}, nil
-}
-
-// GetName will return the path with prefix
-func (d Disk) GetName() string {
-	suffix := d.Path
-	if d.Path == "" {
-		suffix = d.Source
 	}
-
-	return DiskType + "-" + suffix
 }
 
-// DiskFromMap crrate a new disk from map entries
-func DiskFromMap(dev map[string]string) (Disk, error) {
-	return Disk{
-		Path:     dev["path"],
-		Source:   dev["source"],
-		Pool:     dev["pool"],
-		Readonly: dev["readonly"] == "true",
-		Optional: dev["optional"] == "true",
+// FromMap creates a new device with assigned name (can be empty) and options
+func (d *Disk) FromMap(name string, options map[string]string) (Device, error) {
+	return &Disk{
+		KeyName:  name,
+		Path:     options["path"],
+		Source:   options["source"],
+		Pool:     options["pool"],
+		Size:     options["size"],
+		Readonly: options["readonly"] == "true",
+		Optional: options["optional"] == "true",
 	}, nil
 }

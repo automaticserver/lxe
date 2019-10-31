@@ -3,8 +3,8 @@ package lxo
 import (
 	"testing"
 
-	"github.com/alecthomas/assert"
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	"github.com/stretchr/testify/assert"
 )
 
 func newFakeClient() (*LXO, *lxdfakes.FakeContainerServer) {

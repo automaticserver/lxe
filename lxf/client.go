@@ -1,13 +1,13 @@
 package lxf
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/api"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
@@ -113,11 +113,19 @@ func NewClient(socket string, configPath string) (*Client, error) {
 	return client, nil
 }
 
-func (l *Client) GetRuntimeInfo() (*api.Server, error) {
+type runtimeInfo struct {
+	// API version of the container runtime. The string must be semver-compatible.
+	Version string
+}
+
+func (l *Client) GetRuntimeInfo() (*runtimeInfo, error) { // nolint: golint // yes return the unexported type
 	server, _, err := l.server.GetServer()
 	if err != nil {
 		return nil, err
 	}
 
-	return server, nil
+	return &runtimeInfo{
+		// api version is only X.X, so need to add .0 for semver requirement
+		Version: fmt.Sprintf("%s.0", server.APIVersion),
+	}, nil
 }

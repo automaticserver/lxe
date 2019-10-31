@@ -1,52 +1,38 @@
 package lxf
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestNewConfigStoreKeyReserved(t *testing.T) {
 	cs := NewConfigStore().WithReserved("foo", "foo.bar")
 
-	if !cs.IsReserved("foo") {
-		t.Errorf("key foo should be reserved")
+	reserved := []string{"foo", "foo.bar"}
+	notreserved := []string{"foo.baz", "bar"}
+
+	for _, s := range reserved {
+		assert.True(t, cs.IsReserved(s), "should be reserved")
 	}
 
-	if !cs.IsReserved("foo.bar") {
-		t.Errorf("key foo.bar should be reserved")
-	}
-
-	if cs.IsReserved("foo.baz") {
-		t.Errorf("key foo.baz should not be reserved")
-	}
-
-	if cs.IsReserved("bar") {
-		t.Errorf("key bar should not be reserved")
+	for _, s := range notreserved {
+		assert.False(t, cs.IsReserved(s), "should not be reserved")
 	}
 }
 
 func TestNewConfigStorePrefixReserved(t *testing.T) {
 	cs := NewConfigStore().WithReservedPrefixes("foo", "zoo.bar")
 
-	if !cs.IsReserved("foo") {
-		t.Errorf("key foo should be reserved")
+	reserved := []string{"foo", "foo.bar", "zoo.bar", "zoo.bar.tree"}
+	notreserved := []string{"fool", "zoo"}
+
+	for _, s := range reserved {
+		assert.True(t, cs.IsReserved(s), "should be reserved")
 	}
 
-	if !cs.IsReserved("foo.bar") {
-		t.Errorf("key foo.bar should be reserved")
-	}
-
-	if cs.IsReserved("fool") {
-		t.Errorf("key fool should not be reserved")
-	}
-
-	if cs.IsReserved("zoo") {
-		t.Errorf("key zoo should not be reserved")
-	}
-
-	if !cs.IsReserved("zoo.bar") {
-		t.Errorf("key zoo.bar.tree should be reserved")
-	}
-
-	if !cs.IsReserved("zoo.bar.tree") {
-		t.Errorf("key zoo.bar.tree should be reserved")
+	for _, s := range notreserved {
+		assert.False(t, cs.IsReserved(s), "should not be reserved")
 	}
 }
 
@@ -63,9 +49,7 @@ func TestConfigStoreUnreserved(t *testing.T) {
 		"jouse":            "yes",
 	})
 
-	for k, v := range unres {
-		if v != "yes" {
-			t.Errorf("key %v should be in the unreserved result", k)
-		}
+	for _, v := range unres {
+		assert.Equal(t, "yes", v, "should be in the unreserved result")
 	}
 }

@@ -109,18 +109,17 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 
 	// according to containerd CRI implementation RuntimeName=ShimName, RuntimeVersion=ShimVersion,
 	// RuntimeApiVersion=someAPIVersion. The actual runtime name and version is not present
-	server, err := s.lxf.GetRuntimeInfo()
+	info, err := s.lxf.GetRuntimeInfo()
 	if err != nil {
 		logger.Errorf("unable to get server environment")
 		return nil, err
 	}
 
 	response := &rtApi.VersionResponse{
-		Version:        criVersion,
-		RuntimeName:    Domain,
-		RuntimeVersion: Version,
-		// api version is only X.X, so need to add .0 for semver requirement
-		RuntimeApiVersion: server.APIVersion + ".0",
+		Version:           criVersion,
+		RuntimeName:       Domain,
+		RuntimeVersion:    Version,
+		RuntimeApiVersion: info.Version,
 	}
 
 	logger.Debugf("Version responded: %v", response)

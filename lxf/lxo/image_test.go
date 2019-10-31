@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/alecthomas/assert"
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
 	"github.com/lxc/lxd/shared/api"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLXO_CopyImage_Simple(t *testing.T) {

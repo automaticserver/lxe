@@ -3,8 +3,8 @@ package device
 import (
 	"testing"
 
-	"github.com/alecthomas/assert"
 	"github.com/juju/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDetect_UnknownType(t *testing.T) {

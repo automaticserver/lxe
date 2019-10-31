@@ -4,7 +4,7 @@ package device
 import (
 	"testing"
 
-	"github.com/alecthomas/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNone_getName_KeyName(t *testing.T) {

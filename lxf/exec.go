@@ -54,10 +54,8 @@ func (l *Client) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 	}, nil
 }
 
-// Exec will start a command on the server and attach the provided
-// streams. It will block till the command terminated
-// AND all data was written to stdout/stdin. The caller is responsible
-// to provide a sink which doesn't block.
+// Exec will start a command on the server and attach the provided streams. It will block till the command terminated
+// AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
 func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
 	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface
 	var stdinCloser io.ReadCloser
@@ -97,8 +95,8 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr 
 
 	<-dataDone
 
-	// we close as soon as connections are terminated and all data got sent
-	// it seems they won't be closed automatically but i'm not sure if i miss something
+	// we close as soon as connections are terminated and all data got sent. it seems they won't be closed automatically
+	// but i'm not sure if i miss something
 	if stdout != nil {
 		err = stdout.Close()
 		if err != nil {

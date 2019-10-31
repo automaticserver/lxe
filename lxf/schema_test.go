@@ -31,6 +31,8 @@ func getSchemaProfile(schema string) api.Profile {
 }
 
 func TestIsSchemaEmpty(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer(""))
 	assert.Equal(t, false, c)
 
@@ -42,6 +44,8 @@ func TestIsSchemaEmpty(t *testing.T) {
 }
 
 func TestIsSchemaWrong(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer("0.0"))
 	assert.Equal(t, false, c)
 
@@ -50,6 +54,8 @@ func TestIsSchemaWrong(t *testing.T) {
 }
 
 func TestIsSchemaCurrent(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer(SchemaVersionContainer))
 	assert.Equal(t, true, c)
 
@@ -58,6 +64,8 @@ func TestIsSchemaCurrent(t *testing.T) {
 }
 
 func TestIsSchemaPointer(t *testing.T) {
+	t.Parallel()
+
 	c1 := getSchemaContainer(SchemaVersionContainer)
 	c := IsSchemaCurrent(&c1)
 	assert.Equal(t, true, c)

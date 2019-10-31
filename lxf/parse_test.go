@@ -37,7 +37,7 @@ package lxf
 // 		t.Run(tc.In, func(t *testing.T) {
 // 			id, err := lxs.parseImage(tc.In)
 // 			if err != nil {
-// 				t.Errorf("parse image fialed with error %v", err)
+// 				t.Errorf("parse image failed with error %v", err)
 // 			}
 // 			if id.Remote != tc.R {
 // 				t.Errorf("for %v expected remote to be %v but is %v", tc.In, tc.R, id.Remote)

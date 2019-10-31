@@ -27,6 +27,8 @@ func getCRIProfile(cri string) api.Profile {
 }
 
 func TestIsCRIEmpty(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer(""))
 	assert.Equal(t, false, c)
 
@@ -38,6 +40,8 @@ func TestIsCRIEmpty(t *testing.T) {
 }
 
 func TestIsCRIFalse(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("false"))
 	assert.Equal(t, false, c)
 
@@ -46,6 +50,8 @@ func TestIsCRIFalse(t *testing.T) {
 }
 
 func TestIsCRIWrong(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("no"))
 	assert.Equal(t, false, c)
 
@@ -54,6 +60,8 @@ func TestIsCRIWrong(t *testing.T) {
 }
 
 func TestIsCRITrue(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("true"))
 	assert.Equal(t, true, c)
 
@@ -62,6 +70,8 @@ func TestIsCRITrue(t *testing.T) {
 }
 
 func TestIsCRIPointer(t *testing.T) {
+	t.Parallel()
+
 	c1 := getCRIContainer("true")
 	c := IsCRI(&c1)
 	assert.Equal(t, true, c)

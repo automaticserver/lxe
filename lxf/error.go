@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found
-	// Unfortunately there is no constant in the lxd source we could've used
+	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found. Unfortunately there is no
+	// constant in the lxd source we could've used
 	ErrorLXDNotFound = "not found"
 )
 
@@ -35,7 +35,7 @@ func (e ContainerError) Error() string {
 	return e.error("container")
 }
 
-// NewContainerError creates a new SandboxError
+// NewContainerError creates a new ContainerError
 func NewContainerError(id string, reason error) ContainerError {
 	return ContainerError{
 		lxfError: newLxfError(id, reason),

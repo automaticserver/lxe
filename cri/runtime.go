@@ -796,10 +796,10 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 	return resp, nil
 }
 
-func (ss streamService) Exec(containerID string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser, _ bool, resize <-chan remotecommand.TerminalSize) error {
+func (ss streamService) Exec(containerID string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser, tty bool, resize <-chan remotecommand.TerminalSize) error {
 	logger.Debugf("StreamService triggered: {containerID: %v, cmd: %v, stdin: %v, stdout: %v, stderr: %v}", containerID, cmd, stdin, stdout, stderr)
 
-	_, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr)
+	_, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr, tty, resize)
 
 	if err != nil {
 		logger.Errorf("exec container error: %v", err)

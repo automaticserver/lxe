@@ -2,12 +2,18 @@ package lxf
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strconv"
 
+	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
+	"github.com/lxc/lxd/shared/api"
 	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/logger"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 // ExecResponse returns the stdout and err from an exec call
@@ -56,7 +62,7 @@ func (l *Client) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
 
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
-func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
+func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser, tty bool, resize <-chan remotecommand.TerminalSize) (int, error) {
 	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface
 	var stdinCloser io.ReadCloser
 	// kubelet might give us stdin==nil but lxd expects something there otherwise it will segfault
@@ -72,21 +78,24 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr 
 
 	dataDone := make(chan bool)
 
+	ses := &session{resize: resize}
+	go ses.listen()
+
 	// TODO: Is no op.Wait() intentional?
 	_, err := l.server.ExecContainer(cid,
 		lxdApi.ContainerExecPost{
-			Command:      cmd,
-			WaitForWS:    true,
-			Interactive:  (stdin != nil), // if there is no stdin, exec won't be interactive
-			Environment:  environment,
-			Width:        80,
-			Height:       24,
+			Command:     cmd,
+			WaitForWS:   true,
+			Interactive: (stdin != nil), // if there is no stdin, exec won't be interactive
+			Environment: environment,
+			// Width:        80,
+			// Height:       24,
 			RecordOutput: false,
 		}, &lxd.ContainerExecArgs{
 			Stdin:    stdinCloser,
 			Stdout:   stdout,
 			Stderr:   stderr,
-			Control:  nil,
+			Control:  ses.setControl,
 			DataDone: dataDone,
 		})
 	if err != nil {
@@ -113,4 +122,62 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.Reader, stdout, stderr 
 
 	// do not wait for operation, it will wait till command finished executing
 	return 0, nil
+}
+
+type session struct {
+	resize      <-chan remotecommand.TerminalSize
+	control     *websocket.Conn
+	initialSize remotecommand.TerminalSize
+}
+
+func (s *session) setControl(control *websocket.Conn) {
+	s.control = control
+	if s.initialSize.Width != 0 && s.initialSize.Height != 0 {
+		s.sendResize(s.initialSize)
+	}
+}
+
+func (s *session) listen() {
+	for r := range s.resize {
+		// we could receive the resize channel earlier than the exec is open, temporarely save it
+		if s.control == nil {
+			s.initialSize = r
+			continue
+		}
+
+		s.sendResize(r)
+	}
+}
+
+func (s *session) sendResize(r remotecommand.TerminalSize) {
+	width := strconv.FormatUint(uint64(r.Width), 10)
+	height := strconv.FormatUint(uint64(r.Height), 10)
+
+	logger.Debugf("session control window size is now: %vx%v", width, height)
+
+	w, err := s.control.NextWriter(websocket.TextMessage)
+	if err != nil {
+		logger.Errorf("session control obtaining writer failed: %v", err)
+	}
+
+	msg := api.ContainerExecControl{}
+	msg.Command = "window-resize"
+	msg.Args = make(map[string]string)
+	msg.Args["width"] = width
+	msg.Args["height"] = height
+
+	buf, err := json.Marshal(msg)
+	if err != nil {
+		logger.Errorf("session control marshalling message failed: %v", err)
+	}
+
+	_, err = w.Write(buf)
+	if err != nil {
+		logger.Errorf("session control can't write: %v", err)
+	}
+
+	err = w.Close()
+	if err != nil {
+		logger.Errorf("session control can't close: %v", err)
+	}
 }

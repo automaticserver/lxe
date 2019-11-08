@@ -10,6 +10,8 @@ import (
 )
 
 func TestLXO_CopyImage_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeRemoteOperation{}
 	sourceFake := &lxdfakes.FakeImageServer{}
@@ -25,6 +27,8 @@ func TestLXO_CopyImage_Simple(t *testing.T) {
 }
 
 func TestLXO_CopyImage_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeRemoteOperation{}
 	sourceFake := &lxdfakes.FakeImageServer{}
@@ -39,6 +43,8 @@ func TestLXO_CopyImage_Error(t *testing.T) {
 }
 
 func TestLXO_DeleteImage_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -53,6 +59,8 @@ func TestLXO_DeleteImage_Simple(t *testing.T) {
 }
 
 func TestLXO_DeleteImage_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 

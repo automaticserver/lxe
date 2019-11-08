@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/url"
 	"os/exec"
 	"path"
@@ -22,6 +23,8 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 	"k8s.io/kubernetes/pkg/kubelet/server/streaming"
+	"k8s.io/kubernetes/pkg/kubelet/util/ioutils"
+	utilExec "k8s.io/utils/exec"
 )
 
 const (
@@ -764,21 +767,20 @@ func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.Reopen
 func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest) (*rtApi.ExecSyncResponse, error) {
 	logger.Debugf("ExecSync triggered: %v", req)
 
-	out, err := s.lxf.ExecSync(req.GetContainerId(), req.Cmd)
-	if err != nil {
-		logger.Errorf("ExecSync: ContainerID %v trying to exec '%v': %v", req.GetContainerId(), strings.Join(req.Cmd, " "), err)
-		return nil, err
-	}
+	stdin := bytes.NewReader(nil)
+	stdinR := ioutil.NopCloser(stdin)
+	stdout := bytes.NewBuffer(nil)
+	stdoutW := ioutils.WriteCloserWrapper(stdout)
+	stderr := bytes.NewBuffer(nil)
+	stderrW := ioutils.WriteCloserWrapper(stderr)
 
-	response := &rtApi.ExecSyncResponse{
-		Stderr:   out.StdErr,
-		Stdout:   out.StdOut,
-		ExitCode: int32(out.Code),
-	}
+	code, err := s.lxf.Exec(req.GetContainerId(), req.GetCmd(), stdinR, stdoutW, stderrW, false, false, req.GetTimeout(), nil)
 
-	logger.Debugf("ExecSync responded: %v", response)
-
-	return response, nil
+	return &rtApi.ExecSyncResponse{
+		Stdout:   stdout.Bytes(),
+		Stderr:   stderr.Bytes(),
+		ExitCode: code,
+	}, err
 }
 
 // Exec prepares a streaming endpoint to execute a command in the container.
@@ -796,14 +798,25 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 	return resp, nil
 }
 
-func (ss streamService) Exec(containerID string, cmd []string, stdin io.Reader, stdout, stderr io.WriteCloser, tty bool, resize <-chan remotecommand.TerminalSize) error {
-	logger.Debugf("StreamService triggered: {containerID: %v, cmd: %v, stdin: %v, stdout: %v, stderr: %v}", containerID, cmd, stdin, stdout, stderr)
+func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader, stdout, stderr io.WriteCloser, tty bool, resize <-chan remotecommand.TerminalSize) error {
+	logger.Debugf("StreamService Exec triggered: {containerID: %v, cmd: %v, stdin: %#v, stdout: %#v, stderr: %#v, tty: %v, resize: %v}", containerID, cmd, stdinR, stdout, stderr, tty, resize)
 
-	_, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr, tty, resize)
+	var stdin io.ReadCloser
+	if stdinR == nil {
+		stdin = ioutil.NopCloser(bytes.NewReader(nil))
+	} else {
+		stdin = ioutil.NopCloser(stdinR)
+	}
 
-	if err != nil {
-		logger.Errorf("exec container error: %v", err)
-		return err
+	interactive := (stdinR != nil)
+
+	code, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr, interactive, tty, 0, resize)
+
+	if err != nil || code != 0 {
+		return &utilExec.CodeExitError{
+			Err:  errors.Errorf("error executing command %v, exit code %d, reason %v", cmd, code, err),
+			Code: int(code),
+		}
 	}
 
 	return nil

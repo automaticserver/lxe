@@ -36,6 +36,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478
 	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890 // indirect
+	golang.org/x/sys v0.0.0-20190922100055-0a153f010e69
 	google.golang.org/appengine v1.4.0 // indirect
 	// Does not have SemVer tags - latest commit at time of writing
 	google.golang.org/genproto v0.0.0-20181221010529-a1fde7408246 // indirect
@@ -57,6 +58,6 @@ require (
 	k8s.io/klog v0.1.0 // indirect
 	k8s.io/kubernetes v1.14.1
 	// Repo does not have any tags at all
-	k8s.io/utils v0.0.0-20181115163542-0d26856f57b3 // indirect
+	k8s.io/utils v0.0.0-20181115163542-0d26856f57b3
 	sigs.k8s.io/yaml v1.1.0 // indirect
 )

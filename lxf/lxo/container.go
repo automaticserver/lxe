@@ -89,14 +89,3 @@ func (l *LXO) DeleteContainer(id string) error {
 
 	return op.Wait()
 }
-
-// ExecContainer runs a command on a container and wait till operation is done or
-// return an error
-func (l *LXO) ExecContainer(id string, containerExec api.ContainerExecPost, execArgs *lxd.ContainerExecArgs) (lxd.Operation, error) {
-	op, err := l.server.ExecContainer(id, containerExec, execArgs)
-	if err != nil {
-		return op, err
-	}
-
-	return op, op.Wait()
-}

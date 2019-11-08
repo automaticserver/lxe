@@ -10,6 +10,8 @@ import (
 )
 
 func TestLXO_StopContainer_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -24,6 +26,8 @@ func TestLXO_StopContainer_Simple(t *testing.T) {
 }
 
 func TestLXO_StopContainer_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -37,6 +41,8 @@ func TestLXO_StopContainer_Error(t *testing.T) {
 }
 
 func TestLXO_StopContainer_ForceSuccess(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -52,6 +58,8 @@ func TestLXO_StopContainer_ForceSuccess(t *testing.T) {
 }
 
 func TestLXO_StopContainer_ForceFailed(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -67,6 +75,8 @@ func TestLXO_StopContainer_ForceFailed(t *testing.T) {
 }
 
 func TestLXO_StopContainer_AlreadyStopped(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -81,6 +91,8 @@ func TestLXO_StopContainer_AlreadyStopped(t *testing.T) {
 }
 
 func TestLXO_StartContainer_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -95,6 +107,8 @@ func TestLXO_StartContainer_Simple(t *testing.T) {
 }
 
 func TestLXO_StartContainer_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -108,6 +122,8 @@ func TestLXO_StartContainer_Error(t *testing.T) {
 }
 
 func TestLXO_CreateContainer_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -122,6 +138,8 @@ func TestLXO_CreateContainer_Simple(t *testing.T) {
 }
 
 func TestLXO_CreateContainer_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -135,6 +153,8 @@ func TestLXO_CreateContainer_Error(t *testing.T) {
 }
 
 func TestLXO_UpdateContainer_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -149,6 +169,8 @@ func TestLXO_UpdateContainer_Simple(t *testing.T) {
 }
 
 func TestLXO_UpdateContainer_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -162,6 +184,8 @@ func TestLXO_UpdateContainer_Error(t *testing.T) {
 }
 
 func TestLXO_DeleteContainer_Simple(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -176,6 +200,8 @@ func TestLXO_DeleteContainer_Simple(t *testing.T) {
 }
 
 func TestLXO_DeleteContainer_Error(t *testing.T) {
+	t.Parallel()
+
 	lxo, fake := newFakeClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
@@ -185,34 +211,5 @@ func TestLXO_DeleteContainer_Error(t *testing.T) {
 	assert.Error(t, err)
 
 	assert.Equal(t, 1, fake.DeleteContainerCallCount())
-	assert.Equal(t, 0, fakeOp.WaitCallCount())
-}
-
-func TestLXO_ExecContainer_Simple(t *testing.T) {
-	lxo, fake := newFakeClient()
-	fakeOp := &lxdfakes.FakeOperation{}
-
-	fake.ExecContainerReturns(fakeOp, nil)
-	fakeOp.WaitReturns(nil)
-
-	op, err := lxo.ExecContainer("foo", api.ContainerExecPost{}, nil)
-	assert.NoError(t, err)
-	assert.NotNil(t, op)
-
-	assert.Equal(t, 1, fake.ExecContainerCallCount())
-	assert.Equal(t, 1, fakeOp.WaitCallCount())
-}
-
-func TestLXO_ExecContainer_Error(t *testing.T) {
-	lxo, fake := newFakeClient()
-	fakeOp := &lxdfakes.FakeOperation{}
-
-	fake.ExecContainerReturns(fakeOp, errors.New("something failed"))
-
-	op, err := lxo.ExecContainer("foo", api.ContainerExecPost{}, nil)
-	assert.Error(t, err)
-	assert.NotNil(t, op)
-
-	assert.Equal(t, 1, fake.ExecContainerCallCount())
 	assert.Equal(t, 0, fakeOp.WaitCallCount())
 }

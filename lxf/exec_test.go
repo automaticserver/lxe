@@ -1,5 +1,96 @@
 package lxf
 
+import (
+	"testing"
+
+	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	lxd "github.com/lxc/lxd/client"
+	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestClient_Exec_BasicOk(t *testing.T) {
+	t.Parallel()
+
+	client, fake := testClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+	// fakeControl := &websocket.Conn{}
+	// fakeSes := &session{}
+	// fakeDataDone := make(chan bool)
+	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+		// 	arg3.Control = fakeSes.controlHandler
+		// 	arg3.Control(fakeControl)
+
+		// An independent routine within fake sends to this channel after ExecContainer, not Wait() related, so we'll send it here
+		go func() {
+			arg3.DataDone <- true
+		}()
+
+		return fakeOp, nil
+	})
+	fakeOp.WaitReturns(nil)
+
+	fakeOp.GetReturns(lxdApi.Operation{
+		Metadata: map[string]interface{}{
+			"return": float64(8),
+		},
+	})
+
+	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, nil)
+	assert.NoError(t, err)
+	assert.Equal(t, int32(8), exitCode)
+}
+
+// func TestConnection(t *testing.T) {
+// 	_, err := lxf.NewClient("", os.Getenv("HOME")+"/.config/lxc/config.yml")
+// 	if err != nil {
+// 		t.Errorf("failed to set up connection %v", err)
+// 	}
+// }
+
+// func TestConnectionWithInvalidSocket(t *testing.T) {
+// 	_, err := lxf.NewClient("/var/lib/lxd/unix.invalidsocket",
+// 		os.Getenv("HOME")+"/.config/lxc/config.yml")
+// 	if err == nil {
+// 		t.Errorf("invalid socket should return an error")
+// 	}
+// }
+
+// func NewTestClient(t *testing.T) *Client {
+// 	client, err := NewClient("", os.Getenv("HOME")+"/.config/lxc/config.yml")
+// 	assert.NoError(t, err)
+// 	return client
+// }
+
+// // clear tries to remove all resources to provide a clean test base
+// func (lt *lxfTest) clear() {
+// 	for _, ct := range lt.listContainers() {
+// 		lt.stopContainer(ct.ID)
+// 		lt.deleteContainer(ct.ID)
+// 	}
+// 	for _, sb := range lt.listSandboxes() {
+// 		lt.stopSandbox(sb.ID)
+// 		lt.deleteSandbox(sb.ID)
+// 	}
+
+// 	// remove all image aliases except the busybox one
+// 	for _, im := range lt.listImages("") {
+// 		for _, al := range im.Aliases {
+// 			keep := false
+// 			for _, k := range keepImages {
+// 				if k == al {
+// 					keep = true
+// 					continue
+// 				}
+// 			}
+// 			if !keep {
+// 				fmt.Println("remove image", al)
+// 				lt.removeImage(al)
+// 			}
+// 		}
+// 	}
+// }
+
 // func TestExecSyncInParallel(t *testing.T) {
 // 	lt := newLXFTest(t)
 // 	lt.createContainer(&lxf.Container{

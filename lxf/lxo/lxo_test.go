@@ -16,6 +16,8 @@ func newFakeClient() (*LXO, *lxdfakes.FakeContainerServer) {
 }
 
 func TestNewClient(t *testing.T) {
+	t.Parallel()
+
 	fake := &lxdfakes.FakeContainerServer{}
 
 	lxo := NewClient(fake)

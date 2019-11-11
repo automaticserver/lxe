@@ -776,6 +776,8 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 
 	code, err := s.lxf.Exec(req.GetContainerId(), req.GetCmd(), stdinR, stdoutW, stderrW, false, false, req.GetTimeout(), nil)
 
+	logger.Debugf("received exit code %v for exec %v on container %v", code, req.GetCmd(), req.GetContainerId())
+
 	return &rtApi.ExecSyncResponse{
 		Stdout:   stdout.Bytes(),
 		Stderr:   stderr.Bytes(),
@@ -811,6 +813,8 @@ func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader,
 	interactive := (stdinR != nil)
 
 	code, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr, interactive, tty, 0, resize)
+
+	logger.Debugf("received exit code %v for exec %v on container %v", code, cmd, containerID)
 
 	if err != nil || code != 0 {
 		return &utilExec.CodeExitError{

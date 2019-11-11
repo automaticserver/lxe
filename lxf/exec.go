@@ -2,6 +2,7 @@ package lxf
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -14,6 +15,17 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"golang.org/x/sys/unix"
 	"k8s.io/client-go/tools/remotecommand"
+)
+
+var (
+	ErrExecTimeout     = errors.New("timeout reached")
+	ErrNoControlSocket = errors.New("no control socket found")
+
+	cancelSignal = unix.SIGTERM
+
+	CodeExecOk      int32 = 0
+	CodeExecError   int32 = 128
+	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // 128+15=143
 )
 
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated
@@ -40,7 +52,7 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 
 	op, err := l.server.ExecContainer(cid, req, args)
 	if err != nil {
-		return 1, err
+		return CodeExecError, err
 	}
 
 	var deadline <-chan time.Time
@@ -56,7 +68,7 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 			logger.Errorf("session control failed: %v", err)
 		}
 
-		return 130, fmt.Errorf("timeout reached")
+		return CodeExecTimeout, ErrExecTimeout
 
 	// Wait for any remaining I/O to be flushed
 	case <-args.DataDone:
@@ -65,14 +77,14 @@ func (l *Client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 	// Wait for the operation to complete so we can get the return code
 	err = op.Wait()
 	if err != nil {
-		return 1, err
+		return CodeExecError, err
 	}
 
 	opAPI := op.Get()
 
 	exitCode, ok := opAPI.Metadata["return"].(float64)
 	if !ok {
-		return 1, fmt.Errorf("can't parse error code: %#v", opAPI.Metadata["return"])
+		return CodeExecError, fmt.Errorf("can't parse error code: %#v", opAPI.Metadata["return"])
 	}
 
 	return int32(exitCode), nil
@@ -103,6 +115,10 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 	height := strconv.FormatUint(uint64(r.Height), 10)
 
 	logger.Debugf("session control window size is now: %vx%v", width, height)
+
+	if s.control == nil {
+		return ErrNoControlSocket
+	}
 
 	w, err := s.control.NextWriter(websocket.TextMessage)
 	if err != nil {
@@ -136,9 +152,12 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 func (s *session) sendCancel() error {
 	logger.Debugf("timeout reached, force closing of connection")
 
-	// TODO: This doesn't stop the command from executing, whatever signal it is set to
+	if s.control == nil {
+		return ErrNoControlSocket
+	}
 
-	sig := unix.SIGTERM
+	// TODO: In noninteractive mode this doesn't stop the command from executing, whatever signal it is set to
+	sig := cancelSignal
 
 	logger.Debugf("forwarding signal: %s", sig)
 

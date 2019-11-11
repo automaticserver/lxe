@@ -1,12 +1,17 @@
 package lxf
 
 import (
+	"strconv"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 func TestClient_Exec_BasicOk(t *testing.T) {
@@ -14,17 +19,38 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 
 	client, fake := testClient()
 	fakeOp := &lxdfakes.FakeOperation{}
-	// fakeControl := &websocket.Conn{}
-	// fakeSes := &session{}
-	// fakeDataDone := make(chan bool)
-	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
-		// 	arg3.Control = fakeSes.controlHandler
-		// 	arg3.Control(fakeControl)
 
-		// An independent routine within fake sends to this channel after ExecContainer, not Wait() related, so we'll send it here
-		go func() {
-			arg3.DataDone <- true
-		}()
+	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+		go sendDataDone(arg3, 0)
+
+		return fakeOp, nil
+	})
+	fakeOp.WaitReturns(nil)
+
+	fakeOp.GetReturns(lxdApi.Operation{
+		Metadata: map[string]interface{}{
+			"return": float64(CodeExecError),
+		},
+	})
+
+	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, nil)
+	assert.NoError(t, err)
+	assert.Equal(t, CodeExecError, exitCode)
+}
+
+func TestClient_Exec_Timeout(t *testing.T) {
+	t.Parallel()
+
+	client, fake := testClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+	fakeSes := &session{}
+
+	var fakeControl *websocket.Conn
+
+	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+		arg3.Control = fakeSes.controlHandler
+		arg3.Control(fakeControl)
+		go sendDataDone(arg3, 1200*time.Millisecond)
 
 		return fakeOp, nil
 	})
@@ -36,10 +62,93 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 		},
 	})
 
-	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, nil)
-	assert.NoError(t, err)
-	assert.Equal(t, int32(8), exitCode)
+	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 1, nil)
+	assert.Error(t, err)
+	assert.Exactly(t, ErrExecTimeout, err)
+	assert.Equal(t, CodeExecTimeout, exitCode)
 }
+
+// TODO: Test timeout correctly including control websocket
+
+func TestClient_Exec_Resize(t *testing.T) {
+	t.Parallel()
+
+	client, fake := testClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+	resize := make(chan remotecommand.TerminalSize)
+	fakeSes := &session{resize: resize}
+
+	var fakeControl *websocket.Conn
+
+	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+		arg3.Control = fakeSes.controlHandler
+		arg3.Control(fakeControl)
+		go sendDataDone(arg3, 0)
+
+		return fakeOp, nil
+	})
+	fakeOp.WaitReturns(nil)
+
+	fakeOp.GetReturns(lxdApi.Operation{
+		Metadata: map[string]interface{}{
+			"return": float64(0),
+		},
+	})
+
+	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, fakeSes.resize)
+	assert.NoError(t, err)
+	assert.Equal(t, CodeExecOk, exitCode)
+
+	// resize happens at any time
+	resizeConsumed := make(chan bool)
+
+	go func() {
+		resize <- remotecommand.TerminalSize{Width: 60, Height: 40}
+		resizeConsumed <- true
+	}()
+	<-resizeConsumed
+}
+
+func TestClient_Exec_Parallel(t *testing.T) {
+	t.Parallel()
+
+	client, fake := testClient()
+
+	// take the first command argument as a number and use that to return to ensure the a specific command gets the
+	// matching return
+	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+		go sendDataDone(arg3, 0)
+
+		fakeOp := &lxdfakes.FakeOperation{}
+		fakeOp.WaitReturns(nil)
+		returnCode, err := strconv.ParseFloat(arg2.Command[0], 10)
+		assert.NoError(t, err)
+		fakeOp.GetReturns(lxdApi.Operation{
+			Metadata: map[string]interface{}{
+				"return": returnCode,
+			},
+		})
+
+		return fakeOp, nil
+	})
+
+	wg := sync.WaitGroup{}
+	n := 10
+	wg.Add(n)
+
+	for i := 0; i < n; i++ {
+		go func(i int) {
+			exitCode, err := client.Exec("", []string{strconv.Itoa(i)}, nil, nil, nil, false, false, 0, nil)
+			assert.NoError(t, err)
+			assert.Equal(t, int32(i), exitCode)
+			wg.Done()
+		}(i)
+	}
+
+	wg.Wait()
+}
+
+// TODO: Test resize correctly including control websocket
 
 // func TestExecSyncInParallel(t *testing.T) {
 // 	lt := newLXFTest(t)
@@ -170,3 +279,11 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 // 	lt.exec("roosevelt", []string{"echo", output}, nil, stdout, stderr)
 
 // }
+
+// An independent routine within fake sends to this channel after ExecContainer, not Wait() related, so we'll send it here
+func sendDataDone(args *lxd.ContainerExecArgs, sleep time.Duration) {
+	if sleep > 0 {
+		time.Sleep(1200 * time.Millisecond)
+	}
+	args.DataDone <- true
+}

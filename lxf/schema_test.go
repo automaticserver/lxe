@@ -74,3 +74,13 @@ func TestIsSchemaPointer(t *testing.T) {
 	p := IsSchemaCurrent(&p1)
 	assert.Equal(t, true, p)
 }
+
+func satisfyContainerSchema(ct *api.Container) *api.Container {
+	ct.Config[cfgSchema] = SchemaVersionContainer
+	return ct
+}
+
+func satisfyProfileSchema(p *api.Profile) *api.Profile {
+	p.Config[cfgSchema] = SchemaVersionProfile
+	return p
+}

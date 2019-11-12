@@ -46,14 +46,7 @@ test:
 .PHONY: lint
 lint:
 	go mod download
-	go run github.com/golangci/golangci-lint/cmd/golangci-lint run \
-		--deadline 5m \
-		--enable-all \
-		--disable lll \
-		--disable gochecknoglobals \
-		--disable gochecknoinits \
-		--disable godox \
-		--disable funlen
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint run
 
 .PHONY: integration-test
 integration-test: critest

@@ -80,3 +80,13 @@ func TestIsCRIPointer(t *testing.T) {
 	p := IsCRI(&p1)
 	assert.Equal(t, true, p)
 }
+
+func satisfyContainerCri(ct *api.Container) *api.Container {
+	ct.Config[cfgIsCRI] = "true"
+	return ct
+}
+
+func satisfyProfileCri(p *api.Profile) *api.Profile {
+	p.Config[cfgIsCRI] = "true"
+	return p
+}

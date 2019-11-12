@@ -23,11 +23,12 @@ const (
 	cfgCloudInitUserData    = "user.user-data"
 	cfgCloudInitMetaData    = "user.meta-data"
 	cfgEnvironmentPrefix    = "environment"
-	cfgResourcesCPUPrefix   = "user.resources.cpu"
+	cfgResourcesPrefix      = "user.resources"
+	cfgResourcesCPUPrefix   = cfgResourcesPrefix + ".cpu"
 	cfgResourcesCPUShares   = cfgResourcesCPUPrefix + ".shares"
 	cfgResourcesCPUQuota    = cfgResourcesCPUPrefix + ".quota"
 	cfgResourcesCPUPeriod   = cfgResourcesCPUPrefix + ".period"
-	cfgResourcesMemoryLimit = "user.resources.memory.limit"
+	cfgResourcesMemoryLimit = cfgResourcesPrefix + ".memory.limit"
 	cfgLimitCPUAllowance    = "limits.cpu.allowance"
 	cfgLimitMemory          = "limits.memory"
 )
@@ -47,6 +48,7 @@ var (
 	).WithReservedPrefixes(
 		append([]string{
 			cfgEnvironmentPrefix,
+			cfgResourcesPrefix,
 		}, reservedConfigPrefixesCRI...,
 		)...,
 	)

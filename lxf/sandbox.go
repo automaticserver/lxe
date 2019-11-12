@@ -42,11 +42,13 @@ var (
 			cfgHostname,
 			cfgCloudInitNetworkConfig,
 			cfgCloudInitVendorData,
-			cfgNetworkConfigModeData,
 		}, reservedConfigCRI...,
 		)...,
 	).WithReservedPrefixes(
-		reservedConfigPrefixesCRI...,
+		append([]string{
+			cfgNetworkConfig,
+		}, reservedConfigPrefixesCRI...,
+		)...,
 	)
 )
 

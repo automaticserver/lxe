@@ -63,15 +63,23 @@ func (l *Client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
-	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
+func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // nolint: gocognit
+	var err error
+
+	var attempt uint64
+	if attemptS, is := p.Config[cfgMetaAttempt]; is {
+		attempt, err = strconv.ParseUint(attemptS, 10, 32)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	createdAt, err := strconv.ParseInt(p.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
+	createdAt := time.Time{}.UnixNano()
+	if createdAtS, is := p.Config[cfgCreatedAt]; is {
+		createdAt, err = strconv.ParseInt(createdAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	s := &Sandbox{}
@@ -82,7 +90,7 @@ func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	s.Hostname = p.Config[cfgHostname]
 	s.LogDirectory = p.Config[cfgLogDirectory]
 	s.Metadata = SandboxMetadata{
-		Attempt:   uint32(attempts),
+		Attempt:   uint32(attempt),
 		Name:      p.Config[cfgMetaName],
 		Namespace: p.Config[cfgMetaNamespace],
 		UID:       p.Config[cfgMetaUID],
@@ -91,7 +99,7 @@ func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 		Nameservers: strings.Split(p.Config[cfgNetworkConfigNameservers], ","),
 		Searches:    strings.Split(p.Config[cfgNetworkConfigSearches], ","),
 		Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
-		// ModeData:    make(map[string]string),
+		ModeData:    make(map[string]string),
 	}
 	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
 	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
@@ -102,10 +110,6 @@ func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	err = yaml.Unmarshal([]byte(p.Config[cfgNetworkConfigModeData]), &s.NetworkConfig.ModeData)
 	if err != nil {
 		return nil, err
-	}
-
-	if len(s.NetworkConfig.ModeData) == 0 {
-		s.NetworkConfig.ModeData = make(map[string]string)
 	}
 
 	// cloud-init network config & vendor-data are write-only so not read

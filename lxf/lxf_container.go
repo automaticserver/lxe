@@ -69,30 +69,47 @@ func (l *Client) ListContainers() ([]*Container, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error) {
-	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
+func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit
+	var err error
+
+	var attempt uint64
+	if attemptS, is := ct.Config[cfgMetaAttempt]; is {
+		attempt, err = strconv.ParseUint(attemptS, 10, 32)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	privileged, err := strconv.ParseBool(ct.Config[cfgSecurityPrivileged])
-	if err != nil {
-		return nil, err
+	var privileged bool
+	if privilegedS, is := ct.Config[cfgSecurityPrivileged]; is {
+		privileged, err = strconv.ParseBool(privilegedS)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	createdAt, err := strconv.ParseInt(ct.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
+	createdAt := time.Time{}.UnixNano()
+	if createdAtS, is := ct.Config[cfgCreatedAt]; is {
+		createdAt, err = strconv.ParseInt(createdAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	startedAt, err := strconv.ParseInt(ct.Config[cfgStartedAt], 10, 64)
-	if err != nil {
-		return nil, err
+	startedAt := time.Time{}.UnixNano()
+	if startedAtS, is := ct.Config[cfgStartedAt]; is {
+		startedAt, err = strconv.ParseInt(startedAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
-	if err != nil {
-		return nil, err
+	finishedAt := time.Time{}.UnixNano()
+	if finishedAtS, is := ct.Config[cfgFinishedAt]; is {
+		finishedAt, err = strconv.ParseInt(finishedAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	c := &Container{}
@@ -103,7 +120,7 @@ func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error)
 	c.Image = ct.Config[cfgVolatileBaseImage]
 	c.Metadata = ContainerMetadata{
 		Name:    ct.Config[cfgMetaName],
-		Attempt: uint32(attempts),
+		Attempt: uint32(attempt),
 	}
 	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
 	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)

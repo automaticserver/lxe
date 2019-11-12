@@ -9,7 +9,6 @@ import (
 	"github.com/automaticserver/lxe/network"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/api"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
@@ -17,11 +16,11 @@ type Client struct {
 	server  lxd.ContainerServer
 	config  *config.Config
 	opwait  *lxo.LXO
-	network network.NetworkPlugin
+	network network.Plugin
 }
 
 // NewClient will set up a connection and return the client
-func NewClient(socket string, configPath string, network network.NetworkPlugin) (*Client, error) {
+func NewClient(socket string, configPath string, network network.Plugin) (*Client, error) {
 	args := lxd.ConnectionArgs{
 		HTTPClient: &http.Client{
 			// this was a byproduct of a bughunt, but i figured using TCP connections with TLS instead of unix sockets

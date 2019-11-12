@@ -39,14 +39,16 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	var netPlugin network.NetworkPlugin
+	var netPlugin network.Plugin
+
 	switch criConfig.LXENetworkPlugin {
 	case NetworkPluginCNI:
 		netPlugin, err = network.InitPluginCNI(network.ConfCNI{})
 	case NetworkPluginDefault:
 	default:
-		err = errors.Errorf("Unkown network plugin %s", criConfig.LXENetworkPlugin)
+		err = errors.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
 	}
+
 	if err != nil {
 		logger.Critf("Unable to initialize network plugin: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)

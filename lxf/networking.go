@@ -8,7 +8,6 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/automaticserver/lxe/network"
 	"github.com/lxc/lxd/shared/api"
 )
 
@@ -155,61 +154,4 @@ OUTER:
 	}
 
 	return ip
-}
-
-// TODO make an interface for each network plugin and call that instead of switch casing everywhere
-
-// AttachCNI attaches the interface to a (running) container
-func (l *Client) AttachCNI(c *Container) error {
-	s, err := c.Sandbox()
-	if err != nil {
-		return err
-	}
-
-	st, err := c.State()
-	if err != nil {
-		return err
-	}
-
-	// attach interface using CNI
-	result, err := network.AttachCNIInterface(s.Metadata.Namespace, s.Metadata.Name, c.ID, st.Pid)
-	if err != nil {
-		return err
-	}
-
-	s.NetworkConfig.ModeData["result"] = string(result)
-
-	err = s.apply()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AttachCNI removes the interface from the container
-func (l *Client) DetachCNI(c *Container) error {
-	s, err := c.Sandbox()
-	if err != nil {
-		return err
-	}
-
-	// It's possible that we detach from a container that doesn't exist anymore, in this case still clean up
-	var pid int64
-
-	st, err := c.State()
-	if err != nil {
-		if err.Error() != ErrorLXDNotFound {
-			return err
-		}
-	} else {
-		pid = st.Pid
-	}
-
-	err = network.DetachCNIInterface(s.Metadata.Namespace, s.Metadata.Name, c.ID, pid)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

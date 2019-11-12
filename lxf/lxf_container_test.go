@@ -173,9 +173,6 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 				"first": {
 					"type": "none",
 				},
-				"second": {
-					"type": "none",
-				},
 			},
 			Profiles: []string{"profile"},
 		},
@@ -188,7 +185,6 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 	exp.client = client
 	exp.Devices = []device.Device{
 		&device.None{KeyName: "first"},
-		&device.None{KeyName: "second"},
 	}
 	exp.Config = map[string]string{"something.else": "somethingElse"}
 	exp.Profiles = []string{"profile"}

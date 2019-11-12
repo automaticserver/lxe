@@ -2,11 +2,10 @@ package network
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 	"net"
-	"os/exec"
-	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"emperror.dev/errors"
@@ -15,40 +14,37 @@ import (
 )
 
 const (
-	defaultCNIbinPath   = "/opt/cni/bin"
-	defaultCNIconfPath  = "/etc/cni/net.d"
-	defaultCNINetNSPath = "/run/netns"
+	defaultCNIbinPath  = "/opt/cni/bin"
+	defaultCNIconfPath = "/etc/cni/net.d"
 )
 
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value
 type ConfCNI struct {
-	BinPath   string
-	ConfPath  string
-	NetNSPath string
+	BinPath  string
+	ConfPath string
 }
 
 func (c *ConfCNI) setDefaults() {
 	if c.BinPath == "" {
 		c.BinPath = defaultCNIbinPath
 	}
+
 	if c.ConfPath == "" {
 		c.ConfPath = defaultCNIconfPath
-	}
-	if c.NetNSPath == "" {
-		c.NetNSPath = defaultCNINetNSPath
 	}
 }
 
 // cniPlugin manages the pod networks using CNI
 type cniPlugin struct {
-	NetworkPlugin
+	Plugin
 	cni  libcni.CNI
 	conf ConfCNI
 }
 
 // InitPluginCNI instantiates the cni plugin using the provided config
-func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) {
+func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // intended to not export cniPlugin
 	conf.setDefaults()
+
 	return &cniPlugin{
 		cni:  libcni.NewCNIConfig([]string{conf.BinPath}, nil),
 		conf: conf,
@@ -61,10 +57,9 @@ func (c *cniPlugin) PodNetwork(namespace, name, id string, annotations map[strin
 	if err != nil {
 		return nil, errors.Append(err, warnings)
 	}
-	runtimeConf, err := c.getCNIRuntimeConf(namespace, name, id)
-	if err != nil {
-		return nil, err
-	}
+
+	runtimeConf := c.getCNIRuntimeConf(namespace, name, id)
+
 	return &cniPodNetwork{
 		plugin:      c,
 		netList:     netList,
@@ -81,7 +76,9 @@ func (c *cniPlugin) Status() error {
 // getCNINetworkConfig looks into the cni configuration dir for configs to load
 func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, error) {
 	confDir := c.conf.ConfPath
+
 	files, err := libcni.ConfFiles(confDir, []string{".conf", ".conflist", ".json"})
+
 	switch {
 	case err != nil:
 		return nil, nil, err
@@ -90,7 +87,9 @@ func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 	}
 
 	var warnings error
+
 	sort.Strings(files)
+
 	for _, confFile := range files {
 		var confList *libcni.NetworkConfigList
 		if strings.HasSuffix(confFile, ".conflist") {
@@ -117,8 +116,8 @@ func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 				warnings = errors.Append(warnings, errors.Wrapf(err, "Error converting CNI config file %s to list", confFile))
 				continue
 			}
-
 		}
+
 		if len(confList.Plugins) == 0 {
 			warnings = errors.Append(warnings, errors.Errorf("CNI config list %s has no networks, skipping", confFile))
 			continue
@@ -126,15 +125,15 @@ func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 
 		return confList, warnings, nil
 	}
+
 	return nil, warnings, errors.Errorf("No valid networks found in %s", confDir)
 }
 
 // getRuntimeConf returns common libcni runtime conf used to interact with the cni
-func (c *cniPlugin) getCNIRuntimeConf(namespace string, name string, id string) (*libcni.RuntimeConf, error) {
-	netNSPath := c.conf.NetNSPath
+func (c *cniPlugin) getCNIRuntimeConf(_ string, _ string, id string) *libcni.RuntimeConf {
 	return &libcni.RuntimeConf{
 		ContainerID: id,
-		NetNS:       filepath.Join(netNSPath, id),
+		NetNS:       "",
 		IfName:      DefaultInterface,
 		Args:        [][2]string{
 			// Removed, as they all seem to have no purpose
@@ -143,7 +142,7 @@ func (c *cniPlugin) getCNIRuntimeConf(namespace string, name string, id string) 
 			// {"K8S_POD_NAME", name},
 			// {"K8S_POD_INFRA_CONTAINER_ID", id},
 		},
-	}, nil
+	}
 }
 
 // cniPodNetwork is a pod network environment context. It handles the pod network by creating a netns and interfaces for
@@ -155,72 +154,58 @@ type cniPodNetwork struct {
 	annotations map[string]string
 }
 
-// Setup creates the network for that pod and the result is saved
-func (c *cniPodNetwork) Setup(ctx context.Context) ([]byte, error) {
-	out, err := exec.Command("ip", "netns", "add", c.runtimeConf.ContainerID).CombinedOutput()
-	if err != nil {
-		return nil, errors.Wrap(err, string(out))
-	}
-
-	addResult, err := c.plugin.cni.AddNetworkList(ctx, c.netList, c.runtimeConf)
-	if err != nil {
-		return nil, err
-	}
-	result, err := current.NewResultFromResult(addResult)
-	if err != nil {
-		return nil, err
-	}
-	// TODO: since upgrading to cni v0.7.1 we could possibly skip saving the result for ourselves...
-	return json.Marshal(result)
+// Setup creates the network for that pod and the result is saved. pid is the process id of the pod.
+func (c *cniPodNetwork) Setup(ctx context.Context, _ int64) ([]byte, error) {
+	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
+	return nil, nil
 }
 
-// Teardown removes the network for that pod
-func (c *cniPodNetwork) Teardown(ctx context.Context) error {
-	err := c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
-	// if the netns is not exists retry without netns path
-	if err != nil && strings.Contains(err.Error(), "no such file or directory") {
-		c.runtimeConf.NetNS = ""
-		err = c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
-	}
+// Teardown removes the network of that pod. pid is the process id of the pod, but might be missing. Must tear down
+// networking as good as possible, an error will only be logged and doesn't stop execution of further statements
+func (c *cniPodNetwork) Teardown(ctx context.Context, _ []byte, _ int64) error {
+	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
+	return nil
+}
+
+// Attach a container to the pod network. pid is the process id of the container.
+func (c *cniPodNetwork) Attach(ctx context.Context, _ []byte, pid int64) error {
+	c.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
+	_, err := c.plugin.cni.AddNetworkList(ctx, c.netList, c.runtimeConf)
+
 	return err
 }
 
-// Status reports IP and any error with the network of that pod
-func (c *cniPodNetwork) Status(ctx context.Context) (*PodNetworkStatus, error) {
-	err := c.plugin.cni.CheckNetworkList(ctx, c.netList, c.runtimeConf)
+// Detach a container from the pod network. pid is the process id of the container, but might be missing. Must detach
+// networking as good as possible, an error will only be logged and doesn't stop execution of further statements
+func (c *cniPodNetwork) Detach(ctx context.Context, _ []byte, pid int64) error {
+	c.runtimeConf.NetNS = ""
+	if pid != 0 {
+		c.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
+	}
+
+	return c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
+}
+
+// Status reports IP and any error with the network of that pod. Bytes can be nil if LXE thinks it never ran Setup and
+// thus also pid is not set
+func (c *cniPodNetwork) Status(ctx context.Context, _ []byte, _ int64) (*PodNetworkStatus, error) {
+	resultCached, err := c.plugin.cni.GetNetworkListCachedResult(c.netList, c.runtimeConf)
 	if err != nil {
 		return nil, err
 	}
 
-	out, err := exec.Command("ip", "netns", "exec", c.runtimeConf.ContainerID, "-br", "-o", "-4", "addr", "show", "dev", DefaultInterface, "scope", "global").CombinedOutput()
-	//out, err := exec.Command("nsenter", fmt.Sprintf("--net=%s", filepath.Join(c.runtimeConf.NetNS)), "-F", "--", "ip", "-br", "-o", "-4", "addr", "show", "dev", DefaultInterface, "scope", "global").CombinedOutput()
-	if err != nil {
-		return nil, errors.Wrap(err, string(out))
-	}
-
-	ips, err := parseIPAddrShow(out)
+	result, err := current.GetResult(resultCached)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(result.IPs) == 0 {
+		return nil, fmt.Errorf("no ip address found for %v", c.runtimeConf.ContainerID)
 	}
 
 	return &PodNetworkStatus{
-		IPs: ips,
+		IPs: []net.IP{
+			result.IPs[0].Address.IP,
+		},
 	}, nil
-}
-
-func parseIPAddrShow(output []byte) ([]net.IP, error) {
-	var ips []net.IP
-	lines := strings.Split(string(output), "\n")
-	for _, l := range lines {
-		f := strings.Fields(l)
-		if len(f) < 3 {
-			return nil, errors.Errorf("Unexpected address output %s ", l)
-		}
-		ip, _, err := net.ParseCIDR(f[2])
-		if err != nil {
-			return nil, errors.Errorf("CNI failed to parse ip from output %s due to %v", output, err)
-		}
-		ips = append(ips, ip)
-	}
-	return ips, nil
 }

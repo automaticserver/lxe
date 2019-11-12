@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"context"
 	"crypto/md5" // nolint: gosec
 	"fmt"
 	"math"
@@ -305,7 +306,17 @@ func (c *Container) releaseNetworkingResources() error {
 
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
-		err := c.client.DetachCNI(c)
+		netw, err := c.client.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, c.ID, nil)
+		if err != nil {
+			return err
+		}
+
+		var result []byte
+		if res, ok := s.NetworkConfig.ModeData["result"]; ok {
+			result = []byte(res)
+		}
+
+		err = netw.Attach(context.TODO(), result, 0)
 		if err != nil {
 			return err
 		}

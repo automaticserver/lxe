@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -263,11 +264,28 @@ func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
 		return
 	}
 
+	st, err := c.State()
+	if err != nil {
+		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", c.ID, err)
+		return
+	}
+
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
-		err := l.AttachCNI(c)
+		netw, err := l.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, c.ID, nil)
 		if err != nil {
-			logger.Errorf("unable to attach CNI interface to container (%v): %v", c.ID, err)
+			logger.Errorf("unable to open PodNetwork for container %v, %v", c.ID, err)
+			return
+		}
+
+		var result []byte
+		if res, ok := s.NetworkConfig.ModeData["result"]; ok {
+			result = []byte(res)
+		}
+
+		err = netw.Attach(context.TODO(), result, st.Pid)
+		if err != nil {
+			logger.Errorf("unable to attach CNI interface to container %v: %v", c.ID, err)
 		}
 	}
 }
@@ -275,6 +293,6 @@ func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
 func (l *Client) containerStoppedEvent(c *Container, _ api.Event) {
 	err := c.releaseNetworkingResources()
 	if err != nil {
-		logger.Errorf("unable to detach CNI interface from container (%v): %v", c.ID, err)
+		logger.Errorf("unable to detach CNI interface from container %v: %v", c.ID, err)
 	}
 }

@@ -2,6 +2,7 @@ module github.com/automaticserver/lxe
 
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
+	emperror.dev/errors v0.4.3
 	github.com/containernetworking/cni v0.7.1
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all

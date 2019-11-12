@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"context"
 	"crypto/md5" // nolint: gosec
 	"fmt"
 	"strconv"
@@ -212,7 +213,9 @@ func (s *Sandbox) refresh() error {
 	if err != nil {
 		return err
 	}
+
 	s.ETag = r.ETag
+
 	return nil
 }
 
@@ -225,6 +228,11 @@ func (s *Sandbox) Apply() error {
 		s.CreatedAt = time.Now()
 	}
 
+	// Always stop inheriting default eth0 device
+	s.Devices.Upsert(&device.None{
+		KeyName: lxdInitDefaultNicName,
+	})
+
 	// Apply defined network mode
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkBridged:
@@ -236,37 +244,32 @@ func (s *Sandbox) Apply() error {
 		})
 	}
 
-	// Always stop inheriting default eth0 device
-	s.Devices.Upsert(&device.None{
-		KeyName: lxdInitDefaultNicName,
-	})
-
 	err := s.apply()
 	if err != nil {
 		return err
 	}
+
 	err = s.refresh()
 	if err != nil {
 		return err
 	}
 
-	// Apply defined network mode post save
-	switch s.NetworkConfig.Mode {
+	// Apply defined network mode post save (actually I think in the future theres a pod pid at this point)
+	switch s.NetworkConfig.Mode { // nolint: gocritic // keep switch here even with one case
 	case NetworkCNI:
 		podNet, err := s.client.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, s.ID, nil)
 		if err != nil {
 			return err
 		}
-		result, err := podNet.Setup(context.TODO())
+
+		result, err := podNet.Setup(context.TODO(), 0)
 		if err != nil {
 			return err
 		}
+
 		s.NetworkConfig.ModeData = map[string]string{
 			"result": string(result),
 		}
-		AppendIfSet(&s.Config, "raw.lxc", fmt.Sprintf("lxc.namespace.share.user=%s", filepath.Join("/run/netns", s.ID)))
-	default:
-		// do nothing
 	}
 
 	return s.apply()

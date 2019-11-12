@@ -1,0 +1,13 @@
+linters-settings:
+  wsl:
+    # Allow declarations (var) to be cuddled.
+    allow-cuddle-declarations: true
+
+linters:
+  enable-all: true
+  disable:
+    - lll
+    - gochecknoglobals
+    - gochecknoinits
+    - godox
+    - funlen

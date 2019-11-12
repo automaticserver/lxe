@@ -87,12 +87,15 @@ func (d *Daemon) Stop() error {
 	trackError(d.cri.Stop())
 
 	var err error
+
 	if n := len(errs); n > 0 {
 		format := "%v"
 		if n > 1 {
 			format += fmt.Sprintf(" (and %d more errors)", n)
 		}
+
 		err = fmt.Errorf(format, errs[0])
 	}
+
 	return err
 }

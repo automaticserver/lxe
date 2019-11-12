@@ -13,8 +13,7 @@ func (l *LXO) CopyImage(source lxd.ImageServer, image api.Image, args *lxd.Image
 		return err
 	}
 
-	err = op.Wait()
-	return err
+	return op.Wait()
 }
 
 // DeleteImage deletes an image and wait till operation is done or
@@ -25,6 +24,5 @@ func (l *LXO) DeleteImage(hash string) error {
 		return err
 	}
 
-	err = op.Wait()
-	return err
+	return op.Wait()
 }

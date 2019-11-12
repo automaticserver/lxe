@@ -16,6 +16,7 @@ import (
 func (l *Client) NewSandbox() *Sandbox {
 	s := &Sandbox{}
 	s.client = l
+
 	return s
 }
 
@@ -29,26 +30,32 @@ func (l *Client) GetSandbox(id string) (*Sandbox, error) {
 	if !IsCRI(p) {
 		return nil, NewSandboxError(id, fmt.Errorf(ErrorLXDNotFound))
 	}
+
 	return l.toSandbox(p, ETag)
 }
 
 // ListSandboxes will return a list with all the available sandboxes
 func (l *Client) ListSandboxes() ([]*Sandbox, error) {
-	ETag := ""
+	var ETag string
+
 	ps, err := l.server.GetProfiles()
 	if err != nil {
 		return nil, NewSandboxError("lxdApi", err)
 	}
 
-	sl := []*Sandbox{}
+	var sl = []*Sandbox{}
+
 	for _, p := range ps {
+		p := p // pin!
 		if !IsCRI(p) {
 			continue
 		}
+
 		s, err := l.toSandbox(&p, ETag)
 		if err != nil {
 			return nil, err
 		}
+
 		sl = append(sl, s)
 	}
 
@@ -56,25 +63,34 @@ func (l *Client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
-	attempts, err := strconv.ParseUint(p.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
+func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // nolint: gocognit
+	var err error
+
+	var attempt uint64
+	if attemptS, is := p.Config[cfgMetaAttempt]; is {
+		attempt, err = strconv.ParseUint(attemptS, 10, 32)
+		if err != nil {
+			return nil, err
+		}
 	}
-	createdAt, err := strconv.ParseInt(p.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
+
+	createdAt := time.Time{}.UnixNano()
+	if createdAtS, is := p.Config[cfgCreatedAt]; is {
+		createdAt, err = strconv.ParseInt(createdAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	s := &Sandbox{}
 	s.client = l
 
 	s.ID = p.Name
-	s.ETag = ETag
+	s.ETag = etag
 	s.Hostname = p.Config[cfgHostname]
 	s.LogDirectory = p.Config[cfgLogDirectory]
 	s.Metadata = SandboxMetadata{
-		Attempt:   uint32(attempts),
+		Attempt:   uint32(attempt),
 		Name:      p.Config[cfgMetaName],
 		Namespace: p.Config[cfgMetaNamespace],
 		UID:       p.Config[cfgMetaUID],
@@ -83,7 +99,7 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 		Nameservers: strings.Split(p.Config[cfgNetworkConfigNameservers], ","),
 		Searches:    strings.Split(p.Config[cfgNetworkConfigSearches], ","),
 		Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
-		// ModeData:    make(map[string]string),
+		ModeData:    make(map[string]string),
 	}
 	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
 	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
@@ -95,42 +111,29 @@ func (l *Client) toSandbox(p *api.Profile, ETag string) (*Sandbox, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(s.NetworkConfig.ModeData) == 0 {
-		s.NetworkConfig.ModeData = make(map[string]string)
-	}
 
 	// cloud-init network config & vendor-data are write-only so not read
 
 	// get devices
-	s.Proxies, err = device.GetProxiesFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Disks, err = device.GetDisksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Blocks, err = device.GetBlocksFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Nics, err = device.GetNicsFromMap(p.Devices)
-	if err != nil {
-		return nil, err
-	}
-	s.Nones, err = device.GetNonesFromMap(p.Devices)
-	if err != nil {
-		return nil, err
+	for name, options := range p.Devices {
+		d, err := device.Detect(name, options)
+		if err != nil {
+			return nil, err
+		}
+
+		s.Devices.Upsert(d)
 	}
 
 	// get containers using this sandbox
 	for _, name := range p.UsedBy {
 		name = strings.TrimPrefix(name, "/1.0/containers/")
 		name = strings.TrimSuffix(name, "?project=default")
+
 		if strings.Contains(name, shared.SnapshotDelimiter) {
 			// this is a snapshot so dont parse this entry
 			continue
 		}
+
 		s.UsedBy = append(s.UsedBy, name)
 	}
 

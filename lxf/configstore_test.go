@@ -1,46 +1,68 @@
 package lxf
 
-import "testing"
+import (
+	"testing"
 
-func TestNewConfigStoreKeyReserved(t *testing.T) {
+	"github.com/stretchr/testify/assert"
+)
+
+func TestConfigStore_WithReserved(t *testing.T) {
+	t.Parallel()
+
 	cs := NewConfigStore().WithReserved("foo", "foo.bar")
-	if !cs.IsReserved("foo") {
-		t.Errorf("key foo should be reserved")
+
+	reserved := []string{"foo", "foo.bar"}
+	notreserved := []string{"foo.baz", "bar"}
+
+	for _, s := range reserved {
+		assert.True(t, cs.IsReserved(s), "should be reserved")
 	}
-	if !cs.IsReserved("foo.bar") {
-		t.Errorf("key foo.bar should be reserved")
-	}
-	if cs.IsReserved("foo.baz") {
-		t.Errorf("key foo.baz should not be reserved")
-	}
-	if cs.IsReserved("bar") {
-		t.Errorf("key bar should not be reserved")
+
+	for _, s := range notreserved {
+		assert.False(t, cs.IsReserved(s), "should not be reserved")
 	}
 }
 
-func TestNewConfigStorePrefixReserved(t *testing.T) {
+func TestConfigStore_WithReservedPrefixes(t *testing.T) {
+	t.Parallel()
+
 	cs := NewConfigStore().WithReservedPrefixes("foo", "zoo.bar")
-	if !cs.IsReserved("foo") {
-		t.Errorf("key foo should be reserved")
+
+	reserved := []string{"foo", "foo.bar", "zoo.bar", "zoo.bar.tree"}
+	notreserved := []string{"fool", "zoo"}
+
+	for _, s := range reserved {
+		assert.True(t, cs.IsReserved(s), "should be reserved")
 	}
-	if !cs.IsReserved("foo.bar") {
-		t.Errorf("key foo.bar should be reserved")
-	}
-	if cs.IsReserved("fool") {
-		t.Errorf("key fool should not be reserved")
-	}
-	if cs.IsReserved("zoo") {
-		t.Errorf("key zoo should not be reserved")
-	}
-	if !cs.IsReserved("zoo.bar") {
-		t.Errorf("key zoo.bar.tree should be reserved")
-	}
-	if !cs.IsReserved("zoo.bar.tree") {
-		t.Errorf("key zoo.bar.tree should be reserved")
+
+	for _, s := range notreserved {
+		assert.False(t, cs.IsReserved(s), "should not be reserved")
 	}
 }
 
-func TestConfigStoreUnreserved(t *testing.T) {
+func TestConfigStore_IsReserved(t *testing.T) {
+	t.Parallel()
+
+	cs := NewConfigStore().WithReserved("tree", "kanu.manu").WithReservedPrefixes("foo", "zoo.bar")
+
+	assert.True(t, cs.IsReserved("tree"))
+	assert.True(t, cs.IsReserved("kanu.manu"))
+	assert.True(t, cs.IsReserved("foo"))
+	assert.True(t, cs.IsReserved("foo.baz"))
+	assert.True(t, cs.IsReserved("zoo.bar"))
+	assert.True(t, cs.IsReserved("zoo.bar.baz"))
+
+	assert.False(t, cs.IsReserved("tree.leaves"))
+	assert.False(t, cs.IsReserved("green.tree"))
+	assert.False(t, cs.IsReserved("kanu.manu.velo"))
+	assert.False(t, cs.IsReserved("velo.kanu.manu"))
+	assert.False(t, cs.IsReserved("random"))
+	assert.False(t, cs.IsReserved("random.string"))
+}
+
+func TestConfigStore_UnreservedMap(t *testing.T) {
+	t.Parallel()
+
 	cs := NewConfigStore().WithReserved("tree", "kanu.manu").WithReservedPrefixes("foo", "zoo.bar")
 
 	unres := cs.UnreservedMap(map[string]string{
@@ -53,9 +75,27 @@ func TestConfigStoreUnreserved(t *testing.T) {
 		"jouse":            "yes",
 	})
 
-	for k, v := range unres {
-		if v != "yes" {
-			t.Errorf("key %v should be in the unreserved result", k)
-		}
+	for _, v := range unres {
+		assert.Equal(t, "yes", v, "should be in the unreserved result")
 	}
+}
+
+func TestConfigStore_StripedPrefixMap(t *testing.T) {
+	t.Parallel()
+
+	cs := NewConfigStore()
+
+	combined := map[string]string{
+		"io.example.foo":     "yes",
+		"io.example.bar.baz": "yes",
+		"io.example":         "no",
+		"other":              "no",
+	}
+
+	expected := map[string]string{
+		"foo":     "yes",
+		"bar.baz": "yes",
+	}
+
+	assert.Equal(t, expected, cs.StripedPrefixMap(combined, "io.example"))
 }

@@ -19,6 +19,7 @@ func (l *Client) NewContainer(sandboxID string, additionalProfiles ...string) *C
 	c.client = l
 	c.Profiles = append(c.Profiles, additionalProfiles...)
 	c.Profiles = append(c.Profiles, sandboxID)
+
 	return c
 }
 
@@ -38,22 +39,29 @@ func (l *Client) GetContainer(id string) (*Container, error) {
 
 // ListContainers returns a list of all available containers
 func (l *Client) ListContainers() ([]*Container, error) {
-	var err error
-	ETag := ""
+	var (
+		err  error
+		etag string
+	)
+
 	cts, err := l.server.GetContainers()
 	if err != nil {
 		return nil, NewContainerError("lxdApi", err)
 	}
 
-	cl := []*Container{}
+	var cl = []*Container{}
+
 	for _, ct := range cts {
+		ct := ct // pin!
 		if !IsCRI(ct) {
 			continue
 		}
-		c, err := l.toContainer(&ct, ETag)
+
+		c, err := l.toContainer(&ct, etag)
 		if err != nil {
 			return nil, err
 		}
+
 		cl = append(cl, c)
 	}
 
@@ -61,37 +69,58 @@ func (l *Client) ListContainers() ([]*Container, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error) {
-	attempts, err := strconv.ParseUint(ct.Config[cfgMetaAttempt], 10, 32)
-	if err != nil {
-		return nil, err
+func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit
+	var err error
+
+	var attempt uint64
+	if attemptS, is := ct.Config[cfgMetaAttempt]; is {
+		attempt, err = strconv.ParseUint(attemptS, 10, 32)
+		if err != nil {
+			return nil, err
+		}
 	}
-	privileged, err := strconv.ParseBool(ct.Config[cfgSecurityPrivileged])
-	if err != nil {
-		return nil, err
+
+	var privileged bool
+	if privilegedS, is := ct.Config[cfgSecurityPrivileged]; is {
+		privileged, err = strconv.ParseBool(privilegedS)
+		if err != nil {
+			return nil, err
+		}
 	}
-	createdAt, err := strconv.ParseInt(ct.Config[cfgCreatedAt], 10, 64)
-	if err != nil {
-		return nil, err
+
+	createdAt := time.Time{}.UnixNano()
+	if createdAtS, is := ct.Config[cfgCreatedAt]; is {
+		createdAt, err = strconv.ParseInt(createdAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
-	startedAt, err := strconv.ParseInt(ct.Config[cfgStartedAt], 10, 64)
-	if err != nil {
-		return nil, err
+
+	startedAt := time.Time{}.UnixNano()
+	if startedAtS, is := ct.Config[cfgStartedAt]; is {
+		startedAt, err = strconv.ParseInt(startedAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
-	finishedAt, err := strconv.ParseInt(ct.Config[cfgFinishedAt], 10, 64)
-	if err != nil {
-		return nil, err
+
+	finishedAt := time.Time{}.UnixNano()
+	if finishedAtS, is := ct.Config[cfgFinishedAt]; is {
+		finishedAt, err = strconv.ParseInt(finishedAtS, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	c := &Container{}
 	c.client = l
 
 	c.ID = ct.Name
-	c.ETag = ETag
+	c.ETag = etag
 	c.Image = ct.Config[cfgVolatileBaseImage]
 	c.Metadata = ContainerMetadata{
 		Name:    ct.Config[cfgMetaName],
-		Attempt: uint32(attempts),
+		Attempt: uint32(attempt),
 	}
 	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
 	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
@@ -108,56 +137,54 @@ func (l *Client) toContainer(ct *api.Container, ETag string) (*Container, error)
 	c.CloudInitMetaData = ct.Config[cfgCloudInitMetaData]
 	c.CloudInitNetworkConfig = ct.Config[cfgCloudInitNetworkConfig]
 
-	c.Proxies, err = device.GetProxiesFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Disks, err = device.GetDisksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Blocks, err = device.GetBlocksFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Nics, err = device.GetNicsFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
-	}
-	c.Nones, err = device.GetNonesFromMap(ct.Devices)
-	if err != nil {
-		return nil, err
+	// get devices
+	for name, options := range ct.Devices {
+		d, err := device.Detect(name, options)
+		if err != nil {
+			return nil, err
+		}
+
+		c.Devices.Upsert(d)
 	}
 
 	c.Resources = &opencontainers.LinuxResources{}
 	c.Resources.CPU = &opencontainers.LinuxCPU{}
+
 	if sharesS := ct.Config[cfgResourcesCPUShares]; sharesS != "" {
 		shares, err := strconv.ParseUint(sharesS, 10, 64)
 		if err != nil {
 			return nil, err
 		}
+
 		c.Resources.CPU.Shares = &shares
 	}
+
 	if quotaS := ct.Config[cfgResourcesCPUQuota]; quotaS != "" {
 		quota, err := strconv.ParseInt(quotaS, 10, 64)
 		if err != nil {
 			return nil, err
 		}
+
 		c.Resources.CPU.Quota = &quota
 	}
+
 	if periodS := ct.Config[cfgResourcesCPUPeriod]; periodS != "" {
 		period, err := strconv.ParseUint(periodS, 10, 64)
 		if err != nil {
 			return nil, err
 		}
+
 		c.Resources.CPU.Period = &period
 	}
+
 	c.Resources.Memory = &opencontainers.LinuxMemory{}
+
 	if memoryS := ct.Config[cfgResourcesMemoryLimit]; memoryS != "" {
 		memory, err := strconv.ParseInt(memoryS, 10, 64)
 		if err != nil {
 			return nil, err
 		}
+
 		c.Resources.Memory.Limit = &memory
 	}
 
@@ -193,6 +220,7 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 	}
 
 	eventLifecycle := api.EventLifecycle{}
+
 	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
 		logger.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
@@ -205,6 +233,7 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 	}
 
 	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
+
 	c, err := l.GetContainer(containerID)
 	if err != nil {
 		if IsContainerNotFound(err) {
@@ -212,7 +241,10 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 			// ignored
 			return
 		}
+
+		// still return immediately since we can't do anything when we get an error here
 		logger.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
+
 		return
 	}
 
@@ -221,30 +253,26 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 		l.containerStartedEvent(c, event)
 	case "container-stopped":
 		l.containerStoppedEvent(c, event)
-	default:
-		// nothing to do, no other lifecycle events should get here
 	}
 }
 
-func (l *Client) containerStartedEvent(c *Container, e api.Event) {
+func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
 	s, err := c.Sandbox()
 	if err != nil {
 		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", c.ID, err)
 		return
 	}
 
-	switch s.NetworkConfig.Mode {
+	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
 		err := l.AttachCNI(c)
 		if err != nil {
 			logger.Errorf("unable to attach CNI interface to container (%v): %v", c.ID, err)
 		}
-	default:
-		// nothing to do, all other modes need no help after starting
 	}
 }
 
-func (l *Client) containerStoppedEvent(c *Container, e api.Event) {
+func (l *Client) containerStoppedEvent(c *Container, _ api.Event) {
 	err := c.releaseNetworkingResources()
 	if err != nil {
 		logger.Errorf("unable to detach CNI interface from container (%v): %v", c.ID, err)

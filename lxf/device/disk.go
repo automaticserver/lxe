@@ -1,65 +1,68 @@
+// nolint: dupl
 package device
 
 import (
+	"fmt"
 	"strconv"
 )
 
 const (
-	diskType = "disk"
+	DiskType = "disk"
 )
 
-// Disks holds slice of Disk
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Disks []Disk
-
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ds *Disks) Add(d Disk) {
-	for k, e := range *ds {
-		if e.GetName() == d.GetName() {
-			(*ds)[k] = d
-			return
-		}
-	}
-	*ds = append(*ds, d)
-}
-
-// Disk mounts a host path into the container
+// Disk device representation https://lxd.readthedocs.io/en/latest/containers/#type-disk
 type Disk struct {
+	KeyName  string
 	Path     string
-	Readonly bool
-	Pool     string
 	Source   string
+	Pool     string
+	Size     string
+	Readonly bool
 	Optional bool
 }
 
-// ToMap serializes itself into a map. Will return an error if the data
-// is inconsistent/invalid in some way
-func (d Disk) ToMap() (map[string]string, error) {
-	def := map[string]string{
-		"type":     diskType,
+func (d *Disk) getName() string {
+	var name string
+
+	switch {
+	case d.KeyName != "":
+		name = d.KeyName
+	case d.Path == "":
+		name = fmt.Sprintf("%s-%s", DiskType, d.Source)
+	default:
+		name = fmt.Sprintf("%s-%s", DiskType, d.Path)
+	}
+
+	return name
+}
+
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *Disk) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
+		"type":     DiskType,
 		"path":     d.Path,
 		"source":   d.Source,
+		"pool":     d.Pool,
+		"size":     d.Size,
 		"readonly": strconv.FormatBool(d.Readonly),
 		"optional": strconv.FormatBool(d.Optional),
 	}
-	if d.Pool != "" {
-		def["pool"] = d.Pool
-	}
-	return def, nil
 }
 
-// GetName will return the path with prefix
-func (d Disk) GetName() string {
-	return diskType + "-" + d.Path
+// FromMap loads assigned name (can be empty) and options
+func (d *Disk) FromMap(name string, options map[string]string) error {
+	d.KeyName = name
+	d.Path = options["path"]
+	d.Source = options["source"]
+	d.Pool = options["pool"]
+	d.Size = options["size"]
+	d.Readonly = options["readonly"] == "true"
+	d.Optional = options["optional"] == "true"
+
+	return nil
 }
 
-// DiskFromMap crrate a new disk from map entries
-func DiskFromMap(dev map[string]string) (Disk, error) {
-	return Disk{
-		Path:     dev["path"],
-		Source:   dev["source"],
-		Pool:     dev["pool"],
-		Readonly: dev["readonly"] == "true",
-		Optional: dev["optional"] == "true",
-	}, nil
+// New creates a new empty device
+func (d *Disk) new() Device {
+	return &Disk{}
 }

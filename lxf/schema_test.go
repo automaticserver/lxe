@@ -11,22 +11,28 @@ import (
 func getSchemaContainer(schema string) api.Container {
 	c := api.Container{}
 	c.Config = make(map[string]string)
+
 	if schema != "" {
 		c.Config[cfgSchema] = schema
 	}
+
 	return c
 }
 
 func getSchemaProfile(schema string) api.Profile {
 	p := api.Profile{}
 	p.Config = make(map[string]string)
+
 	if schema != "" {
 		p.Config[cfgSchema] = schema
 	}
+
 	return p
 }
 
 func TestIsSchemaEmpty(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer(""))
 	assert.Equal(t, false, c)
 
@@ -38,6 +44,8 @@ func TestIsSchemaEmpty(t *testing.T) {
 }
 
 func TestIsSchemaWrong(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer("0.0"))
 	assert.Equal(t, false, c)
 
@@ -46,6 +54,8 @@ func TestIsSchemaWrong(t *testing.T) {
 }
 
 func TestIsSchemaCurrent(t *testing.T) {
+	t.Parallel()
+
 	c := IsSchemaCurrent(getSchemaContainer(SchemaVersionContainer))
 	assert.Equal(t, true, c)
 
@@ -54,6 +64,8 @@ func TestIsSchemaCurrent(t *testing.T) {
 }
 
 func TestIsSchemaPointer(t *testing.T) {
+	t.Parallel()
+
 	c1 := getSchemaContainer(SchemaVersionContainer)
 	c := IsSchemaCurrent(&c1)
 	assert.Equal(t, true, c)
@@ -61,4 +73,14 @@ func TestIsSchemaPointer(t *testing.T) {
 	p1 := getSchemaProfile(SchemaVersionProfile)
 	p := IsSchemaCurrent(&p1)
 	assert.Equal(t, true, p)
+}
+
+func satisfyContainerSchema(ct *api.Container) *api.Container {
+	ct.Config[cfgSchema] = SchemaVersionContainer
+	return ct
+}
+
+func satisfyProfileSchema(p *api.Profile) *api.Profile {
+	p.Config[cfgSchema] = SchemaVersionProfile
+	return p
 }

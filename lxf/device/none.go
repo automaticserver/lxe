@@ -1,45 +1,33 @@
+// nolint: dupl
 package device
 
 const (
-	noneType = "none"
+	NoneType = "none"
 )
 
-// None holds slice of None
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Nones []None
-
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ns *Nones) Add(n None) {
-	for k, e := range *ns {
-		if e.GetName() == n.GetName() {
-			(*ns)[k] = n
-			return
-		}
-	}
-	*ns = append(*ns, n)
-}
-
-// None device allows disabling inherited devices
+// None device representation https://lxd.readthedocs.io/en/latest/containers/#type-none
 type None struct {
-	// Name of the device to disable
-	Name string
+	KeyName string
 }
 
-// ToMap serializes itself into a lxd device map entry
-func (n None) ToMap() (map[string]string, error) {
-	return map[string]string{
-		"type": noneType,
-	}, nil
+func (d *None) getName() string {
+	return d.KeyName
 }
 
-// GetName will generate a uinique name for the device map
-func (n None) GetName() string {
-	return n.Name
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *None) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
+		"type": NoneType,
+	}
 }
 
-// NoneFromMap create a new none from map entries
-func NoneFromMap(dev map[string]string, name string) (None, error) {
-	return None{
-		Name: name,
-	}, nil
+// FromMap loads assigned name (can be empty) and options
+func (d *None) FromMap(name string, options map[string]string) error {
+	d.KeyName = name
+	return nil
+}
+
+// New creates a new empty device
+func (d *None) new() Device {
+	return &None{}
 }

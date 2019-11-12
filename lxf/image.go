@@ -33,6 +33,7 @@ func (l *Client) PullImage(name string) (string, error) {
 	}
 
 	imageRef := dereferenceAlias(imgServer, imageID.Alias)
+
 	image, _, err := imgServer.GetImage(imageRef)
 	if err != nil {
 		return "", err
@@ -60,11 +61,10 @@ func (l *Client) RemoveImage(name string) error {
 	}
 
 	hash, found, err := imageID.Hash(l)
-	if !found {
-		return nil
-	}
 	if err != nil {
 		return err
+	} else if !found {
+		return nil
 	}
 
 	err = l.opwait.DeleteImage(hash)
@@ -72,6 +72,7 @@ func (l *Client) RemoveImage(name string) error {
 		if err.Error() == ErrorLXDNotFound {
 			return nil
 		}
+
 		return err
 	}
 
@@ -95,6 +96,7 @@ func (l *Client) ensureImageAlias(alias string, fingerprint string) error {
 				alreadyCorrect = true
 				break
 			}
+
 			err = l.server.DeleteImageAlias(ca.Name)
 			if err != nil {
 				return fmt.Errorf("failed to delete alias %v for update, %v", alias, err)
@@ -111,16 +113,19 @@ func (l *Client) ensureImageAlias(alias string, fingerprint string) error {
 	aliasPost := lxdApi.ImageAliasesPost{}
 	aliasPost.Name = alias
 	aliasPost.Target = fingerprint
+
 	err = l.server.CreateImageAlias(aliasPost)
 	if err != nil {
 		return fmt.Errorf("failed to create alias %v, %v", alias, err)
 	}
+
 	return nil
 }
 
 // ListImages will list all local images from the lxd server
 func (l *Client) ListImages(filter string) ([]Image, error) {
-	var response = []Image{}
+	response := []Image{}
+
 	imglist, err := l.server.GetImages()
 	if err != nil {
 		return nil, fmt.Errorf("unable to list images, %v", err)
@@ -130,10 +135,12 @@ func (l *Client) ListImages(filter string) ([]Image, error) {
 		if filter != "" && filter != imgInfo.Fingerprint {
 			continue
 		}
+
 		aliases := []string{}
 		for _, ali := range imgInfo.Aliases {
 			aliases = append(aliases, ali.Name+":latest")
 		}
+
 		response = append(response, Image{
 			Hash:    imgInfo.Fingerprint,
 			Aliases: aliases,
@@ -152,14 +159,14 @@ func (l *Client) GetImage(name string) (*Image, error) {
 		if strings.HasSuffix(err.Error(), "doesn't exist") {
 			return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
 		}
+
 		return nil, err
 	}
 
 	hash, found, err := imageID.Hash(l)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve image %v, %v", name, err)
-	}
-	if !found {
+	} else if !found {
 		return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
 	}
 
@@ -167,10 +174,12 @@ func (l *Client) GetImage(name string) (*Image, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to get image %v, %v", name, err)
 	}
+
 	aliases := []string{}
 	for _, ali := range img.Aliases {
 		aliases = append(aliases, ali.Name+":latest")
 	}
+
 	return &Image{
 		Hash:    img.Fingerprint,
 		Aliases: aliases,
@@ -194,11 +203,13 @@ func (l *Client) GetFSPoolUsage() ([]FSPoolUsage, error) {
 	}
 
 	rval := []FSPoolUsage{}
+
 	for _, pool := range pools {
 		pRcs, err := l.server.GetStoragePoolResources(pool.Name)
 		if err != nil {
 			return nil, err
 		}
+
 		rval = append(rval, FSPoolUsage{
 			Timestamp:  time.Now().UnixNano(),
 			FsID:       pool.Config["source"],
@@ -234,13 +245,16 @@ func (i ImageID) Hash(l *Client) (string, bool, error) {
 				if err.Error() == ErrorLXDNotFound {
 					return "", false, nil
 				}
+
 				return "", false, err
 			}
 			// it worked so it must be a hash
 			return i.Alias, true, nil
 		}
+
 		return "", false, err
 	}
+
 	// we could resolve the local alias
 	return exists.Target, true, nil
 }
@@ -252,10 +266,12 @@ func (l *Client) parseImage(name string) (ImageID, error) {
 	if err != nil {
 		return ImageID{}, err
 	}
+
 	remote, tag, err := l.config.ParseRemote(img)
 	if err != nil {
 		return ImageID{}, err
 	}
+
 	return ImageID{Remote: remote, Alias: tag}, nil
 }
 
@@ -290,5 +306,6 @@ func dereferenceAlias(d lxd.ImageServer, inName string) string {
 	if result == nil || err != nil {
 		return inName
 	}
+
 	return result.Target
 }

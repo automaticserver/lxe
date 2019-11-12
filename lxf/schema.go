@@ -11,12 +11,19 @@ import (
 // Schema Version this package is currently expecting
 const (
 	cfgSchema              = "user.lxe.schema"
-	SchemaVersionProfile   = "0.3"
-	SchemaVersionContainer = "0.5"
+	SchemaVersionProfile   = zeroThree
+	SchemaVersionContainer = zeroFive
 
 	cfgOldIsSandbox     = "user.is_cri_sandbox"
 	cfgOldIsContainer   = "user.is_cri_container"
 	cfgOldContainerName = "user.containerName"
+
+	// make linter goconst happy, didn't want to disable it
+	zeroOne   = "0.1"
+	zeroTwo   = "0.2"
+	zeroThree = "0.3"
+	zeroFour  = "0.4"
+	zeroFive  = "0.5"
 )
 
 // MigrationWorkspace manages schema of lxd objects
@@ -33,14 +40,17 @@ func (l *Client) Migration() *MigrationWorkspace {
 
 // IsSchemaCurrent checks if a object is in the current schema
 func IsSchemaCurrent(i interface{}) bool {
-	var val string
-	var has bool
+	var (
+		val string
+		has bool
+	)
 
 	switch o := i.(type) {
 	case api.Container:
 		if val, has = o.Config[cfgSchema]; !has {
 			return false
 		}
+
 		return val == SchemaVersionContainer
 	case *api.Container:
 		return IsSchemaCurrent(*o)
@@ -48,6 +58,7 @@ func IsSchemaCurrent(i interface{}) bool {
 		if val, has = o.Config[cfgSchema]; !has {
 			return false
 		}
+
 		return val == SchemaVersionProfile
 	case *api.Profile:
 		return IsSchemaCurrent(*o)
@@ -62,6 +73,7 @@ func (m *MigrationWorkspace) Ensure() error {
 	if err != nil {
 		return err
 	}
+
 	anyChanges := false
 
 	for k := range profiles {
@@ -75,12 +87,15 @@ func (m *MigrationWorkspace) Ensure() error {
 
 		// TODO: or better compare to a copy of the entry?
 		counter := 0
+
 		if m.ensureProfileZeroOne(p) {
 			counter++
 		}
+
 		if m.ensureProfileZeroTwo(p) {
 			counter++
 		}
+
 		if m.ensureProfileZeroThree(p) {
 			counter++
 		}
@@ -88,6 +103,7 @@ func (m *MigrationWorkspace) Ensure() error {
 		// If something has changed, update it
 		if counter > 0 {
 			anyChanges = true
+
 			err = m.lxf.server.UpdateProfile(p.Name, p.Writable(), "")
 			if err != nil {
 				return err
@@ -95,7 +111,8 @@ func (m *MigrationWorkspace) Ensure() error {
 		}
 	}
 
-	ETag := ""
+	var etag string
+
 	containers, err := m.lxf.server.GetContainers()
 	if err != nil {
 		return err
@@ -112,18 +129,23 @@ func (m *MigrationWorkspace) Ensure() error {
 
 		// TODO: or better compare to a copy of the entry?
 		counter := 0
+
 		if m.ensureContainerZeroOne(c) {
 			counter++
 		}
+
 		if m.ensureContainerZeroTwo(c) {
 			counter++
 		}
+
 		if m.ensureContainerZeroThree(c) {
 			counter++
 		}
+
 		if m.ensureContainerZeroFour(c) {
 			counter++
 		}
+
 		if m.ensureContainerZeroFive(c) {
 			counter++
 		}
@@ -131,7 +153,8 @@ func (m *MigrationWorkspace) Ensure() error {
 		// If something has changed, update it
 		if counter > 0 {
 			anyChanges = true
-			err := m.lxf.opwait.UpdateContainer(c.Name, c.Writable(), ETag)
+
+			err := m.lxf.opwait.UpdateContainer(c.Name, c.Writable(), etag)
 			if err != nil {
 				return err
 			}
@@ -141,6 +164,7 @@ func (m *MigrationWorkspace) Ensure() error {
 	if anyChanges {
 		logger.Warnf("Migration changes applied successfully")
 	}
+
 	return nil
 }
 
@@ -149,49 +173,58 @@ func (m *MigrationWorkspace) Ensure() error {
 func (m *MigrationWorkspace) ensureProfileZeroOne(p *api.Profile) bool {
 	if p.Config[cfgSchema] == "" {
 		p.Config[cfgMetaUID] = p.Name
-		p.Config[cfgSchema] = "0.1"
+		p.Config[cfgSchema] = zeroOne
+
 		return true
 	}
+
 	return false
 }
 
 // user.is_cri_sandbox has moved to user.cri
 func (m *MigrationWorkspace) ensureProfileZeroTwo(p *api.Profile) bool {
-	if p.Config[cfgSchema] == "0.1" {
+	if p.Config[cfgSchema] == zeroOne {
 		p.Config[cfgIsCRI] = p.Config[cfgOldIsSandbox]
-		p.Config[cfgSchema] = "0.2"
+		p.Config[cfgSchema] = zeroTwo
+
 		return true
 	}
+
 	return false
 }
 
 // cleanup unused keys
 func (m *MigrationWorkspace) ensureProfileZeroThree(p *api.Profile) bool {
-	if p.Config[cfgSchema] == "0.2" {
+	if p.Config[cfgSchema] == zeroTwo {
 		delete(p.Config, cfgOldIsSandbox)
-		p.Config[cfgSchema] = "0.3"
+		p.Config[cfgSchema] = zeroThree
+
 		return true
 	}
+
 	return false
 }
 
 func (m *MigrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
 	if c.Config[cfgSchema] == "" {
-		c.Config[cfgSchema] = "0.1"
+		c.Config[cfgSchema] = zeroOne
 		return true
 	}
+
 	return false
 }
 
 // user.is_cri_container has moved to user.cri
 // user.containerName has moved to user.metadata.Name
 func (m *MigrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
-	if c.Config[cfgSchema] == "0.1" {
+	if c.Config[cfgSchema] == zeroOne {
 		c.Config[cfgIsCRI] = c.Config[cfgOldIsContainer]
 		c.Config[cfgMetaName] = c.Config[cfgOldContainerName]
-		c.Config[cfgSchema] = "0.2"
+		c.Config[cfgSchema] = zeroTwo
+
 		return true
 	}
+
 	return false
 }
 
@@ -199,9 +232,10 @@ func (m *MigrationWorkspace) ensureContainerZeroTwo(c *api.Container) bool {
 // autostart can be missing
 // cleanup unused keys
 func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
-	if c.Config[cfgSchema] == "0.2" {
+	if c.Config[cfgSchema] == zeroTwo {
 		delete(c.Config, cfgOldIsContainer)
 		delete(c.Config, cfgOldContainerName)
+
 		if c.Config[cfgCreatedAt] == "" {
 			if c.Config[cfgStartedAt] == "" {
 				c.Config[cfgCreatedAt] = strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -209,15 +243,20 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 				c.Config[cfgCreatedAt] = c.Config[cfgStartedAt]
 			}
 		}
+
 		if c.Config[cfgStartedAt] == "" {
 			c.Config[cfgStartedAt] = strconv.FormatInt(time.Time{}.UnixNano(), 10)
 		}
+
 		if c.Config[cfgFinishedAt] == "" {
 			c.Config[cfgFinishedAt] = strconv.FormatInt(time.Time{}.UnixNano(), 10)
 		}
-		c.Config[cfgSchema] = "0.3"
+
+		c.Config[cfgSchema] = zeroThree
+
 		return true
 	}
+
 	return false
 }
 
@@ -225,20 +264,23 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 // WARNING: intentionally changed migration to 0.3 to not force-setting that field if
 // someone is coming from 0.2 or below
 func (m *MigrationWorkspace) ensureContainerZeroFour(c *api.Container) bool {
-	if c.Config[cfgSchema] == "0.3" {
-		c.Config[cfgSchema] = "0.4"
+	if c.Config[cfgSchema] == zeroThree {
+		c.Config[cfgSchema] = zeroFour
 		return true
 	}
+
 	return false
 }
 
 // Implemented variable length of profiles. The order of profiles in schema <= 0.4 was wrong.
 // Move the first profile, which was the sandbox, to the last position, otherwise preserve position
 func (m *MigrationWorkspace) ensureContainerZeroFive(c *api.Container) bool {
-	if c.Config[cfgSchema] == "0.4" {
+	if c.Config[cfgSchema] == zeroFour {
 		c.Profiles = append(c.Profiles[1:], c.Profiles[0])
-		c.Config[cfgSchema] = "0.5"
+		c.Config[cfgSchema] = zeroFive
+
 		return true
 	}
+
 	return false
 }

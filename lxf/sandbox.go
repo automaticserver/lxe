@@ -1,10 +1,8 @@
 package lxf
 
 import (
-	"context"
-	"crypto/md5" // nolint: gosec #nosec (no sensitive data)
+	"crypto/md5" // nolint: gosec
 	"fmt"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -44,11 +42,13 @@ var (
 			cfgHostname,
 			cfgCloudInitNetworkConfig,
 			cfgCloudInitVendorData,
-			cfgNetworkConfigModeData,
 		}, reservedConfigCRI...,
 		)...,
 	).WithReservedPrefixes(
-		reservedConfigPrefixesCRI...,
+		append([]string{
+			cfgNetworkConfig,
+		}, reservedConfigPrefixesCRI...,
+		)...,
 	)
 )
 
@@ -129,6 +129,7 @@ func getNetworkMode(str string) NetworkMode {
 			return v
 		}
 	}
+
 	return NetworkNone
 }
 
@@ -140,6 +141,7 @@ func getSandboxState(str string) SandboxState {
 	if str == string(SandboxNotReady) {
 		return SandboxNotReady
 	}
+
 	return SandboxReady
 }
 
@@ -184,18 +186,22 @@ func (s *Sandbox) Containers() ([]*Container, error) {
 			return nil, err
 		}
 	}
+
 	return s.containers, nil
 }
 
 func (s *Sandbox) getContainers() ([]*Container, error) {
-	var cl []*Container
+	cl := []*Container{}
+
 	for _, cntName := range s.UsedBy {
 		c, err := s.client.GetContainer(cntName)
 		if err != nil {
 			return nil, err
 		}
+
 		cl = append(cl, c)
 	}
+
 	return cl, nil
 }
 
@@ -220,21 +226,19 @@ func (s *Sandbox) Apply() error {
 	}
 
 	// Apply defined network mode
-	switch s.NetworkConfig.Mode {
+	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkBridged:
-		s.Nics.Add(device.Nic{
+		s.Devices.Upsert(&device.Nic{
 			Name:        network.DefaultInterface,
 			NicType:     "bridged",
 			Parent:      s.NetworkConfig.ModeData["bridge"],
 			IPv4Address: s.NetworkConfig.ModeData["interface-address"],
 		})
-	default:
-		// do nothing
 	}
 
 	// Always stop inheriting default eth0 device
-	s.Nones.Add(device.None{
-		Name: lxdInitDefaultNicName,
+	s.Devices.Upsert(&device.None{
+		KeyName: lxdInitDefaultNicName,
 	})
 
 	err := s.apply()
@@ -282,8 +286,10 @@ func (s *Sandbox) Delete() error {
 		if err.Error() == ErrorLXDNotFound {
 			return nil
 		}
+
 		return err
 	}
+
 	return nil
 }
 
@@ -309,6 +315,7 @@ func (s *Sandbox) apply() error {
 	if err != nil {
 		return err
 	}
+
 	config[cfgNetworkConfigModeData] = string(yml)
 
 	// write labels
@@ -343,18 +350,20 @@ func (s *Sandbox) apply() error {
 				},
 			},
 		}
+
 		if s.NetworkConfig.Mode == NetworkBridged {
 			// because added later, if physical-type is empty, it is dhcp
 			if s.NetworkConfig.ModeData["physical-type"] == "" {
 				s.NetworkConfig.ModeData["physical-type"] = "dhcp"
 			}
+
 			entry := NetworkConfigEntryPhysical{
 				NetworkConfigEntry: NetworkConfigEntry{
 					Type: "physical",
 				},
 				Name: network.DefaultInterface,
 				Subnets: []NetworkConfigEntryPhysicalSubnet{
-					NetworkConfigEntryPhysicalSubnet{
+					{
 						Type: s.NetworkConfig.ModeData["physical-type"],
 					},
 				},
@@ -377,26 +386,11 @@ hostname: %s
 manage_etc_hosts: true`, s.Hostname)
 	}
 
-	devices := map[string]map[string]string{}
-	err = device.AddProxiesToMap(devices, s.Proxies...)
-	if err != nil {
-		return err
-	}
-	err = device.AddDisksToMap(devices, s.Disks...)
-	if err != nil {
-		return err
-	}
-	err = device.AddBlocksToMap(devices, s.Blocks...)
-	if err != nil {
-		return err
-	}
-	err = device.AddNicsToMap(devices, s.Nics...)
-	if err != nil {
-		return err
-	}
-	err = device.AddNonesToMap(devices, s.Nones...)
-	if err != nil {
-		return err
+	devices := make(map[string]map[string]string)
+
+	for _, d := range s.Devices {
+		name, options := d.ToMap()
+		devices[name] = options
 	}
 
 	config[cfgSchema] = SchemaVersionProfile
@@ -407,6 +401,7 @@ manage_etc_hosts: true`, s.Hostname)
 
 	if s.ID == "" { // profile has to be created
 		s.ID = s.CreateID()
+
 		return s.client.server.CreateProfile(api.ProfilesPost{
 			Name:       s.ID,
 			ProfilePut: profile,
@@ -414,7 +409,7 @@ manage_etc_hosts: true`, s.Hostname)
 	}
 	// else profile has to be updated
 	if s.ETag == "" {
-		return fmt.Errorf("Update profile not allowed with empty ETag")
+		return fmt.Errorf("update profile not allowed with empty ETag")
 	}
 
 	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
@@ -422,14 +417,16 @@ manage_etc_hosts: true`, s.Hostname)
 		if err.Error() == ErrorLXDNotFound {
 			return NewSandboxError(s.ID, err)
 		}
+
 		return err
 	}
+
 	return nil
 }
 
 // CreateID creates a unique profile id
 func (s *Sandbox) CreateID() string {
-	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec #nosec
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
 	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
@@ -443,6 +440,7 @@ func (s *Sandbox) GetInetAddress() string {
 			// TODO: additional debug output
 			return ""
 		}
+
 		return ip.String()
 	case NetworkNone:
 		return ""
@@ -461,6 +459,7 @@ func (s *Sandbox) GetInetAddress() string {
 			// TODO: additional debug output
 			return ""
 		}
+
 		for _, c := range cl {
 			// ignore any non-running containers
 			if c.StateName != ContainerStateRunning {
@@ -474,5 +473,6 @@ func (s *Sandbox) GetInetAddress() string {
 			}
 		}
 	}
+
 	return ""
 }

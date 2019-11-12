@@ -13,6 +13,7 @@ func getCRIContainer(cri string) api.Container {
 	if cri != "" {
 		c.Config[cfgIsCRI] = cri
 	}
+
 	return c
 }
 
@@ -21,10 +22,13 @@ func getCRIProfile(cri string) api.Profile {
 	if cri != "" {
 		p.Config[cfgIsCRI] = cri
 	}
+
 	return p
 }
 
 func TestIsCRIEmpty(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer(""))
 	assert.Equal(t, false, c)
 
@@ -36,6 +40,8 @@ func TestIsCRIEmpty(t *testing.T) {
 }
 
 func TestIsCRIFalse(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("false"))
 	assert.Equal(t, false, c)
 
@@ -44,6 +50,8 @@ func TestIsCRIFalse(t *testing.T) {
 }
 
 func TestIsCRIWrong(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("no"))
 	assert.Equal(t, false, c)
 
@@ -52,6 +60,8 @@ func TestIsCRIWrong(t *testing.T) {
 }
 
 func TestIsCRITrue(t *testing.T) {
+	t.Parallel()
+
 	c := IsCRI(getCRIContainer("true"))
 	assert.Equal(t, true, c)
 
@@ -60,6 +70,8 @@ func TestIsCRITrue(t *testing.T) {
 }
 
 func TestIsCRIPointer(t *testing.T) {
+	t.Parallel()
+
 	c1 := getCRIContainer("true")
 	c := IsCRI(&c1)
 	assert.Equal(t, true, c)
@@ -67,4 +79,14 @@ func TestIsCRIPointer(t *testing.T) {
 	p1 := getCRIProfile("True")
 	p := IsCRI(&p1)
 	assert.Equal(t, true, p)
+}
+
+func satisfyContainerCri(ct *api.Container) *api.Container {
+	ct.Config[cfgIsCRI] = "true"
+	return ct
+}
+
+func satisfyProfileCri(p *api.Profile) *api.Profile {
+	p.Config[cfgIsCRI] = "true"
+	return p
 }

@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -84,6 +85,7 @@ func NewClient(socket string, configPath string, network network.NetworkPlugin) 
 			Timeout: 10 * time.Second,
 		},
 	}
+
 	server, err := lxd.ConnectLXDUnix(socket, &args)
 	if err != nil {
 		return nil, err
@@ -97,7 +99,7 @@ func NewClient(socket string, configPath string, network network.NetworkPlugin) 
 	client := &Client{
 		server:  server,
 		config:  config,
-		opwait:  lxo.New(server),
+		opwait:  lxo.NewClient(server),
 		network: network,
 	}
 
@@ -106,6 +108,7 @@ func NewClient(socket string, configPath string, network network.NetworkPlugin) 
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = listener.AddHandler([]string{"lifecycle"}, client.lifecycleEventHandler)
 	if err != nil {
 		return nil, err
@@ -114,10 +117,19 @@ func NewClient(socket string, configPath string, network network.NetworkPlugin) 
 	return client, nil
 }
 
-func (c *Client) GetRuntimeInfo() (*api.Server, error) {
-	server, _, err := c.server.GetServer()
+type runtimeInfo struct {
+	// API version of the container runtime. The string must be semver-compatible.
+	Version string
+}
+
+func (l *Client) GetRuntimeInfo() (*runtimeInfo, error) { // nolint: golint // yes return the unexported type
+	server, _, err := l.server.GetServer()
 	if err != nil {
 		return nil, err
 	}
-	return server, nil
+
+	return &runtimeInfo{
+		// api version is only X.X, so need to add .0 for semver requirement
+		Version: fmt.Sprintf("%s.0", server.APIVersion),
+	}, nil
 }

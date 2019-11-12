@@ -15,73 +15,45 @@ GO111MODULE=on
 .PHONY: all
 all: build test lint
 
-.PHONY: build
-build: version
-	go build -v $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
-
-.PHONY: clean
-clean: package-clean
-	rm -r bin || true
-
-.PHONY: debug
-debug: version
-	go build -v -tags logdebug $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
-
-bin/gometalinter:
-	# Unhappy the way gometalinter wants to be installed now...
-	curl -L https://git.io/vp6lP | sh
-
-$(GOPATH)/bin/overalls:
-	go get -v -u "github.com/go-playground/overalls"
-
-$(GOPATH)/bin/critest:
-# 	go get -v -u "github.com/kubernetes-incubator/cri-tools/cmd/critest"
-	make -C $(GOPATH)/src/github.com/kubernetes-incubator/cri-tools critest
-
-.PHONY: check
-check: lint vet test
-
-.PHONY: lint
-lint: bin/gometalinter
-	bin/gometalinter ./... --vendor --skip=$(GOPATH)/pkg/mod --exclude="/pkg/mod/" \
-		--disable-all \
-		--deadline 160s \
-		--enable=misspell \
-		--enable=goconst \
-		--enable=deadcode \
-		--enable=ineffassign \
-		--enable=lll --line-length=140 \
-		--enable=gosec \
-		--enable=golint \
-		--enable=varcheck \
-		--enable=structcheck \
-		--enable=gosimple \
-		--enable=errcheck \
-		--enable=goimports \
-		--enable=dupl \
-		--enable=gotype \
-		--concurrency=1 --enable-gc \
-		--aggregate
-
-.PHONY: vet
-vet:
-	@echo TODO
-
-.PHONY: test
-test: $(GOPATH)/bin/overalls
-	$(GOPATH)/bin/overalls -project $(PACKAGENAME) -ignore .git,vendor,.cache
-	go tool cover -func overalls.coverprofile
-
-gccgo:
-	go build -v $(DEBUG) -compiler gccgo ./...
-
 .PHONY: version
 version:
 	@echo "$(VERSION)"
 	@echo "package cri\n// Version of LXE\nconst Version = \"$(VERSION)\"" | gofmt > cri/version.go
 
+.PHONY: build
+build: version
+	go build -v $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
+
+.PHONY: debug
+debug: version
+	go build -v -tags logdebug $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
+
+.PHONY: generate
+generate:
+	go mod tidy
+	go generate ./...
+
+# $(GOPATH)/bin/critest:
+# # 	go get -v -u "github.com/kubernetes-incubator/cri-tools/cmd/critest"
+# 	make -C $(GOPATH)/src/github.com/kubernetes-incubator/cri-tools critest
+
+.PHONY: test
+test:
+	go test ./... -coverprofile go.coverprofile
+	go tool cover -func go.coverprofile
+# | sed 's|^$(shell go list -m)/||'
+
+.PHONY: lint
+lint:
+	go mod download
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint run
+
 .PHONY: integration-test
 integration-test: critest
+
+.PHONY: clean
+clean: package-clean
+	rm -r bin || true
 
 .PHONY: checklxd
 checklxd:

@@ -1,13 +1,75 @@
+// nolint: dupl
 package device
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/juju/errors"
 )
 
 const (
-	proxyType = "proxy"
+	ProxyType = "proxy"
+)
+
+// Proxy device representation https://lxd.readthedocs.io/en/latest/containers/#type-proxy
+type Proxy struct {
+	KeyName     string
+	Listen      *ProxyEndpoint
+	Destination *ProxyEndpoint
+}
+
+func (d *Proxy) getName() string {
+	var name string
+
+	switch {
+	case d.KeyName != "":
+		name = d.KeyName
+	default:
+		name = fmt.Sprintf("%v-%v", ProxyType, d.Listen.String())
+	}
+
+	return name
+}
+
+// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+func (d *Proxy) ToMap() (string, map[string]string) {
+	return d.getName(), map[string]string{
+		"type":    ProxyType,
+		"listen":  d.Listen.String(),
+		"connect": d.Destination.String(),
+	}
+}
+
+// New creates a new empty device
+func (d *Proxy) new() Device {
+	return &Proxy{}
+}
+
+// FromMap loads assigned name (can be empty) and options
+func (d *Proxy) FromMap(name string, options map[string]string) error {
+	var err error
+
+	d.KeyName = name
+
+	d.Listen, err = NewProxyEndpoint(options["listen"])
+	if err != nil {
+		return err
+	}
+
+	d.Destination, err = NewProxyEndpoint(options["connect"])
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Protocol defines the type of a proxy endpoint
+type Protocol int
+
+const (
 	// ProtocolUndefined is not a valid protocol
 	ProtocolUndefined = Protocol(0)
 	// ProtocolTCP makes the endpoint use TCP
@@ -15,30 +77,6 @@ const (
 	// ProtocolUDP makes the endpoint use UDP
 	ProtocolUDP = Protocol(2)
 )
-
-// Proxies holds slice of Proxy
-// Use it if you want to Add() a entry non-conflicting (see Add())
-type Proxies []Proxy
-
-// Add a entry to the slice, if the name is the same, will overwrite the existing entry
-func (ps *Proxies) Add(p Proxy) {
-	for k, e := range *ps {
-		if e.GetName() == p.GetName() {
-			(*ps)[k] = p
-			return
-		}
-	}
-	*ps = append(*ps, p)
-}
-
-// Proxy defines a lxd proxy device
-type Proxy struct {
-	Listen      ProxyEndpoint
-	Destination ProxyEndpoint
-}
-
-// Protocol defines the type of a proxy endpoint
-type Protocol int
 
 var (
 	protMapNameVal = map[string]Protocol{
@@ -53,42 +91,12 @@ var (
 	}
 )
 
-// ToMap will serialize itself into a lxd device map
-func (p Proxy) ToMap() (map[string]string, error) {
-	return map[string]string{
-		"type":    proxyType,
-		"listen":  p.Listen.String(),
-		"connect": p.Destination.String(),
-	}, nil
-}
-
-// GetName will generate a uinique name for the device map
-func (p Proxy) GetName() string {
-	return proxyType + "-" + p.Listen.String()
-}
-
-// ProxyFromMap constructs a Proxy from provided map values
-func ProxyFromMap(dev map[string]string) (Proxy, error) {
-	l, err := NewProxyEndpoint(dev["listen"])
-	if err != nil {
-		return Proxy{}, err
-	}
-	d, err := NewProxyEndpoint(dev["connect"])
-	if err != nil {
-		return Proxy{}, err
-	}
-
-	return Proxy{
-		Listen:      l,
-		Destination: d,
-	}, nil
-}
-
 func newProtocol(str string) (Protocol, error) {
-	if i, has := protMapNameVal[str]; has && str != "undefined" {
+	if i, has := protMapNameVal[str]; has && str != protMapValName[ProtocolUndefined] {
 		return i, nil
 	}
-	return ProtocolUndefined, fmt.Errorf("unknown protocol, %v", str)
+
+	return ProtocolUndefined, errors.NotValidf("unknown protocol: %v", str)
 }
 
 func (p Protocol) String() string {
@@ -107,23 +115,23 @@ type ProxyEndpoint struct {
 // address: ip or empty
 // port: uiint16
 // TODO verify and document allowed format values
-func NewProxyEndpoint(str string) (ProxyEndpoint, error) {
+func NewProxyEndpoint(str string) (*ProxyEndpoint, error) {
 	parts := strings.Split(str, ":")
 	if len(parts) != 3 {
-		return ProxyEndpoint{}, fmt.Errorf("Proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
+		return nil, errors.NotValidf("proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
 	}
 
 	prot, err := newProtocol(parts[0])
 	if err != nil {
-		return ProxyEndpoint{}, err
+		return nil, err
 	}
 
 	port, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return ProxyEndpoint{}, fmt.Errorf("Port must be an int not %v", parts[2])
+		return nil, errors.NotValidf("port must be an int not %v", parts[2])
 	}
 
-	return ProxyEndpoint{
+	return &ProxyEndpoint{
 		Protocol: prot,
 		Address:  parts[1],
 		Port:     port,

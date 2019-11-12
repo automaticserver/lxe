@@ -7,8 +7,6 @@ import (
 	"github.com/lxc/lxd/shared/api"
 )
 
-// nolint: gosec #nosec (no sensitive data)
-
 const (
 	cfgIsCRI         = "user.cri"
 	cfgLabels        = "user.labels"
@@ -51,8 +49,10 @@ func IsCRI(i interface{}) bool {
 		return false
 	}
 
-	var val string
-	var has bool
+	var (
+		val string
+		has bool
+	)
 
 	switch o := i.(type) {
 	case api.Container:
@@ -75,5 +75,6 @@ func IsCRI(i interface{}) bool {
 	if err != nil {
 		return false
 	}
+
 	return is
 }

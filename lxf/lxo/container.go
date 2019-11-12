@@ -8,15 +8,21 @@ import (
 // StopContainer will try to stop the container with provided name.
 // It will retry for half a minute and return success when it's stopped.
 func (l *LXO) StopContainer(id string, timeout, retries int) error {
-	ETag := ""
-	var err error
-	for i := 1; i <= retries; i++ {
+	var (
+		err  error
+		etag string
+	)
+
+	for i := 0; i <= retries; i++ {
 		lxdReq := api.ContainerStatePut{
 			Action:  "stop",
 			Timeout: timeout,
 			Force:   i == retries,
 		}
-		op, err := l.server.UpdateContainerState(id, lxdReq, ETag)
+
+		var op lxd.Operation
+
+		op, err = l.server.UpdateContainerState(id, lxdReq, etag)
 		if err != nil {
 			return err
 		}
@@ -26,11 +32,11 @@ func (l *LXO) StopContainer(id string, timeout, retries int) error {
 			if err.Error() == "The container is already stopped" {
 				return nil
 			}
-			// else try again
 		} else {
 			return nil
 		}
 	}
+
 	return err
 }
 
@@ -42,6 +48,7 @@ func (l *LXO) StartContainer(id string) error {
 		Action:  "start",
 		Timeout: -1,
 	}
+
 	op, err := l.server.UpdateContainerState(id, lxdReq, ETag)
 	if err != nil {
 		return err
@@ -57,16 +64,18 @@ func (l *LXO) CreateContainer(container api.ContainersPost) error {
 	if err != nil {
 		return err
 	}
+
 	return op.Wait()
 }
 
 // UpdateContainer will create the container and wait till operation is done or
 // return an error
-func (l *LXO) UpdateContainer(id string, container api.ContainerPut, ETag string) error {
-	op, err := l.server.UpdateContainer(id, container, ETag)
+func (l *LXO) UpdateContainer(id string, container api.ContainerPut, etag string) error {
+	op, err := l.server.UpdateContainer(id, container, etag)
 	if err != nil {
 		return err
 	}
+
 	return op.Wait()
 }
 
@@ -77,16 +86,6 @@ func (l *LXO) DeleteContainer(id string) error {
 	if err != nil {
 		return err
 	}
-	return op.Wait()
-}
 
-// ExecContainer runs a command on a container and wait till operation is done or
-// return an error
-func (l *LXO) ExecContainer(id string, containerExec api.ContainerExecPost, execArgs *lxd.ContainerExecArgs) (lxd.Operation, error) {
-	op, err := l.server.ExecContainer(id, containerExec, execArgs)
-	if err != nil {
-		return op, err
-	}
-	err = op.Wait()
-	return op, err
+	return op.Wait()
 }

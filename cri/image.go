@@ -3,12 +3,11 @@ package cri
 import (
 	"time"
 
+	"github.com/automaticserver/lxe/lxf"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/logger"
-	"github.com/automaticserver/lxe/lxf"
 	"golang.org/x/net/context"
-
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
@@ -36,11 +35,14 @@ func NewImageServer(s *RuntimeServer, lxf *lxf.Client) (*ImageServer, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	i.lxdConfig, err = config.LoadConfig(configPath)
 	if err != nil {
 		return nil, err
 	}
+
 	i.lxdConfig.DefaultRemote = s.criConfig.LXDImageRemote
+
 	return &i, nil
 }
 
@@ -49,6 +51,7 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 	logger.Debugf("ListImages(%v) triggered", req)
 
 	response := &rtApi.ListImagesResponse{}
+
 	imglist, err := s.lxf.ListImages(req.GetFilter().GetImage().GetImage())
 	if err != nil {
 		logger.Errorf("Unable to list images, %v", err)
@@ -68,6 +71,7 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 	}
 
 	logger.Debugf("ListImages responded: %v", response)
+
 	return response, nil
 }
 
@@ -83,7 +87,9 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 		if lxf.IsImageNotFound(err) {
 			return &rtApi.ImageStatusResponse{}, nil
 		}
+
 		logger.Errorf("failed to get image status %v, %v", req.GetImage().GetImage(), err)
+
 		return nil, err
 	}
 
@@ -97,6 +103,7 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 	}}
 
 	logger.Debugf("ImageStatus responded: %v", response)
+
 	return response, nil
 }
 
@@ -119,6 +126,7 @@ func (s ImageServer) PullImage(ctx context.Context, req *rtApi.PullImageRequest)
 	}
 
 	logger.Debugf("PullImage responded: %v", response)
+
 	return response, nil
 }
 
@@ -137,6 +145,7 @@ func (s ImageServer) RemoveImage(ctx context.Context, req *rtApi.RemoveImageRequ
 	response := &rtApi.RemoveImageResponse{}
 
 	logger.Debugf("RemoveImage responded: %v", response)
+
 	return response, nil
 }
 
@@ -170,5 +179,6 @@ func (s ImageServer) ImageFsInfo(ctx context.Context, req *rtApi.ImageFsInfoRequ
 	})
 
 	logger.Debugf("ImageFsInfo responded: %v", response)
+
 	return response, nil
 }

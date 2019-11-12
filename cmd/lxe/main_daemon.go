@@ -35,24 +35,11 @@ func (c *cmdDaemon) Command() *cobra.Command {
 	cmd.Flags().IntVar(&c.flagPrintGoroutines, "print-goroutines", 0, "How often to print all the goroutines"+"``")
 
 	c.cmd = cmd
+
 	return cmd
 }
 
 func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
-
-	// TODO: apply for latest variant introduced by lxd
-	// Start debug activities as per command line flags, if any.
-	//stop, err := dbg.Start(
-	//dbg.CPU(c.flagCPUProfile),
-	//dbg.Memory(c.flagMemoryProfile),
-	//dbg.Goroutines(c.flagPrintGoroutines),
-	//)
-	//if err != nil {
-	//return err
-	//}
-
-	//defer stop()
-
 	daemonConf := cri.NewDaemonConfig(c.flagGroup, c.global.flagLogTrace)
 	d := cri.NewDaemon(daemonConf, &c.global.cri)
 
@@ -61,7 +48,7 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ch := make(chan os.Signal)
+	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGPWR)
 	signal.Notify(ch, syscall.SIGINT)
 	signal.Notify(ch, syscall.SIGQUIT)

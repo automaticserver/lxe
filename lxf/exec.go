@@ -1,118 +1,188 @@
 package lxf
 
 import (
-	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"strconv"
+	"time"
 
+	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
+	"github.com/lxc/lxd/shared/api"
 	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/logger"
+	"golang.org/x/sys/unix"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
-// ExecResponse returns the stdout and err from an exec call
-type ExecResponse struct {
-	StdOut []byte
-	StdErr []byte
-	Code   int
+var (
+	ErrExecTimeout     = errors.New("timeout reached")
+	ErrNoControlSocket = errors.New("no control socket found")
+
+	cancelSignal = unix.SIGTERM
+
+	CodeExecOk      int32 = 0
+	CodeExecError   int32 = 128
+	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // 128+15=143
+)
+
+// Exec will start a command on the server and attach the provided streams. It will block till the command terminated
+// AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
+func (l *Client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error) {
+	ses := &session{resize: resize}
+
+	req := lxdApi.ContainerExecPost{
+		Command:      cmd,
+		WaitForWS:    true,
+		Interactive:  interactive,
+		Environment:  map[string]string{"TERM": "xterm"},
+		Width:        80,
+		Height:       24,
+		RecordOutput: false,
+	}
+	args := &lxd.ContainerExecArgs{
+		Stdin:    stdin,
+		Stdout:   stdout,
+		Stderr:   stderr,
+		Control:  ses.controlHandler,
+		DataDone: make(chan bool),
+	}
+
+	op, err := l.server.ExecContainer(cid, req, args)
+	if err != nil {
+		return CodeExecError, err
+	}
+
+	var deadline <-chan time.Time
+	if timeout > 0 {
+		deadline = time.After(time.Duration(timeout) * time.Second)
+	}
+
+	select {
+	// Exit early if timeout is reached
+	case <-deadline:
+		err := ses.sendCancel()
+		if err != nil {
+			logger.Errorf("session control failed: %v", err)
+		}
+
+		return CodeExecTimeout, ErrExecTimeout
+
+	// Wait for any remaining I/O to be flushed
+	case <-args.DataDone:
+	}
+
+	// Wait for the operation to complete so we can get the return code
+	err = op.Wait()
+	if err != nil {
+		return CodeExecError, err
+	}
+
+	opAPI := op.Get()
+
+	exitCode, ok := opAPI.Metadata["return"].(float64)
+	if !ok {
+		return CodeExecError, fmt.Errorf("can't parse error code: %#v", opAPI.Metadata["return"])
+	}
+
+	return int32(exitCode), nil
 }
 
-// ExecSync runs a command on a container and blocks till it's finished
-func (l *Client) ExecSync(cid string, cmd []string) (*ExecResponse, error) {
-	tempStderr := NewWriteCloserBuffer()
-	tempStdout := NewWriteCloserBuffer()
-
-	dataDone := make(chan bool)
-
-	op, err := l.opwait.ExecContainer(cid, lxdApi.ContainerExecPost{
-		Command:     cmd,
-		Interactive: false,
-		Width:       0,
-		Height:      0,
-		WaitForWS:   true,
-	}, &lxd.ContainerExecArgs{
-		Stderr:   tempStderr,
-		Stdout:   tempStdout,
-		Stdin:    ioutil.NopCloser(bytes.NewReader(nil)),
-		DataDone: dataDone,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	ret, has := op.Get().Metadata["return"].(float64)
-	if !has {
-		return nil, fmt.Errorf("exec sync could not read the return code")
-	}
-
-	<-dataDone // wait till all data is written (stdout, stderr)
-
-	return &ExecResponse{
-		StdErr: tempStderr.Bytes(),
-		StdOut: tempStdout.Bytes(),
-		Code:   int(ret),
-	}, nil
+type session struct {
+	resize  <-chan remotecommand.TerminalSize
+	control *websocket.Conn
 }
 
-// Exec will start a command on the server and attach the provided
-// streams. It will block till the command terminated
-// AND all data was written to stdout/stdin. The caller is responsible
-// to provide a sink which doesn't block.
-func (l *Client) Exec(cid string, cmd []string,
-	stdin io.Reader, stdout, stderr io.WriteCloser) (int, error) {
+func (s *session) controlHandler(control *websocket.Conn) {
+	s.control = control
 
-	// we get io.Reader interface from the kubelet but lxd wants ReadCloser interface
-	var stdinCloser io.ReadCloser
-	// kubelet might give us stdin==nil but lxd expects something there otherwise it will segfault
-	if stdin == nil {
-		stdinCloser = ioutil.NopCloser(bytes.NewBufferString(""))
-	} else {
-		stdinCloser = ioutil.NopCloser(stdin)
+	go s.listenResize()
+}
+
+func (s *session) listenResize() {
+	for r := range s.resize {
+		err := s.sendResize(r)
+		if err != nil {
+			logger.Errorf("session control failed: %v", err)
+		}
+	}
+}
+
+func (s *session) sendResize(r remotecommand.TerminalSize) error {
+	width := strconv.FormatUint(uint64(r.Width), 10)
+	height := strconv.FormatUint(uint64(r.Height), 10)
+
+	logger.Debugf("session control window size is now: %vx%v", width, height)
+
+	if s.control == nil {
+		return ErrNoControlSocket
 	}
 
-	environment := map[string]string{
-		"TERM": "xterm",
-	}
-
-	dataDone := make(chan bool)
-
-	// TODO: Is no op.Wait() intentional?
-	_, err := l.server.ExecContainer(cid,
-		lxdApi.ContainerExecPost{
-			Command:      cmd,
-			WaitForWS:    true,
-			Interactive:  (stdin != nil), // if there is no stdin, exec won't be interactive
-			Environment:  environment,
-			Width:        80,
-			Height:       24,
-			RecordOutput: false,
-		}, &lxd.ContainerExecArgs{
-			Stdin:    stdinCloser,
-			Stdout:   stdout,
-			Stderr:   stderr,
-			Control:  nil,
-			DataDone: dataDone,
-		})
+	w, err := s.control.NextWriter(websocket.TextMessage)
 	if err != nil {
-		return 1, err
+		return err
 	}
 
-	<-dataDone
-	// we close as soon as connections are terminated and all data got sent
-	// it seems they won't be closed automatically but i'm not sure if i miss something
-	if stdout != nil {
-		err = stdout.Close()
-		if err != nil {
-			return 0, err
-		}
-	}
-	if stderr != nil {
-		err = stderr.Close()
-		if err != nil {
-			return 0, err
-		}
+	msg := api.ContainerExecControl{}
+	msg.Command = "window-resize"
+	msg.Args = make(map[string]string)
+	msg.Args["width"] = width
+	msg.Args["height"] = height
+
+	buf, err := json.Marshal(msg)
+	if err != nil {
+		return err
 	}
 
-	// do not wait for operation, it will wait till command finished executing
-	return 0, nil
+	_, err = w.Write(buf)
+	if err != nil {
+		return err
+	}
+
+	err = w.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *session) sendCancel() error {
+	logger.Debugf("timeout reached, force closing of connection")
+
+	if s.control == nil {
+		return ErrNoControlSocket
+	}
+
+	// TODO: In noninteractive mode this doesn't stop the command from executing, whatever signal it is set to
+	sig := cancelSignal
+
+	logger.Debugf("forwarding signal: %s", sig)
+
+	w, err := s.control.NextWriter(websocket.TextMessage)
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+
+	msg := api.ContainerExecControl{}
+	msg.Command = "signal"
+	msg.Signal = int(sig)
+
+	buf, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(buf)
+	if err != nil {
+		return err
+	}
+
+	closeMsg := websocket.FormatCloseMessage(websocket.CloseGoingAway, "timeout reached")
+	err = s.control.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(1*time.Second))
+
+	return err
 }

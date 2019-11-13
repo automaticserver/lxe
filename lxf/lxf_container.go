@@ -272,7 +272,7 @@ func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
 
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
-		netw, err := l.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, c.ID, nil)
+		netw, err := l.network.PodNetwork(s.ID, nil)
 		if err != nil {
 			logger.Errorf("unable to open PodNetwork for container %v, %v", c.ID, err)
 			return
@@ -283,10 +283,22 @@ func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
 			result = []byte(res)
 		}
 
-		err = netw.Attach(context.TODO(), result, st.Pid)
+		result, err = netw.AttachPid(context.TODO(), result, st.Pid)
 		if err != nil {
 			logger.Errorf("unable to attach CNI interface to container %v: %v", c.ID, err)
+			return
 		}
+
+		if len(result) > 0 {
+			s.NetworkConfig.ModeData = map[string]string{
+				"result": string(result),
+			}
+		}
+	}
+
+	err = s.apply()
+	if err != nil {
+		logger.Errorf("unable to save sandbox %v: %v", s.ID, err)
 	}
 }
 

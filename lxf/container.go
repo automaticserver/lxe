@@ -306,7 +306,7 @@ func (c *Container) releaseNetworkingResources() error {
 
 	switch s.NetworkConfig.Mode { // nolint: gocritic
 	case NetworkCNI:
-		netw, err := c.client.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, c.ID, nil)
+		netw, err := c.client.network.PodNetwork(s.ID, nil)
 		if err != nil {
 			return err
 		}
@@ -316,13 +316,13 @@ func (c *Container) releaseNetworkingResources() error {
 			result = []byte(res)
 		}
 
-		err = netw.Attach(context.TODO(), result, 0)
+		err = netw.DetachPid(context.TODO(), result)
 		if err != nil {
 			return err
 		}
 	}
 
-	return nil
+	return s.apply()
 }
 
 // validate checks for misconfigurations

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 	"testing"
@@ -14,9 +15,10 @@ import (
 )
 
 var (
-	testCNIDir      string
-	testCNIbinPath  string = defaultCNIbinPath
-	testCNIconfPath string
+	testCNIDir       string
+	testCNIbinPath   string = defaultCNIbinPath
+	testCNIconfPath  string
+	testCNInetnsPath string = defaultCNInetnsPath
 
 	ctx = context.TODO()
 )
@@ -74,7 +76,7 @@ func TestInitPluginCNI(t *testing.T) {
 		wantErr bool
 	}{
 		{"defaults", args{ConfCNI{}}, false},
-		{"testing", args{ConfCNI{testCNIbinPath, testCNIconfPath}}, false},
+		{"testing", args{ConfCNI{testCNIbinPath, testCNIconfPath, testCNInetnsPath}}, false},
 	}
 
 	for _, tt := range tests {
@@ -91,15 +93,13 @@ func TestInitPluginCNI(t *testing.T) {
 func testCNIPlugin(t *testing.T) *cniPlugin {
 	t.Log("testCNIDir", testCNIDir)
 
-	cniPlugin, err := InitPluginCNI(ConfCNI{testCNIbinPath, testCNIconfPath})
+	cniPlugin, err := InitPluginCNI(ConfCNI{testCNIbinPath, testCNIconfPath, testCNInetnsPath})
 	assert.NoError(t, err)
 
 	return cniPlugin
 }
 
-func toFakeCniPlugin(t *testing.T, cniPlugin *cniPlugin) *libcnifake.FakeCNI {
-	t.Log("dumy")
-
+func toFakeCniPlugin(_ *testing.T, cniPlugin *cniPlugin) *libcnifake.FakeCNI {
 	fake := &libcnifake.FakeCNI{}
 	cniPlugin.cni = fake
 
@@ -109,8 +109,6 @@ func toFakeCniPlugin(t *testing.T, cniPlugin *cniPlugin) *libcnifake.FakeCNI {
 func Test_cniPlugin_PodNetwork(t *testing.T) {
 	cniPlugin := testCNIPlugin(t)
 	type args struct {
-		namespace   string
-		name        string
 		id          string
 		annotations map[string]string
 	}
@@ -120,13 +118,13 @@ func Test_cniPlugin_PodNetwork(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"", args{"default", "nginx", "foo", nil}, false},
+		{"", args{"foo", nil}, false},
 	}
 
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := cniPlugin.PodNetwork(tt.args.namespace, tt.args.name, tt.args.id, tt.args.annotations)
+			got, err := cniPlugin.PodNetwork(tt.args.id, tt.args.annotations)
 			pn := got.(*cniPodNetwork)
 			fmt.Print(err)
 			assert.False(t, (err != nil) != tt.wantErr)
@@ -136,27 +134,30 @@ func Test_cniPlugin_PodNetwork(t *testing.T) {
 	}
 }
 
-func Test_cniPodNetwork_Setup(t *testing.T) {
+func Test_cniPodNetwork_Attach(t *testing.T) {
 	testNeedsRoot(t)
 	cniPlugin := testCNIPlugin(t)
-	podNetwork, err := cniPlugin.PodNetwork("default", "nginx", "foo", nil)
+	podNetwork, err := cniPlugin.PodNetwork("test_attach", nil)
 	assert.NoError(t, err)
 	fake := toFakeCniPlugin(t, cniPlugin)
 
-	_, err = podNetwork.Setup(ctx, 0)
+	_, err = podNetwork.AttachPid(ctx, nil, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, fake.AddNetworkListCallCount())
+
+	out, err := exec.Command("ip", "netns", "delete", "test_attach").CombinedOutput()
+	assert.NoError(t, err, string(out))
 }
 
 func Test_cniPodNetwork_Teardown_MissingNetwork(t *testing.T) {
 	testNeedsRoot(t)
 	cniPlugin := testCNIPlugin(t)
-	podNetwork, err := cniPlugin.PodNetwork("default", "nginx", "foo", nil)
+	podNetwork, err := cniPlugin.PodNetwork("test_teardown_missingnetwork", nil)
 	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
 	// CRI DelNetwork always tries to remove as good as possible without throwing error
-	err = podNetwork.Teardown(ctx, nil, 0)
+	err = podNetwork.DetachPid(ctx, nil)
 	assert.NoError(t, err)
 	//assert.Equal(t, 1, fake.DelNetworkListCallCount())
 } // nolint: wsl
@@ -164,11 +165,11 @@ func Test_cniPodNetwork_Teardown_MissingNetwork(t *testing.T) {
 func Test_cniPodNetwork_Status_MissingNetwork(t *testing.T) {
 	testNeedsRoot(t)
 	cniPlugin := testCNIPlugin(t)
-	podNetwork, err := cniPlugin.PodNetwork("default", "nginx", "foo", nil)
+	podNetwork, err := cniPlugin.PodNetwork("test_status_missingnetwork", nil)
 	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
-	got, err := podNetwork.Status(ctx, nil, 0)
+	got, err := podNetwork.StatusPid(ctx, nil, 0)
 	assert.Error(t, err)
 	assert.Nil(t, got)
 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())
@@ -177,40 +178,19 @@ func Test_cniPodNetwork_Status_MissingNetwork(t *testing.T) {
 func Test_cniPodNetwork_Status_WithNetwork(t *testing.T) {
 	testNeedsRoot(t)
 	cniPlugin := testCNIPlugin(t)
-	podNetwork, err := cniPlugin.PodNetwork("default", "nginx", "foo", nil)
+	podNetwork, err := cniPlugin.PodNetwork("test_status_withnetwork", nil)
 	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
-	_, err = podNetwork.Setup(ctx, 0)
+	_, err = podNetwork.AttachPid(ctx, nil, 0)
 	assert.NoError(t, err)
 	//assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
-	got, err := podNetwork.Status(ctx, nil, 0)
+	got, err := podNetwork.StatusPid(ctx, []byte(`{"cniVersion":"0.4.0","ips":[{"version":"4","interface":2,"address":"10.22.0.64/16","gateway":"10.22.0.1"}]}`), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, got)
 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())
-} // nolint: wsl
 
-// func Test_parseIPAddrShow(t *testing.T) {
-// 	type args struct {
-// 		output []byte
-// 	}
-// 	tests := []struct {
-// 		name    string
-// 		args    args
-// 		want    []net.IP
-// 		wantErr bool
-// 	}{
-// 		{"", args{[]byte("eth0   UP     10.10.100.169/24 ")}, []net.IP{net.ParseIP("10.10.100.169")}, false},
-// 		{"", args{[]byte("eth0   DOWN   10.10.100.169/24")}, []net.IP{net.ParseIP("10.10.100.169")}, false},
-// 		{"", args{[]byte("10.10.100.169/24")}, nil, true},
-// 		{"", args{[]byte("2: eth0    inet 10.10.100.169/24 brd 10.10.100.255 scope global dynamic noprefixroute eth0")}, nil, true},
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			got, err := parseIPAddrShow(tt.args.output)
-// 			assert.False(t, (err != nil) != tt.wantErr)
-// 			assert.Equal(t, tt.want, got)
-// 		})
-// 	}
-// }
+	out, err := exec.Command("ip", "netns", "delete", "test_status_withnetwork").CombinedOutput()
+	assert.NoError(t, err, string(out))
+}

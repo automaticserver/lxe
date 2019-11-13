@@ -254,21 +254,25 @@ func (s *Sandbox) Apply() error {
 		return err
 	}
 
+	// TODO apply is on the wrong place for initializing network
+
 	// Apply defined network mode post save (actually I think in the future theres a pod pid at this point)
 	switch s.NetworkConfig.Mode { // nolint: gocritic // keep switch here even with one case
 	case NetworkCNI:
-		podNet, err := s.client.network.PodNetwork(s.Metadata.Namespace, s.Metadata.Name, s.ID, nil)
+		podNet, err := s.client.network.PodNetwork(s.ID, nil)
 		if err != nil {
 			return err
 		}
 
-		result, err := podNet.Setup(context.TODO(), 0)
+		result, err := podNet.SetupPid(context.TODO(), 0)
 		if err != nil {
 			return err
 		}
 
-		s.NetworkConfig.ModeData = map[string]string{
-			"result": string(result),
+		if len(result) > 0 {
+			s.NetworkConfig.ModeData = map[string]string{
+				"result": string(result),
+			}
 		}
 	}
 

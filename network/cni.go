@@ -2,8 +2,11 @@ package network
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
+	"os/exec"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,14 +17,16 @@ import (
 )
 
 const (
-	defaultCNIbinPath  = "/opt/cni/bin"
-	defaultCNIconfPath = "/etc/cni/net.d"
+	defaultCNIbinPath   = "/opt/cni/bin"
+	defaultCNIconfPath  = "/etc/cni/net.d"
+	defaultCNInetnsPath = "/run/netns"
 )
 
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value
 type ConfCNI struct {
-	BinPath  string
-	ConfPath string
+	BinPath   string
+	ConfPath  string
+	NetnsPath string
 }
 
 func (c *ConfCNI) setDefaults() {
@@ -31,6 +36,10 @@ func (c *ConfCNI) setDefaults() {
 
 	if c.ConfPath == "" {
 		c.ConfPath = defaultCNIconfPath
+	}
+
+	if c.NetnsPath == "" {
+		c.NetnsPath = defaultCNInetnsPath
 	}
 }
 
@@ -52,13 +61,13 @@ func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // inte
 }
 
 // PodNetwork enters a pod network environment context
-func (c *cniPlugin) PodNetwork(namespace, name, id string, annotations map[string]string) (PodNetwork, error) {
+func (c *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNetwork, error) {
 	netList, warnings, err := c.getCNINetworkConfig()
 	if err != nil {
 		return nil, errors.Append(err, warnings)
 	}
 
-	runtimeConf := c.getCNIRuntimeConf(namespace, name, id)
+	runtimeConf := c.getCNIRuntimeConf(id)
 
 	return &cniPodNetwork{
 		plugin:      c,
@@ -130,7 +139,7 @@ func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 }
 
 // getRuntimeConf returns common libcni runtime conf used to interact with the cni
-func (c *cniPlugin) getCNIRuntimeConf(_ string, _ string, id string) *libcni.RuntimeConf {
+func (c *cniPlugin) getCNIRuntimeConf(id string) *libcni.RuntimeConf {
 	return &libcni.RuntimeConf{
 		ContainerID: id,
 		NetNS:       "",
@@ -148,53 +157,73 @@ func (c *cniPlugin) getCNIRuntimeConf(_ string, _ string, id string) *libcni.Run
 // cniPodNetwork is a pod network environment context. It handles the pod network by creating a netns and interfaces for
 // the pod
 type cniPodNetwork struct {
-	plugin      *cniPlugin
-	netList     *libcni.NetworkConfigList
-	runtimeConf *libcni.RuntimeConf
-	annotations map[string]string
+	DeviceHandler // noop
+	plugin        *cniPlugin
+	netList       *libcni.NetworkConfigList
+	runtimeConf   *libcni.RuntimeConf
+	annotations   map[string]string
 }
 
-// Setup creates the network for that pod and the result is saved. pid is the process id of the pod.
-func (c *cniPodNetwork) Setup(ctx context.Context, _ int64) ([]byte, error) {
+// SetupPid creates the network for that pod. pid is the process id of the pod. The retured result bytes are provided
+// for the other calls of this PodNetwork.
+func (c *cniPodNetwork) SetupPid(_ context.Context, _ int64) ([]byte, error) {
 	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
 	return nil, nil
 }
 
-// Teardown removes the network of that pod. pid is the process id of the pod, but might be missing. Must tear down
-// networking as good as possible, an error will only be logged and doesn't stop execution of further statements
-func (c *cniPodNetwork) Teardown(ctx context.Context, _ []byte, _ int64) error {
+// TeardownPid removes the network of that pod. Must tear down networking as good as possible, an error will only be
+// logged and doesn't stop execution of further statements.
+func (c *cniPodNetwork) TeardownPid(_ context.Context, _ []byte) error {
 	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
 	return nil
 }
 
-// Attach a container to the pod network. pid is the process id of the container.
-func (c *cniPodNetwork) Attach(ctx context.Context, _ []byte, pid int64) error {
-	c.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
-	_, err := c.plugin.cni.AddNetworkList(ctx, c.netList, c.runtimeConf)
+// AttachPid attaches a container to the pod network. pid is the process id of the container. Can return arbitrary
+// bytes or nic devices or both. The retured result bytes replace the existing one if provided.
+func (c *cniPodNetwork) AttachPid(ctx context.Context, _ []byte, pid int64) ([]byte, error) {
+	if pid == 0 {
+		cID := c.runtimeConf.ContainerID
 
-	return err
-}
+		out, err := exec.Command("ip", "netns", "add", cID).CombinedOutput()
+		if err != nil {
+			return nil, errors.Wrap(err, string(out))
+		}
 
-// Detach a container from the pod network. pid is the process id of the container, but might be missing. Must detach
-// networking as good as possible, an error will only be logged and doesn't stop execution of further statements
-func (c *cniPodNetwork) Detach(ctx context.Context, _ []byte, pid int64) error {
-	c.runtimeConf.NetNS = ""
-	if pid != 0 {
+		defer exec.Command("ip", "netns", "delete", cID) // nolint: errcheck
+
+		c.runtimeConf.NetNS = filepath.Join(c.plugin.conf.NetnsPath, cID)
+	} else {
 		c.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
 	}
 
-	return c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
-}
-
-// Status reports IP and any error with the network of that pod. Bytes can be nil if LXE thinks it never ran Setup and
-// thus also pid is not set
-func (c *cniPodNetwork) Status(ctx context.Context, _ []byte, _ int64) (*PodNetworkStatus, error) {
-	resultCached, err := c.plugin.cni.GetNetworkListCachedResult(c.netList, c.runtimeConf)
+	result, err := c.plugin.cni.AddNetworkList(ctx, c.netList, c.runtimeConf)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := current.GetResult(resultCached)
+	return json.Marshal(result)
+}
+
+// DetachPid detaches a container from the pod network. Must detach networking as good as possible, an error will only
+// be logged and doesn't stop execution of further statements.
+func (c *cniPodNetwork) DetachPid(ctx context.Context, _ []byte) error {
+	c.runtimeConf.NetNS = ""
+	return c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
+}
+
+// StatusPid reports IP and any error with the network of that pod. Bytes can be nil if LXE thinks it never ran Setup
+// and thus also pid is not set or weren't returned yet.
+func (c *cniPodNetwork) StatusPid(ctx context.Context, previousresult []byte, _ int64) (*PodNetworkStatus, error) {
+	if previousresult == nil {
+		previousresult = []byte{}
+	}
+
+	resultInit, err := current.NewResult(previousresult)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := current.GetResult(resultInit)
 	if err != nil {
 		return nil, err
 	}

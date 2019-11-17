@@ -6,21 +6,20 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
-	"github.com/automaticserver/lxe/network"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
 type Client struct {
-	server  lxd.ContainerServer
-	config  *config.Config
-	opwait  *lxo.LXO
-	network network.Plugin
+	server       lxd.ContainerServer
+	config       *config.Config
+	opwait       *lxo.LXO
+	eventHandler EventHandler
 }
 
 // NewClient will set up a connection and return the client
-func NewClient(socket string, configPath string, network network.Plugin) (*Client, error) {
+func NewClient(socket string, configPath string) (*Client, error) {
 	args := lxd.ConnectionArgs{
 		HTTPClient: &http.Client{
 			// this was a byproduct of a bughunt, but i figured using TCP connections with TLS instead of unix sockets
@@ -96,10 +95,9 @@ func NewClient(socket string, configPath string, network network.Plugin) (*Clien
 	}
 
 	client := &Client{
-		server:  server,
-		config:  config,
-		opwait:  lxo.NewClient(server),
-		network: network,
+		server: server,
+		config: config,
+		opwait: lxo.NewClient(server),
 	}
 
 	// register LXD eventhandler
@@ -114,6 +112,17 @@ func NewClient(socket string, configPath string, network network.Plugin) (*Clien
 	}
 
 	return client, nil
+}
+
+// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
+// network plugin) either return it here, or extract creation of the connection outside and pass server into
+// NewClient(), but that makes the initialisation NewClient() pretty unnecessary
+func (l *Client) GetServer() lxd.ContainerServer {
+	return l.server
+}
+
+func (l *Client) SetEventHandler(eh EventHandler) {
+	l.eventHandler = eh
 }
 
 type runtimeInfo struct {

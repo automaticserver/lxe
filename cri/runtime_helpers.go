@@ -9,7 +9,9 @@ import (
 
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/network"
 	"github.com/lxc/lxd/shared"
+	"golang.org/x/net/context"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
@@ -214,14 +216,14 @@ func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
 	return nil
 }
 
-func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
+func (s RuntimeServer) deleteContainers(ctx context.Context, sb *lxf.Sandbox) error {
 	cl, err := sb.Containers()
 	if err != nil {
 		return err
 	}
 
 	for _, c := range cl {
-		err = s.deleteContainer(c)
+		err = s.deleteContainer(ctx, c)
 		if err != nil {
 			return err
 		}
@@ -230,7 +232,7 @@ func (s RuntimeServer) deleteContainers(sb *lxf.Sandbox) error {
 	return nil
 }
 
-func (s RuntimeServer) deleteContainer(c *lxf.Container) error {
+func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) error {
 	err := c.Delete()
 	if err != nil {
 		if lxf.IsContainerNotFound(err) {
@@ -238,6 +240,96 @@ func (s RuntimeServer) deleteContainer(c *lxf.Container) error {
 		}
 
 		return err
+	}
+
+	sb, err := c.Sandbox()
+	if err != nil {
+		return err
+	}
+
+	// remove network
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
+			contNet, err := podNet.ContainerNetwork(c.ID, nil)
+			if err == nil { // dito
+				_ = contNet.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+			}
+		}
+	}
+
+	return nil
+}
+
+// ContainerStarted implements lxf.EventHandler interface
+func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) error {
+	sb, err := c.Sandbox()
+	if err != nil {
+		return err
+	}
+
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		st, err := c.State()
+		if err != nil {
+			return err
+		}
+
+		netw, err := s.network.PodNetwork(sb.ID, nil)
+		if err != nil {
+			return err
+		}
+
+		res, err := netw.WhenStarted(ctx, &network.PropertiesRunning{
+			Properties: network.Properties{
+				Data: sb.NetworkConfig.ModeData,
+			},
+			Pid: st.Pid,
+		})
+		if err != nil {
+			return err
+		}
+
+		return s.handleNetworkResult(sb, res)
+	}
+
+	return nil
+}
+
+// ContainerStopped implements lxf.EventHandler interface
+func (s *RuntimeServer) ContainerStopped(ctx context.Context, c *lxf.Container) error {
+	sb, err := c.Sandbox()
+	if err != nil {
+		return err
+	}
+
+	// stop network
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
+			contNet, err := podNet.ContainerNetwork(c.ID, nil)
+			if err == nil { // dito
+				_ = contNet.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *RuntimeServer) handleNetworkResult(sb *lxf.Sandbox, res *network.Result) error {
+	if res != nil {
+		if len(res.Data) > 0 {
+			sb.NetworkConfig.ModeData = res.Data
+		}
+
+		for _, n := range res.Nics {
+			n := n
+			sb.Devices.Upsert(&n)
+		}
+
+		sb.CloudInitNetworkConfigEntries = append(sb.CloudInitNetworkConfigEntries, res.NetworkConfigEntries...)
+
+		return sb.Apply()
 	}
 
 	return nil

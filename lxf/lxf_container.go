@@ -213,6 +213,11 @@ func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error)
 	return c, nil
 }
 
+type EventHandler interface {
+	ContainerStarted(ctx context.Context, c *Container) error
+	ContainerStopped(ctx context.Context, c *Container) error
+}
+
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
 func (l *Client) lifecycleEventHandler(event api.Event) {
 	// we should always only get lifecycle events due to the handler setup but just in case ...
@@ -251,60 +256,16 @@ func (l *Client) lifecycleEventHandler(event api.Event) {
 
 	switch eventLifecycle.Action {
 	case "container-started":
-		l.containerStartedEvent(c, event)
+		err := l.eventHandler.ContainerStarted(context.TODO(), c)
+		if err != nil {
+			logger.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
+			return
+		}
 	case "container-stopped":
-		l.containerStoppedEvent(c, event)
-	}
-}
-
-func (l *Client) containerStartedEvent(c *Container, _ api.Event) {
-	s, err := c.Sandbox()
-	if err != nil {
-		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", c.ID, err)
-		return
-	}
-
-	st, err := c.State()
-	if err != nil {
-		logger.Errorf("lifecycle: ContainerID %v trying to get sandbox: %v", c.ID, err)
-		return
-	}
-
-	switch s.NetworkConfig.Mode { // nolint: gocritic
-	case NetworkCNI:
-		netw, err := l.network.PodNetwork(s.ID, nil)
+		err := l.eventHandler.ContainerStopped(context.TODO(), c)
 		if err != nil {
-			logger.Errorf("unable to open PodNetwork for container %v, %v", c.ID, err)
+			logger.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
 			return
 		}
-
-		var result []byte
-		if res, ok := s.NetworkConfig.ModeData["result"]; ok {
-			result = []byte(res)
-		}
-
-		result, err = netw.AttachPid(context.TODO(), result, st.Pid)
-		if err != nil {
-			logger.Errorf("unable to attach CNI interface to container %v: %v", c.ID, err)
-			return
-		}
-
-		if len(result) > 0 {
-			s.NetworkConfig.ModeData = map[string]string{
-				"result": string(result),
-			}
-		}
-	}
-
-	err = s.apply()
-	if err != nil {
-		logger.Errorf("unable to save sandbox %v: %v", s.ID, err)
-	}
-}
-
-func (l *Client) containerStoppedEvent(c *Container, _ api.Event) {
-	err := c.releaseNetworkingResources()
-	if err != nil {
-		logger.Errorf("unable to detach CNI interface from container %v: %v", c.ID, err)
 	}
 }

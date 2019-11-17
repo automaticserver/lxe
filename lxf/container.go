@@ -1,7 +1,6 @@
 package lxf
 
 import (
-	"context"
 	"crypto/md5" // nolint: gosec
 	"fmt"
 	"math"
@@ -283,9 +282,6 @@ func (c *Container) Stop(timeout int) error {
 // Delete the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
 func (c *Container) Delete() error {
-	// Try to release networking resources, don't throw error if something went wrong
-	_ = c.releaseNetworkingResources()
-
 	err := c.client.opwait.DeleteContainer(c.ID)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
@@ -296,33 +292,6 @@ func (c *Container) Delete() error {
 	}
 
 	return nil
-}
-
-func (c *Container) releaseNetworkingResources() error {
-	s, err := c.Sandbox()
-	if err != nil {
-		return err
-	}
-
-	switch s.NetworkConfig.Mode { // nolint: gocritic
-	case NetworkCNI:
-		netw, err := c.client.network.PodNetwork(s.ID, nil)
-		if err != nil {
-			return err
-		}
-
-		var result []byte
-		if res, ok := s.NetworkConfig.ModeData["result"]; ok {
-			result = []byte(res)
-		}
-
-		err = netw.DetachPid(context.TODO(), result)
-		if err != nil {
-			return err
-		}
-	}
-
-	return s.apply()
 }
 
 // validate checks for misconfigurations

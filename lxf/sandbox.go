@@ -1,7 +1,6 @@
 package lxf
 
 import (
-	"context"
 	"crypto/md5" // nolint: gosec
 	"fmt"
 	"strconv"
@@ -9,11 +8,10 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/network"
+	"github.com/automaticserver/lxe/network/cloudinit"
 	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
-	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
 
@@ -73,6 +71,8 @@ type Sandbox struct {
 	State SandboxState
 	// LogDirectory TODO, to be implemented?
 	LogDirectory string
+	// CloudInitNetworkConfigEntries to set
+	CloudInitNetworkConfigEntries []cloudinit.NetworkConfigEntryPhysical
 
 	// sandbox is the parent sandbox of this container
 	containers []*Container
@@ -146,36 +146,6 @@ func getSandboxState(str string) SandboxState {
 	return SandboxReady
 }
 
-// networkConfigData is used as root element to serialize to cloud config
-type networkConfigData struct {
-	Version int           `json:"version"`
-	Config  []interface{} `json:"config"`
-}
-
-// NetworkConfigEntry is an entry in the v1 network config
-type NetworkConfigEntry struct {
-	Type string `json:"type"`
-}
-
-// NetworkConfigEntryNameserver is a nameserver entry
-type NetworkConfigEntryNameserver struct {
-	NetworkConfigEntry
-	Address []string `json:"address"`
-	Search  []string `json:"search"`
-}
-
-// NetworkConfigEntryPhysical is a nameserver entry
-type NetworkConfigEntryPhysical struct {
-	NetworkConfigEntry
-	Name    string                             `json:"name"`
-	Subnets []NetworkConfigEntryPhysicalSubnet `json:"subnets"`
-}
-
-// NetworkConfigEntryPhysicalSubnet is a subnet entry in the v1 network config of a physical device
-type NetworkConfigEntryPhysicalSubnet struct {
-	Type string `json:"type"`
-}
-
 // Containers looks up all assigned containers
 // Implemented as lazy loading, and returns same result if already looked up
 // Not thread safe! But it's expected the pointers stay in the same routine
@@ -233,50 +203,12 @@ func (s *Sandbox) Apply() error {
 		KeyName: lxdInitDefaultNicName,
 	})
 
-	// Apply defined network mode
-	switch s.NetworkConfig.Mode { // nolint: gocritic
-	case NetworkBridged:
-		s.Devices.Upsert(&device.Nic{
-			Name:        network.DefaultInterface,
-			NicType:     "bridged",
-			Parent:      s.NetworkConfig.ModeData["bridge"],
-			IPv4Address: s.NetworkConfig.ModeData["interface-address"],
-		})
-	}
-
 	err := s.apply()
 	if err != nil {
 		return err
 	}
 
-	err = s.refresh()
-	if err != nil {
-		return err
-	}
-
-	// TODO apply is on the wrong place for initializing network
-
-	// Apply defined network mode post save (actually I think in the future theres a pod pid at this point)
-	switch s.NetworkConfig.Mode { // nolint: gocritic // keep switch here even with one case
-	case NetworkCNI:
-		podNet, err := s.client.network.PodNetwork(s.ID, nil)
-		if err != nil {
-			return err
-		}
-
-		result, err := podNet.SetupPid(context.TODO(), 0)
-		if err != nil {
-			return err
-		}
-
-		if len(result) > 0 {
-			s.NetworkConfig.ModeData = map[string]string{
-				"result": string(result),
-			}
-		}
-	}
-
-	return s.apply()
+	return s.refresh()
 }
 
 // Stop set the sandbox state to SandboxNotReady
@@ -342,49 +274,32 @@ func (s *Sandbox) apply() error {
 		}
 	}
 
+	data := cloudinit.NetworkConfig{
+		Version: 1,
+		Config:  []interface{}{},
+	}
 	// write cloud-init network config
 	if len(s.NetworkConfig.Nameservers) > 0 &&
 		len(s.NetworkConfig.Searches) > 0 {
-		data := networkConfigData{
-			Version: 1,
-			Config: []interface{}{
-				NetworkConfigEntryNameserver{
-					NetworkConfigEntry: NetworkConfigEntry{
-						Type: "nameserver",
-					},
-					Address: s.NetworkConfig.Nameservers,
-					Search:  s.NetworkConfig.Searches,
-				},
+		data.Config = append(data.Config, cloudinit.NetworkConfigEntryNameserver{
+			NetworkConfigEntry: cloudinit.NetworkConfigEntry{
+				Type: "nameserver",
 			},
-		}
-
-		if s.NetworkConfig.Mode == NetworkBridged {
-			// because added later, if physical-type is empty, it is dhcp
-			if s.NetworkConfig.ModeData["physical-type"] == "" {
-				s.NetworkConfig.ModeData["physical-type"] = "dhcp"
-			}
-
-			entry := NetworkConfigEntryPhysical{
-				NetworkConfigEntry: NetworkConfigEntry{
-					Type: "physical",
-				},
-				Name: network.DefaultInterface,
-				Subnets: []NetworkConfigEntryPhysicalSubnet{
-					{
-						Type: s.NetworkConfig.ModeData["physical-type"],
-					},
-				},
-			}
-			data.Config = append(data.Config, entry)
-		}
-
-		yml, err := yaml.Marshal(data)
-		if err != nil {
-			return err
-		}
-
-		config[cfgCloudInitNetworkConfig] = string(yml)
+			Address: s.NetworkConfig.Nameservers,
+			Search:  s.NetworkConfig.Searches,
+		})
 	}
+
+	for _, entry := range s.CloudInitNetworkConfigEntries {
+		data.Config = append(data.Config, entry)
+	}
+
+	yml, err = yaml.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	config[cfgCloudInitNetworkConfig] = string(yml)
 
 	// write cloud-init vendor data if we have hostname and search
 	if s.Hostname != "" {
@@ -435,51 +350,4 @@ manage_etc_hosts: true`, s.Hostname)
 func (s *Sandbox) CreateID() string {
 	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
 	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
-}
-
-// GetInetAddress returns the ip address of the sandbox
-// empty string if nothing was found
-func (s *Sandbox) GetInetAddress() string {
-	switch s.NetworkConfig.Mode {
-	case NetworkHost:
-		ip, err := utilNet.ChooseHostInterface()
-		if err != nil {
-			// TODO: additional debug output
-			return ""
-		}
-
-		return ip.String()
-	case NetworkNone:
-		return ""
-	case NetworkBridged:
-		// if statically assigned ip exists, return that
-		if s.NetworkConfig.ModeData["interface-address"] != "" {
-			return s.NetworkConfig.ModeData["interface-address"]
-		}
-		// otherwise look into containers (= fallthrough)
-		fallthrough
-	case NetworkCNI:
-		fallthrough
-	default:
-		cl, err := s.Containers()
-		if err != nil {
-			// TODO: additional debug output
-			return ""
-		}
-
-		for _, c := range cl {
-			// ignore any non-running containers
-			if c.StateName != ContainerStateRunning {
-				continue
-			}
-
-			// get the ipv4 address of eth0
-			ip := c.GetInetAddress([]string{network.DefaultInterface})
-			if ip != "" {
-				return ip
-			}
-		}
-	}
-
-	return ""
 }

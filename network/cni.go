@@ -13,7 +13,9 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/containernetworking/cni/libcni"
+	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
+	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
 const (
@@ -45,9 +47,9 @@ func (c *ConfCNI) setDefaults() {
 
 // cniPlugin manages the pod networks using CNI
 type cniPlugin struct {
-	Plugin
-	cni  libcni.CNI
-	conf ConfCNI
+	noopPlugin // every method not implemented is noop
+	cni        libcni.CNI
+	conf       ConfCNI
 }
 
 // InitPluginCNI instantiates the cni plugin using the provided config
@@ -61,30 +63,30 @@ func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // inte
 }
 
 // PodNetwork enters a pod network environment context
-func (c *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNetwork, error) {
-	netList, warnings, err := c.getCNINetworkConfig()
+func (p *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNetwork, error) {
+	netList, warnings, err := p.getCNINetworkConfig()
 	if err != nil {
 		return nil, errors.Append(err, warnings)
 	}
 
-	runtimeConf := c.getCNIRuntimeConf(id)
+	runtimeConf := p.getCNIRuntimeConf(id)
 
 	return &cniPodNetwork{
-		plugin:      c,
+		plugin:      p,
 		netList:     netList,
 		runtimeConf: runtimeConf,
 		annotations: annotations,
 	}, nil
 }
 
-// Status returns error if the plugin is in error state
-func (c *cniPlugin) Status() error {
-	return nil
+// UpdateRuntimeConfig is called when there are updates to the configuration which the plugin might need to apply
+func (p *cniPlugin) UpdateRuntimeConfig(_ *rtApi.RuntimeConfig) error {
+	return fmt.Errorf("cniPlugin can't update runtime config")
 }
 
 // getCNINetworkConfig looks into the cni configuration dir for configs to load
-func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, error) {
-	confDir := c.conf.ConfPath
+func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, error) {
+	confDir := p.conf.ConfPath
 
 	files, err := libcni.ConfFiles(confDir, []string{".conf", ".conflist", ".json"})
 
@@ -139,7 +141,7 @@ func (c *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 }
 
 // getRuntimeConf returns common libcni runtime conf used to interact with the cni
-func (c *cniPlugin) getCNIRuntimeConf(id string) *libcni.RuntimeConf {
+func (p *cniPlugin) getCNIRuntimeConf(id string) *libcni.RuntimeConf {
 	return &libcni.RuntimeConf{
 		ContainerID: id,
 		NetNS:       "",
@@ -154,66 +156,61 @@ func (c *cniPlugin) getCNIRuntimeConf(id string) *libcni.RuntimeConf {
 	}
 }
 
-// cniPodNetwork is a pod network environment context. It handles the pod network by creating a netns and interfaces for
-// the pod
+// cniPodNetwork is a pod network environment context
 type cniPodNetwork struct {
-	DeviceHandler // noop
-	plugin        *cniPlugin
-	netList       *libcni.NetworkConfigList
-	runtimeConf   *libcni.RuntimeConf
-	annotations   map[string]string
+	noopPodNetwork // every method not implemented is noop
+	plugin         *cniPlugin
+	netList        *libcni.NetworkConfigList
+	runtimeConf    *libcni.RuntimeConf
+	annotations    map[string]string
 }
 
-// SetupPid creates the network for that pod. pid is the process id of the pod. The retured result bytes are provided
-// for the other calls of this PodNetwork.
-func (c *cniPodNetwork) SetupPid(_ context.Context, _ int64) ([]byte, error) {
-	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
-	return nil, nil
+// ContainerNetwork enters a container network environment context
+func (s *cniPodNetwork) ContainerNetwork(id string, annotations map[string]string) (ContainerNetwork, error) {
+	return &cniContainerNetwork{
+		pod:         s,
+		cid:         id,
+		annotations: annotations,
+	}, nil
 }
 
-// TeardownPid removes the network of that pod. Must tear down networking as good as possible, an error will only be
-// logged and doesn't stop execution of further statements.
-func (c *cniPodNetwork) TeardownPid(_ context.Context, _ []byte) error {
-	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method does nothing
-	return nil
+// Status reports IP and any error with the network of that pod
+func (s *cniPodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*Status, error) {
+	ips, err := s.ips([]byte(prop.Data["result"]))
+	if err != nil {
+		return nil, err
+	}
+
+	return &Status{IPs: ips}, nil
 }
 
-// AttachPid attaches a container to the pod network. pid is the process id of the container. Can return arbitrary
-// bytes or nic devices or both. The retured result bytes replace the existing one if provided.
-func (c *cniPodNetwork) AttachPid(ctx context.Context, _ []byte, pid int64) ([]byte, error) {
+// Setup creates the network interface for the provided pid
+func (s *cniPodNetwork) setup(ctx context.Context, pid int64) (types.Result, error) {
+	// TODO: remove pid 0 "support"
 	if pid == 0 {
-		cID := c.runtimeConf.ContainerID
+		cID := s.runtimeConf.ContainerID
 
 		out, err := exec.Command("ip", "netns", "add", cID).CombinedOutput()
 		if err != nil {
 			return nil, errors.Wrap(err, string(out))
 		}
 
-		defer exec.Command("ip", "netns", "delete", cID) // nolint: errcheck
-
-		c.runtimeConf.NetNS = filepath.Join(c.plugin.conf.NetnsPath, cID)
+		s.runtimeConf.NetNS = filepath.Join(s.plugin.conf.NetnsPath, cID)
 	} else {
-		c.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
+		s.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
 	}
 
-	result, err := c.plugin.cni.AddNetworkList(ctx, c.netList, c.runtimeConf)
-	if err != nil {
-		return nil, err
-	}
-
-	return json.Marshal(result)
+	return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
 }
 
-// DetachPid detaches a container from the pod network. Must detach networking as good as possible, an error will only
-// be logged and doesn't stop execution of further statements.
-func (c *cniPodNetwork) DetachPid(ctx context.Context, _ []byte) error {
-	c.runtimeConf.NetNS = ""
-	return c.plugin.cni.DelNetworkList(ctx, c.netList, c.runtimeConf)
+// Teardown removes the network compeletely as good as possible
+func (s *cniPodNetwork) teardown(ctx context.Context) error {
+	s.runtimeConf.NetNS = ""
+	return s.plugin.cni.DelNetworkList(ctx, s.netList, s.runtimeConf)
 }
 
-// StatusPid reports IP and any error with the network of that pod. Bytes can be nil if LXE thinks it never ran Setup
-// and thus also pid is not set or weren't returned yet.
-func (c *cniPodNetwork) StatusPid(ctx context.Context, previousresult []byte, _ int64) (*PodNetworkStatus, error) {
+// Get ips of that result
+func (s *cniPodNetwork) ips(previousresult []byte) ([]net.IP, error) {
 	if previousresult == nil {
 		previousresult = []byte{}
 	}
@@ -229,12 +226,39 @@ func (c *cniPodNetwork) StatusPid(ctx context.Context, previousresult []byte, _ 
 	}
 
 	if len(result.IPs) == 0 {
-		return nil, fmt.Errorf("no ip address found for %v", c.runtimeConf.ContainerID)
+		return nil, fmt.Errorf("no ip address found for %v", s.runtimeConf.ContainerID)
 	}
 
-	return &PodNetworkStatus{
-		IPs: []net.IP{
-			result.IPs[0].Address.IP,
-		},
-	}, nil
+	return []net.IP{result.IPs[0].Address.IP}, nil
+}
+
+// cniContainerNetwork is a container network environment context
+type cniContainerNetwork struct {
+	noopContainerNetwork // every method not implemented is noop
+	pod                  *cniPodNetwork
+	cid                  string
+	annotations          map[string]string
+}
+
+// WhenStarted is called when the pod is started.
+func (c *cniContainerNetwork) WhenStarted(ctx context.Context, prop *PropertiesRunning) (*Result, error) {
+	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method goes up to pod
+	result, err := c.pod.setup(ctx, prop.Pid)
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Result{Data: map[string]string{"result": string(b)}}, nil
+}
+
+// WhenDeleted is called when the container is deleted. If tearing down here, must tear down as good as possible. Must
+// tear down here if not implemented for WhenStopped. If an error is returned it will only be logged
+func (c *cniContainerNetwork) WhenDeleted(ctx context.Context, prop *Properties) error {
+	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method goes up to pod
+	return c.pod.teardown(ctx)
 }

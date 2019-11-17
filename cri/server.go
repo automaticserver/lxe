@@ -14,12 +14,11 @@ import (
 )
 
 // NetworkPlugin defines how the pod network should be setup.
-// NetworkPluginDefault creates and manages a `LXEBridge` bridge which the containers are attached to
+// NetworkPluginDefault creates and manages a lxd bridge which the containers are attached to
 // NetworkPluginCNI uses the kubernetes cni tools to let it attach interfaces to containers
 const (
 	NetworkPluginDefault = ""
 	NetworkPluginCNI     = "cni"
-	LXEBridge            = "lxebr0"
 )
 
 // Server implements the kubernetes CRI interface specification
@@ -31,30 +30,13 @@ type Server struct {
 
 // NewServer creates the CRI server
 func NewServer(criConfig *Config) *Server {
-	grpcServer := grpc.NewServer()
-
 	configPath, err := getLXDConfigPath(criConfig)
 	if err != nil {
 		logger.Critf("Unable to find lxc config: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	var netPlugin network.Plugin
-
-	switch criConfig.LXENetworkPlugin {
-	case NetworkPluginCNI:
-		netPlugin, err = network.InitPluginCNI(network.ConfCNI{})
-	case NetworkPluginDefault:
-	default:
-		err = errors.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
-	}
-
-	if err != nil {
-		logger.Critf("Unable to initialize network plugin: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
-	}
-
-	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath, netPlugin)
+	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath)
 	if err != nil {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
@@ -71,21 +53,35 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeSchemaMigrationFailure)
 	}
 
-	if criConfig.LXENetworkPlugin == NetworkPluginDefault {
-		// Initialize lxd bridge for lxe is created with new generated cidr if missing
-		err = lxf.EnsureBridge(LXEBridge, criConfig.LXEBridgeDHCPRange, true, true)
-		if err != nil {
-			logger.Critf("Unable to setup bridge %v: %v", LXEBridge, err)
-			os.Exit(shared.ExitCodeUnspecified)
-		}
+	// load selected plugin
+	var netPlugin network.Plugin
+
+	switch criConfig.LXENetworkPlugin {
+	case NetworkPluginCNI:
+		netPlugin, err = network.InitPluginCNI(network.ConfCNI{})
+	case NetworkPluginDefault:
+		netPlugin, err = network.InitPluginLxdBridge(lxf.GetServer(), network.ConfLxdBridge{
+			Cidr:       criConfig.LXEBridgeDHCPRange,
+			Nat:        true,
+			CreateOnly: true,
+		})
+	default:
+		err = errors.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
+	}
+
+	if err != nil {
+		logger.Critf("Unable to initialize network plugin: %v", err)
+		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	// for now we bind the http on every interface
-	runtimeServer, err := NewRuntimeServer(criConfig, lxf)
+	runtimeServer, err := NewRuntimeServer(criConfig, lxf, netPlugin)
 	if err != nil {
 		logger.Critf("Unable to start runtime server: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
+
+	lxf.SetEventHandler(runtimeServer)
 
 	imageServer, err := NewImageServer(runtimeServer, lxf)
 	if err != nil {
@@ -93,6 +89,7 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
+	grpcServer := grpc.NewServer()
 	runtimeapi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
 	runtimeapi.RegisterImageServiceServer(grpcServer, *imageServer)
 

@@ -13,6 +13,7 @@ import (
 
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/network"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
@@ -46,16 +47,16 @@ type RuntimeServer struct {
 	stream    streamService
 	lxdConfig *config.Config
 	criConfig *Config
+	network   network.Plugin
 }
 
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
-func NewRuntimeServer(
-	criConfig *Config,
-	lxf *lxf.Client) (*RuntimeServer, error) {
+func NewRuntimeServer(criConfig *Config, lxf *lxf.Client, network network.Plugin) (*RuntimeServer, error) {
 	var err error
 
 	runtime := RuntimeServer{
 		criConfig: criConfig,
+		network:   network,
 	}
 
 	configPath, err := getLXDConfigPath(criConfig)
@@ -167,22 +168,11 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		lxf.AppendIfSet(&sb.Config, "raw.lxc", "lxc.include = "+s.criConfig.LXEHostnetworkFile)
 	} else {
 		// manage network according to selected network plugin
+		// TODO: we could omit these since we use network plugin, but we still need to remember if it is HostNetwork
 		switch s.criConfig.LXENetworkPlugin {
 		case NetworkPluginDefault:
-			// default is to use the predefined lxd bridge managed by lxe
-			randIP, err := s.lxf.FindFreeIPBridgeLXD(LXEBridge)
-			if err != nil {
-				logger.Errorf("RunPodSandbox: SandboxName %v unable to find a free ip: %v", req.GetConfig().GetMetadata().GetName(), err)
-				return nil, err
-			}
 			sb.NetworkConfig.Mode = lxf.NetworkBridged
-			sb.NetworkConfig.ModeData = map[string]string{
-				"bridge":            LXEBridge,
-				"interface-address": randIP.String(),
-				"physical-type":     "dhcp",
-			}
 		case NetworkPluginCNI:
-			// lxe is configured to manage network with cni
 			sb.NetworkConfig.Mode = lxf.NetworkCNI
 		default:
 			// unknown plugin name provided
@@ -293,6 +283,40 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		return nil, err
 	}
 
+	// create network
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		res, err := podNet.WhenCreated(ctx, &network.Properties{})
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.handleNetworkResult(sb, res)
+		if err != nil {
+			return nil, err
+		}
+
+		// Since a PodSandbox is created "started", also fire started network
+		res, err = podNet.WhenStarted(ctx, &network.PropertiesRunning{
+			Properties: network.Properties{
+				Data: sb.NetworkConfig.ModeData,
+			},
+			Pid: 0, // if we had real 1:n pod:container we would add here the pid of the pod process
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.handleNetworkResult(sb, res)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	logger.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
 
 	response := &rtApi.RunPodSandboxResponse{
@@ -337,6 +361,14 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 		return nil, err
 	}
 
+	// Stop networking
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		netw, err := s.network.PodNetwork(sb.ID, nil)
+		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
+			_ = netw.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+		}
+	}
+
 	logger.Infof("StopPodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
 	response := &rtApi.StopPodSandboxResponse{}
@@ -370,7 +402,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 		return nil, err
 	}
 
-	err = s.deleteContainers(sb)
+	err = s.deleteContainers(ctx, sb)
 	if err != nil {
 		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
@@ -380,6 +412,14 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	if err != nil {
 		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete: %v", req.GetPodSandboxId(), err)
 		return nil, err
+	}
+
+	// Delete networking
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		netw, err := s.network.PodNetwork(sb.ID, nil)
+		if err == nil { // we don't care about error, but only enter if there's no error
+			_ = netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+		}
 	}
 
 	logger.Infof("RemovePodSandbox successful: SandboxID %v", req.GetPodSandboxId())
@@ -441,7 +481,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		}
 	}
 
-	ip := sb.GetInetAddress()
+	ip := s.getInetAddress(ctx, sb)
 	if ip != "" {
 		response.Status.Network.Ip = ip
 	}
@@ -449,6 +489,63 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	logger.Debugf("PodSandboxStatus responded: %v", response)
 
 	return response, nil
+}
+
+// getInetAddress returns the ip address of the sandbox. empty string if nothing was found
+func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string {
+	switch sb.NetworkConfig.Mode {
+	case lxf.NetworkHost:
+		ip, err := utilNet.ChooseHostInterface()
+		if err != nil {
+			// TODO: additional debug output
+			return ""
+		}
+
+		return ip.String()
+	case lxf.NetworkNone:
+		return ""
+	case lxf.NetworkBridged:
+		fallthrough
+	case lxf.NetworkCNI:
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		if err != nil {
+			// TODO: additional debug output
+			return ""
+		}
+
+		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
+		if err != nil {
+			// TODO: additional debug output
+			return ""
+		}
+
+		if len(status.IPs) > 0 {
+			return status.IPs[0].String()
+		}
+
+		fallthrough
+	default:
+		cl, err := sb.Containers()
+		if err != nil {
+			// TODO: additional debug output
+			return ""
+		}
+
+		for _, c := range cl {
+			// ignore any non-running containers
+			if c.StateName != lxf.ContainerStateRunning {
+				continue
+			}
+
+			// get the ipv4 address of eth0
+			ip := c.GetInetAddress([]string{network.DefaultInterface})
+			if ip != "" {
+				return ip
+			}
+		}
+	}
+
+	return ""
 }
 
 // ListPodSandbox returns a list of PodSandboxes.
@@ -589,6 +686,34 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 		return nil, err
 	}
 
+	sb, err := c.Sandbox()
+	if err != nil {
+		return nil, err
+	}
+
+	// create network
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		contNet, err := podNet.ContainerNetwork(c.ID, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		res, err := contNet.WhenCreated(ctx, &network.Properties{})
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.handleNetworkResult(sb, res)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", c.ID, req.GetPodSandboxId())
 
 	response := &rtApi.CreateContainerResponse{
@@ -676,7 +801,7 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 		return nil, err
 	}
 
-	err = s.deleteContainer(c)
+	err = s.deleteContainer(ctx, c)
 	if err != nil {
 		logger.Errorf("RemoveContainer: ContainerID %v trying to remove container: %v", req.GetContainerId(), err)
 		return nil, err
@@ -860,7 +985,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 		return err
 	}
 
-	podIP := sb.GetInetAddress()
+	podIP := ss.runtimeServer.getInetAddress(context.TODO(), sb)
 
 	_, err = exec.LookPath("socat")
 	if err != nil {
@@ -984,9 +1109,7 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context, req *rtApi.Updat
 	//logger.Infof("UpdateRuntimeConfig called: PodCIDR %v", req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr())
 	logger.Debugf("UpdateRuntimeConfig triggered: %v", req)
 
-	podCIDR := req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr()
-
-	err := s.lxf.EnsureBridge(LXEBridge, podCIDR, true, false)
+	err := s.network.UpdateRuntimeConfig(req.GetRuntimeConfig())
 	if err != nil {
 		logger.Errorf("UpdateRuntimeConfig: %v", err)
 		return nil, err

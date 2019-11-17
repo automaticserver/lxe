@@ -139,9 +139,11 @@ func Test_cniPodNetwork_Attach(t *testing.T) {
 	cniPlugin := testCNIPlugin(t)
 	podNetwork, err := cniPlugin.PodNetwork("test_attach", nil)
 	assert.NoError(t, err)
+	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
+	assert.NoError(t, err)
 	fake := toFakeCniPlugin(t, cniPlugin)
 
-	_, err = podNetwork.AttachPid(ctx, nil, 0)
+	_, err = containerNetwork.WhenStarted(ctx, &PropertiesRunning{Pid: 0})
 	assert.NoError(t, err)
 	assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
@@ -154,10 +156,12 @@ func Test_cniPodNetwork_Teardown_MissingNetwork(t *testing.T) {
 	cniPlugin := testCNIPlugin(t)
 	podNetwork, err := cniPlugin.PodNetwork("test_teardown_missingnetwork", nil)
 	assert.NoError(t, err)
+	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
+	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
 	// CRI DelNetwork always tries to remove as good as possible without throwing error
-	err = podNetwork.DetachPid(ctx, nil)
+	err = containerNetwork.WhenDeleted(ctx, nil)
 	assert.NoError(t, err)
 	//assert.Equal(t, 1, fake.DelNetworkListCallCount())
 } // nolint: wsl
@@ -169,7 +173,7 @@ func Test_cniPodNetwork_Status_MissingNetwork(t *testing.T) {
 	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
-	got, err := podNetwork.StatusPid(ctx, nil, 0)
+	got, err := podNetwork.Status(ctx, &PropertiesRunning{})
 	assert.Error(t, err)
 	assert.Nil(t, got)
 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())
@@ -180,13 +184,15 @@ func Test_cniPodNetwork_Status_WithNetwork(t *testing.T) {
 	cniPlugin := testCNIPlugin(t)
 	podNetwork, err := cniPlugin.PodNetwork("test_status_withnetwork", nil)
 	assert.NoError(t, err)
+	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
+	assert.NoError(t, err)
 	//fake := toFakeCniPlugin(t, cniPlugin)
 
-	_, err = podNetwork.AttachPid(ctx, nil, 0)
+	_, err = containerNetwork.WhenStarted(ctx, &PropertiesRunning{Pid: 0})
 	assert.NoError(t, err)
 	//assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
-	got, err := podNetwork.StatusPid(ctx, []byte(`{"cniVersion":"0.4.0","ips":[{"version":"4","interface":2,"address":"10.22.0.64/16","gateway":"10.22.0.1"}]}`), 0)
+	got, err := podNetwork.Status(ctx, &PropertiesRunning{Properties: Properties{Data: map[string]string{"result": `{"cniVersion":"0.4.0","ips":[{"version":"4","interface":2,"address":"10.22.0.64/16","gateway":"10.22.0.1"}]}`}}})
 	assert.NoError(t, err)
 	assert.NotNil(t, got)
 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())

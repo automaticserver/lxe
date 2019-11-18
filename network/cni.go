@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"os/exec"
-	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -186,20 +184,7 @@ func (s *cniPodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*S
 
 // Setup creates the network interface for the provided pid
 func (s *cniPodNetwork) setup(ctx context.Context, pid int64) (types.Result, error) {
-	// TODO: remove pid 0 "support"
-	if pid == 0 {
-		cID := s.runtimeConf.ContainerID
-
-		out, err := exec.Command("ip", "netns", "add", cID).CombinedOutput()
-		if err != nil {
-			return nil, errors.Wrap(err, string(out))
-		}
-
-		s.runtimeConf.NetNS = filepath.Join(s.plugin.conf.NetnsPath, cID)
-	} else {
-		s.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
-	}
-
+	s.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
 	return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
 }
 
@@ -227,6 +212,10 @@ func (s *cniPodNetwork) ips(previousresult []byte) ([]net.IP, error) {
 
 	if len(result.IPs) == 0 {
 		return nil, fmt.Errorf("no ip address found for %v", s.runtimeConf.ContainerID)
+	}
+
+	if result.IPs[0].Address.IP == nil {
+		return nil, fmt.Errorf("invalid ip address found for %v", s.runtimeConf.ContainerID)
 	}
 
 	return []net.IP{result.IPs[0].Address.IP}, nil

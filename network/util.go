@@ -3,6 +3,7 @@ package network
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"math/rand"
 	"net"
 )
@@ -35,7 +36,7 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 	var ip net.IP
 OUTER:
 	for {
-		// randomly select an[ ip address within the specified subnet
+		// randomly select an ip address within the specified subnet
 		trialB := make([]byte, 4)
 		binary.LittleEndian.PutUint32(trialB, rand.Uint32())
 		for i, v := range trialB {
@@ -44,7 +45,8 @@ OUTER:
 		trial := net.IPv4(trialB[0], trialB[1], trialB[2], trialB[3])
 
 		// not allowed if outside explicitly defined range
-		if bytes.Compare(trial, start) <= 0 || bytes.Compare(trial, end) >= 0 {
+		if bytes.Compare(trial, start) < 0 || bytes.Compare(trial, end) > 0 {
+			fmt.Printf("compare: trial %v, start %v, end %v\n", trial, start, end)
 			continue
 		}
 

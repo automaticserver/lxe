@@ -1,7 +1,6 @@
 package network
 
 import (
-	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -19,8 +18,13 @@ var (
 	testCNIbinPath   string = defaultCNIbinPath
 	testCNIconfPath  string
 	testCNInetnsPath string = defaultCNInetnsPath
+)
 
-	ctx = context.TODO()
+var (
+	// verify interface satisfaction
+	_ Plugin           = &cniPlugin{}
+	_ PodNetwork       = &cniPodNetwork{}
+	_ ContainerNetwork = &cniContainerNetwork{}
 )
 
 func init() {

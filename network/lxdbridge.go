@@ -17,32 +17,32 @@ const (
 	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found. Unfortunately there is no
 	// constant in the lxd source we could've used
 	ErrorLXDNotFound = "not found"
-	defaultLxdBridge = "lxebr0"
+	defaultLXDBridge = "lxebr0"
 )
 
-// ConfLxdBridge are configuration options for the LxdBridge plugin. All properties are optional and get a default value
-type ConfLxdBridge struct {
-	LxdBridge  string
+// ConfLXDBridge are configuration options for the LXDBridge plugin. All properties are optional and get a default value
+type ConfLXDBridge struct {
+	LXDBridge  string
 	Cidr       string
 	Nat        bool
 	CreateOnly bool
 }
 
-func (c *ConfLxdBridge) setDefaults() {
-	if c.LxdBridge == "" {
-		c.LxdBridge = defaultLxdBridge
+func (c *ConfLXDBridge) setDefaults() {
+	if c.LXDBridge == "" {
+		c.LXDBridge = defaultLXDBridge
 	}
 }
 
-// lxdBridgePlugin manages the pod networks using LxdBridge
+// lxdBridgePlugin manages the pod networks using LXDBridge
 type lxdBridgePlugin struct {
 	noopPlugin // every method not implemented is noop
 	server     lxd.ContainerServer
-	conf       ConfLxdBridge
+	conf       ConfLXDBridge
 }
 
-// InitPluginLxdBridge instantiates the LxdBridge plugin using the provided config
-func InitPluginLxdBridge(server lxd.ContainerServer, conf ConfLxdBridge) (*lxdBridgePlugin, error) { // nolint: golint // intended to not export lxdBridgePlugin
+// InitPluginLXDBridge instantiates the LXDBridge plugin using the provided config
+func InitPluginLXDBridge(server lxd.ContainerServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint // intended to not export lxdBridgePlugin
 	conf.setDefaults()
 
 	p := &lxdBridgePlugin{
@@ -100,17 +100,17 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 			"ipv4.dhcp":    strconv.FormatBool(true),
 			"ipv4.nat":     strconv.FormatBool(p.conf.Nat),
 			"ipv6.address": "none",
-			// We don't need to receive a DNS in DHCP, Kubernetes' DNS is always set my requesting a mount for resolv.conf.
+			// We don't need to receive a DNS in DHCP, Kubernetes' DNS is always set by requesting a mount for resolv.conf.
 			// This disables dns in dnsmasq (option -p: https://linux.die.net/man/8/dnsmasq)
 			"raw.dnsmasq": `port=0`,
 		},
 	}
 
-	network, ETag, err := p.server.GetNetwork(p.conf.LxdBridge)
+	network, ETag, err := p.server.GetNetwork(p.conf.LXDBridge)
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
 			return p.server.CreateNetwork(api.NetworksPost{
-				Name:       p.conf.LxdBridge,
+				Name:       p.conf.LXDBridge,
 				Type:       "bridge",
 				Managed:    true,
 				NetworkPut: put,
@@ -119,7 +119,7 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 
 		return err
 	} else if network.Type != "bridge" {
-		return fmt.Errorf("expected %v to be a bridge, but is %v", p.conf.LxdBridge, network.Type)
+		return fmt.Errorf("expected %v to be a bridge, but is %v", p.conf.LXDBridge, network.Type)
 	}
 
 	// don't update when only creation is requested
@@ -132,21 +132,21 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 		network.Config[k] = v
 	}
 
-	return p.server.UpdateNetwork(p.conf.LxdBridge, network.Writable(), ETag)
+	return p.server.UpdateNetwork(p.conf.LXDBridge, network.Writable(), ETag)
 }
 
 // findFreeIP generates a IP within the range of the provided lxd managed bridge which does
 // not exist in the current leases
 func (p *lxdBridgePlugin) findFreeIP() (net.IP, error) {
-	network, _, err := p.server.GetNetwork(p.conf.LxdBridge)
+	network, _, err := p.server.GetNetwork(p.conf.LXDBridge)
 	if err != nil {
 		return nil, err
 	} else if network.Config["ipv4.dhcp.ranges"] != "" {
-		// actually we can now using findFreeIP() below, but not good enough, as this field can yield multiple ranges
-		return nil, fmt.Errorf("not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", p.conf.LxdBridge)
+		// actually we can now using FindFreeIP(), but not good enough, as this field can yield multiple ranges
+		return nil, fmt.Errorf("not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", p.conf.LXDBridge)
 	}
 
-	rawLeases, err := p.server.GetNetworkLeases(p.conf.LxdBridge)
+	rawLeases, err := p.server.GetNetworkLeases(p.conf.LXDBridge)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ func (s *lxdBridgePodNetwork) WhenCreated(ctx context.Context, prop *Properties)
 	r := &Result{}
 	// TODO: Remove, I think we don't/shouldn't need that anymore
 	r.Data = map[string]string{
-		// 	"bridge":            s.plugin.conf.LxdBridge,
+		// 	"bridge":            s.plugin.conf.LXDBridge,
 		"interface-address": randIP.String(), // except this for IP return shortcut in Status
 		// 	"physical-type":     "dhcp",
 	}
@@ -219,7 +219,7 @@ func (s *lxdBridgePodNetwork) WhenCreated(ctx context.Context, prop *Properties)
 		{
 			Name:        DefaultInterface,
 			NicType:     "bridged",
-			Parent:      s.plugin.conf.LxdBridge,
+			Parent:      s.plugin.conf.LXDBridge,
 			IPv4Address: randIP.String(),
 		},
 	}

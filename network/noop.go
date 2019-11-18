@@ -7,6 +7,13 @@ import (
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
 
+var (
+	// verify interface satisfaction
+	_ Plugin           = &noopPlugin{}
+	_ PodNetwork       = &noopPodNetwork{}
+	_ ContainerNetwork = &noopContainerNetwork{}
+)
+
 // noopPlugin implements Plugin without doing anything
 type noopPlugin struct{}
 

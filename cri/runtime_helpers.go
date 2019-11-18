@@ -274,12 +274,17 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 			return err
 		}
 
-		netw, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, nil)
 		if err != nil {
 			return err
 		}
 
-		res, err := netw.WhenStarted(ctx, &network.PropertiesRunning{
+		contNet, err := podNet.ContainerNetwork(c.ID, nil)
+		if err != nil {
+			return err
+		}
+
+		res, err := contNet.WhenStarted(ctx, &network.PropertiesRunning{
 			Properties: network.Properties{
 				Data: sb.NetworkConfig.ModeData,
 			},

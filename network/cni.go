@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	defaultCNIbinPath   = "/opt/cni/bin"
-	defaultCNIconfPath  = "/etc/cni/net.d"
+	DefaultCNIbinPath   = "/opt/cni/bin"
+	DefaultCNIconfPath  = "/etc/cni/net.d"
 	defaultCNInetnsPath = "/run/netns"
 )
 
@@ -31,11 +31,11 @@ type ConfCNI struct {
 
 func (c *ConfCNI) setDefaults() {
 	if c.BinPath == "" {
-		c.BinPath = defaultCNIbinPath
+		c.BinPath = DefaultCNIbinPath
 	}
 
 	if c.ConfPath == "" {
-		c.ConfPath = defaultCNIconfPath
+		c.ConfPath = DefaultCNIconfPath
 	}
 
 	if c.NetnsPath == "" {

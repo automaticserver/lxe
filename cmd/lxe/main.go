@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/cri"
+	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/lxc/lxd/shared/logging"
@@ -87,8 +88,14 @@ func main() {
 		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
 	app.PersistentFlags().StringVar(&globalCmd.cri.LXENetworkPlugin, "network-plugin",
 		"", "The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.")
+	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBridgeName, "bridge-name",
+		network.DefaultLXDBridge, "When using network-plugin '', which bridge to create and use.")
 	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBridgeDHCPRange, "bridge-dhcp-range",
-		"", "Which DHCP range to configure in the 'lxebr0' lxd bridge. Only applies if network-plugin is set to '' and does not exist yet. If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig")
+		"", "When using network-plugin '', which DHCP range to configure the lxd bridge. If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig.")
+	app.PersistentFlags().StringVar(&globalCmd.cri.CNIConfDir, "cni-conf-dir",
+		network.DefaultCNIconfPath, "When using network-plugin cni, dir in which to search for CNI configuration files.")
+	app.PersistentFlags().StringVar(&globalCmd.cri.CNIBinDir, "cni-bin-dir",
+		network.DefaultCNIbinPath, "When using network-plugin cni, dir in which to search for CNI plugin binaries.")
 
 	// Run the main command and handle errors
 	err := app.Execute()

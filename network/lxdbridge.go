@@ -17,7 +17,7 @@ const (
 	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found. Unfortunately there is no
 	// constant in the lxd source we could've used
 	ErrorLXDNotFound = "not found"
-	defaultLXDBridge = "lxebr0"
+	DefaultLXDBridge = "lxebr0"
 )
 
 // ConfLXDBridge are configuration options for the LXDBridge plugin. All properties are optional and get a default value
@@ -30,7 +30,7 @@ type ConfLXDBridge struct {
 
 func (c *ConfLXDBridge) setDefaults() {
 	if c.LXDBridge == "" {
-		c.LXDBridge = defaultLXDBridge
+		c.LXDBridge = DefaultLXDBridge
 	}
 }
 

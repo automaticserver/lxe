@@ -58,9 +58,13 @@ func NewServer(criConfig *Config) *Server {
 
 	switch criConfig.LXENetworkPlugin {
 	case NetworkPluginCNI:
-		netPlugin, err = network.InitPluginCNI(network.ConfCNI{})
+		netPlugin, err = network.InitPluginCNI(network.ConfCNI{
+			BinPath:  criConfig.CNIBinDir,
+			ConfPath: criConfig.CNIConfDir,
+		})
 	case NetworkPluginDefault:
 		netPlugin, err = network.InitPluginLXDBridge(lxf.GetServer(), network.ConfLXDBridge{
+			LXDBridge:  criConfig.LXEBridgeName,
 			Cidr:       criConfig.LXEBridgeDHCPRange,
 			Nat:        true,
 			CreateOnly: true,

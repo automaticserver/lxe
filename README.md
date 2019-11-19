@@ -16,23 +16,11 @@ This project is currently under heavy development, expect incompatible changes.
 
 ## Requirements
 
-You need to have LXD >= 3.3 installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). A LXD built by source is also sufficient.
+You need to have LXD >= 3.3 installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). A LXD built by source is also supported.
 
 ## Installing LXE from packages
 
-There are only official builds right now. Migration of our internal pipeline to a public location in progress.
-
-## Installing LXE from source
-
-LXE uses [Go Modules](https://github.com/golang/go/wiki/Modules) so the minimum Go version required is 1.11. Clone this repo to your wished location. If you checked it out within `$GOPATH` set `GO111MODULE=on`.
-
-### Building
-
-Build this project using the following command, which will give you the binary in `./bin/`
-
-```bash
-make build
-```
+There are only manual builds right now, see [releases page](https://github.com/automaticserver/lxe/releases) for available builds.
 
 ## Getting started
 
@@ -81,26 +69,80 @@ You may need to provide the LXD socket path:
 - if you built LXD by source, the socket is located in `/var/lib/lxd/unix.socket` (which is also default in LXE)
 - if you installed LXD via snap, the socket is located in `/var/snap/lxd/common/lxd/unix.socket`
 
+We recommend to use CNI as the network plugin as it offers more flexibility and integration to [common kubernetes network setups](https://kubernetes.io/docs/concepts/cluster-administration/networking/). But for sure you can use the currently default network plugin, which uses lxd's integrated networking, and build kubernetes cluster networking around it.
+
+The CNI plugin is selected by passing the `--network-plugin=cni` option. The CNI configuration is read from within `--cni-conf-dir` (default /etc/cni/net.d) and uses that file to set up each pod’s network. The CNI configuration file must match the [CNI specification](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration), and any required CNI plugins referenced by the configuration must be present in `--cni-bin-dir` (default /opt/cni/bin).
+
+If there are multiple CNI configuration files in the directory, the first configuration file by name in lexicographic order is used. Keep in mind you can also chain several plugins using a conflist file. Example configuration `/etc/cni/net.d/10-mynet.conf`:
+
+```json
+{
+  "cniVersion": "0.3.1",
+  "name": "mynet",
+  "type": "bridge",
+  "bridge": "cni0",
+  "isGateway": true,
+  "ipMasq": true,
+  "ipam": {
+    "type": "host-local",
+    "ranges": [
+      [
+        {
+          "subnet": "10.22.0.0/16",
+          "rangeStart": "10.22.0.50",
+          "rangeEnd": "10.22.0.100",
+          "gateway": "10.22.0.1"
+        }
+      ]
+    ],
+    "routes": [
+      {
+        "dst": "0.0.0.0/0"
+      }
+    ]
+  }
+}
+```
+
 For all options, consider looking into `lxe --help`.
 
 #### Starting the daemon
 
 You might want to use `--verbose` for some feedback, otherwise the daemon is pretty silent when no errors occur. Warning: `--debug` is *very* verbose.
 
-- if you built LXD by source, `lxe --verbose`
-- if you installed LXD via snap, `lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config ~/snap/lxd/current/.config/lxc/config.yml --verbose`
+- if you built LXD by source, `lxe --network-plugin cni --verbose`
+- if you installed LXD via snap, `lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config ~/snap/lxd/current/.config/lxc/config.yml --network-plugin cni --verbose`
 
 You should be greeted with:
 
 ```bash
-INFO[10-03|19:02:07] Connected to LXD via "/var/lib/lxd/unix.socket" 
-INFO[10-03|19:02:07] Starting streaming server on :44124 
-INFO[10-03|19:02:07] Started LXE/0.1.21.gc4ee124.dirty CRI shim on UNIX socket "/var/run/lxe.sock" 
+INFO[10-03|19:02:07] Connected to LXD via "/var/lib/lxd/unix.socket"
+INFO[10-03|19:02:07] Starting streaming server on :44124
+INFO[10-03|19:02:07] Started LXE/0.1.21.gc4ee124.dirty CRI shim on UNIX socket "/var/run/lxe.sock"
 ```
 
 #### Configure Kubelet to use LXE
 
 Now that you have LXE running on your system you can define the LXE socket as CRI endpoint in kubelet. You'll have to define the following options `--container-runtime=remote` and `--container-runtime-endpoint=unix:///var/run/lxe.sock` and your kubelet should be able to connect to your LXE socket.
+
+## Installing LXE from source
+
+LXE uses [Go Modules](https://github.com/golang/go/wiki/Modules) so the minimum Go version required is 1.11. Clone this repo to your wished location. If you checked it out within `$GOPATH` set `GO111MODULE=on`.
+
+### Building & Tests
+
+Build this project using the following command, which will give you the binary in `./bin/`
+
+```bash
+make build
+```
+
+There are also tests available.
+
+```cmd
+make test
+make lint
+```
 
 ## Bug reports
 

@@ -20,6 +20,12 @@ type Config struct {
 	LXEHostnetworkFile string
 	// Which LXENetworkPlugin to use
 	LXENetworkPlugin string
+	// LXEBridgeName is the name of the bridge to create and use
+	LXEBridgeName string
 	// LXEBridgeDHCPRange to configure for lxebr0 if NetworkPlugin is default
 	LXEBridgeDHCPRange string
+	// CNIConfDir is the path where the cni configuration files are
+	CNIConfDir string
+	// CNIBinDir is the path where the cni plugins are
+	CNIBinDir string
 }

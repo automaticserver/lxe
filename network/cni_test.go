@@ -23,8 +23,8 @@ func fakeCNIFiles(t *testing.T) (string, string, string, string) {
 	tmpDir, err := ioutil.TempDir("", "cni")
 	assert.NoError(t, err)
 
-	binPath := filepath.Join(tmpDir, defaultCNIbinPath)
-	confPath := filepath.Join(tmpDir, defaultCNIconfPath)
+	binPath := filepath.Join(tmpDir, DefaultCNIbinPath)
+	confPath := filepath.Join(tmpDir, DefaultCNIconfPath)
 	netnsPath := filepath.Join(tmpDir, defaultCNInetnsPath)
 
 	err = os.MkdirAll(confPath, 0700)

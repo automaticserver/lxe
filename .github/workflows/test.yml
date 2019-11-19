@@ -1,0 +1,20 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: checkout
+      uses: actions/checkout@master
+    - name: setup go
+      uses: actions/setup-go@master
+    - name: load dependencies
+      run: |
+        go mod download
+        go mod verify
+    - name: test
+      run: make test

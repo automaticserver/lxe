@@ -1,9 +1,18 @@
+
 # LXE
 
-[![Gitter](https://badges.gitter.im/automaticserver-lxe.svg)](https://gitter.im/automaticserver-lxe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+<img src="fixtures/logo/logo_lxe_150.png" align="right" title="LXE Logo">
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-go.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+
+[![Build Status](https://img.shields.io/travis/automaticserver/lxe/master)](https://travis-ci.org/automaticserver/lxe)
+[![GitHub](https://img.shields.io/github/license/automaticserver/lxe?color=lightgrey)](https://github.com/automaticserver/lxe/blob/master/COPYING)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/automaticserver/lxe)](https://github.com/automaticserver/lxe/releases)
+[![Gitter](https://img.shields.io/gitter/room/automaticserver/lxe?color=blueviolet)](https://gitter.im/automaticserver-lxe)
 
 LXE is a shim of the Kubernetes [Container Runtime Interface](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md) for LXD.
-This project is currently under heavy development, expect incompatible changes. The name of this project can change - we're open for suggestions - lxe was only an internal codename.
+This project is currently under heavy development, expect incompatible changes.
 
 ## Requirements
 
@@ -11,7 +20,7 @@ You need to have LXD >= 3.3 installed, which packages are officially only availa
 
 ## Installing LXE from packages
 
-There are no official builds right now. Migration of our internal pipeline to a public location in progress.
+There are only official builds right now. Migration of our internal pipeline to a public location in progress.
 
 ## Installing LXE from source
 
@@ -52,7 +61,7 @@ Also make sure the LXD-client's remote configuration file exists (e.g. by runnin
 - if you installed LXD via snap, the file is located in `~/snap/lxd/current/.config/lxc/config.yml`
 - or you wrote that configration file on a location of your choice
 
-LXE might be run as user (* implementation incomplete), so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control)
+LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control).
 
 ### Running LXE
 
@@ -60,9 +69,10 @@ LXE might be run as user (* implementation incomplete), so give it [access to lx
 
 The most important LXE options are the following:
 
-```
+```c
       --lxd-remote-config string    Path to the LXD remote config (guessed by default)
       --lxd-socket string           LXD's unix socket (default "/var/lib/lxd/unix.socket")
+      --network-plugin string       The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.
       --socket string               The unix socket under which LXE will expose its service to Kubernetes (default "/var/run/lxe.sock")
 ```
 

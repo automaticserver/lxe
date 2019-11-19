@@ -14,8 +14,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    env: GO111MODULE=on
+    runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
     - name: checkout
       uses: actions/checkout@master
@@ -31,8 +32,9 @@ jobs:
       run: make build
 
   test:
-    runs-on: ubuntu-latest
-    env: GO111MODULE=on
+    runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
     - name: checkout
       uses: actions/checkout@master
@@ -48,8 +50,9 @@ jobs:
       run: make test
 
   lint:
-    runs-on: ubuntu-latest
-    env: GO111MODULE=on
+    runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
     - name: checkout
       uses: actions/checkout@master

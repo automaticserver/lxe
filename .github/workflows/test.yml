@@ -4,10 +4,12 @@ on:
   pull_request:
     branches:
       - master
+      - workflow
       - releases/*
   push:
     branches:
       - master
+      - workflow
       - releases/*
 
 jobs:

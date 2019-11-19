@@ -14,14 +14,15 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    env: GO111MODULE=on
     steps:
     - name: checkout
       uses: actions/checkout@master
     - name: setup go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12.x
     # - name: load dependencies
     #   run: |
     #     go mod download
@@ -30,14 +31,15 @@ jobs:
       run: make build
 
   test:
-
     runs-on: ubuntu-latest
-
+    env: GO111MODULE=on
     steps:
     - name: checkout
       uses: actions/checkout@master
     - name: setup go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12.x
     # - name: load dependencies
     #   run: |
     #     go mod download
@@ -46,14 +48,15 @@ jobs:
       run: make test
 
   lint:
-
     runs-on: ubuntu-latest
-
+    env: GO111MODULE=on
     steps:
     - name: checkout
       uses: actions/checkout@master
     - name: setup go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12.x
     # - name: load dependencies
     #   run: |
     #     go mod download

@@ -1,0 +1,21 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.12.x', '1.13.x' ]
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v1.0.0
+      with:
+          go-version: ${{ matrix.go }}
+    - run: go mod download
+    - run: make build
+    - run: make test
+    - run: make lint

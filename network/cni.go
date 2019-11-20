@@ -182,9 +182,9 @@ func (s *cniPodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*S
 	return &Status{IPs: ips}, nil
 }
 
-// Setup creates the network interface for the provided pid
-func (s *cniPodNetwork) setup(ctx context.Context, pid int64) (types.Result, error) {
-	s.runtimeConf.NetNS = fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(pid, 10))
+// Setup creates the network interface for the provided netfile
+func (s *cniPodNetwork) setup(ctx context.Context, netfile string) (types.Result, error) {
+	s.runtimeConf.NetNS = netfile
 	return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
 }
 
@@ -229,10 +229,10 @@ type cniContainerNetwork struct {
 	annotations          map[string]string
 }
 
-// WhenStarted is called when the pod is started.
+// WhenStarted is called when the container is started.
 func (c *cniContainerNetwork) WhenStarted(ctx context.Context, prop *PropertiesRunning) (*Result, error) {
 	// TODO: As long as we haven't figured out to do 1:n podnetwork:container this method goes up to pod
-	result, err := c.pod.setup(ctx, prop.Pid)
+	result, err := c.pod.setup(ctx, fmt.Sprintf("/proc/%s/ns/net", strconv.FormatInt(prop.Pid, 10)))
 	if err != nil {
 		return nil, err
 	}

@@ -180,15 +180,17 @@ func Test_cniPodNetwork_setup(t *testing.T) {
 	podNet, fake, tmpDir := testCNIPodNet(t)
 	defer os.RemoveAll(tmpDir)
 
+	netfile := "/proc/5/ns/net"
+
 	fake.AddNetworkListReturns(nil, nil)
 
-	_, err := podNet.setup(ctx, 5)
+	_, err := podNet.setup(ctx, netfile)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
 	_, _, argRuntimeConf := fake.AddNetworkListArgsForCall(0)
 	// assert.Len(t, argConfList.Plugins, 1)
-	assert.Equal(t, "/proc/5/ns/net", argRuntimeConf.NetNS)
+	assert.Equal(t, netfile, argRuntimeConf.NetNS)
 }
 
 func Test_cniPodNetwork_teardown_afterSetup(t *testing.T) {
@@ -200,7 +202,7 @@ func Test_cniPodNetwork_teardown_afterSetup(t *testing.T) {
 	fake.AddNetworkListReturns(nil, nil)
 	fake.DelNetworkListReturns(nil)
 
-	_, err := podNet.setup(ctx, 5)
+	_, err := podNet.setup(ctx, "/proc/5/ns/net")
 	assert.NoError(t, err)
 
 	err = podNet.teardown(ctx)

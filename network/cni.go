@@ -186,7 +186,6 @@ func (s *cniPodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*S
 func (s *cniPodNetwork) setup(ctx context.Context, netfile string) (types.Result, error) {
 	s.runtimeConf.NetNS = netfile
 
-	//return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
 	result, err := s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
 	if err != nil {
 		return nil, err

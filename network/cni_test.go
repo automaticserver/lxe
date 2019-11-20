@@ -8,6 +8,7 @@ import (
 
 	"github.com/automaticserver/lxe/network/libcnifake"
 	"github.com/containernetworking/cni/libcni"
+	types020 "github.com/containernetworking/cni/pkg/types/020"
 	"github.com/containernetworking/cni/pkg/types/current"
 	"github.com/stretchr/testify/assert"
 )
@@ -174,19 +175,44 @@ func Test_cniPodNetwork_Status_Missing(t *testing.T) {
 	assert.Nil(t, status)
 }
 
-func Test_cniPodNetwork_setup(t *testing.T) {
+func Test_cniPodNetwork_setup_Simple(t *testing.T) {
 	t.Parallel()
 
 	podNet, fake, tmpDir := testCNIPodNet(t)
 	defer os.RemoveAll(tmpDir)
 
 	netfile := "/proc/5/ns/net"
+	result, err := current.NewResult([]byte(`{"cniVersion":"0.4.0"}`))
+	assert.NoError(t, err)
 
-	fake.AddNetworkListReturns(nil, nil)
+	fake.AddNetworkListReturns(result, nil)
 
-	_, err := podNet.setup(ctx, netfile)
+	_, err = podNet.setup(ctx, netfile)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, fake.AddNetworkListCallCount())
+
+	_, _, argRuntimeConf := fake.AddNetworkListArgsForCall(0)
+	// assert.Len(t, argConfList.Plugins, 1)
+	assert.Equal(t, netfile, argRuntimeConf.NetNS)
+}
+
+func Test_cniPodNetwork_setup_OldVersion(t *testing.T) {
+	t.Parallel()
+
+	podNet, fake, tmpDir := testCNIPodNet(t)
+	defer os.RemoveAll(tmpDir)
+
+	netfile := "/proc/5/ns/net"
+	result, err := types020.NewResult([]byte(`{"cniVersion":"0.2.0"}`))
+	assert.NoError(t, err)
+	assert.Equal(t, types020.ImplementedSpecVersion, result.Version())
+
+	fake.AddNetworkListReturns(result, nil)
+
+	result, err = podNet.setup(ctx, netfile)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, fake.AddNetworkListCallCount())
+	assert.Equal(t, current.ImplementedSpecVersion, result.Version())
 
 	_, _, argRuntimeConf := fake.AddNetworkListArgsForCall(0)
 	// assert.Len(t, argConfList.Plugins, 1)
@@ -199,10 +225,13 @@ func Test_cniPodNetwork_teardown_afterSetup(t *testing.T) {
 	podNet, fake, tmpDir := testCNIPodNet(t)
 	defer os.RemoveAll(tmpDir)
 
-	fake.AddNetworkListReturns(nil, nil)
+	result, err := current.NewResult([]byte(`{"cniVersion":"0.4.0"}`))
+	assert.NoError(t, err)
+
+	fake.AddNetworkListReturns(result, nil)
 	fake.DelNetworkListReturns(nil)
 
-	_, err := podNet.setup(ctx, "/proc/5/ns/net")
+	_, err = podNet.setup(ctx, "/proc/5/ns/net")
 	assert.NoError(t, err)
 
 	err = podNet.teardown(ctx)
@@ -226,6 +255,8 @@ func Test_cniPodNetwork_ips_Simple(t *testing.T) {
 	assert.Len(t, ips, 1)
 	assert.Equal(t, "10.22.0.64", ips[0].String())
 }
+
+// TODO: ips from old result
 
 func Test_cniPodNetwork_ips_Missing(t *testing.T) {
 	t.Parallel()

@@ -49,7 +49,7 @@ Also make sure the LXD-client's remote configuration file exists (e.g. by runnin
 - if you installed LXD via snap, the file is located in `~/snap/lxd/current/.config/lxc/config.yml`
 - or you wrote that configration file on a location of your choice
 
-LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control).
+LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control). When using the network-plugin cni root permissions are required.
 
 ### Running LXE
 

@@ -3,7 +3,6 @@ package network
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"math/rand"
 	"net"
 )
@@ -46,7 +45,6 @@ OUTER:
 
 		// not allowed if outside explicitly defined range
 		if bytes.Compare(trial, start) < 0 || bytes.Compare(trial, end) > 0 {
-			fmt.Printf("compare: trial %v, start %v, end %v\n", trial, start, end)
 			continue
 		}
 

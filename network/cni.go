@@ -185,7 +185,15 @@ func (s *cniPodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*S
 // Setup creates the network interface for the provided netfile
 func (s *cniPodNetwork) setup(ctx context.Context, netfile string) (types.Result, error) {
 	s.runtimeConf.NetNS = netfile
-	return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
+
+	//return s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
+	result, err := s.plugin.cni.AddNetworkList(ctx, s.netList, s.runtimeConf)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert the result to the current cni version
+	return current.NewResultFromResult(result)
 }
 
 // Teardown removes the network compeletely as good as possible
@@ -200,25 +208,26 @@ func (s *cniPodNetwork) ips(previousresult []byte) ([]net.IP, error) {
 		previousresult = []byte{}
 	}
 
-	resultInit, err := current.NewResult(previousresult)
+	result, err := current.NewResult(previousresult)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := current.GetResult(resultInit)
+	// convert the result to the current cni version
+	currentResult, err := current.NewResultFromResult(result)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(result.IPs) == 0 {
+	if len(currentResult.IPs) == 0 {
 		return nil, fmt.Errorf("no ip address found for %v", s.runtimeConf.ContainerID)
 	}
 
-	if result.IPs[0].Address.IP == nil {
+	if currentResult.IPs[0].Address.IP == nil {
 		return nil, fmt.Errorf("invalid ip address found for %v", s.runtimeConf.ContainerID)
 	}
 
-	return []net.IP{result.IPs[0].Address.IP}, nil
+	return []net.IP{currentResult.IPs[0].Address.IP}, nil
 }
 
 // cniContainerNetwork is a container network environment context

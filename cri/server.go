@@ -78,6 +78,8 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
+	grpcServer := grpc.NewServer()
+
 	// for now we bind the http on every interface
 	runtimeServer, err := NewRuntimeServer(criConfig, lxf, netPlugin)
 	if err != nil {
@@ -93,7 +95,6 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	grpcServer := grpc.NewServer()
 	runtimeapi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
 	runtimeapi.RegisterImageServiceServer(grpcServer, *imageServer)
 

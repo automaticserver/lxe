@@ -274,11 +274,12 @@ func (s *Sandbox) apply() error {
 		}
 	}
 
+	// write cloud-init network config
 	data := cloudinit.NetworkConfig{
 		Version: 1,
 		Config:  []interface{}{},
 	}
-	// write cloud-init network config
+
 	if len(s.NetworkConfig.Nameservers) > 0 &&
 		len(s.NetworkConfig.Searches) > 0 {
 		data.Config = append(data.Config, cloudinit.NetworkConfigEntryNameserver{
@@ -305,7 +306,8 @@ func (s *Sandbox) apply() error {
 	if s.Hostname != "" {
 		config[cfgCloudInitVendorData] = fmt.Sprintf(`#cloud-config
 hostname: %s
-manage_etc_hosts: true`, s.Hostname)
+manage_etc_hosts: true
+`, s.Hostname)
 	}
 
 	devices := make(map[string]map[string]string)

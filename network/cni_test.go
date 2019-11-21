@@ -299,6 +299,7 @@ func Test_cniContainerNetwork_WhenStarted(t *testing.T) {
 
 	res, err := contNet.WhenStarted(ctx, &PropertiesRunning{Properties: Properties{}, Pid: 6})
 	assert.NoError(t, err)
+	assert.Equal(t, 1, fake.AddNetworkListCallCount())
 	assert.NotEmpty(t, res.Data)
 	assert.Empty(t, res.Nics)
 	assert.Empty(t, res.NetworkConfigEntries)
@@ -314,4 +315,5 @@ func Test_cniContainerNetwork_WhenDeleted(t *testing.T) {
 
 	err := contNet.WhenDeleted(ctx, &Properties{})
 	assert.NoError(t, err)
+	assert.Equal(t, 1, fake.DelNetworkListCallCount())
 }

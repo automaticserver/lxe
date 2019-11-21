@@ -249,9 +249,9 @@ func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) er
 
 	// remove network
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
-			contNet, err := podNet.ContainerNetwork(c.ID, nil)
+			contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 			if err == nil { // dito
 				_ = contNet.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 			}
@@ -274,12 +274,12 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 			return err
 		}
 
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			return err
 		}
 
-		contNet, err := podNet.ContainerNetwork(c.ID, nil)
+		contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 		if err != nil {
 			return err
 		}
@@ -309,9 +309,9 @@ func (s *RuntimeServer) ContainerStopped(ctx context.Context, c *lxf.Container) 
 
 	// stop network
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
-			contNet, err := podNet.ContainerNetwork(c.ID, nil)
+			contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 			if err == nil { // dito
 				_ = contNet.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 			}

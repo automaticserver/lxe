@@ -285,7 +285,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 
 	// create network
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			return nil, err
 		}
@@ -363,7 +363,7 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 
 	// Stop networking
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		netw, err := s.network.PodNetwork(sb.ID, nil)
+		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
 			_ = netw.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 		}
@@ -416,7 +416,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 
 	// Delete networking
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		netw, err := s.network.PodNetwork(sb.ID, nil)
+		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err == nil { // we don't care about error, but only enter if there's no error
 			_ = netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 		}
@@ -507,7 +507,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	case lxf.NetworkBridged:
 		fallthrough
 	case lxf.NetworkCNI:
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			// TODO: additional debug output
 			return ""
@@ -693,12 +693,12 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 
 	// create network
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		podNet, err := s.network.PodNetwork(sb.ID, nil)
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			return nil, err
 		}
 
-		contNet, err := podNet.ContainerNetwork(c.ID, nil)
+		contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 		if err != nil {
 			return nil, err
 		}

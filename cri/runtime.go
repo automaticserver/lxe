@@ -153,7 +153,6 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	}
 	sb.Labels = req.GetConfig().GetLabels()
 	sb.Annotations = req.GetConfig().GetAnnotations()
-	sb.Config = map[string]string{}
 
 	if req.GetConfig().GetDnsConfig() != nil {
 		sb.NetworkConfig.Nameservers = req.GetConfig().GetDnsConfig().GetServers()
@@ -630,7 +629,6 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 	}
 	c.LogPath = req.GetConfig().GetLogPath()
 	c.Image = req.GetConfig().GetImage().GetImage()
-	c.Config = make(map[string]string)
 
 	for _, mnt := range req.GetConfig().GetMounts() {
 		hostPath := mnt.GetHostPath()
@@ -662,8 +660,6 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 	c.Privileged = req.GetConfig().GetLinux().GetSecurityContext().GetPrivileged()
 
 	// get metadata & cloud-init if defined
-	c.Environment = make(map[string]string)
-
 	for _, env := range req.GetConfig().GetEnvs() {
 		switch {
 		case env.GetKey() == "user-data":

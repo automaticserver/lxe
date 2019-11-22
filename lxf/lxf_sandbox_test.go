@@ -26,6 +26,9 @@ func TestClient_NewSandbox(t *testing.T) {
 
 	exp := &Sandbox{}
 	exp.client = client
+	exp.Config = make(map[string]string)
+	exp.NetworkConfig.Mode = NetworkNone
+	exp.NetworkConfig.ModeData = make(map[string]string)
 
 	s := client.NewSandbox()
 

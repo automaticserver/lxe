@@ -16,6 +16,9 @@ import (
 func (l *Client) NewSandbox() *Sandbox {
 	s := &Sandbox{}
 	s.client = l
+	s.Config = make(map[string]string)
+	s.NetworkConfig.Mode = NetworkNone
+	s.NetworkConfig.ModeData = make(map[string]string)
 
 	return s
 }

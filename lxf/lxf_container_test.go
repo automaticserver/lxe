@@ -32,6 +32,8 @@ func TestClient_NewContainer(t *testing.T) {
 		"default",
 		"sandboxID",
 	}
+	exp.Config = make(map[string]string)
+	exp.Environment = make(map[string]string)
 
 	s := client.NewContainer("sandboxID", "default")
 

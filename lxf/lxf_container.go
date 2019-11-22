@@ -20,6 +20,8 @@ func (l *Client) NewContainer(sandboxID string, additionalProfiles ...string) *C
 	c.client = l
 	c.Profiles = append(c.Profiles, additionalProfiles...)
 	c.Profiles = append(c.Profiles, sandboxID)
+	c.Config = make(map[string]string)
+	c.Environment = make(map[string]string)
 
 	return c
 }

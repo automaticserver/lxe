@@ -603,6 +603,8 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
 	logger.Debugf("CreateContainer triggered: %v", req)
 
+	var err error
+
 	c := s.lxf.NewContainer(req.GetPodSandboxId(), s.criConfig.LXDProfiles...)
 
 	c.Labels = req.GetConfig().GetLabels()
@@ -680,7 +682,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 		c.Resources.Memory.Limit = &resrc.MemoryLimitInBytes
 	}
 
-	err := c.Apply()
+	err = c.Apply()
 	if err != nil {
 		logger.Errorf("CreateContainer: ContainerName %v trying to create container: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err

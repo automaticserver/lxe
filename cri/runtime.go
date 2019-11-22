@@ -133,7 +133,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure the sandbox is in the ready state on
 // success
-func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit
+func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit, gocyclo
 	logger.Infof("RunPodSandbox called: SandboxName %v in Namespace %v with SandboxUID %v", req.GetConfig().GetMetadata().GetName(),
 		req.GetConfig().GetMetadata().GetNamespace(), req.GetConfig().GetMetadata().GetUid())
 	logger.Debugf("RunPodSandbox triggered: %v", req)
@@ -161,8 +161,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	}
 
 	// Find out which network mode should be used
-	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) ==
-		string(lxf.NetworkHost) {
+	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) == string(lxf.NetworkHost) { // nolint: gocritic
 		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
 		lxf.AppendIfSet(&sb.Config, "raw.lxc", "lxc.include = "+s.criConfig.LXEHostnetworkFile)
@@ -287,16 +286,25 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
+			err := errors.Wrap(err, fmt.Sprintf("can't enter sandbox %v network context", sb.ID))
+			logger.Error(err.Error())
+
 			return nil, err
 		}
 
 		res, err := podNet.WhenCreated(ctx, &network.Properties{})
 		if err != nil {
+			err := errors.Wrap(err, fmt.Sprintf("can't create sandbox %v network context", sb.ID))
+			logger.Error(err.Error())
+
 			return nil, err
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
+			err := errors.Wrap(err, fmt.Sprintf("can't save create sandbox %v network result", sb.ID))
+			logger.Error(err.Error())
+
 			return nil, err
 		}
 
@@ -308,11 +316,17 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 			Pid: 0, // if we had real 1:n pod:container we would add here the pid of the pod process
 		})
 		if err != nil {
+			err := errors.Wrap(err, fmt.Sprintf("can't start sandbox %v network context", sb.ID))
+			logger.Error(err.Error())
+
 			return nil, err
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
+			err := errors.Wrap(err, fmt.Sprintf("can't save start sandbox %v network result", sb.ID))
+			logger.Error(err.Error())
+
 			return nil, err
 		}
 	}

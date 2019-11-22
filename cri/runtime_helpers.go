@@ -1,6 +1,7 @@
 package cri
 
 import (
+	"fmt"
 	"os"
 	"os/user"
 	"path"
@@ -11,6 +12,7 @@ import (
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
 	"github.com/lxc/lxd/shared"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
 )
@@ -276,12 +278,12 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("can't enter sandbox %v network context", sb.ID))
 		}
 
 		contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 		if err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("can't enter container %v network context", c.ID))
 		}
 
 		res, err := contNet.WhenStarted(ctx, &network.PropertiesRunning{
@@ -291,10 +293,13 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 			Pid: st.Pid,
 		})
 		if err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("can't start container %v network", c.ID))
 		}
 
-		return s.handleNetworkResult(sb, res)
+		err = s.handleNetworkResult(sb, res)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("can't save start container %v network result", c.ID))
+		}
 	}
 
 	return nil

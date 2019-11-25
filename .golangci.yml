@@ -11,3 +11,11 @@ linters:
     - gochecknoinits
     - godox
     - funlen
+
+exclude-rules:
+  # Exclude some linters from running on tests files.
+  - path: _test\.go
+    linters:
+      - gocyclo
+      - dupl
+      - gosec

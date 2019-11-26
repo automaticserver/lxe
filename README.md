@@ -6,8 +6,9 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-go.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-[![Build Status](https://img.shields.io/travis/automaticserver/lxe/master)](https://travis-ci.org/automaticserver/lxe)
+[![Build Status](https://travis-ci.org/automaticserver/lxe.svg?branch=master)](https://travis-ci.org/automaticserver/lxe)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/automaticserver/lxe)](https://github.com/automaticserver/lxe/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/automaticserver/lxe)](https://goreportcard.com/report/github.com/automaticserver/lxe)
 [![GitHub](https://img.shields.io/github/license/automaticserver/lxe?color=lightgrey)](https://github.com/automaticserver/lxe/blob/master/COPYING)
 [![Gitter](https://img.shields.io/gitter/room/automaticserver/lxe?color=blueviolet)](https://gitter.im/automaticserver-lxe)
 

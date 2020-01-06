@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	"github.com/automaticserver/lxe/cri"
@@ -14,14 +17,6 @@ import (
 type cmdDaemon struct {
 	cmd    *cobra.Command
 	global *cmdGlobal
-
-	// Common options
-	flagGroup string
-
-	// Debug options
-	flagCPUProfile      string
-	flagMemoryProfile   string
-	flagPrintGoroutines int
 }
 
 func (c *cmdDaemon) Command() *cobra.Command {
@@ -30,9 +25,6 @@ func (c *cmdDaemon) Command() *cobra.Command {
 	cmd.Short = "LXE is a shim of the Kubernetes Container Runtime Interface for LXD"
 
 	cmd.RunE = c.Run
-	cmd.Flags().StringVar(&c.flagCPUProfile, "cpu-profile", "", "Enable CPU profiling, writing into the specified file"+"``")
-	cmd.Flags().StringVar(&c.flagMemoryProfile, "memory-profile", "", "Enable memory profiling, writing into the specified file"+"``")
-	cmd.Flags().IntVar(&c.flagPrintGoroutines, "print-goroutines", 0, "How often to print all the goroutines"+"``")
 
 	c.cmd = cmd
 
@@ -40,8 +32,7 @@ func (c *cmdDaemon) Command() *cobra.Command {
 }
 
 func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
-	daemonConf := cri.NewDaemonConfig(c.flagGroup, c.global.flagLogTrace)
-	d := cri.NewDaemon(daemonConf, &c.global.cri)
+	d := cri.NewDaemon(&c.global.cri)
 
 	err := d.Init()
 	if err != nil {
@@ -49,19 +40,29 @@ func (c *cmdDaemon) Run(cmd *cobra.Command, args []string) error {
 	}
 
 	ch := make(chan os.Signal, 1)
+	// let go handle SIGQUIT itself, so not added here
 	signal.Notify(ch, syscall.SIGPWR)
 	signal.Notify(ch, syscall.SIGINT)
-	signal.Notify(ch, syscall.SIGQUIT)
 	signal.Notify(ch, syscall.SIGTERM)
+	signal.Notify(ch, syscall.SIGUSR2)
 
-	sig := <-ch
-	if sig == syscall.SIGPWR {
-		logger.Infof("Received '%s signal', shutting down.", sig)
-	} else {
-		logger.Infof("Received '%s signal', exiting.", sig)
+	for sig := range ch {
+		logger.Infof("received signal %v", sig)
+
+		switch sig {
+		case syscall.SIGPWR, syscall.SIGINT, syscall.SIGTERM:
+			logger.Warn("shutting down")
+			return d.Stop()
+		case syscall.SIGUSR2:
+			// Allow manual dump of goroutines until pprof is implemented
+			err := dumpGoroutines()
+			if err != nil {
+				logger.Errorf("Unable to dump goroutines: %v", err)
+			}
+		}
 	}
 
-	return d.Stop()
+	return nil
 }
 
 type noHandler struct {
@@ -69,5 +70,38 @@ type noHandler struct {
 
 // Log 's nothing
 func (h noHandler) Log(r *log.Record) error {
+	return nil
+}
+
+func dumpGoroutines() error {
+	file, err := ioutil.TempFile(os.TempDir(), fmt.Sprintf("lxe-routines-"))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Based on answers to this stackoverflow question:
+	// https://stackoverflow.com/questions/19094099/how-to-dump-goroutine-stacktraces
+	var buf []byte
+	var bufsize int
+	var stacklen int
+
+	// Create a stack buffer of 1MB and grow it to at most 100MB if necessary
+	for bufsize = 1e6; bufsize < 100e6; bufsize *= 2 {
+		buf = make([]byte, bufsize)
+		stacklen = runtime.Stack(buf, true)
+
+		if stacklen < bufsize {
+			break
+		}
+	}
+
+	_, err = file.Write(buf[:stacklen])
+	if err != nil {
+		return err
+	}
+
+	logger.Errorf("Wrote goroutine dump to %s", file.Name())
+
 	return nil
 }

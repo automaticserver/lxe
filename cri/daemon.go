@@ -14,32 +14,16 @@ type Daemon struct {
 	setupChan    chan struct{} // Closed when basic Daemon setup is completed
 	shutdownChan chan struct{}
 
-	daemonConfig *DaemonConfig
-	cri          *Server
-	criConfig    *Config
-}
-
-// DaemonConfig holds configuration values for Daemon.
-type DaemonConfig struct {
-	Group string   // Group name the local unix socket should be chown'ed to
-	Trace []string // List of sub-systems to trace
+	cri       *Server
+	criConfig *Config
 }
 
 // NewDaemon returns a new Daemon object with the given configuration.
-func NewDaemon(daemonConfig *DaemonConfig, criConfig *Config) *Daemon {
+func NewDaemon(criConfig *Config) *Daemon {
 	return &Daemon{
-		daemonConfig: daemonConfig,
 		criConfig:    criConfig,
 		setupChan:    make(chan struct{}),
 		shutdownChan: make(chan struct{}),
-	}
-}
-
-// NewDaemonConfig returns a DaemonConfig object
-func NewDaemonConfig(group string, trace []string) *DaemonConfig {
-	return &DaemonConfig{
-		Group: group,
-		Trace: trace,
 	}
 }
 

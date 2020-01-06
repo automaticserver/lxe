@@ -25,7 +25,6 @@ type cmdGlobal struct {
 	flagLogSyslog  bool
 	flagLogVerbose bool
 	flagLogFile    string
-	flagLogTrace   []string
 
 	cri cri.Config
 }
@@ -65,7 +64,6 @@ func main() {
 	app.PersistentFlags().BoolVar(&globalCmd.flagVersion, "version", false, "Print version number.")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagHelp, "help", "h", false, "Print help.")
 	app.PersistentFlags().StringVar(&globalCmd.flagLogFile, "logfile", "/var/log/lxe.log", "Path to the log file."+"``")
-	app.PersistentFlags().StringArrayVar(&globalCmd.flagLogTrace, "trace", []string{}, "Log tracing targets."+"``")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages.")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages.")
 

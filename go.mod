@@ -1,9 +1,11 @@
 module github.com/automaticserver/lxe
 
 require (
+	asag.io/aep-acs/go-base v0.0.0-20191219185151-97ff83e7c5d2
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	emperror.dev/errors v0.4.3
 	github.com/containernetworking/cni v0.7.1
+	github.com/containernetworking/plugins v0.8.3
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
@@ -21,7 +23,6 @@ require (
 	github.com/juju/go4 v0.0.0-20160222163258-40d72ab9641a // indirect
 	github.com/juju/persistent-cookiejar v0.0.0-20171026135701-d5e5a8405ef9 // indirect
 	github.com/juju/retry v0.0.0-20180821225755-9058e192b216 // indirect
-	github.com/juju/testing v0.0.0-20180920084828-472a3e8b2073 // indirect
 	github.com/juju/utils v0.0.0-20180820210520-bf9cc5bdd62d // indirect
 	github.com/juju/webbrowser v0.0.0-20180907093207-efb9432b2bcb // indirect
 	// Last commit of LXD v3.3
@@ -56,9 +57,8 @@ require (
 	k8s.io/apiserver v0.0.0-20181220070914-ce7b605bead3 // indirect
 	// We need to use the master branch as long as commit a6d1c60475b25ad is not in a tag
 	k8s.io/client-go v10.0.0+incompatible
-	k8s.io/klog v0.1.0 // indirect
 	k8s.io/kubernetes v1.14.1
 	// Repo does not have any tags at all
-	k8s.io/utils v0.0.0-20181115163542-0d26856f57b3
+	k8s.io/utils v0.0.0-20191114200735-6ca3b61696b6
 	sigs.k8s.io/yaml v1.1.0 // indirect
 )

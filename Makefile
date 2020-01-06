@@ -22,11 +22,7 @@ version:
 
 .PHONY: build
 build: version
-	go build -v $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
-
-.PHONY: debug
-debug: version
-	go build -v -tags logdebug $(DEBUG) -o bin/$(EXECUTABLE) ./cmd/lxe
+	go build -o bin/$(EXECUTABLE) -gcflags=all='-N -l' ./cmd/lxe
 
 .PHONY: generate
 generate:

@@ -1,11 +1,9 @@
 module github.com/automaticserver/lxe
 
 require (
-	asag.io/aep-acs/go-base v0.0.0-20191219185151-97ff83e7c5d2
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	emperror.dev/errors v0.4.3
 	github.com/containernetworking/cni v0.7.1
-	github.com/containernetworking/plugins v0.8.3
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
@@ -17,12 +15,15 @@ require (
 	github.com/golangci/golangci-lint v1.21.0
 	// Repo does not have any tags at all
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf // indirect
+	github.com/google/uuid v1.1.1 // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/json-iterator/go v1.1.5 // indirect
 	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5
 	github.com/juju/go4 v0.0.0-20160222163258-40d72ab9641a // indirect
+	github.com/juju/loggo v0.0.0-20190526231331-6e530bcce5d8 // indirect
 	github.com/juju/persistent-cookiejar v0.0.0-20171026135701-d5e5a8405ef9 // indirect
 	github.com/juju/retry v0.0.0-20180821225755-9058e192b216 // indirect
+	github.com/juju/testing v0.0.0-20190613124551-e81189438503 // indirect
 	github.com/juju/utils v0.0.0-20180820210520-bf9cc5bdd62d // indirect
 	github.com/juju/webbrowser v0.0.0-20180907093207-efb9432b2bcb // indirect
 	// Last commit of LXD v3.3

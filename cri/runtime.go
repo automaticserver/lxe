@@ -115,7 +115,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 	// RuntimeApiVersion=someAPIVersion. The actual runtime name and version is not present
 	info, err := s.lxf.GetRuntimeInfo()
 	if err != nil {
-		logger.Errorf("unable to get server environment")
+		logger.Errorf("unable to get server environment: %v", err)
 		return nil, err
 	}
 

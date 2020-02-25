@@ -510,7 +510,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	case lxf.NetworkHost:
 		ip, err := utilNet.ChooseHostInterface()
 		if err != nil {
-			// TODO: additional debug output
+			logger.Errorf("Couldn't choose host interface: %v", err)
 			return ""
 		}
 
@@ -518,43 +518,42 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	case lxf.NetworkNone:
 		return ""
 	case lxf.NetworkBridged:
-		fallthrough
+		// Look into the container, as coded below
 	case lxf.NetworkCNI:
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			// TODO: additional debug output
+			logger.Errorf("Couldn't get cni pod network: %v", err)
 			return ""
 		}
 
 		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
 		if err != nil {
-			// TODO: additional debug output
+			logger.Errorf("Couldn't get status of cni pod network: %v", err)
 			return ""
 		}
 
 		if len(status.IPs) > 0 {
 			return status.IPs[0].String()
 		}
+	}
 
-		fallthrough
-	default:
-		cl, err := sb.Containers()
-		if err != nil {
-			// TODO: additional debug output
-			return ""
+	// If not yet returned, look into the containers interface list and select the address from the default interface
+	cl, err := sb.Containers()
+	if err != nil {
+		logger.Errorf("Couldn't list containers while trying to get inet address: %v", err)
+		return ""
+	}
+
+	for _, c := range cl {
+		// ignore any non-running containers
+		if c.StateName != lxf.ContainerStateRunning {
+			continue
 		}
 
-		for _, c := range cl {
-			// ignore any non-running containers
-			if c.StateName != lxf.ContainerStateRunning {
-				continue
-			}
-
-			// get the ipv4 address of eth0
-			ip := c.GetInetAddress([]string{network.DefaultInterface})
-			if ip != "" {
-				return ip
-			}
+		// get the ipv4 address of eth0
+		ip := c.GetInetAddress([]string{network.DefaultInterface})
+		if ip != "" {
+			return ip
 		}
 	}
 

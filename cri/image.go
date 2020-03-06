@@ -17,12 +17,12 @@ type ImageServer struct {
 	lxdConfig     *config.Config
 	criConfig     *Config
 	runtimeRemote string
-	lxf           *lxf.Client
+	lxf           lxf.Client
 }
 
 // NewImageServer returns a new ImageServer backed by LXD
 // we only need one connection — until we start distinguishing runtime & image service
-func NewImageServer(s *RuntimeServer, lxf *lxf.Client) (*ImageServer, error) {
+func NewImageServer(s *RuntimeServer, lxf lxf.Client) (*ImageServer, error) {
 	i := ImageServer{
 		lxdConfig: s.lxdConfig,
 		criConfig: s.criConfig,

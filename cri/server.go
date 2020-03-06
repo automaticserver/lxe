@@ -36,7 +36,7 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	lxf, err := lxf.NewClient(criConfig.LXDSocket, configPath)
+	client, err := lxf.NewClient(criConfig.LXDSocket, configPath)
 	if err != nil {
 		logger.Critf("Unable to initialize lxe facade: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
@@ -45,7 +45,7 @@ func NewServer(criConfig *Config) *Server {
 	logger.Infof("Connected to LXD via %q", criConfig.LXDSocket)
 
 	// Ensure profile and container schema migration
-	migration := lxf.Migration()
+	migration := lxf.NewMigrationWorkspace(client)
 
 	err = migration.Ensure()
 	if err != nil {
@@ -63,7 +63,7 @@ func NewServer(criConfig *Config) *Server {
 			ConfPath: criConfig.CNIConfDir,
 		})
 	case NetworkPluginDefault:
-		netPlugin, err = network.InitPluginLXDBridge(lxf.GetServer(), network.ConfLXDBridge{
+		netPlugin, err = network.InitPluginLXDBridge(client.GetServer(), network.ConfLXDBridge{
 			LXDBridge:  criConfig.LXEBridgeName,
 			Cidr:       criConfig.LXEBridgeDHCPRange,
 			Nat:        true,
@@ -81,15 +81,15 @@ func NewServer(criConfig *Config) *Server {
 	grpcServer := grpc.NewServer()
 
 	// for now we bind the http on every interface
-	runtimeServer, err := NewRuntimeServer(criConfig, lxf, netPlugin)
+	runtimeServer, err := NewRuntimeServer(criConfig, client, netPlugin)
 	if err != nil {
 		logger.Critf("Unable to start runtime server: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	lxf.SetEventHandler(runtimeServer)
+	client.SetEventHandler(runtimeServer)
 
-	imageServer, err := NewImageServer(runtimeServer, lxf)
+	imageServer, err := NewImageServer(runtimeServer, client)
 	if err != nil {
 		logger.Critf("Unable to start image server: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)

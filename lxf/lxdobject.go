@@ -6,7 +6,7 @@ import "github.com/automaticserver/lxe/lxf/device"
 type LXDObject struct {
 	// client holds the lxf.Client representing as a lxd client
 	// nolint: structcheck
-	client *Client
+	client *client
 	// ID is a unique generated ID and is read-only
 	ID string
 	// ETag uniquely identifies user modifiable content of this resource, prevents race conditions when saving

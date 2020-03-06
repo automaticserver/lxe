@@ -30,7 +30,7 @@ var (
 
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
-func (l *Client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error) {
+func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error) {
 	ses := &session{resize: resize}
 
 	req := lxdApi.ContainerExecPost{

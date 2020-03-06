@@ -2,16 +2,58 @@ package lxf
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
-type Client struct {
+type Client interface {
+	// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
+	// network plugin) either return it here, or extract creation of the connection outside and pass server into
+	// NewClient(), but that makes the initialisation NewClient() pretty unnecessary
+	GetServer() lxd.ContainerServer
+	// GetRuntimeInfo returns informations about the runtime
+	GetRuntimeInfo() (*RuntimeInfo, error)
+	// SetEventHandler for container's starting and stopping events
+	SetEventHandler(eh EventHandler)
+
+	// PullImage copies the given image from the remote server
+	PullImage(name string) (string, error)
+	// RemoveImage will remove the given image
+	RemoveImage(name string) error
+	// ListImages will list all local images from the lxd server
+	ListImages(filter string) ([]Image, error)
+	// GetImage will fetch information about the already downloaded image identified by name
+	GetImage(name string) (*Image, error)
+	// GetFSPoolUsage returns a list of usage information about the used storage pools
+	GetFSPoolUsage() ([]FSPoolUsage, error)
+
+	// NewSandbox creates a local representation of a sandbox
+	NewSandbox() *Sandbox
+	// GetSandbox will find a sandbox by id and return it.
+	GetSandbox(id string) (*Sandbox, error)
+	// ListSandboxes will return a list with all the available sandboxes
+	ListSandboxes() ([]*Sandbox, error)
+
+	// NewContainer creates a local representation of a container
+	NewContainer(sandboxID string, additionalProfiles ...string) *Container
+	// GetContainer returns the container identified by id
+	GetContainer(id string) (*Container, error)
+	// ListContainers returns a list of all available containers
+	ListContainers() ([]*Container, error)
+
+	// Exec will start a command on the server and attach the provided streams. It will block till the command terminated
+	// AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
+	Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error)
+}
+
+type client struct {
 	server       lxd.ContainerServer
 	config       *config.Config
 	opwait       *lxo.LXO
@@ -19,7 +61,7 @@ type Client struct {
 }
 
 // NewClient will set up a connection and return the client
-func NewClient(socket string, configPath string) (*Client, error) {
+func NewClient(socket string, configPath string) (Client, error) {
 	args := lxd.ConnectionArgs{
 		HTTPClient: &http.Client{
 			// this was a byproduct of a bughunt, but i figured using TCP connections with TLS instead of unix sockets
@@ -94,7 +136,7 @@ func NewClient(socket string, configPath string) (*Client, error) {
 		return nil, err
 	}
 
-	client := &Client{
+	cl := &client{
 		server: server,
 		config: config,
 		opwait: lxo.NewClient(server),
@@ -106,37 +148,39 @@ func NewClient(socket string, configPath string) (*Client, error) {
 		return nil, err
 	}
 
-	_, err = listener.AddHandler([]string{"lifecycle"}, client.lifecycleEventHandler)
+	_, err = listener.AddHandler([]string{"lifecycle"}, cl.lifecycleEventHandler)
 	if err != nil {
 		return nil, err
 	}
 
-	return client, nil
+	return cl, nil
 }
 
 // GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
 // network plugin) either return it here, or extract creation of the connection outside and pass server into
 // NewClient(), but that makes the initialisation NewClient() pretty unnecessary
-func (l *Client) GetServer() lxd.ContainerServer {
+func (l *client) GetServer() lxd.ContainerServer {
 	return l.server
 }
 
-func (l *Client) SetEventHandler(eh EventHandler) {
+// SetEventHandler for container's starting and stopping events
+func (l *client) SetEventHandler(eh EventHandler) {
 	l.eventHandler = eh
 }
 
-type runtimeInfo struct {
+type RuntimeInfo struct {
 	// API version of the container runtime. The string must be semver-compatible.
 	Version string
 }
 
-func (l *Client) GetRuntimeInfo() (*runtimeInfo, error) { // nolint: golint // yes return the unexported type
+// GetRuntimeInfo returns informations about the runtime
+func (l *client) GetRuntimeInfo() (*RuntimeInfo, error) {
 	server, _, err := l.server.GetServer()
 	if err != nil {
 		return nil, err
 	}
 
-	return &runtimeInfo{
+	return &RuntimeInfo{
 		// api version is only X.X, so need to add .0 for semver requirement
 		Version: fmt.Sprintf("%s.0", server.APIVersion),
 	}, nil

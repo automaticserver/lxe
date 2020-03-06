@@ -15,7 +15,7 @@ import (
 )
 
 // NewContainer creates a local representation of a container
-func (l *Client) NewContainer(sandboxID string, additionalProfiles ...string) *Container {
+func (l *client) NewContainer(sandboxID string, additionalProfiles ...string) *Container {
 	c := &Container{}
 	c.client = l
 	c.Profiles = append(c.Profiles, additionalProfiles...)
@@ -27,7 +27,7 @@ func (l *Client) NewContainer(sandboxID string, additionalProfiles ...string) *C
 }
 
 // GetContainer returns the container identified by id
-func (l *Client) GetContainer(id string) (*Container, error) {
+func (l *client) GetContainer(id string) (*Container, error) {
 	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
 		return nil, NewContainerError(id, err)
@@ -41,7 +41,7 @@ func (l *Client) GetContainer(id string) (*Container, error) {
 }
 
 // ListContainers returns a list of all available containers
-func (l *Client) ListContainers() ([]*Container, error) {
+func (l *client) ListContainers() ([]*Container, error) {
 	var (
 		err  error
 		etag string
@@ -72,7 +72,7 @@ func (l *Client) ListContainers() ([]*Container, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *Client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit
+func (l *client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit
 	var err error
 
 	var attempt uint64
@@ -221,7 +221,7 @@ type EventHandler interface {
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
-func (l *Client) lifecycleEventHandler(event api.Event) {
+func (l *client) lifecycleEventHandler(event api.Event) {
 	// we should always only get lifecycle events due to the handler setup but just in case ...
 	if event.Type != "lifecycle" {
 		return

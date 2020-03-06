@@ -28,13 +28,13 @@ const (
 
 // MigrationWorkspace manages schema of lxd objects
 type MigrationWorkspace struct {
-	lxf *Client
+	lxf *client
 }
 
 // Migration initializes the migration workspace
-func (l *Client) Migration() *MigrationWorkspace {
+func NewMigrationWorkspace(l Client) *MigrationWorkspace {
 	return &MigrationWorkspace{
-		lxf: l,
+		lxf: l.(*client),
 	}
 }
 

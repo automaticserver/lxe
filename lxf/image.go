@@ -18,7 +18,7 @@ type Image struct {
 }
 
 // PullImage copies the given image from the remote server
-func (l *Client) PullImage(name string) (string, error) {
+func (l *client) PullImage(name string) (string, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		return "", err
@@ -53,8 +53,8 @@ func (l *Client) PullImage(name string) (string, error) {
 	return image.Fingerprint, l.ensureImageAlias(imageID.Tag(), image.Fingerprint)
 }
 
-// RemoveImage will remove the given alias
-func (l *Client) RemoveImage(name string) error {
+// RemoveImage will remove the given image
+func (l *client) RemoveImage(name string) error {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func (l *Client) RemoveImage(name string) error {
 
 // Create the specified image alis, update if already exist
 // from github.com/lxc/lxd/lxc/image.go:172 + changes
-func (l *Client) ensureImageAlias(alias string, fingerprint string) error {
+func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 	current, err := l.server.GetImageAliases()
 	if err != nil {
 		return err
@@ -123,7 +123,7 @@ func (l *Client) ensureImageAlias(alias string, fingerprint string) error {
 }
 
 // ListImages will list all local images from the lxd server
-func (l *Client) ListImages(filter string) ([]Image, error) {
+func (l *client) ListImages(filter string) ([]Image, error) {
 	response := []Image{}
 
 	imglist, err := l.server.GetImages()
@@ -151,9 +151,8 @@ func (l *Client) ListImages(filter string) ([]Image, error) {
 	return response, nil
 }
 
-// GetImage will fetch information about the image identified by name
-// It will only work on local images.
-func (l *Client) GetImage(name string) (*Image, error) {
+// GetImage will fetch information about the already downloaded image identified by name
+func (l *client) GetImage(name string) (*Image, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "doesn't exist") {
@@ -196,7 +195,7 @@ type FSPoolUsage struct {
 }
 
 // GetFSPoolUsage returns a list of usage information about the used storage pools
-func (l *Client) GetFSPoolUsage() ([]FSPoolUsage, error) {
+func (l *client) GetFSPoolUsage() ([]FSPoolUsage, error) {
 	pools, err := l.server.GetStoragePools()
 	if err != nil {
 		return nil, err
@@ -235,7 +234,7 @@ func (i ImageID) Tag() string {
 // Hash returns the hash from the combined local tag or if it's
 // already a hash this one.
 // It it's not found second return will be false and error will be zero.
-func (i ImageID) Hash(l *Client) (string, bool, error) {
+func (i ImageID) Hash(l *client) (string, bool, error) {
 	exists, _, err := l.server.GetImageAlias(i.Tag())
 	if err != nil {
 		if err.Error() == ErrorLXDNotFound {
@@ -261,7 +260,7 @@ func (i ImageID) Hash(l *Client) (string, bool, error) {
 
 // parseImage will take an external image and split it up into
 // remote and tag
-func (l *Client) parseImage(name string) (ImageID, error) {
+func (l *client) parseImage(name string) (ImageID, error) {
 	img, err := convertDockerImageNameToLXC(name)
 	if err != nil {
 		return ImageID{}, err

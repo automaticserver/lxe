@@ -1,5 +1,7 @@
 module github.com/automaticserver/lxe
 
+go 1.14
+
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	emperror.dev/errors v0.4.3
@@ -12,6 +14,7 @@ require (
 	github.com/flosch/pongo2 v0.0.0-20180809100617-24195e6d38b0 // indirect
 	github.com/frankban/quicktest v1.1.0 // indirect
 	github.com/ghodss/yaml v1.0.0
+	github.com/gogo/protobuf v1.2.2-0.20190723190241-65acae22fc9d // indirect
 	github.com/golangci/golangci-lint v1.21.0
 	// Repo does not have any tags at all
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf // indirect
@@ -37,13 +40,11 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.4.0
-	golang.org/x/net v0.0.0-20190923162816-aa69164e4478
+	golang.org/x/net v0.0.0-20191004110552-13f9640d40b9
 	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890 // indirect
 	golang.org/x/sys v0.0.0-20190922100055-0a153f010e69
-	google.golang.org/appengine v1.4.0 // indirect
-	// Does not have SemVer tags - latest commit at time of writing
-	google.golang.org/genproto v0.0.0-20181221010529-a1fde7408246 // indirect
-	google.golang.org/grpc v1.21.0
+	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873 // indirect
+	google.golang.org/grpc v1.23.1
 	gopkg.in/errgo.v1 v1.0.0 // indirect
 	gopkg.in/httprequest.v1 v1.1.3 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
@@ -51,7 +52,7 @@ require (
 	gopkg.in/macaroon.v2 v2.0.0 // indirect
 	gopkg.in/retry.v1 v1.0.2 // indirect
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5 // indirect
-	gopkg.in/yaml.v2 v2.2.4
+	gopkg.in/yaml.v2 v2.2.8
 	// These imports do not use SemVer (Tags are "kubernetes-1.12.1")
 	k8s.io/api v0.0.0-20181130031204-d04500c8c3dd // indirect
 	k8s.io/apimachinery v0.0.0-20181220065808-98853ca904e8

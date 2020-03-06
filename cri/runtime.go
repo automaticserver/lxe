@@ -43,7 +43,7 @@ type streamService struct {
 // RuntimeServer is the PoC implementation of the CRI RuntimeServer
 type RuntimeServer struct {
 	rtApi.RuntimeServiceServer
-	lxf       *lxf.Client
+	lxf       lxf.Client
 	stream    streamService
 	lxdConfig *config.Config
 	criConfig *Config
@@ -51,7 +51,7 @@ type RuntimeServer struct {
 }
 
 // NewRuntimeServer returns a new RuntimeServer backed by LXD
-func NewRuntimeServer(criConfig *Config, lxf *lxf.Client, network network.Plugin) (*RuntimeServer, error) {
+func NewRuntimeServer(criConfig *Config, lxf lxf.Client, network network.Plugin) (*RuntimeServer, error) {
 	var err error
 
 	runtime := RuntimeServer{

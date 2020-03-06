@@ -13,7 +13,7 @@ import (
 )
 
 // NewSandbox creates a local representation of a sandbox
-func (l *Client) NewSandbox() *Sandbox {
+func (l *client) NewSandbox() *Sandbox {
 	s := &Sandbox{}
 	s.client = l
 	s.Config = make(map[string]string)
@@ -24,7 +24,7 @@ func (l *Client) NewSandbox() *Sandbox {
 }
 
 // GetSandbox will find a sandbox by id and return it.
-func (l *Client) GetSandbox(id string) (*Sandbox, error) {
+func (l *client) GetSandbox(id string) (*Sandbox, error) {
 	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
 		return nil, NewSandboxError(id, err)
@@ -38,7 +38,7 @@ func (l *Client) GetSandbox(id string) (*Sandbox, error) {
 }
 
 // ListSandboxes will return a list with all the available sandboxes
-func (l *Client) ListSandboxes() ([]*Sandbox, error) {
+func (l *client) ListSandboxes() ([]*Sandbox, error) {
 	var ETag string
 
 	ps, err := l.server.GetProfiles()
@@ -66,7 +66,7 @@ func (l *Client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *Client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // nolint: gocognit
+func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // nolint: gocognit
 	var err error
 
 	var attempt uint64

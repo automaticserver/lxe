@@ -276,7 +276,7 @@ func (s *Sandbox) apply() error {
 
 	// write cloud-init network config
 	data := cloudinit.NetworkConfig{
-		Version: 1,
+		Version: 1, // nolint: gomnd
 		Config:  []interface{}{},
 	}
 

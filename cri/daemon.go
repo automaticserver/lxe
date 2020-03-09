@@ -74,7 +74,7 @@ func (d *Daemon) Stop() error {
 
 	if n := len(errs); n > 0 {
 		format := "%v"
-		if n > 1 {
+		if n > 1 { // nolint: gomnd
 			format += fmt.Sprintf(" (and %d more errors)", n)
 		}
 

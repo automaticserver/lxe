@@ -5,6 +5,7 @@ go 1.14
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	emperror.dev/errors v0.4.3
+	github.com/bombsimon/wsl v1.2.5 // indirect
 	github.com/containernetworking/cni v0.7.1
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all
@@ -15,7 +16,7 @@ require (
 	github.com/frankban/quicktest v1.1.0 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.2.2-0.20190723190241-65acae22fc9d // indirect
-	github.com/golangci/golangci-lint v1.21.0
+	github.com/golangci/golangci-lint v1.23.8
 	// Repo does not have any tags at all
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf // indirect
 	github.com/google/uuid v1.1.1 // indirect

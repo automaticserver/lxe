@@ -23,11 +23,11 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 
 	// defaults for start and end to usable addresses if not explicitly defined
 	if start == nil {
-		start = net.IPv4(networkIP[0], networkIP[1], networkIP[2], networkIP[3]+1)
+		start = net.IPv4(networkIP[0], networkIP[1], networkIP[2], networkIP[3]+1) // nolint: gomnd
 	}
 
 	if end == nil {
-		end = net.IPv4(broadcastIP[0], broadcastIP[1], broadcastIP[2], broadcastIP[3]-1)
+		end = net.IPv4(broadcastIP[0], broadcastIP[1], broadcastIP[2], broadcastIP[3]-1) // nolint: gomnd
 	}
 
 	// Until a usable IP is found...

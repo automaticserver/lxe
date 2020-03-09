@@ -17,6 +17,11 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
+const (
+	WindowHeightDefault = 24
+	WindowWidthDefault  = 80
+)
+
 var (
 	ErrExecTimeout     = errors.New("timeout reached")
 	ErrNoControlSocket = errors.New("no control socket found")
@@ -38,8 +43,8 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 		WaitForWS:    true,
 		Interactive:  interactive,
 		Environment:  map[string]string{"TERM": "xterm"},
-		Width:        80,
-		Height:       24,
+		Width:        WindowWidthDefault,
+		Height:       WindowHeightDefault,
 		RecordOutput: false,
 	}
 	args := &lxd.ContainerExecArgs{
@@ -182,7 +187,7 @@ func (s *session) sendCancel() error {
 	}
 
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseGoingAway, "timeout reached")
-	err = s.control.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(1*time.Second))
+	err = s.control.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(1*time.Second)) // nolint: gomnd
 
 	return err
 }

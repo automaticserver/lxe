@@ -21,3 +21,4 @@ issues:
       - errcheck
       - dupl
       - gosec
+      - gomnd

@@ -68,7 +68,7 @@ func IsSchemaCurrent(i interface{}) bool {
 }
 
 // Ensure applies all migration steps from detected schema to current schema
-func (m *MigrationWorkspace) Ensure() error {
+func (m *MigrationWorkspace) Ensure() error { // nolint: gocognit
 	profiles, err := m.lxf.server.GetProfiles()
 	if err != nil {
 		return err

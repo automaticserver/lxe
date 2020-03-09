@@ -69,6 +69,7 @@ func (d *Proxy) FromMap(name string, options map[string]string) error {
 // Protocol defines the type of a proxy endpoint
 type Protocol int
 
+// nolint: gomnd
 const (
 	// ProtocolUndefined is not a valid protocol
 	ProtocolUndefined = Protocol(0)
@@ -117,7 +118,7 @@ type ProxyEndpoint struct {
 // TODO verify and document allowed format values
 func NewProxyEndpoint(str string) (*ProxyEndpoint, error) {
 	parts := strings.Split(str, ":")
-	if len(parts) != 3 {
+	if len(parts) != 3 { // nolint: gomnd
 		return nil, errors.NotValidf("proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
 	}
 

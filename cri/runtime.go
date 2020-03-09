@@ -98,6 +98,7 @@ func NewRuntimeServer(criConfig *Config, lxf lxf.Client, network network.Plugin)
 	go func() {
 		defer close(runtime.stream.streamServerCloseCh)
 		logger.Infof("Starting streaming server on %v", streamServerConfig.Addr)
+
 		err := runtime.stream.streamServer.Start(true)
 		if err != nil {
 			panic(fmt.Errorf("error serving execs or portforwards: %v", err))
@@ -1034,6 +1035,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 		if err != nil {
 			logger.Errorf("pipe copy errored: %v", err)
 		}
+
 		err = inPipe.Close()
 		if err != nil {
 			logger.Errorf("pipe close errored: %v", err)

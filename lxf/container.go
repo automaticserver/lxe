@@ -471,6 +471,7 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 			}
 
 			if c.Resources.CPU.Quota != nil && *c.Resources.CPU.Quota > 0 && c.Resources.CPU.Period != nil && *c.Resources.CPU.Period > 0 {
+				// nolint:gomnd
 				config[cfgLimitCPUAllowance] = fmt.Sprintf("%dms/%dms",
 					int(math.Ceil(float64(*c.Resources.CPU.Quota)/1000)),
 					int(math.Ceil(float64(*c.Resources.CPU.Period)/1000)),

@@ -53,6 +53,10 @@ type Client interface {
 	Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error)
 }
 
+var (
+	lxdHTTPTimeout = 10 * time.Second
+)
+
 type client struct {
 	server       lxd.ContainerServer
 	config       *config.Config
@@ -122,7 +126,7 @@ func NewClient(socket string, configPath string) (Client, error) {
 			// and still needs more investigation.
 			// since sharing the networknamespace between host and container via "lxc.raw = lxc.net.0.type=none"
 			// is neither officially supported nor encouraged, filing a bugreport against LXD is rather pointless.
-			Timeout: 10 * time.Second,
+			Timeout: lxdHTTPTimeout,
 		},
 	}
 

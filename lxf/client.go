@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
+	"github.com/lxc/lxd/shared/logger"
+	"gopkg.in/fsnotify.v1"
 	"k8s.io/client-go/tools/remotecommand"
 )
 
@@ -62,10 +65,62 @@ type client struct {
 	config       *config.Config
 	opwait       *lxo.LXO
 	eventHandler EventHandler
+	socket       string
 }
 
 // NewClient will set up a connection and return the client
 func NewClient(socket string, configPath string) (Client, error) {
+	config, err := config.LoadConfig(configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	cl := &client{
+		config: config,
+		socket: socket,
+	}
+
+	err = cl.connect()
+	if err != nil {
+		return nil, err
+	}
+
+	go cl.detectNeedReconnect()
+
+	return cl, nil
+}
+
+// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
+// network plugin) either return it here, or extract creation of the connection outside and pass server into
+// NewClient(), but that makes the initialisation NewClient() pretty unnecessary
+func (l *client) GetServer() lxd.ContainerServer {
+	return l.server
+}
+
+// SetEventHandler for container's starting and stopping events
+func (l *client) SetEventHandler(eh EventHandler) {
+	l.eventHandler = eh
+}
+
+type RuntimeInfo struct {
+	// API version of the container runtime. The string must be semver-compatible.
+	Version string
+}
+
+// GetRuntimeInfo returns informations about the runtime
+func (l *client) GetRuntimeInfo() (*RuntimeInfo, error) {
+	server, _, err := l.server.GetServer()
+	if err != nil {
+		return nil, err
+	}
+
+	return &RuntimeInfo{
+		// api version is only X.X, so need to add .0 for semver requirement
+		Version: fmt.Sprintf("%s.0", server.APIVersion),
+	}, nil
+}
+
+func (l *client) connect() error {
 	args := lxd.ConnectionArgs{
 		HTTPClient: &http.Client{
 			// this was a byproduct of a bughunt, but i figured using TCP connections with TLS instead of unix sockets
@@ -130,62 +185,76 @@ func NewClient(socket string, configPath string) (Client, error) {
 		},
 	}
 
-	server, err := lxd.ConnectLXDUnix(socket, &args)
+	server, err := lxd.ConnectLXDUnix(l.socket, &args)
 	if err != nil {
-		return nil, err
-	}
-
-	config, err := config.LoadConfig(configPath)
-	if err != nil {
-		return nil, err
-	}
-
-	cl := &client{
-		server: server,
-		config: config,
-		opwait: lxo.NewClient(server),
+		return err
 	}
 
 	// register LXD eventhandler
 	listener, err := server.GetEvents()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	_, err = listener.AddHandler([]string{"lifecycle"}, cl.lifecycleEventHandler)
+	_, err = listener.AddHandler([]string{"lifecycle"}, l.lifecycleEventHandler)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return cl, nil
+	l.server = server
+	l.opwait = lxo.NewClient(server)
+
+	return nil
 }
 
-// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
-// network plugin) either return it here, or extract creation of the connection outside and pass server into
-// NewClient(), but that makes the initialisation NewClient() pretty unnecessary
-func (l *client) GetServer() lxd.ContainerServer {
-	return l.server
-}
-
-// SetEventHandler for container's starting and stopping events
-func (l *client) SetEventHandler(eh EventHandler) {
-	l.eventHandler = eh
-}
-
-type RuntimeInfo struct {
-	// API version of the container runtime. The string must be semver-compatible.
-	Version string
-}
-
-// GetRuntimeInfo returns informations about the runtime
-func (l *client) GetRuntimeInfo() (*RuntimeInfo, error) {
-	server, _, err := l.server.GetServer()
+// detect if server needs to be connected again to. Seems to be needed if we get a lxd.RemoteOperation (e.g. in CopyImage), the op.Wait() never succeeds unless we have connected to the lxd socket again. All other lxd.Operations seem to work fine and wouldn't be needed for them.
+func (l *client) detectNeedReconnect() { // nolint: gocognit
+	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.ContainerServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
+	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		return nil, err
+		logger.Crit(err.Error())
+	}
+	defer watcher.Close()
+
+	err = watcher.Add(path.Dir(l.socket))
+	if err != nil {
+		logger.Crit(err.Error())
 	}
 
-	return &RuntimeInfo{
-		// api version is only X.X, so need to add .0 for semver requirement
-		Version: fmt.Sprintf("%s.0", server.APIVersion),
-	}, nil
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+
+			if event.Op&fsnotify.Create == fsnotify.Create && event.Name == l.socket {
+				logger.Infof("socket %s got created, trying to reconnect", l.socket)
+
+				go func() {
+					for {
+						err := l.connect()
+						if err != nil {
+							// print error and try again
+							logger.Errorf("tried reconnecting to lxd socket: %v", err)
+						} else {
+							logger.Info("reconnected to lxd socket")
+
+							return
+						}
+					}
+				}()
+			}
+
+			if event.Op&fsnotify.Remove == fsnotify.Remove && event.Name == l.socket {
+				logger.Warnf("socket %s got deleted, will try to reconnect once it's created again", l.socket)
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+
+			logger.Crit("error: %v", err)
+		}
+	}
 }

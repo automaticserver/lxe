@@ -5,7 +5,6 @@ go 1.14
 require (
 	code.cloudfoundry.org/systemcerts v0.0.0-20180917154049-ca00b2f806f2 // indirect
 	emperror.dev/errors v0.4.3
-	github.com/bombsimon/wsl v1.2.5 // indirect
 	github.com/containernetworking/cni v0.7.1
 	github.com/docker/docker v1.13.1
 	// Repo does not have any tags at all
@@ -37,7 +36,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/opencontainers/runtime-spec v1.0.1
-	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.4.0
@@ -47,6 +45,7 @@ require (
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873 // indirect
 	google.golang.org/grpc v1.23.1
 	gopkg.in/errgo.v1 v1.0.0 // indirect
+	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/httprequest.v1 v1.1.3 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/macaroon-bakery.v2 v2.1.0 // indirect

@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
 	lxdApi "github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	"golang.org/x/sys/unix"
@@ -130,7 +129,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 		return err
 	}
 
-	msg := api.ContainerExecControl{}
+	msg := lxdApi.ContainerExecControl{}
 	msg.Command = "window-resize"
 	msg.Args = make(map[string]string)
 	msg.Args["width"] = width
@@ -172,7 +171,7 @@ func (s *session) sendCancel() error {
 	}
 	defer w.Close()
 
-	msg := api.ContainerExecControl{}
+	msg := lxdApi.ContainerExecControl{}
 	msg.Command = "signal"
 	msg.Signal = int(sig)
 

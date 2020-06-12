@@ -256,6 +256,8 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
+	logger.Infof("EventHandler: Type %v ContainerID %v", event.Type, containerID)
+
 	switch eventLifecycle.Action {
 	case "container-started":
 		err := l.eventHandler.ContainerStarted(context.TODO(), c)

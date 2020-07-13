@@ -10,7 +10,7 @@ import (
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"google.golang.org/grpc"
-	runtimeapi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 // NetworkPlugin defines how the pod network should be setup.
@@ -95,8 +95,8 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	runtimeapi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
-	runtimeapi.RegisterImageServiceServer(grpcServer, *imageServer)
+	rtApi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
+	rtApi.RegisterImageServiceServer(grpcServer, *imageServer)
 
 	return &Server{
 		server:    grpcServer,

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 var (

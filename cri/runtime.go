@@ -22,7 +22,7 @@ import (
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
-	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 	"k8s.io/kubernetes/pkg/kubelet/server/streaming"
 	"k8s.io/kubernetes/pkg/kubelet/util/ioutils"
 	utilExec "k8s.io/utils/exec"

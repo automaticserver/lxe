@@ -13,7 +13,7 @@ import (
 	"github.com/containernetworking/cni/libcni"
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
-	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 const (

@@ -38,10 +38,10 @@ require (
 	gopkg.in/retry.v1 v1.0.3 // indirect
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5 // indirect
 	gopkg.in/yaml.v2 v2.3.0
-	k8s.io/apimachinery v0.18.5
-	k8s.io/apiserver v0.18.5 // indirect
-	k8s.io/client-go v11.0.0+incompatible
-	k8s.io/kubernetes v1.15.12
+	k8s.io/apimachinery v0.15.12
+	k8s.io/client-go v0.15.12
+	k8s.io/cri-api v0.0.0
+	k8s.io/kubernetes v1.18.5
 	k8s.io/utils v0.0.0-20200619165400-6e3d28b6ed19
 )
 

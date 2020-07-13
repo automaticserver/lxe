@@ -15,7 +15,7 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
-	rtApi "k8s.io/kubernetes/pkg/kubelet/apis/cri/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {

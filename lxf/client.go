@@ -1,6 +1,7 @@
 package lxf
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,6 +14,13 @@ import (
 	"github.com/lxc/lxd/shared/logger"
 	"gopkg.in/fsnotify.v1"
 	"k8s.io/client-go/tools/remotecommand"
+)
+
+var (
+	ErrMissingETag = errors.New("missing ETag")
+	ErrConvert     = errors.New("convert error")
+	ErrParse       = errors.New("parse error")
+	ErrUsage       = errors.New("usage error")
 )
 
 // Client is a facade to thin the interface to map the cri logic to lxd.

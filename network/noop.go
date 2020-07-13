@@ -2,12 +2,14 @@ package network
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 var (
+	ErrNoop = errors.New("noop")
 	// verify interface satisfaction
 	_ Plugin           = &noopPlugin{}
 	_ PodNetwork       = &noopPodNetwork{}
@@ -28,12 +30,12 @@ func (p *noopPlugin) PodNetwork(_ string, _ map[string]string) (PodNetwork, erro
 }
 
 func (p *noopPlugin) Status() error {
-	return fmt.Errorf("noop plugin is never running")
+	return fmt.Errorf("%w plugin is never running", ErrNoop)
 }
 
 // UpdateRuntimeConfig is called when there are updates to the configuration which the plugin might need to apply
 func (p *noopPlugin) UpdateRuntimeConfig(_ *rtApi.RuntimeConfig) error {
-	return fmt.Errorf("noopPlugin can't update runtime config")
+	return fmt.Errorf("%w plugin can't update runtime config", ErrNoop)
 }
 
 // cniPodNetwork is a pod network environment context

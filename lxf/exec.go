@@ -88,7 +88,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 
 	exitCode, ok := opAPI.Metadata["return"].(float64)
 	if !ok {
-		return CodeExecError, fmt.Errorf("can't parse error code: %#v", opAPI.Metadata["return"])
+		return CodeExecError, fmt.Errorf("code %w: %#v", ErrParse, opAPI.Metadata["return"])
 	}
 
 	return int32(exitCode), nil
@@ -186,7 +186,7 @@ func (s *session) sendCancel() error {
 	}
 
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseGoingAway, "timeout reached")
-	err = s.control.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(1*time.Second)) // nolint: gomnd
+	err = s.control.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(1*time.Second))
 
 	return err
 }

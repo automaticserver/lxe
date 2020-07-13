@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
@@ -30,11 +31,11 @@ func (l *client) NewContainer(sandboxID string, additionalProfiles ...string) *C
 func (l *client) GetContainer(id string) (*Container, error) {
 	ct, ETag, err := l.server.GetContainer(id)
 	if err != nil {
-		return nil, NewContainerError(id, err)
+		return nil, err
 	}
 
 	if !IsCRI(ct) {
-		return nil, NewContainerError(id, fmt.Errorf(ErrorLXDNotFound))
+		return nil, fmt.Errorf("container %w: %s", shared.NewErrNotFound(), id)
 	}
 
 	return l.toContainer(ct, ETag)
@@ -49,7 +50,7 @@ func (l *client) ListContainers() ([]*Container, error) {
 
 	cts, err := l.server.GetContainers()
 	if err != nil {
-		return nil, NewContainerError("lxdApi", err)
+		return nil, err
 	}
 
 	var cl = []*Container{}
@@ -193,11 +194,11 @@ func (l *client) toContainer(ct *api.Container, etag string) (*Container, error)
 
 	c.Profiles = ct.Profiles
 	if len(c.Profiles) == 0 {
-		return nil, fmt.Errorf("Container '%v' has no sandbox", c.ID)
+		return nil, fmt.Errorf("%w: container '%v' has no sandbox", ErrConvert, c.ID)
 	}
 
 	// Map status code of LXD to CRI
-	switch ct.StatusCode {
+	switch ct.StatusCode { // nolint: exhaustive
 	case api.Running:
 		c.StateName = ContainerStateRunning
 	case api.Stopped, api.Aborting, api.Stopping:
@@ -224,6 +225,7 @@ type EventHandler interface {
 func (l *client) lifecycleEventHandler(event api.Event) {
 	// we should always only get lifecycle events due to the handler setup but just in case ...
 	if event.Type != "lifecycle" {
+		// If the started container is not a cri container, we also get "not found", so this container can be ignored
 		return
 	}
 
@@ -244,9 +246,7 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 
 	c, err := l.GetContainer(containerID)
 	if err != nil {
-		if IsContainerNotFound(err) {
-			// If the started container is not a cri container, we also get the error not found. So this container can be
-			// ignored
+		if shared.IsErrNotFound(err) {
 			return
 		}
 

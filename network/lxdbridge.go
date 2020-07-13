@@ -2,22 +2,25 @@ package network
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"strconv"
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network/cloudinit"
+	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 const (
-	// ErrorLXDNotFound is the error string a LXD request returns, when nothing is found. Unfortunately there is no
-	// constant in the lxd source we could've used
-	ErrorLXDNotFound = "not found"
 	DefaultLXDBridge = "lxebr0"
+)
+
+var (
+	ErrNotBridge = errors.New("not a bridge")
 )
 
 // ConfLXDBridge are configuration options for the LXDBridge plugin. All properties are optional and get a default value
@@ -108,7 +111,7 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 
 	network, ETag, err := p.server.GetNetwork(p.conf.LXDBridge)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+		if shared.IsErrNotFound(err) {
 			return p.server.CreateNetwork(api.NetworksPost{
 				Name:       p.conf.LXDBridge,
 				Type:       "bridge",
@@ -119,7 +122,7 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 
 		return err
 	} else if network.Type != "bridge" {
-		return fmt.Errorf("expected %v to be a bridge, but is %v", p.conf.LXDBridge, network.Type)
+		return fmt.Errorf("%w: %v, but is %v", ErrNotBridge, p.conf.LXDBridge, network.Type)
 	}
 
 	// don't update when only creation is requested
@@ -135,6 +138,8 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 	return p.server.UpdateNetwork(p.conf.LXDBridge, network.Writable(), ETag)
 }
 
+var ErrNotImplemented = errors.New("not implemented")
+
 // findFreeIP generates a IP within the range of the provided lxd managed bridge which does
 // not exist in the current leases
 func (p *lxdBridgePlugin) findFreeIP() (net.IP, error) {
@@ -143,7 +148,7 @@ func (p *lxdBridgePlugin) findFreeIP() (net.IP, error) {
 		return nil, err
 	} else if network.Config["ipv4.dhcp.ranges"] != "" {
 		// actually we can now using FindFreeIP(), but not good enough, as this field can yield multiple ranges
-		return nil, fmt.Errorf("not yet implemented to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", p.conf.LXDBridge)
+		return nil, fmt.Errorf("%w to find an IP with explicitly set ip ranges `ipv4.dhcp.ranges` in bridge %v", ErrNotImplemented, p.conf.LXDBridge)
 	}
 
 	rawLeases, err := p.server.GetNetworkLeases(p.conf.LXDBridge)
@@ -187,12 +192,12 @@ func (s *lxdBridgePodNetwork) ContainerNetwork(id string, annotations map[string
 // Status reports IP and any error with the network of that pod
 func (s *lxdBridgePodNetwork) Status(ctx context.Context, prop *PropertiesRunning) (*Status, error) {
 	if prop.Data["interface-address"] == "" {
-		return nil, fmt.Errorf("no ip address found")
+		return nil, &net.AddrError{Addr: prop.Data["interface-address"], Err: "missing"}
 	}
 
 	ip := net.ParseIP(prop.Data["interface-address"])
 	if ip == nil {
-		return nil, fmt.Errorf("invalid ip address format")
+		return nil, &net.ParseError{Type: "IP address", Text: prop.Data["interface-address"]}
 	}
 
 	return &Status{

@@ -11,6 +11,9 @@ linters:
     - gochecknoinits
     - godox
     - funlen
+    - testpackage
+    - godot
+    - gofumpt
 
 issues:
   exclude-rules:
@@ -20,5 +23,4 @@ issues:
       - gocyclo
       - errcheck
       - dupl
-      - gosec
-      - gomnd
+      - goerr113

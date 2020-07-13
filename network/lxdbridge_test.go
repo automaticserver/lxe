@@ -1,10 +1,10 @@
 package network
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +33,7 @@ func TestInitPluginLXDBridge_DefaultsAndCreate(t *testing.T) {
 
 	server, fake := testLXDClient()
 
-	fake.GetNetworkReturns(nil, "", fmt.Errorf(ErrorLXDNotFound))
+	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
 
 	p, err := InitPluginLXDBridge(server, ConfLXDBridge{})
 	assert.NoError(t, err)
@@ -106,7 +106,7 @@ func Test_lxdBridgePlugin_UpdateRuntimeConfig(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(nil, "", fmt.Errorf(ErrorLXDNotFound))
+	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
 
 	err := plugin.UpdateRuntimeConfig(&rtApi.RuntimeConfig{NetworkConfig: &rtApi.NetworkConfig{PodCidr: "192.168.224.0/24"}})
 	assert.NoError(t, err)
@@ -151,7 +151,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeBridgeIP(t *testing.T) {
 	plugin.conf.Cidr = "192.168.224.0/24"
 	cidrExp := "192.168.224.1/24"
 
-	fake.GetNetworkReturns(nil, "", fmt.Errorf(ErrorLXDNotFound))
+	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
 
 	err := plugin.ensureBridge()
 	assert.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeAuto(t *testing.T) {
 	plugin, fake := testLXDBridgePlugin()
 	plugin.conf.Cidr = ""
 
-	fake.GetNetworkReturns(nil, "", fmt.Errorf(ErrorLXDNotFound))
+	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
 
 	err := plugin.ensureBridge()
 	assert.NoError(t, err)

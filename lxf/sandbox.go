@@ -9,6 +9,7 @@ import (
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network/cloudinit"
+	"github.com/automaticserver/lxe/shared"
 	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
@@ -222,7 +223,7 @@ func (s *Sandbox) Stop() error {
 func (s *Sandbox) Delete() error {
 	err := s.client.server.DeleteProfile(s.ID)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -276,7 +277,7 @@ func (s *Sandbox) apply() error {
 
 	// write cloud-init network config
 	data := cloudinit.NetworkConfig{
-		Version: 1, // nolint: gomnd
+		Version: 1,
 		Config:  []interface{}{},
 	}
 
@@ -333,13 +334,13 @@ manage_etc_hosts: true
 	}
 	// else profile has to be updated
 	if s.ETag == "" {
-		return fmt.Errorf("update profile not allowed with empty ETag")
+		return fmt.Errorf("update profile not allowed: %w", ErrMissingETag)
 	}
 
 	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
-			return NewSandboxError(s.ID, err)
+		if shared.IsErrNotFound(err) {
+			return fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), s.ID)
 		}
 
 		return err

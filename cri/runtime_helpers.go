@@ -11,7 +11,8 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
-	"github.com/lxc/lxd/shared"
+	"github.com/automaticserver/lxe/shared"
+	sharedLXD "github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
@@ -82,7 +83,7 @@ func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
 	disk := rtApi.FilesystemUsage{
 		Timestamp: now,
 		FsId: &rtApi.FilesystemIdentifier{
-			Mountpoint: path.Join(shared.VarPath("container"), c.ID, "rootfs"),
+			Mountpoint: path.Join(sharedLXD.VarPath("container"), c.ID, "rootfs"),
 		},
 		UsedBytes:  &rtApi.UInt64Value{Value: st.Stats.FilesystemUsage}, // TODO: root seems not visible? or does it depend?
 		InodesUsed: &rtApi.UInt64Value{Value: 0},                        // TODO: do we have to find out?
@@ -209,7 +210,7 @@ func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
 
 	err := c.Stop(timeout)
 	if err != nil {
-		if lxf.IsContainerNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -238,7 +239,7 @@ func (s RuntimeServer) deleteContainers(ctx context.Context, sb *lxf.Sandbox) er
 func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) error {
 	err := c.Delete()
 	if err != nil {
-		if lxf.IsContainerNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -273,7 +274,7 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 		return err
 	}
 
-	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+	if sb.NetworkConfig.Mode != lxf.NetworkHost { // nolint: nestif
 		st, err := c.State()
 		if err != nil {
 			return err

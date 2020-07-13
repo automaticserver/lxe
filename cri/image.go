@@ -4,8 +4,9 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf"
+	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared"
+	sharedLXD "github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/logger"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
@@ -84,7 +85,7 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 	img, err := s.lxf.GetImage(req.GetImage().GetImage())
 	if err != nil {
 		// If the image can't be found, return no error with empty result
-		if lxf.IsImageNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return &rtApi.ImageStatusResponse{}, nil
 		}
 
@@ -173,7 +174,7 @@ func (s ImageServer) ImageFsInfo(ctx context.Context, req *rtApi.ImageFsInfoRequ
 	// TODO: UsedBytes, InodesUsed
 	response.ImageFilesystems = append(response.ImageFilesystems, &rtApi.FilesystemUsage{
 		Timestamp:  time.Now().UnixNano(),
-		FsId:       &rtApi.FilesystemIdentifier{Mountpoint: shared.VarPath("images")},
+		FsId:       &rtApi.FilesystemIdentifier{Mountpoint: sharedLXD.VarPath("images")},
 		UsedBytes:  &rtApi.UInt64Value{Value: 0},
 		InodesUsed: &rtApi.UInt64Value{Value: 0},
 	})

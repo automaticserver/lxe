@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
@@ -167,7 +168,7 @@ func (c *Container) getSandbox() (*Sandbox, error) {
 		return sandbox, nil
 	}
 
-	return nil, fmt.Errorf("Container '%v' must have at least one profile", c.ID)
+	return nil, fmt.Errorf("%w: container '%v' must have at least one profile", ErrConvert, c.ID)
 }
 
 // State looks up additional state info
@@ -236,8 +237,8 @@ func (c *Container) Apply() error {
 func (c *Container) Start() error {
 	err := c.client.opwait.StartContainer(c.ID)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
-			return NewContainerError(c.ID, err)
+		if shared.IsErrNotFound(err) {
+			return fmt.Errorf("container %w: %s", shared.NewErrNotFound(), c.ID)
 		}
 
 		return err
@@ -261,7 +262,7 @@ func (c *Container) Start() error {
 func (c *Container) Stop(timeout int) error {
 	err := c.client.opwait.StopContainer(c.ID, timeout, 1)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -284,7 +285,7 @@ func (c *Container) Stop(timeout int) error {
 func (c *Container) Delete() error {
 	err := c.client.opwait.DeleteContainer(c.ID)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -301,10 +302,10 @@ func (c *Container) validate() error {
 		return err
 	}
 
-	switch s.NetworkConfig.Mode { // nolint: gocritic
+	switch s.NetworkConfig.Mode { // nolint: exhaustive, gocritic
 	case NetworkHost:
 		if !c.Privileged {
-			return fmt.Errorf("`podSpec.hostNetwork: true` can only be used together with `containerSpec.securityContext.privileged: true`")
+			return fmt.Errorf("%w: `podSpec.hostNetwork: true` can only be used together with `containerSpec.securityContext.privileged: true`", ErrUsage)
 		}
 	}
 
@@ -326,7 +327,7 @@ func (c *Container) apply() error {
 	}
 
 	if !found {
-		return fmt.Errorf("image '%v' not found on local remote", c.Image)
+		return fmt.Errorf("image %w on local remote: %s", shared.NewErrNotFound(), c.Image)
 	}
 
 	config := makeContainerConfig(c)
@@ -368,13 +369,13 @@ func (c *Container) apply() error {
 	}
 	// else container has to be updated
 	if c.ETag == "" {
-		return fmt.Errorf("update container not allowed with empty ETag")
+		return fmt.Errorf("update container not allowed: %w", ErrMissingETag)
 	}
 
 	err = c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
-			return NewContainerError(c.ID, err)
+		if shared.IsErrNotFound(err) {
+			return fmt.Errorf("container %w: %s", shared.NewErrNotFound(), c.ID)
 		}
 
 		return err
@@ -456,7 +457,7 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 		config[cfgCloudInitNetworkConfig] = c.CloudInitNetworkConfig
 	}
 
-	if c.Resources != nil {
+	if c.Resources != nil { // nolint: nestif
 		if c.Resources.CPU != nil {
 			if c.Resources.CPU.Shares != nil {
 				config[cfgResourcesCPUShares] = strconv.FormatUint(*c.Resources.CPU.Shares, 10)

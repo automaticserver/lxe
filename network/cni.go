@@ -22,6 +22,10 @@ const (
 	defaultCNInetnsPath = "/run/netns"
 )
 
+var (
+	ErrNoUpdateRuntimeConfig = errors.New("cniPlugin can't update runtime config")
+)
+
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value
 type ConfCNI struct {
 	BinPath   string
@@ -79,7 +83,7 @@ func (p *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNet
 
 // UpdateRuntimeConfig is called when there are updates to the configuration which the plugin might need to apply
 func (p *cniPlugin) UpdateRuntimeConfig(_ *rtApi.RuntimeConfig) error {
-	return fmt.Errorf("cniPlugin can't update runtime config")
+	return ErrNoUpdateRuntimeConfig
 }
 
 // getCNINetworkConfig looks into the cni configuration dir for configs to load
@@ -101,7 +105,7 @@ func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 
 	for _, confFile := range files {
 		var confList *libcni.NetworkConfigList
-		if strings.HasSuffix(confFile, ".conflist") {
+		if strings.HasSuffix(confFile, ".conflist") { // nolint: nestif
 			confList, err = libcni.ConfListFromFile(confFile)
 			if err != nil {
 				warnings = errors.Append(warnings, errors.Wrapf(err, "Error loading CNI config list file %s", confFile))
@@ -219,11 +223,11 @@ func (s *cniPodNetwork) ips(previousresult []byte) ([]net.IP, error) {
 	}
 
 	if len(result.IPs) == 0 {
-		return nil, fmt.Errorf("no ip address found for %v", s.runtimeConf.ContainerID)
+		return nil, fmt.Errorf("%w: for %v", &net.AddrError{Err: "missing address"}, s.runtimeConf.ContainerID)
 	}
 
 	if result.IPs[0].Address.IP == nil {
-		return nil, fmt.Errorf("invalid ip address found for %v", s.runtimeConf.ContainerID)
+		return nil, fmt.Errorf("%w: for %v", &net.AddrError{Err: "invalid address"}, s.runtimeConf.ContainerID)
 	}
 
 	return []net.IP{result.IPs[0].Address.IP}, nil

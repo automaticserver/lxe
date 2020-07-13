@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/lxc/lxd/shared"
+	"github.com/automaticserver/lxe/shared"
+	sharedLXD "github.com/lxc/lxd/shared"
 	"github.com/lxc/lxd/shared/api"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -27,11 +28,11 @@ func (l *client) NewSandbox() *Sandbox {
 func (l *client) GetSandbox(id string) (*Sandbox, error) {
 	p, ETag, err := l.server.GetProfile(id)
 	if err != nil {
-		return nil, NewSandboxError(id, err)
+		return nil, err
 	}
 
 	if !IsCRI(p) {
-		return nil, NewSandboxError(id, fmt.Errorf(ErrorLXDNotFound))
+		return nil, fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), id)
 	}
 
 	return l.toSandbox(p, ETag)
@@ -43,7 +44,7 @@ func (l *client) ListSandboxes() ([]*Sandbox, error) {
 
 	ps, err := l.server.GetProfiles()
 	if err != nil {
-		return nil, NewSandboxError("lxdApi", err)
+		return nil, err
 	}
 
 	var sl = []*Sandbox{}
@@ -66,7 +67,7 @@ func (l *client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
-func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // nolint: gocognit
+func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	var err error
 
 	var attempt uint64
@@ -132,7 +133,7 @@ func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) { // n
 		name = strings.TrimPrefix(name, "/1.0/containers/")
 		name = strings.TrimSuffix(name, "?project=default")
 
-		if strings.Contains(name, shared.SnapshotDelimiter) {
+		if strings.Contains(name, sharedLXD.SnapshotDelimiter) {
 			// this is a snapshot so dont parse this entry
 			continue
 		}

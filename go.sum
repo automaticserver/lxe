@@ -432,6 +432,7 @@ github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e/go.mod h1:7rIyQ
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
 github.com/lxc/lxd v0.0.0-20190827163136-ff737ec6e385 h1:EpQoXHWKuffX3FR1qY0ZGCTmLIIlJWd+0Vd6I9Bll7o=
 github.com/lxc/lxd v0.0.0-20190827163136-ff737ec6e385/go.mod h1:2BaZflfwsv8a3uy3/Vw+de4Avn4DSrAiqaHJjCIXMV4=
+github.com/lxc/lxd v0.0.0-20200713101704-ccf7026d1616 h1:rP5FkMswsiGYO3ZrgqFMnj64odjb//SAncj2IHFN59g=
 github.com/magiconair/properties v0.0.0-20160816085511-61b492c03cf4/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.0 h1:LLgXmsheXeRoUOBOjtwPQCWIYqM/LU1ayDtDePerRcY=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=

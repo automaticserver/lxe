@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -74,7 +73,7 @@ func (h noHandler) Log(r *log.Record) error {
 }
 
 func dumpGoroutines() error {
-	file, err := ioutil.TempFile(os.TempDir(), fmt.Sprintf("lxe-routines-"))
+	file, err := ioutil.TempFile(os.TempDir(), "lxe-routines-")
 	if err != nil {
 		return err
 	}

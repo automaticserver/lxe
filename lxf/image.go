@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
 )
@@ -46,7 +47,7 @@ func (l *client) PullImage(name string) (string, error) {
 
 	err = l.opwait.CopyImage(imgServer, *image, &args)
 	if err != nil {
-		return "", fmt.Errorf("unable to pull requested image (%v) from server %v, %v",
+		return "", fmt.Errorf("unable to pull requested image %v from server %v, %w",
 			image, imageID.Remote, err)
 	}
 
@@ -69,7 +70,7 @@ func (l *client) RemoveImage(name string) error {
 
 	err = l.opwait.DeleteImage(hash)
 	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+		if shared.IsErrNotFound(err) {
 			return nil
 		}
 
@@ -99,7 +100,7 @@ func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 
 			err = l.server.DeleteImageAlias(ca.Name)
 			if err != nil {
-				return fmt.Errorf("failed to delete alias %v for update, %v", alias, err)
+				return fmt.Errorf("failed to delete alias for update: %v, %w", alias, err)
 			}
 		}
 	}
@@ -116,7 +117,7 @@ func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 
 	err = l.server.CreateImageAlias(aliasPost)
 	if err != nil {
-		return fmt.Errorf("failed to create alias %v, %v", alias, err)
+		return fmt.Errorf("failed to create alias: %v, %w", alias, err)
 	}
 
 	return nil
@@ -128,7 +129,7 @@ func (l *client) ListImages(filter string) ([]Image, error) {
 
 	imglist, err := l.server.GetImages()
 	if err != nil {
-		return nil, fmt.Errorf("unable to list images, %v", err)
+		return nil, fmt.Errorf("unable to list images: %w", err)
 	}
 
 	for _, imgInfo := range imglist {
@@ -156,7 +157,7 @@ func (l *client) GetImage(name string) (*Image, error) {
 	imageID, err := l.parseImage(name)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "doesn't exist") {
-			return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
+			return nil, fmt.Errorf("image %w: %s, %v", shared.NewErrNotFound(), name, err)
 		}
 
 		return nil, err
@@ -164,14 +165,14 @@ func (l *client) GetImage(name string) (*Image, error) {
 
 	hash, found, err := imageID.Hash(l)
 	if err != nil {
-		return nil, fmt.Errorf("failed to resolve image %v, %v", name, err)
+		return nil, fmt.Errorf("failed to resolve image: %v, %w", name, err)
 	} else if !found {
-		return nil, NewImageError(name, fmt.Errorf(ErrorLXDNotFound))
+		return nil, fmt.Errorf("image %w: %s, unable to find hash", shared.NewErrNotFound(), name)
 	}
 
 	img, _, err := l.server.GetImage(hash)
 	if err != nil {
-		return nil, fmt.Errorf("unable to get image %v, %v", name, err)
+		return nil, fmt.Errorf("unable to get image: %v, %w", name, err)
 	}
 
 	aliases := []string{}
@@ -236,12 +237,12 @@ func (i ImageID) Tag() string {
 // It it's not found second return will be false and error will be zero.
 func (i ImageID) Hash(l *client) (string, bool, error) {
 	exists, _, err := l.server.GetImageAlias(i.Tag())
-	if err != nil {
-		if err.Error() == ErrorLXDNotFound {
+	if err != nil { // nolint: nestif
+		if shared.IsErrNotFound(err) {
 			// it still might be a hash, check that
 			_, _, err = l.server.GetImage(i.Alias)
 			if err != nil {
-				if err.Error() == ErrorLXDNotFound {
+				if shared.IsErrNotFound(err) {
 					return "", false, nil
 				}
 
@@ -294,7 +295,7 @@ func convertDockerImageNameToLXC(inputName string) (string, error) {
 		return match[1] + ":" + match[2], nil
 	}
 
-	return "", fmt.Errorf("could not parse image name %v", inputName)
+	return "", fmt.Errorf("image name %w: %s", ErrParse, inputName)
 }
 
 // dereferenceAlias from github.com/lxc/lxd/lxc/image.go:102

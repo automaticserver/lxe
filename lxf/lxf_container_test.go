@@ -1,12 +1,12 @@
 package lxf
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
+	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/stretchr/testify/assert"
@@ -59,7 +59,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainerReturns(nil, "", fmt.Errorf(ErrorLXDNotFound))
+	fake.GetContainerReturns(nil, "", shared.NewErrNotFound())
 
 	s, err := client.GetContainer("foo")
 
@@ -104,7 +104,7 @@ func TestClient_ListContainers_Error(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, fmt.Errorf(ErrorLXDNotFound))
+	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, shared.NewErrNotFound())
 
 	sl, err := client.ListContainers()
 	assert.Error(t, err)

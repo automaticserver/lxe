@@ -14,6 +14,7 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
+	"github.com/automaticserver/lxe/shared"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/logger"
@@ -30,6 +31,11 @@ import (
 
 const (
 	criVersion = "0.1.0"
+)
+
+var (
+	ErrNotImplemented       = errors.New("not implemented")
+	ErrUnknownNetworkPlugin = errors.New("unknown network plugin")
 )
 
 // streamService implements streaming.Runtime.
@@ -101,7 +107,7 @@ func NewRuntimeServer(criConfig *Config, lxf lxf.Client, network network.Plugin)
 
 		err := runtime.stream.streamServer.Start(true)
 		if err != nil {
-			panic(fmt.Errorf("error serving execs or portforwards: %v", err))
+			panic(fmt.Errorf("error serving execs or portforwards: %w", err))
 		}
 	}()
 
@@ -134,7 +140,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure the sandbox is in the ready state on
 // success
-func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit, gocyclo
+func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit
 	logger.Infof("RunPodSandbox called: SandboxName %v in Namespace %v with SandboxUID %v", req.GetConfig().GetMetadata().GetName(),
 		req.GetConfig().GetMetadata().GetNamespace(), req.GetConfig().GetMetadata().GetUid())
 	logger.Debugf("RunPodSandbox triggered: %v", req)
@@ -161,7 +167,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	}
 
 	// Find out which network mode should be used
-	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) == string(lxf.NetworkHost) { // nolint: gocritic
+	if strings.ToLower(req.GetConfig().GetLinux().GetSecurityContext().GetNamespaceOptions().GetNetwork().String()) == string(lxf.NetworkHost) {
 		// host network explicitly requested
 		sb.NetworkConfig.Mode = lxf.NetworkHost
 		lxf.AppendIfSet(&sb.Config, "raw.lxc", "lxc.include = "+s.criConfig.LXEHostnetworkFile)
@@ -175,7 +181,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 			sb.NetworkConfig.Mode = lxf.NetworkCNI
 		default:
 			// unknown plugin name provided
-			err := fmt.Errorf("unknown network plugin name configured: %v", s.criConfig.LXENetworkPlugin)
+			err := fmt.Errorf("%w: %v", ErrUnknownNetworkPlugin, s.criConfig.LXENetworkPlugin)
 			logger.Error(err.Error())
 			return nil, err
 		}
@@ -195,7 +201,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 
 			var protocol device.Protocol
 
-			switch portMap.GetProtocol() {
+			switch portMap.GetProtocol() { // nolint: exhaustive
 			case rtApi.Protocol_UDP:
 				protocol = device.ProtocolUDP
 			case rtApi.Protocol_TCP:
@@ -227,7 +233,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	}
 
 	// TODO: Refactor...
-	if req.Config.Linux != nil {
+	if req.Config.Linux != nil { // nolint: nestif
 		lxf.SetIfSet(&sb.Config, "user.linux.cgroup_parent", req.Config.Linux.CgroupParent)
 
 		for key, value := range req.Config.Linux.Sysctls {
@@ -283,7 +289,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	}
 
 	// create network
-	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+	if sb.NetworkConfig.Mode != lxf.NetworkHost { // nolint: nestif
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't enter sandbox %v network context", sb.ID))
@@ -354,7 +360,7 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if lxf.IsSandboxNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return &rtApi.StopPodSandboxResponse{}, nil
 		}
 
@@ -401,7 +407,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if lxf.IsSandboxNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return &rtApi.RemovePodSandboxResponse{}, nil
 		}
 
@@ -772,7 +778,7 @@ func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContain
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		if lxf.IsContainerNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return &rtApi.StopContainerResponse{}, nil
 		}
 
@@ -804,7 +810,7 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		if lxf.IsContainerNotFound(err) {
+		if shared.IsErrNotFound(err) {
 			return &rtApi.RemoveContainerResponse{}, nil
 		}
 
@@ -889,7 +895,7 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 // UpdateContainerResources updates ContainerConfig of the container.
 func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.UpdateContainerResourcesRequest) (*rtApi.UpdateContainerResourcesResponse, error) {
 	logger.Debugf("UpdateContainerResources triggered: %v", req)
-	return nil, fmt.Errorf("UpdateContainerResources not implemented")
+	return nil, fmt.Errorf("UpdateContainerResources: %w", ErrNotImplemented)
 }
 
 // ReopenContainerLog asks runtime to reopen the stdout/stderr log file for the container. This is often called after
@@ -897,7 +903,7 @@ func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.
 // log file and return nil, or return an error. Once it returns error, new container log file MUST NOT be created.
 func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.ReopenContainerLogRequest) (*rtApi.ReopenContainerLogResponse, error) {
 	logger.Debugf("ReopenContainerLog triggered: %v", req)
-	return nil, fmt.Errorf("ReopenContainerLog not implemented")
+	return nil, fmt.Errorf("ReopenContainerLog: %w", ErrNotImplemented)
 }
 
 // ExecSync runs a command in a container synchronously.
@@ -968,7 +974,7 @@ func (s RuntimeServer) Attach(ctx context.Context, req *rtApi.AttachRequest) (*r
 	logger.Debugf("Attach triggered: %v", req)
 	logger.Errorf("Attach - not implemented")
 
-	return nil, fmt.Errorf("Attach - not implemented")
+	return nil, fmt.Errorf("Attach: %w", ErrNotImplemented)
 }
 
 // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
@@ -1012,7 +1018,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	commandString := fmt.Sprintf("socat %s", strings.Join(args, " "))
 	logger.Debugf("executing port forwarding command: %s", commandString)
 
-	command := exec.Command("socat", args...) // nolint: gosec
+	command := exec.Command("socat", args...)
 	command.Stdout = stream
 
 	stderr := new(bytes.Buffer)
@@ -1043,7 +1049,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	}()
 
 	if err := command.Run(); err != nil {
-		return fmt.Errorf("%v: %s", err, stderr.String())
+		return fmt.Errorf("%w: %s", err, stderr.String())
 	}
 
 	return nil

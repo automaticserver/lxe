@@ -1,5 +1,0 @@
-/etc/default/lxe
-/etc/logrotate.d/lxe
-/etc/init/lxe.conf
-/etc/init.d/lxe
-/etc/lxe/lxd-remote.yaml

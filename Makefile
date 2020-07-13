@@ -73,28 +73,3 @@ cribench: checklxd default prepareintegration $(GOPATH)/bin/critest
 
 run: checklxd build
 	./bin/$(EXECUTABLE) --debug --socket $(LXESOCKETFILE) --lxd-socket $(LXDSOCKETFILE) --logfile $(LXELOGFILE)
-
-.PHONY: package-clean
-package-clean:
-	rm -r package || true
-
-.PHONY: package-deb-lxd-snap
-package-deb-lxd-snap: build
-	$(eval version:=$(shell make version))
-	mkdir -p package/debian-lxd-snap/usr/bin
-	
-	objcopy --strip-debug --strip-unneeded --remove-section=.comment --remove-section=.note bin/$(EXECUTABLE) package/debian-lxd-snap/usr/bin/$(EXECUTABLE)
-	cp -R fixtures/packaging/debian-lxd-snap/* package/debian-lxd-snap
-	$(eval date:=$(shell date -R))
-	VERSION="$(version)" DATE="$(date)" DOMAIN="$(DOMAIN)" envsubst < fixtures/packaging/debian-lxd-snap/usr/share/doc/$(DOMAIN)/changelog > package/debian-lxd-snap/usr/share/doc/$(DOMAIN)/changelog
-	gzip -9 -S ".Debian.gz" package/debian-lxd-snap/usr/share/doc/$(DOMAIN)/changelog
-	gzip -9 package/debian-lxd-snap/usr/share/man/man8/$(EXECUTABLE).8
-	
-	cd package/debian-lxd-snap; find . -type f -not -path './DEBIAN/*' -print | cut -c 3- | xargs md5sum > DEBIAN/md5sums
-	VERSION="$(version)" INSTALLSIZE="\$$INSTALLSIZE" envsubst < fixtures/packaging/debian-lxd-snap/DEBIAN/control > package/debian-lxd-snap/DEBIAN/control
-	du -s package/debian-lxd-snap | cut -f1 | awk '{print "Installed-Size: "$$1}' | sed -i -e '/$$INSTALLSIZE/{r /dev/stdin' -e 'd;}' package/debian-lxd-snap/DEBIAN/control
-
-	chmod -R g-w package/debian-lxd-snap/
-	fakeroot dpkg-deb -b package/debian-lxd-snap
-	mv package/debian-lxd-snap.deb package/$(DOMAIN)_$(version).debian-lxd-snap.deb
-	lintian --profile debian -i -I package/$(DOMAIN)_$(version).debian-lxd-snap.deb

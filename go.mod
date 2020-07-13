@@ -3,7 +3,6 @@ module github.com/automaticserver/lxe
 go 1.14
 
 require (
-	emperror.dev/errors v0.7.0
 	github.com/containernetworking/cni v0.8.0
 	github.com/docker/docker v1.13.1
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect

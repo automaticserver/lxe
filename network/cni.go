@@ -3,13 +3,13 @@ package network
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"sort"
 	"strconv"
 	"strings"
 
-	"emperror.dev/errors"
 	"github.com/containernetworking/cni/libcni"
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
@@ -24,6 +24,7 @@ const (
 
 var (
 	ErrNoUpdateRuntimeConfig = errors.New("cniPlugin can't update runtime config")
+	ErrNoNetworksFound       = errors.New("No valid networks found")
 )
 
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value
@@ -68,7 +69,7 @@ func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // inte
 func (p *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNetwork, error) {
 	netList, warnings, err := p.getCNINetworkConfig()
 	if err != nil {
-		return nil, errors.Append(err, warnings)
+		return nil, fmt.Errorf("%w, %v", err, warnings)
 	}
 
 	runtimeConf := p.getCNIRuntimeConf(id)
@@ -96,7 +97,7 @@ func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 	case err != nil:
 		return nil, nil, err
 	case len(files) == 0:
-		return nil, nil, errors.Errorf("No networks found in %s", confDir)
+		return nil, nil, fmt.Errorf("%w in %s", ErrNoNetworksFound, confDir)
 	}
 
 	var warnings error
@@ -108,38 +109,38 @@ func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 		if strings.HasSuffix(confFile, ".conflist") { // nolint: nestif
 			confList, err = libcni.ConfListFromFile(confFile)
 			if err != nil {
-				warnings = errors.Append(warnings, errors.Wrapf(err, "Error loading CNI config list file %s", confFile))
+				warnings = fmt.Errorf("%v: %w, error loading CNI config list file %s", warnings, err, confFile)
 				continue
 			}
 		} else {
 			conf, err := libcni.ConfFromFile(confFile)
 			if err != nil {
-				warnings = errors.Append(warnings, errors.Wrapf(err, "Error loading CNI config file %s", confFile))
+				warnings = fmt.Errorf("%v: %w, error loading CNI config file %s", warnings, err, confFile)
 				continue
 			}
 			// Ensure the config has a "type" so we know what plugin to run.
 			// Also catches the case where somebody put a conflist into a conf file.
 			if conf.Network.Type == "" {
-				warnings = errors.Append(warnings, errors.Errorf("Error loading CNI config file %s: no 'type'; perhaps this is a .conflist?", confFile))
+				warnings = fmt.Errorf("%w: error loading CNI config file %s: no 'type'; perhaps this is a .conflist?", warnings, confFile)
 				continue
 			}
 
 			confList, err = libcni.ConfListFromConf(conf)
 			if err != nil {
-				warnings = errors.Append(warnings, errors.Wrapf(err, "Error converting CNI config file %s to list", confFile))
+				warnings = fmt.Errorf("%v: %w, error converting CNI config file %s to list", warnings, err, confFile)
 				continue
 			}
 		}
 
 		if len(confList.Plugins) == 0 {
-			warnings = errors.Append(warnings, errors.Errorf("CNI config list %s has no networks, skipping", confFile))
+			warnings = fmt.Errorf("%w: CNI config list %s has no networks, skipping", warnings, confFile)
 			continue
 		}
 
 		return confList, warnings, nil
 	}
 
-	return nil, warnings, errors.Errorf("No valid networks found in %s", confDir)
+	return nil, warnings, fmt.Errorf("%w in %s", ErrNoNetworksFound, confDir)
 }
 
 // getRuntimeConf returns common libcni runtime conf used to interact with the cni

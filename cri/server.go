@@ -1,10 +1,10 @@
 package cri
 
 import (
+	"fmt"
 	"net"
 	"os"
 
-	"emperror.dev/errors"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
@@ -70,7 +70,7 @@ func NewServer(criConfig *Config) *Server {
 			CreateOnly: true,
 		})
 	default:
-		err = errors.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
+		err = fmt.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
 	}
 
 	if err != nil {

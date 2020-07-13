@@ -1,103 +1,78 @@
 package main
 
 import (
-	"math/rand"
-	"os"
-	"time"
-
+	"github.com/automaticserver/lxe/cli"
 	"github.com/automaticserver/lxe/cri"
 	"github.com/automaticserver/lxe/network"
-	"github.com/automaticserver/lxe/shared"
-	"github.com/lxc/lxd/shared/logger"
-	"github.com/lxc/lxd/shared/logging"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// Initialize the random number generator
+var (
+	venom, rootCmd = cli.New(cli.Options{
+		Type:         cli.TypeService,
+		KeyDelimiter: "-",
+	})
+	log = logrus.StandardLogger()
+)
+
+func main() {
+	cli.Run()
+}
+
 func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
+	rootCmd.Use = "lxe"
+	rootCmd.Short = "LXE is a shim of the Kubernetes Container Runtime Interface for LXD"
+	rootCmd.Long = "LXE implements the Kubernetes Container Runtime Interface and creates LXD containers from Pods. Many options in the PodSpec and ContainerSpec are honored but a fundamental perception of containers (application containers like docker does vs system containers which is what LXD does) lead to slight implementation differences. Read the documentation for the full list of caveats."
+	rootCmd.Example = "lxe -s /run/lxe.sock -l /var/lib/lxd/unix.socket"
+
+	pflags := rootCmd.PersistentFlags()
+
+	// application flags
+	pflags.StringP("socket", "s", "/run/lxe.sock", "Path of the socket where it should provide the runtime and image service to kubelet.")
+	pflags.StringP("lxd-socket", "l", "/var/lib/lxd/unix.socket", "Path of the socket where LXD provides it's API.")
+	pflags.StringP("lxd-remote-config", "r", "", "Path to the LXD remote config. (guessed by default)")
+	pflags.StringP("lxd-image-remote", "", "local", "Use this remote if ImageSpec doesn't provide an explicit remote.")
+	pflags.StringSliceP("lxd-profiles", "p", []string{"default"}, "Set these additional profiles when creating containers.")
+	pflags.StringP("streaming-endpoint", "", ":44124", "Listen address for the streaming service. Be careful from where this service can be accessed from as it allows to run exec commands on the containers! Format: [IP]:Port")
+	pflags.StringP("streaming-address", "", "", "Define which base address to use for constructing streaming URLs for a client to connect to. If this is set to empty, it will use the same host address and port from --streaming-endpoint. If that has an empty host address, it will obtain the address of the interface to the default gateway. Format: [IP][:Port]")
+	// TODO: I was thinking, can't we just create a tmpfile with those contents when running lxe and remember that? Maybe, but it must be a persistent location, otherwise containers won't be able to start without that file existing.
+	pflags.StringP("hostnetwork-file", "", "", "EXPERIMENTAL! If host networking is defined in the PodSpec, this persisting file will be set as include in raw.lxc container config. (This process is required to workaround LXD, since it doesn't offer such option in the container or device config out of the box). The file must contain: lxc.net.0.type=none")
+	pflags.StringP("network-plugin", "n", "bridge", "The network plugin to use. 'bridge' manages the lxd bridge defined in --bridge-name. 'cni' uses kubernetes cni tools to attach interfaces using configuration defined in --cni-conf-dir")
+	pflags.StringP("bridge-name", "", network.DefaultLXDBridge, "Which bridge to create and use when using --network-plugin 'bridge'.")
+	pflags.StringP("bridge-dhcp-range", "", "", "Which DHCP range to configure the lxd bridge when using --network-plugin 'bridge'. If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig.")
+	pflags.StringP("cni-conf-dir", "", network.DefaultCNIconfPath, "Dir in which to search for CNI configuration files when using --network-plugin 'cni'.")
+	pflags.StringP("cni-bin-dir", "", network.DefaultCNIbinPath, "Dir in which to search for CNI plugin binaries when using --network-plugin 'cni'.")
+
+	rootCmd.RunE = rootCmdRunE
 }
 
-type cmdGlobal struct {
-	flagHelp       bool
-	flagVersion    bool
-	flagLogDebug   bool
-	flagLogSyslog  bool
-	flagLogVerbose bool
-	flagLogFile    string
-
-	cri cri.Config
-}
-
-func (c *cmdGlobal) Run(cmd *cobra.Command, args []string) error {
-	// Setup logger
-	syslog := ""
-	if c.flagLogSyslog {
-		syslog = cri.Domain
+func rootCmdRunE(cmd *cobra.Command, args []string) error {
+	c := &cri.Config{
+		UnixSocket:           venom.GetString("socket"),
+		LXDSocket:            venom.GetString("lxd-socket"),
+		LXDRemoteConfig:      venom.GetString("lxd-remote-config"),
+		LXDImageRemote:       venom.GetString("lxd-image-remote"),
+		LXDProfiles:          venom.GetStringSlice("lxd-profiles"),
+		LXEStreamingEndpoint: venom.GetString("streaming-endpoint"),
+		LXEStreamingAddress:  venom.GetString("streaming-address"),
+		LXEHostnetworkFile:   venom.GetString("hostnetwork-file"),
+		LXENetworkPlugin:     venom.GetString("network-plugin"),
+		LXEBridgeName:        venom.GetString("bridge-name"),
+		LXEBridgeDHCPRange:   venom.GetString("bridge-dhcp-range"),
+		CNIConfDir:           venom.GetString("cni-conf-dir"),
+		CNIBinDir:            venom.GetString("cni-bin-dir"),
 	}
 
-	var err error
+	d := cri.NewDaemon(c)
 
-	handler := noHandler{}
-
-	logger.Log, err = logging.GetLogger(syslog, c.flagLogFile, c.flagLogVerbose, c.flagLogDebug, handler)
+	err := d.Init()
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
+	log.WithField("socket", venom.GetString("socket")).Warnf("started %s CRI shim", cri.Domain)
 
-func main() {
-	// daemon command (main)
-	daemonCmd := cmdDaemon{}
-	app := daemonCmd.Command()
-
-	// Workaround for main command
-	app.Args = cobra.ArbitraryArgs
-	app.Version = cri.Version
-
-	// Global flags
-	globalCmd := cmdGlobal{}
-	daemonCmd.global = &globalCmd
-	app.PersistentPreRunE = globalCmd.Run
-	app.PersistentFlags().BoolVar(&globalCmd.flagVersion, "version", false, "Print version number.")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagHelp, "help", "h", false, "Print help.")
-	app.PersistentFlags().StringVar(&globalCmd.flagLogFile, "logfile", "/var/log/lxe.log", "Path to the log file."+"``")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages.")
-	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages.")
-
-	// lxd / lxe specific flags
-	app.PersistentFlags().StringVar(&globalCmd.cri.UnixSocket, "socket",
-		"/var/run/lxe.sock", "The unix socket under which LXE will expose its service to Kubernetes.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXDSocket, "lxd-socket",
-		"/var/lib/lxd/unix.socket", "LXD's unix socket.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXDRemoteConfig, "lxd-remote-config",
-		"", "Path to the LXD remote config. (guessed by default)")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXDImageRemote, "lxd-image-remote",
-		"local", "Use this remote when ImageSpec doesn't provide an explicit remote.")
-	app.PersistentFlags().StringSliceVar(&globalCmd.cri.LXDProfiles, "lxd-profiles",
-		[]string{"default"}, "Set these additional profiles when creating containers.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXEStreamingServerEndpoint, "streaming-endpoint",
-		"", "IP or Interface for Streaming Server. (guessed by default)")
-	app.PersistentFlags().IntVar(&globalCmd.cri.LXEStreamingPort, "streaming-port",
-		44124, "Port where LXE's Streaming HTTP Server will listen.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXEHostnetworkFile, "hostnetwork-file",
-		"/var/lib/lxe/hostnetwork.conf", "Path to the hostnetwork file for lxc raw include")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXENetworkPlugin, "network-plugin",
-		"", "The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBridgeName, "bridge-name",
-		network.DefaultLXDBridge, "When using network-plugin '', which bridge to create and use.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.LXEBridgeDHCPRange, "bridge-dhcp-range",
-		"", "When using network-plugin '', which DHCP range to configure the lxd bridge. If empty, uses random range provided by lxd. Not needed, if kubernetes will publish the range using CRI UpdateRuntimeconfig.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.CNIConfDir, "cni-conf-dir",
-		network.DefaultCNIconfPath, "When using network-plugin cni, dir in which to search for CNI configuration files.")
-	app.PersistentFlags().StringVar(&globalCmd.cri.CNIBinDir, "cni-bin-dir",
-		network.DefaultCNIbinPath, "When using network-plugin cni, dir in which to search for CNI plugin binaries.")
-
-	// Run the main command and handle errors
-	err := app.Execute()
-	if err != nil {
-		os.Exit(shared.ExitCodeUnspecified)
-	}
+	// run forever
+	select {}
 }

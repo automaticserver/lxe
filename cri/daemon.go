@@ -1,9 +1,7 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"fmt"
-
-	"github.com/lxc/lxd/shared/logger"
 )
 
 // Domain of the daemon
@@ -37,7 +35,7 @@ func (d *Daemon) Init() error {
 	if err != nil {
 		err2 := d.Stop()
 		if err2 != nil {
-			logger.Errorf("Init errored and also errored during stop: %v", err2)
+			log.Errorf("Init errored and also errored during stop: %v", err2)
 		}
 	}
 

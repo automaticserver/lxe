@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"context"
@@ -11,7 +11,6 @@ import (
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -233,7 +232,7 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 
 	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
-		logger.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
+		log.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
 		return
 	}
 
@@ -251,24 +250,24 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		}
 
 		// still return immediately since we can't do anything when we get an error here
-		logger.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
+		log.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
 
 		return
 	}
 
-	logger.Infof("EventHandler: Type %v ContainerID %v", event.Type, containerID)
+	log.Infof("EventHandler: Type %v ContainerID %v", event.Type, containerID)
 
 	switch eventLifecycle.Action {
 	case "container-started":
 		err := l.eventHandler.ContainerStarted(context.TODO(), c)
 		if err != nil {
-			logger.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
+			log.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
 			return
 		}
 	case "container-stopped":
 		err := l.eventHandler.ContainerStopped(context.TODO(), c)
 		if err != nil {
-			logger.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
+			log.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
 			return
 		}
 	}

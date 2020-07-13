@@ -1,4 +1,4 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"fmt"
@@ -13,7 +13,6 @@ import (
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	sharedLXD "github.com/lxc/lxd/shared"
-	"github.com/lxc/lxd/shared/logger"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
@@ -267,7 +266,7 @@ func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) er
 
 // ContainerStarted implements lxf.EventHandler interface
 func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) error {
-	logger.Infof("ContainerStarted called: ContainerName %v", c.ID)
+	log.Infof("ContainerStarted called: ContainerName %v", c.ID)
 
 	sb, err := c.Sandbox()
 	if err != nil {

@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"encoding/base32"

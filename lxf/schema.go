@@ -1,12 +1,11 @@
 // nolint: nestif
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"strconv"
 	"time"
 
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 )
 
 // Schema Version this package is currently expecting
@@ -163,7 +162,7 @@ func (m *MigrationWorkspace) Ensure() error { // nolint: gocognit
 	}
 
 	if anyChanges {
-		logger.Warnf("Migration changes applied successfully")
+		log.Warnf("Migration changes applied successfully")
 	}
 
 	return nil

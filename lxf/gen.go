@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 // lxdfakes
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_operation.go github.com/lxc/lxd/client.Operation

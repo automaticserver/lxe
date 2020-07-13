@@ -1,4 +1,4 @@
-package shared
+package shared // import "github.com/automaticserver/lxe/shared"
 
 import (
 	"errors"

@@ -1,14 +1,16 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"fmt"
 	"net"
 	"os"
 
+	"github.com/automaticserver/lxe/cli/version"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
-	"github.com/lxc/lxd/shared/logger"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
@@ -21,9 +23,15 @@ const (
 	NetworkPluginCNI     = "cni"
 )
 
+var (
+	ErrTimeout = errors.New("timeout error")
+	log        = logrus.StandardLogger()
+)
+
 // Server implements the kubernetes CRI interface specification
 type Server struct {
 	server    *grpc.Server
+	stream    *streamService
 	sock      net.Listener
 	criConfig *Config
 }
@@ -32,24 +40,24 @@ type Server struct {
 func NewServer(criConfig *Config) *Server {
 	configPath, err := getLXDConfigPath(criConfig)
 	if err != nil {
-		logger.Critf("Unable to find lxc config: %v", err)
+		log.Fatalf("Unable to find lxc config: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	client, err := lxf.NewClient(criConfig.LXDSocket, configPath)
 	if err != nil {
-		logger.Critf("Unable to initialize lxe facade: %v", err)
+		log.Fatalf("Unable to initialize lxe facade: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	logger.Infof("Connected to LXD via %q", criConfig.LXDSocket)
+	log.Infof("Connected to LXD via %q", criConfig.LXDSocket)
 
 	// Ensure profile and container schema migration
 	migration := lxf.NewMigrationWorkspace(client)
 
 	err = migration.Ensure()
 	if err != nil {
-		logger.Critf("Migration failed: %v", err)
+		log.Fatalf("Migration failed: %v", err)
 		os.Exit(shared.ExitCodeSchemaMigrationFailure)
 	}
 
@@ -74,7 +82,7 @@ func NewServer(criConfig *Config) *Server {
 	}
 
 	if err != nil {
-		logger.Critf("Unable to initialize network plugin: %v", err)
+		log.Fatalf("Unable to initialize network plugin: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
@@ -83,15 +91,21 @@ func NewServer(criConfig *Config) *Server {
 	// for now we bind the http on every interface
 	runtimeServer, err := NewRuntimeServer(criConfig, client, netPlugin)
 	if err != nil {
-		logger.Critf("Unable to start runtime server: %v", err)
+		log.Fatalf("Unable to start runtime server: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	client.SetEventHandler(runtimeServer)
 
+	err = setupStreamService(criConfig, runtimeServer)
+	if err != nil {
+		log.Fatalf("unable to create streaming server: %v", err)
+		os.Exit(shared.ExitCodeUnspecified)
+	}
+
 	imageServer, err := NewImageServer(runtimeServer, client)
 	if err != nil {
-		logger.Critf("Unable to start image server: %v", err)
+		log.Fatalf("Unable to start image server: %v", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
@@ -100,6 +114,7 @@ func NewServer(criConfig *Config) *Server {
 
 	return &Server{
 		server:    grpcServer,
+		stream:    runtimeServer.stream,
 		criConfig: criConfig,
 	}
 }
@@ -111,25 +126,32 @@ func (c *Server) Serve() error {
 	sock := c.criConfig.UnixSocket
 
 	if _, err = os.Stat(sock); err == nil {
-		logger.Debugf("Cleaning up stale socket")
+		log.Debugf("Cleaning up stale socket")
 
 		err = os.Remove(sock)
 		if err != nil {
-			logger.Critf("Error cleaning up stale listening socket %q: %v ", sock, err)
+			log.Fatalf("Error cleaning up stale listening socket %q: %v ", sock, err)
 			os.Exit(shared.ExitCodeUnspecified)
 		}
 	}
 
 	c.sock, err = net.Listen("unix", sock)
 	if err != nil {
-		logger.Critf("Error listening on socket %q: %v ", sock, err)
+		log.Fatalf("Error listening on socket %q: %v ", sock, err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	logger.Infof("Started %s/%s CRI shim on UNIX socket %q", Domain, Version, sock)
-
 	defer c.sock.Close()
 	defer os.Remove(c.criConfig.UnixSocket)
+
+	log.Infof("Started %s/%s CRI shim on UNIX socket %q", Domain, version.Version, sock)
+
+	go func() {
+		err := c.stream.serve()
+		if err != nil {
+			panic(fmt.Errorf("error serving stream service: %w", err))
+		}
+	}()
 
 	return c.server.Serve(c.sock)
 }

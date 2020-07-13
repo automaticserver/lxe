@@ -1,6 +1,6 @@
 // +build tools
 
-package root
+package cli // import "github.com/automaticserver/lxe/cli"
 
 import (
 	// Importing a golangci lint package to track its version in go mod

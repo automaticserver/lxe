@@ -1,5 +1,5 @@
 // nolint: dupl
-package device
+package device // import "github.com/automaticserver/lxe/lxf/device"
 
 import "fmt"
 

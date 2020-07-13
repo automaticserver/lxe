@@ -7,11 +7,15 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
 	github.com/elazarl/goproxy v0.0.0-20200710112657-153946a5f232 // indirect
-	github.com/emicklei/go-restful v2.13.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/ghodss/yaml v1.0.0
-	github.com/golangci/golangci-lint v1.28.3
+	github.com/gogo/protobuf v1.3.1 // indirect
+	github.com/golangci/golangci-lint v1.28.1
+	github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039 // indirect
+	github.com/google/uuid v1.1.1 // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/gorilla/websocket v1.4.2
+	github.com/jirfag/go-printf-func-name v0.0.0-20200119135958-7558a9eaa5af // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/juju/errors v0.0.0-20200330140219-3fe23663418f
 	github.com/juju/go4 v0.0.0-20160222163258-40d72ab9641a // indirect
@@ -20,10 +24,19 @@ require (
 	github.com/juju/testing v0.0.0-20200706033705-4c23f9c453cd // indirect
 	github.com/juju/webbrowser v1.0.0 // indirect
 	github.com/lxc/lxd v0.0.0-20190827163136-ff737ec6e385
+	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
 	github.com/opencontainers/runtime-spec v1.0.2
+	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/shurcooL/go v0.0.0-20191216061654-b114cc39af9f // indirect
+	github.com/sirupsen/logrus v1.6.0
+	github.com/smartystreets/assertions v1.0.1 // indirect
+	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
+	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/spf13/viper v1.7.0
+	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
@@ -32,6 +45,7 @@ require (
 	google.golang.org/grpc v1.30.0
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/httprequest.v1 v1.2.1 // indirect
+	gopkg.in/ini.v1 v1.52.0 // indirect
 	gopkg.in/macaroon-bakery.v2 v2.2.0 // indirect
 	gopkg.in/retry.v1 v1.0.3 // indirect
 	gopkg.in/yaml.v2 v2.3.0
@@ -40,6 +54,8 @@ require (
 	k8s.io/cri-api v0.0.0
 	k8s.io/kubernetes v1.18.5
 	k8s.io/utils v0.0.0-20200619165400-6e3d28b6ed19
+	mvdan.cc/unparam v0.0.0-20191111180625-960b1ec0f2c2 // indirect
+	sourcegraph.com/sqs/pbtypes v1.0.0 // indirect
 )
 
 replace k8s.io/kubernetes => k8s.io/kubernetes v1.15.12

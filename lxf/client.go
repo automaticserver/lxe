@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ import (
 	"github.com/automaticserver/lxe/lxf/lxo"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/logger"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/fsnotify.v1"
 	"k8s.io/client-go/tools/remotecommand"
 )
@@ -66,6 +66,7 @@ type Client interface {
 
 var (
 	lxdHTTPTimeout = 10 * time.Second
+	log            = logrus.StandardLogger()
 )
 
 type client struct {
@@ -220,13 +221,13 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.ContainerServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		logger.Crit(err.Error())
+		log.Fatal(err.Error())
 	}
 	defer watcher.Close()
 
 	err = watcher.Add(path.Dir(l.socket))
 	if err != nil {
-		logger.Crit(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	for {
@@ -237,16 +238,16 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 			}
 
 			if event.Op&fsnotify.Create == fsnotify.Create && event.Name == l.socket {
-				logger.Infof("socket %s got created, trying to reconnect", l.socket)
+				log.Infof("socket %s got created, trying to reconnect", l.socket)
 
 				go func() {
 					for {
 						err := l.connect()
 						if err != nil {
 							// print error and try again
-							logger.Errorf("tried reconnecting to lxd socket: %v", err)
+							log.Errorf("tried reconnecting to lxd socket: %v", err)
 						} else {
-							logger.Info("reconnected to lxd socket")
+							log.Info("reconnected to lxd socket")
 
 							return
 						}
@@ -255,14 +256,14 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 			}
 
 			if event.Op&fsnotify.Remove == fsnotify.Remove && event.Name == l.socket {
-				logger.Warnf("socket %s got deleted, will try to reconnect once it's created again", l.socket)
+				log.Warnf("socket %s got deleted, will try to reconnect once it's created again", l.socket)
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				return
 			}
 
-			logger.Crit("error: %v", err)
+			log.Fatalf("error: %v", err)
 		}
 	}
 }

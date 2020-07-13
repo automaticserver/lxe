@@ -1,4 +1,4 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 // Config options that LXE will need to interface with LXD
 type Config struct {
@@ -12,10 +12,10 @@ type Config struct {
 	LXDImageRemote string
 	// LXDProfiles which all cri containers inherit
 	LXDProfiles []string
-	// LXEStreamingServerEndpoint contains the listen address for the streaming server
-	LXEStreamingServerEndpoint string
-	// LXEStreamingPort is the port for the streaming server
-	LXEStreamingPort int
+	// LXEStreamingEndpoint contains the listen address for the streaming server
+	LXEStreamingEndpoint string
+	// LXEStreamingAddress is the base address for constructing streaming URLs
+	LXEStreamingAddress string
 	// LXEHostnetworkFile file path to use for lxc's raw.include
 	LXEHostnetworkFile string
 	// Which LXENetworkPlugin to use

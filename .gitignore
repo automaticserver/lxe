@@ -1,6 +1,3 @@
-vendor
-.vscode/
 *.coverprofile
-cri/version.go
-bin/
-package/
+/bin
+/vendor

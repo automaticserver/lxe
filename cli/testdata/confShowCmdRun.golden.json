@@ -1,0 +1,35 @@
+{
+  "abool": false,
+  "abytes": "Cg==",
+  "aduration": "30s",
+  "afloat": "3.1415",
+  "anint": 42,
+  "anip": "127.0.0.1",
+  "anipnet": "127.0.224.0/24",
+  "astringslice": [
+    "o h",
+    "sole",
+    "mio"
+  ],
+  "config": "",
+  "log": {
+    "file": {
+      "path": ""
+    },
+    "formatter": "pretty",
+    "level": "warning",
+    "target": "stderr"
+  },
+  "remote": {
+    "first": "",
+    "second": ""
+  },
+  "short": "",
+  "store-dir": {
+    "another": {
+      "sub-level": "foo"
+    },
+    "dir": "store",
+    "log-level": "debug"
+  }
+}

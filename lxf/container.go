@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"crypto/md5" // nolint: gosec
@@ -10,7 +10,6 @@ import (
 
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
@@ -341,7 +340,7 @@ func (c *Container) apply() error {
 
 	for key, val := range c.Config {
 		if containerConfigStore.IsReserved(key) {
-			logger.Warnf("config key '%v' is reserved and can not be used", key)
+			log.Warnf("config key '%v' is reserved and can not be used", key)
 		} else {
 			config[key] = val
 		}

@@ -1,30 +1,28 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/url"
 	"os/exec"
 	"path"
 	"strconv"
 	"strings"
 
+	"github.com/automaticserver/lxe/cli/version"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/logger"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
-	"k8s.io/kubernetes/pkg/kubelet/server/streaming"
 	"k8s.io/kubernetes/pkg/kubelet/util/ioutils"
 	utilExec "k8s.io/utils/exec"
 )
@@ -38,19 +36,11 @@ var (
 	ErrUnknownNetworkPlugin = errors.New("unknown network plugin")
 )
 
-// streamService implements streaming.Runtime.
-type streamService struct {
-	streaming.Runtime
-	runtimeServer       *RuntimeServer // needed by Exec() endpoint
-	streamServer        streaming.Server
-	streamServerCloseCh chan struct{}
-}
-
 // RuntimeServer is the PoC implementation of the CRI RuntimeServer
 type RuntimeServer struct {
 	rtApi.RuntimeServiceServer
 	lxf       lxf.Client
-	stream    streamService
+	stream    *streamService
 	lxdConfig *config.Config
 	criConfig *Config
 	network   network.Plugin
@@ -76,64 +66,30 @@ func NewRuntimeServer(criConfig *Config, lxf lxf.Client, network network.Plugin)
 	}
 
 	runtime.lxf = lxf
-	streamServerAddr := criConfig.LXEStreamingServerEndpoint + ":" + strconv.Itoa(criConfig.LXEStreamingPort)
-
-	outboundIP, err := utilNet.ChooseHostInterface()
-	if err != nil {
-		logger.Errorf("could not find suitable host interface: %v", err)
-		return nil, err
-	}
-
-	// Prepare streaming server
-	streamServerConfig := streaming.DefaultConfig
-	streamServerConfig.Addr = streamServerAddr
-	streamServerConfig.BaseURL = &url.URL{
-		Scheme: "http",
-		Host:   outboundIP.String() + ":" + strconv.Itoa(criConfig.LXEStreamingPort),
-	}
-	runtime.stream.runtimeServer = &runtime
-
-	runtime.stream.streamServer, err = streaming.NewServer(streamServerConfig, runtime.stream)
-	if err != nil {
-		logger.Errorf("unable to create streaming server")
-		return nil, err
-	}
-
-	runtime.stream.streamServerCloseCh = make(chan struct{})
-
-	go func() {
-		defer close(runtime.stream.streamServerCloseCh)
-		logger.Infof("Starting streaming server on %v", streamServerConfig.Addr)
-
-		err := runtime.stream.streamServer.Start(true)
-		if err != nil {
-			panic(fmt.Errorf("error serving execs or portforwards: %w", err))
-		}
-	}()
 
 	return &runtime, nil
 }
 
 // Version returns the runtime name, runtime version, and runtime API version.
 func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (*rtApi.VersionResponse, error) {
-	logger.Debugf("Version triggered: %v", req)
+	log.Debugf("Version triggered: %v", req)
 
 	// according to containerd CRI implementation RuntimeName=ShimName, RuntimeVersion=ShimVersion,
 	// RuntimeApiVersion=someAPIVersion. The actual runtime name and version is not present
 	info, err := s.lxf.GetRuntimeInfo()
 	if err != nil {
-		logger.Errorf("unable to get server environment: %v", err)
+		log.Errorf("unable to get server environment: %v", err)
 		return nil, err
 	}
 
 	response := &rtApi.VersionResponse{
 		Version:           criVersion,
 		RuntimeName:       Domain,
-		RuntimeVersion:    Version,
+		RuntimeVersion:    version.Version,
 		RuntimeApiVersion: info.Version,
 	}
 
-	logger.Debugf("Version responded: %v", response)
+	log.Debugf("Version responded: %v", response)
 
 	return response, nil
 }
@@ -141,9 +97,9 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure the sandbox is in the ready state on
 // success
 func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit
-	logger.Infof("RunPodSandbox called: SandboxName %v in Namespace %v with SandboxUID %v", req.GetConfig().GetMetadata().GetName(),
+	log.Infof("RunPodSandbox called: SandboxName %v in Namespace %v with SandboxUID %v", req.GetConfig().GetMetadata().GetName(),
 		req.GetConfig().GetMetadata().GetNamespace(), req.GetConfig().GetMetadata().GetUid())
-	logger.Debugf("RunPodSandbox triggered: %v", req)
+	log.Debugf("RunPodSandbox triggered: %v", req)
 
 	var err error
 
@@ -182,7 +138,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		default:
 			// unknown plugin name provided
 			err := fmt.Errorf("%w: %v", ErrUnknownNetworkPlugin, s.criConfig.LXENetworkPlugin)
-			logger.Error(err.Error())
+			log.Error(err.Error())
 			return nil, err
 		}
 	}
@@ -284,7 +240,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 
 	err = sb.Apply()
 	if err != nil {
-		logger.Errorf("RunPodSandbox: SandboxName %v failed to create sandbox: %v", req.GetConfig().GetMetadata().GetName(), err)
+		log.Errorf("RunPodSandbox: SandboxName %v failed to create sandbox: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err
 	}
 
@@ -293,7 +249,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't enter sandbox %v network context", sb.ID))
-			logger.Error(err.Error())
+			log.Error(err.Error())
 
 			return nil, err
 		}
@@ -301,7 +257,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		res, err := podNet.WhenCreated(ctx, &network.Properties{})
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't create sandbox %v network context", sb.ID))
-			logger.Error(err.Error())
+			log.Error(err.Error())
 
 			return nil, err
 		}
@@ -309,7 +265,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't save create sandbox %v network result", sb.ID))
-			logger.Error(err.Error())
+			log.Error(err.Error())
 
 			return nil, err
 		}
@@ -323,7 +279,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		})
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't start sandbox %v network context", sb.ID))
-			logger.Error(err.Error())
+			log.Error(err.Error())
 
 			return nil, err
 		}
@@ -331,19 +287,19 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
 			err := errors.Wrap(err, fmt.Sprintf("can't save start sandbox %v network result", sb.ID))
-			logger.Error(err.Error())
+			log.Error(err.Error())
 
 			return nil, err
 		}
 	}
 
-	logger.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
+	log.Infof("RunPodSandbox successful: Created SandboxID %v for SandboxUID %v", sb.ID, req.GetConfig().GetMetadata().GetUid())
 
 	response := &rtApi.RunPodSandboxResponse{
 		PodSandboxId: sb.ID,
 	}
 
-	logger.Debugf("RunPodSandbox responded: %v", response)
+	log.Debugf("RunPodSandbox responded: %v", response)
 
 	return response, nil
 }
@@ -354,8 +310,8 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 // reclaimed. kubelet will call StopPodSandbox at least once before calling RemovePodSandbox. It will also attempt to
 // reclaim resources eagerly, as soon as a sandbox is not needed. Hence, multiple StopPodSandbox calls are expected.
 func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSandboxRequest) (*rtApi.StopPodSandboxResponse, error) {
-	logger.Infof("StopPodSandbox called: SandboxID %v", req.GetPodSandboxId())
-	logger.Debugf("StopPodSandbox triggered: %v", req)
+	log.Infof("StopPodSandbox called: SandboxID %v", req.GetPodSandboxId())
+	log.Debugf("StopPodSandbox triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
@@ -364,20 +320,20 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 			return &rtApi.StopPodSandboxResponse{}, nil
 		}
 
-		logger.Errorf("StopPodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
+		log.Errorf("StopPodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 
 		return nil, err
 	}
 
 	err = s.stopContainers(sb)
 	if err != nil {
-		logger.Errorf("StopPodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
+		log.Errorf("StopPodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
 	err = sb.Stop()
 	if err != nil {
-		logger.Errorf("StopPodSandbox: SandboxID %v Trying to stop: %v", req.GetPodSandboxId(), err)
+		log.Errorf("StopPodSandbox: SandboxID %v Trying to stop: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
@@ -389,11 +345,11 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 		}
 	}
 
-	logger.Infof("StopPodSandbox successful: SandboxID %v", req.GetPodSandboxId())
+	log.Infof("StopPodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
 	response := &rtApi.StopPodSandboxResponse{}
 
-	logger.Debugf("StopPodSandbox responded: %v", response)
+	log.Debugf("StopPodSandbox responded: %v", response)
 
 	return response, nil
 }
@@ -401,8 +357,8 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 // RemovePodSandbox removes the sandbox. This is pretty much the same as StopPodSandbox but also removes the sandbox and
 // the containers
 func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePodSandboxRequest) (*rtApi.RemovePodSandboxResponse, error) {
-	logger.Infof("RemovePodSandbox called: SandboxID %v", req.GetPodSandboxId())
-	logger.Debugf("RemovePodSandbox triggered: %v", req)
+	log.Infof("RemovePodSandbox called: SandboxID %v", req.GetPodSandboxId())
+	log.Debugf("RemovePodSandbox triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
@@ -411,26 +367,26 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 			return &rtApi.RemovePodSandboxResponse{}, nil
 		}
 
-		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
+		log.Errorf("RemovePodSandbox: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 
 		return nil, err
 	}
 
 	err = s.stopContainers(sb)
 	if err != nil {
-		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
+		log.Errorf("RemovePodSandbox: SandboxID %v Trying to stop containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
 	err = s.deleteContainers(ctx, sb)
 	if err != nil {
-		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete containers: %v", req.GetPodSandboxId(), err)
+		log.Errorf("RemovePodSandbox: SandboxID %v Trying to delete containers: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
 	err = sb.Delete()
 	if err != nil {
-		logger.Errorf("RemovePodSandbox: SandboxID %v Trying to delete: %v", req.GetPodSandboxId(), err)
+		log.Errorf("RemovePodSandbox: SandboxID %v Trying to delete: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
@@ -442,23 +398,23 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 		}
 	}
 
-	logger.Infof("RemovePodSandbox successful: SandboxID %v", req.GetPodSandboxId())
+	log.Infof("RemovePodSandbox successful: SandboxID %v", req.GetPodSandboxId())
 
 	response := &rtApi.RemovePodSandboxResponse{}
 
-	logger.Debugf("RemovePodSandbox responded: %v", response)
+	log.Debugf("RemovePodSandbox responded: %v", response)
 
 	return response, nil
 }
 
 // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
-	//logger.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
-	logger.Debugf("PodSandboxStatus triggered: %v", req)
+	//log.Infof("PodSandboxStatus called: SandboxID %v", req.GetPodSandboxId())
+	log.Debugf("PodSandboxStatus triggered: %v", req)
 
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
-		logger.Errorf("PodSandboxStatus: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
+		log.Errorf("PodSandboxStatus: SandboxID %v Trying to get sandbox: %v", req.GetPodSandboxId(), err)
 		return nil, err
 	}
 
@@ -506,7 +462,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 		response.Status.Network.Ip = ip
 	}
 
-	logger.Debugf("PodSandboxStatus responded: %v", response)
+	log.Debugf("PodSandboxStatus responded: %v", response)
 
 	return response, nil
 }
@@ -517,7 +473,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	case lxf.NetworkHost:
 		ip, err := utilNet.ChooseHostInterface()
 		if err != nil {
-			logger.Errorf("Couldn't choose host interface: %v", err)
+			log.Errorf("Couldn't choose host interface: %v", err)
 			return ""
 		}
 
@@ -529,13 +485,13 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	case lxf.NetworkCNI:
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			logger.Errorf("Couldn't get cni pod network: %v", err)
+			log.Errorf("Couldn't get cni pod network: %v", err)
 			return ""
 		}
 
 		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
 		if err != nil {
-			logger.Errorf("Couldn't get status of cni pod network: %v", err)
+			log.Errorf("Couldn't get status of cni pod network: %v", err)
 			return ""
 		}
 
@@ -547,7 +503,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	// If not yet returned, look into the containers interface list and select the address from the default interface
 	cl, err := sb.Containers()
 	if err != nil {
-		logger.Errorf("Couldn't list containers while trying to get inet address: %v", err)
+		log.Errorf("Couldn't list containers while trying to get inet address: %v", err)
 		return ""
 	}
 
@@ -569,11 +525,11 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 
 // ListPodSandbox returns a list of PodSandboxes.
 func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSandboxRequest) (*rtApi.ListPodSandboxResponse, error) {
-	logger.Debugf("ListPodSandbox triggered: %v", req)
+	log.Debugf("ListPodSandbox triggered: %v", req)
 
 	sandboxes, err := s.lxf.ListSandboxes()
 	if err != nil {
-		logger.Errorf("ListPodSandbox: Trying to list sandbox: %v", err)
+		log.Errorf("ListPodSandbox: Trying to list sandbox: %v", err)
 		return nil, err
 	}
 
@@ -612,15 +568,15 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 		response.Items = append(response.Items, &pod)
 	}
 
-	logger.Debugf("ListPodSandbox responded: %v", response)
+	log.Debugf("ListPodSandbox responded: %v", response)
 
 	return response, nil
 }
 
 // CreateContainer creates a new container in specified PodSandbox
 func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) {
-	logger.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
-	logger.Debugf("CreateContainer triggered: %v", req)
+	log.Infof("CreateContainer called: ContainerName %v for SandboxID %v", req.GetConfig().GetMetadata().GetName(), req.GetPodSandboxId())
+	log.Debugf("CreateContainer triggered: %v", req)
 
 	var err error
 
@@ -700,7 +656,7 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 
 	err = c.Apply()
 	if err != nil {
-		logger.Errorf("CreateContainer: ContainerName %v trying to create container: %v", req.GetConfig().GetMetadata().GetName(), err)
+		log.Errorf("CreateContainer: ContainerName %v trying to create container: %v", req.GetConfig().GetMetadata().GetName(), err)
 		return nil, err
 	}
 
@@ -732,13 +688,13 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 		}
 	}
 
-	logger.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", c.ID, req.GetPodSandboxId())
+	log.Infof("CreateContainer successful: Created ContainerID %v for SandboxID %v", c.ID, req.GetPodSandboxId())
 
 	response := &rtApi.CreateContainerResponse{
 		ContainerId: c.ID,
 	}
 
-	logger.Debugf("CreateContainer responded: %v", response)
+	log.Debugf("CreateContainer responded: %v", response)
 
 	return response, nil
 }
@@ -746,26 +702,26 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 // StartContainer starts the container.
 // nolint: dupl
 func (s RuntimeServer) StartContainer(ctx context.Context, req *rtApi.StartContainerRequest) (*rtApi.StartContainerResponse, error) {
-	logger.Infof("StartContainer called: ContainerID %v", req.GetContainerId())
-	logger.Debugf("StartContainer triggered: %v", req)
+	log.Infof("StartContainer called: ContainerID %v", req.GetContainerId())
+	log.Debugf("StartContainer triggered: %v", req)
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("StartContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
+		log.Errorf("StartContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
 	err = c.Start()
 	if err != nil {
-		logger.Errorf("StartContainer: ContainerID %v trying to start container: %v", req.GetContainerId(), err)
+		log.Errorf("StartContainer: ContainerID %v trying to start container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
-	logger.Infof("StartContainer successful: ContainerID %v", c.ID)
+	log.Infof("StartContainer successful: ContainerID %v", c.ID)
 
 	response := &rtApi.StartContainerResponse{}
 
-	logger.Debugf("StartContainer responded: %v", response)
+	log.Debugf("StartContainer responded: %v", response)
 
 	return response, nil
 }
@@ -773,8 +729,8 @@ func (s RuntimeServer) StartContainer(ctx context.Context, req *rtApi.StartConta
 // StopContainer stops a running container with a grace period (i.e., timeout). This call is idempotent, and must not
 // return an error if the container has already been stopped.
 func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContainerRequest) (*rtApi.StopContainerResponse, error) {
-	logger.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
-	logger.Debugf("StopContainer triggered: %v", req)
+	log.Infof("StopContainer called: ContainerID %v", req.GetContainerId())
+	log.Debugf("StopContainer triggered: %v", req)
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
@@ -782,22 +738,22 @@ func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContain
 			return &rtApi.StopContainerResponse{}, nil
 		}
 
-		logger.Errorf("StopContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
+		log.Errorf("StopContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 
 		return nil, err
 	}
 
 	err = s.stopContainer(c, int(req.Timeout))
 	if err != nil {
-		logger.Errorf("StopContainer: ContainerID %v trying to stop container: %v", req.GetContainerId(), err)
+		log.Errorf("StopContainer: ContainerID %v trying to stop container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
-	logger.Infof("StopContainer successful: ContainerID %v", c.ID)
+	log.Infof("StopContainer successful: ContainerID %v", c.ID)
 
 	response := &rtApi.StopContainerResponse{}
 
-	logger.Debugf("StopContainer responded: %v", response)
+	log.Debugf("StopContainer responded: %v", response)
 
 	return response, nil
 }
@@ -805,8 +761,8 @@ func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContain
 // RemoveContainer removes the container. If the container is running, the container must be forcibly removed. This call
 // is idempotent, and must not return an error if the container has already been removed. nolint: dupl
 func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveContainerRequest) (*rtApi.RemoveContainerResponse, error) {
-	logger.Infof("RemoveContainer called: ContainerID %v", req.GetContainerId())
-	logger.Debugf("RemoveContainer triggered: %v", req)
+	log.Infof("RemoveContainer called: ContainerID %v", req.GetContainerId())
+	log.Debugf("RemoveContainer triggered: %v", req)
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
@@ -814,35 +770,35 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 			return &rtApi.RemoveContainerResponse{}, nil
 		}
 
-		logger.Errorf("RemoveContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
+		log.Errorf("RemoveContainer: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 
 		return nil, err
 	}
 
 	err = s.deleteContainer(ctx, c)
 	if err != nil {
-		logger.Errorf("RemoveContainer: ContainerID %v trying to remove container: %v", req.GetContainerId(), err)
+		log.Errorf("RemoveContainer: ContainerID %v trying to remove container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
-	logger.Infof("RemoveContainer successful: ContainerID %v", c.ID)
+	log.Infof("RemoveContainer successful: ContainerID %v", c.ID)
 
 	response := &rtApi.RemoveContainerResponse{}
 
-	logger.Debugf("RemoveContainer responded: %v", response)
+	log.Debugf("RemoveContainer responded: %v", response)
 
 	return response, nil
 }
 
 // ListContainers lists all containers by filters.
 func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContainersRequest) (*rtApi.ListContainersResponse, error) {
-	logger.Debugf("ListContainers triggered: %v", req)
+	log.Debugf("ListContainers triggered: %v", req)
 
 	response := &rtApi.ListContainersResponse{}
 
 	cl, err := s.lxf.ListContainers()
 	if err != nil {
-		logger.Errorf("ListContainers: trying to get container list: %v", err)
+		log.Errorf("ListContainers: trying to get container list: %v", err)
 		return nil, err
 	}
 
@@ -869,32 +825,32 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 		response.Containers = append(response.Containers, toCriContainer(c))
 	}
 
-	logger.Debugf("ListContainers responded: %v", response)
+	log.Debugf("ListContainers responded: %v", response)
 
 	return response, nil
 }
 
 // ContainerStatus returns status of the container. If the container is not present, returns an error.
 func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.ContainerStatusRequest) (*rtApi.ContainerStatusResponse, error) {
-	//logger.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
-	logger.Debugf("ContainerStatus triggered: %v", req)
+	//log.Infof("ContainerStatus called: ContainerID %v", req.GetContainerId())
+	log.Debugf("ContainerStatus triggered: %v", req)
 
 	ct, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("ContainerStatus: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
+		log.Errorf("ContainerStatus: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
 	response := toCriStatusResponse(ct)
 
-	logger.Debugf("ContainerStatus responded: %v", response)
+	log.Debugf("ContainerStatus responded: %v", response)
 
 	return response, nil
 }
 
 // UpdateContainerResources updates ContainerConfig of the container.
 func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.UpdateContainerResourcesRequest) (*rtApi.UpdateContainerResourcesResponse, error) {
-	logger.Debugf("UpdateContainerResources triggered: %v", req)
+	log.Debugf("UpdateContainerResources triggered: %v", req)
 	return nil, fmt.Errorf("UpdateContainerResources: %w", ErrNotImplemented)
 }
 
@@ -902,13 +858,13 @@ func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.
 // the log file has been rotated. If the container is not running, container runtime can choose to either create a new
 // log file and return nil, or return an error. Once it returns error, new container log file MUST NOT be created.
 func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.ReopenContainerLogRequest) (*rtApi.ReopenContainerLogResponse, error) {
-	logger.Debugf("ReopenContainerLog triggered: %v", req)
+	log.Debugf("ReopenContainerLog triggered: %v", req)
 	return nil, fmt.Errorf("ReopenContainerLog: %w", ErrNotImplemented)
 }
 
 // ExecSync runs a command in a container synchronously.
 func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest) (*rtApi.ExecSyncResponse, error) {
-	logger.Debugf("ExecSync triggered: %v", req)
+	log.Debugf("ExecSync triggered: %v", req)
 
 	stdin := bytes.NewReader(nil)
 	stdinR := ioutil.NopCloser(stdin)
@@ -919,7 +875,7 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 
 	code, err := s.lxf.Exec(req.GetContainerId(), req.GetCmd(), stdinR, stdoutW, stderrW, false, false, req.GetTimeout(), nil)
 
-	logger.Debugf("received exit code %v for exec %v on container %v", code, req.GetCmd(), req.GetContainerId())
+	log.Debugf("received exit code %v for exec %v on container %v", code, req.GetCmd(), req.GetContainerId())
 
 	return &rtApi.ExecSyncResponse{
 		Stdout:   stdout.Bytes(),
@@ -930,21 +886,21 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 
 // Exec prepares a streaming endpoint to execute a command in the container.
 func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi.ExecResponse, error) {
-	logger.Debugf("Exec triggered: %v", req)
+	log.Debugf("Exec triggered: %v", req)
 
 	resp, err := s.stream.streamServer.GetExec(req)
 	if err != nil {
-		logger.Errorf("Exec: ContainerID %v preparing exec endpoint: %v", req.GetContainerId(), err)
+		log.Errorf("Exec: ContainerID %v preparing exec endpoint: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
-	logger.Debugf("Exec responded: %v", resp)
+	log.Debugf("Exec responded: %v", resp)
 
 	return resp, nil
 }
 
 func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader, stdout, stderr io.WriteCloser, tty bool, resize <-chan remotecommand.TerminalSize) error {
-	logger.Debugf("StreamService Exec triggered: {containerID: %v, cmd: %v, stdin: %#v, stdout: %#v, stderr: %#v, tty: %v, resize: %v}", containerID, cmd, stdinR, stdout, stderr, tty, resize)
+	log.Debugf("StreamService Exec triggered: {containerID: %v, cmd: %v, stdin: %#v, stdout: %#v, stderr: %#v, tty: %v, resize: %v}", containerID, cmd, stdinR, stdout, stderr, tty, resize)
 
 	var stdin io.ReadCloser
 	if stdinR == nil {
@@ -957,7 +913,7 @@ func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader,
 
 	code, err := ss.runtimeServer.lxf.Exec(containerID, cmd, stdin, stdout, stderr, interactive, tty, 0, resize)
 
-	logger.Debugf("received exit code %v for exec %v on container %v", code, cmd, containerID)
+	log.Debugf("received exit code %v for exec %v on container %v", code, cmd, containerID)
 
 	if err != nil || code != 0 {
 		return &utilExec.CodeExitError{
@@ -971,23 +927,23 @@ func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader,
 
 // Attach prepares a streaming endpoint to attach to a running container.
 func (s RuntimeServer) Attach(ctx context.Context, req *rtApi.AttachRequest) (*rtApi.AttachResponse, error) {
-	logger.Debugf("Attach triggered: %v", req)
-	logger.Errorf("Attach - not implemented")
+	log.Debugf("Attach triggered: %v", req)
+	log.Errorf("Attach - not implemented")
 
 	return nil, fmt.Errorf("Attach: %w", ErrNotImplemented)
 }
 
 // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
 func (s RuntimeServer) PortForward(ctx context.Context, req *rtApi.PortForwardRequest) (resp *rtApi.PortForwardResponse, err error) {
-	logger.Debugf("PortForward triggered: %v", req)
+	log.Debugf("PortForward triggered: %v", req)
 
 	resp, err = s.stream.streamServer.GetPortForward(req)
 	if err != nil {
-		logger.Errorf("PortForward: preparing pendpoint: %v", err)
+		log.Errorf("PortForward: preparing pendpoint: %v", err)
 		return nil, err
 	}
 
-	logger.Debugf("PortForward responded: %v", resp)
+	log.Debugf("PortForward responded: %v", resp)
 
 	return resp, nil
 }
@@ -998,7 +954,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	sb, err := ss.runtimeServer.lxf.GetSandbox(podSandboxID)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to find pod %v", podSandboxID)
-		logger.Errorf("%v", err)
+		log.Errorf("%v", err)
 
 		return err
 	}
@@ -1008,7 +964,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	_, err = exec.LookPath("socat")
 	if err != nil {
 		err = errors.Wrap(err, "unable to do port forwarding")
-		logger.Errorf("%v", err)
+		log.Errorf("%v", err)
 
 		return err
 	}
@@ -1016,7 +972,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	args := []string{"-", fmt.Sprintf("TCP4:%s:%d,keepalive", podIP, port)}
 
 	commandString := fmt.Sprintf("socat %s", strings.Join(args, " "))
-	logger.Debugf("executing port forwarding command: %s", commandString)
+	log.Debugf("executing port forwarding command: %s", commandString)
 
 	command := exec.Command("socat", args...)
 	command.Stdout = stream
@@ -1032,19 +988,19 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	// exits.
 	inPipe, err := command.StdinPipe()
 	if err != nil {
-		logger.Errorf("PortForward: unable to do port forwarding: %v", err)
+		log.Errorf("PortForward: unable to do port forwarding: %v", err)
 		return err
 	}
 
 	go func() {
 		_, err = pools.Copy(inPipe, stream)
 		if err != nil {
-			logger.Errorf("pipe copy errored: %v", err)
+			log.Errorf("pipe copy errored: %v", err)
 		}
 
 		err = inPipe.Close()
 		if err != nil {
-			logger.Errorf("pipe close errored: %v", err)
+			log.Errorf("pipe close errored: %v", err)
 		}
 	}()
 
@@ -1057,43 +1013,43 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 
 // ContainerStats returns stats of the container. If the container does not exist, the call returns an error.
 func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerStatsRequest) (*rtApi.ContainerStatsResponse, error) {
-	logger.Debugf("ContainerStats triggered: %v", req)
+	log.Debugf("ContainerStats triggered: %v", req)
 
 	response := &rtApi.ContainerStatsResponse{}
 
 	cntStat, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		logger.Errorf("ContainerStats: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
+		log.Errorf("ContainerStats: ContainerID %v trying to get container: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
 	response.Stats, err = toCriStats(cntStat)
 	if err != nil {
-		logger.Errorf("ContainerStats: ContainerID %v trying to get stats: %v", req.GetContainerId(), err)
+		log.Errorf("ContainerStats: ContainerID %v trying to get stats: %v", req.GetContainerId(), err)
 		return nil, err
 	}
 
-	logger.Debugf("ContainerStats responded: %v", response)
+	log.Debugf("ContainerStats responded: %v", response)
 
 	return response, nil
 }
 
 // ListContainerStats returns stats of all running containers.
 func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListContainerStatsRequest) (*rtApi.ListContainerStatsResponse, error) {
-	logger.Debugf("ListContainerStats triggered: %v", req)
+	log.Debugf("ListContainerStats triggered: %v", req)
 
 	response := &rtApi.ListContainerStatsResponse{}
 
 	if req.Filter != nil && req.Filter.Id != "" {
 		c, err := s.lxf.GetContainer(req.Filter.Id)
 		if err != nil {
-			logger.Errorf("ListContainerStats: ContainerID %v trying to get container: %v", req.GetFilter().GetId(), err)
+			log.Errorf("ListContainerStats: ContainerID %v trying to get container: %v", req.GetFilter().GetId(), err)
 			return nil, err
 		}
 
 		st, err := toCriStats(c)
 		if err != nil {
-			logger.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", req.GetFilter().GetId(), err)
+			log.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", req.GetFilter().GetId(), err)
 			return nil, err
 		}
 
@@ -1104,46 +1060,46 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 
 	cts, err := s.lxf.ListContainers()
 	if err != nil {
-		logger.Errorf("ListContainerStats: trying to list containers: %v", err)
+		log.Errorf("ListContainerStats: trying to list containers: %v", err)
 		return nil, err
 	}
 
 	for _, c := range cts {
 		st, err := toCriStats(c)
 		if err != nil {
-			logger.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", c.ID, err)
+			log.Errorf("ListContainerStats: ContainerID %v trying to get stats: %v", c.ID, err)
 			return nil, err
 		}
 
 		response.Stats = append(response.Stats, st)
 	}
 
-	logger.Debugf("ListContainerStats responded: %v", response)
+	log.Debugf("ListContainerStats responded: %v", response)
 
 	return response, nil
 }
 
 // UpdateRuntimeConfig updates the runtime configuration based on the given request.
 func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context, req *rtApi.UpdateRuntimeConfigRequest) (*rtApi.UpdateRuntimeConfigResponse, error) {
-	//logger.Infof("UpdateRuntimeConfig called: PodCIDR %v", req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr())
-	logger.Debugf("UpdateRuntimeConfig triggered: %v", req)
+	//log.Infof("UpdateRuntimeConfig called: PodCIDR %v", req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr())
+	log.Debugf("UpdateRuntimeConfig triggered: %v", req)
 
 	err := s.network.UpdateRuntimeConfig(req.GetRuntimeConfig())
 	if err != nil {
-		logger.Errorf("UpdateRuntimeConfig: %v", err)
+		log.Errorf("UpdateRuntimeConfig: %v", err)
 		return nil, err
 	}
 
 	response := &rtApi.UpdateRuntimeConfigResponse{}
 
-	logger.Debugf("UpdateRuntimeConfig responded: %v", response)
+	log.Debugf("UpdateRuntimeConfig responded: %v", response)
 
 	return response, nil
 }
 
 // Status returns the status of the runtime.
 func (s RuntimeServer) Status(ctx context.Context, req *rtApi.StatusRequest) (*rtApi.StatusResponse, error) {
-	logger.Debugf("Status triggered: %v", req)
+	log.Debugf("Status triggered: %v", req)
 
 	// TODO: actually check services!
 	response := &rtApi.StatusResponse{
@@ -1161,7 +1117,7 @@ func (s RuntimeServer) Status(ctx context.Context, req *rtApi.StatusRequest) (*r
 		},
 	}
 
-	logger.Debugf("Status responded: %v", response)
+	log.Debugf("Status responded: %v", response)
 
 	return response, nil
 }

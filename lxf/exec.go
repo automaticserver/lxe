@@ -1,4 +1,4 @@
-package lxf
+package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"encoding/json"
@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/logger"
 	"golang.org/x/sys/unix"
 	"k8s.io/client-go/tools/remotecommand"
 )
@@ -69,7 +68,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 	case <-deadline:
 		err := ses.sendCancel()
 		if err != nil {
-			logger.Errorf("session control failed: %v", err)
+			log.Errorf("session control failed: %v", err)
 		}
 
 		return CodeExecTimeout, ErrExecTimeout
@@ -109,7 +108,7 @@ func (s *session) listenResize() {
 	for r := range s.resize {
 		err := s.sendResize(r)
 		if err != nil {
-			logger.Errorf("session control failed: %v", err)
+			log.Errorf("session control failed: %v", err)
 		}
 	}
 }
@@ -118,7 +117,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 	width := strconv.FormatUint(uint64(r.Width), 10)
 	height := strconv.FormatUint(uint64(r.Height), 10)
 
-	logger.Debugf("session control window size is now: %vx%v", width, height)
+	log.Debugf("session control window size is now: %vx%v", width, height)
 
 	if s.control == nil {
 		return ErrNoControlSocket
@@ -154,7 +153,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 }
 
 func (s *session) sendCancel() error {
-	logger.Debugf("timeout reached, force closing of connection")
+	log.Debugf("timeout reached, force closing of connection")
 
 	if s.control == nil {
 		return ErrNoControlSocket
@@ -163,7 +162,7 @@ func (s *session) sendCancel() error {
 	// TODO: In noninteractive mode this doesn't stop the command from executing, whatever signal it is set to
 	sig := cancelSignal
 
-	logger.Debugf("forwarding signal: %s", sig)
+	log.Debugf("forwarding signal: %s", sig)
 
 	w, err := s.control.NextWriter(websocket.TextMessage)
 	if err != nil {

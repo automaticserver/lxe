@@ -128,7 +128,7 @@ Now that you have LXE running on your system you can define the LXE socket as CR
 
 ## Installing LXE from source
 
-LXE uses [Go Modules](https://github.com/golang/go/wiki/Modules) so the minimum Go version required is 1.11. Clone this repo to your wished location. If you checked it out within `$GOPATH` set `GO111MODULE=on`.
+Currently LXE requires golang 1.13 or newer to be compiled and uses [Go Modules](https://github.com/golang/go/wiki/Modules). Clone this repo to your wished location. If you checked it out _within_ `$GOPATH` set `GO111MODULE=on`.
 
 ### Building & Tests
 

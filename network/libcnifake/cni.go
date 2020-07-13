@@ -92,6 +92,22 @@ type FakeCNI struct {
 	delNetworkListReturnsOnCall map[int]struct {
 		result1 error
 	}
+	GetNetworkCachedConfigStub        func(*libcni.NetworkConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)
+	getNetworkCachedConfigMutex       sync.RWMutex
+	getNetworkCachedConfigArgsForCall []struct {
+		arg1 *libcni.NetworkConfig
+		arg2 *libcni.RuntimeConf
+	}
+	getNetworkCachedConfigReturns struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}
+	getNetworkCachedConfigReturnsOnCall map[int]struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}
 	GetNetworkCachedResultStub        func(*libcni.NetworkConfig, *libcni.RuntimeConf) (types.Result, error)
 	getNetworkCachedResultMutex       sync.RWMutex
 	getNetworkCachedResultArgsForCall []struct {
@@ -105,6 +121,22 @@ type FakeCNI struct {
 	getNetworkCachedResultReturnsOnCall map[int]struct {
 		result1 types.Result
 		result2 error
+	}
+	GetNetworkListCachedConfigStub        func(*libcni.NetworkConfigList, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)
+	getNetworkListCachedConfigMutex       sync.RWMutex
+	getNetworkListCachedConfigArgsForCall []struct {
+		arg1 *libcni.NetworkConfigList
+		arg2 *libcni.RuntimeConf
+	}
+	getNetworkListCachedConfigReturns struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}
+	getNetworkListCachedConfigReturnsOnCall map[int]struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
 	}
 	GetNetworkListCachedResultStub        func(*libcni.NetworkConfigList, *libcni.RuntimeConf) (types.Result, error)
 	getNetworkListCachedResultMutex       sync.RWMutex
@@ -530,6 +562,73 @@ func (fake *FakeCNI) DelNetworkListReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeCNI) GetNetworkCachedConfig(arg1 *libcni.NetworkConfig, arg2 *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error) {
+	fake.getNetworkCachedConfigMutex.Lock()
+	ret, specificReturn := fake.getNetworkCachedConfigReturnsOnCall[len(fake.getNetworkCachedConfigArgsForCall)]
+	fake.getNetworkCachedConfigArgsForCall = append(fake.getNetworkCachedConfigArgsForCall, struct {
+		arg1 *libcni.NetworkConfig
+		arg2 *libcni.RuntimeConf
+	}{arg1, arg2})
+	fake.recordInvocation("GetNetworkCachedConfig", []interface{}{arg1, arg2})
+	fake.getNetworkCachedConfigMutex.Unlock()
+	if fake.GetNetworkCachedConfigStub != nil {
+		return fake.GetNetworkCachedConfigStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.getNetworkCachedConfigReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeCNI) GetNetworkCachedConfigCallCount() int {
+	fake.getNetworkCachedConfigMutex.RLock()
+	defer fake.getNetworkCachedConfigMutex.RUnlock()
+	return len(fake.getNetworkCachedConfigArgsForCall)
+}
+
+func (fake *FakeCNI) GetNetworkCachedConfigCalls(stub func(*libcni.NetworkConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)) {
+	fake.getNetworkCachedConfigMutex.Lock()
+	defer fake.getNetworkCachedConfigMutex.Unlock()
+	fake.GetNetworkCachedConfigStub = stub
+}
+
+func (fake *FakeCNI) GetNetworkCachedConfigArgsForCall(i int) (*libcni.NetworkConfig, *libcni.RuntimeConf) {
+	fake.getNetworkCachedConfigMutex.RLock()
+	defer fake.getNetworkCachedConfigMutex.RUnlock()
+	argsForCall := fake.getNetworkCachedConfigArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeCNI) GetNetworkCachedConfigReturns(result1 []byte, result2 *libcni.RuntimeConf, result3 error) {
+	fake.getNetworkCachedConfigMutex.Lock()
+	defer fake.getNetworkCachedConfigMutex.Unlock()
+	fake.GetNetworkCachedConfigStub = nil
+	fake.getNetworkCachedConfigReturns = struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeCNI) GetNetworkCachedConfigReturnsOnCall(i int, result1 []byte, result2 *libcni.RuntimeConf, result3 error) {
+	fake.getNetworkCachedConfigMutex.Lock()
+	defer fake.getNetworkCachedConfigMutex.Unlock()
+	fake.GetNetworkCachedConfigStub = nil
+	if fake.getNetworkCachedConfigReturnsOnCall == nil {
+		fake.getNetworkCachedConfigReturnsOnCall = make(map[int]struct {
+			result1 []byte
+			result2 *libcni.RuntimeConf
+			result3 error
+		})
+	}
+	fake.getNetworkCachedConfigReturnsOnCall[i] = struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}{result1, result2, result3}
+}
+
 func (fake *FakeCNI) GetNetworkCachedResult(arg1 *libcni.NetworkConfig, arg2 *libcni.RuntimeConf) (types.Result, error) {
 	fake.getNetworkCachedResultMutex.Lock()
 	ret, specificReturn := fake.getNetworkCachedResultReturnsOnCall[len(fake.getNetworkCachedResultArgsForCall)]
@@ -592,6 +691,73 @@ func (fake *FakeCNI) GetNetworkCachedResultReturnsOnCall(i int, result1 types.Re
 		result1 types.Result
 		result2 error
 	}{result1, result2}
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfig(arg1 *libcni.NetworkConfigList, arg2 *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error) {
+	fake.getNetworkListCachedConfigMutex.Lock()
+	ret, specificReturn := fake.getNetworkListCachedConfigReturnsOnCall[len(fake.getNetworkListCachedConfigArgsForCall)]
+	fake.getNetworkListCachedConfigArgsForCall = append(fake.getNetworkListCachedConfigArgsForCall, struct {
+		arg1 *libcni.NetworkConfigList
+		arg2 *libcni.RuntimeConf
+	}{arg1, arg2})
+	fake.recordInvocation("GetNetworkListCachedConfig", []interface{}{arg1, arg2})
+	fake.getNetworkListCachedConfigMutex.Unlock()
+	if fake.GetNetworkListCachedConfigStub != nil {
+		return fake.GetNetworkListCachedConfigStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.getNetworkListCachedConfigReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfigCallCount() int {
+	fake.getNetworkListCachedConfigMutex.RLock()
+	defer fake.getNetworkListCachedConfigMutex.RUnlock()
+	return len(fake.getNetworkListCachedConfigArgsForCall)
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfigCalls(stub func(*libcni.NetworkConfigList, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)) {
+	fake.getNetworkListCachedConfigMutex.Lock()
+	defer fake.getNetworkListCachedConfigMutex.Unlock()
+	fake.GetNetworkListCachedConfigStub = stub
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfigArgsForCall(i int) (*libcni.NetworkConfigList, *libcni.RuntimeConf) {
+	fake.getNetworkListCachedConfigMutex.RLock()
+	defer fake.getNetworkListCachedConfigMutex.RUnlock()
+	argsForCall := fake.getNetworkListCachedConfigArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfigReturns(result1 []byte, result2 *libcni.RuntimeConf, result3 error) {
+	fake.getNetworkListCachedConfigMutex.Lock()
+	defer fake.getNetworkListCachedConfigMutex.Unlock()
+	fake.GetNetworkListCachedConfigStub = nil
+	fake.getNetworkListCachedConfigReturns = struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeCNI) GetNetworkListCachedConfigReturnsOnCall(i int, result1 []byte, result2 *libcni.RuntimeConf, result3 error) {
+	fake.getNetworkListCachedConfigMutex.Lock()
+	defer fake.getNetworkListCachedConfigMutex.Unlock()
+	fake.GetNetworkListCachedConfigStub = nil
+	if fake.getNetworkListCachedConfigReturnsOnCall == nil {
+		fake.getNetworkListCachedConfigReturnsOnCall = make(map[int]struct {
+			result1 []byte
+			result2 *libcni.RuntimeConf
+			result3 error
+		})
+	}
+	fake.getNetworkListCachedConfigReturnsOnCall[i] = struct {
+		result1 []byte
+		result2 *libcni.RuntimeConf
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeCNI) GetNetworkListCachedResult(arg1 *libcni.NetworkConfigList, arg2 *libcni.RuntimeConf) (types.Result, error) {
@@ -801,8 +967,12 @@ func (fake *FakeCNI) Invocations() map[string][][]interface{} {
 	defer fake.delNetworkMutex.RUnlock()
 	fake.delNetworkListMutex.RLock()
 	defer fake.delNetworkListMutex.RUnlock()
+	fake.getNetworkCachedConfigMutex.RLock()
+	defer fake.getNetworkCachedConfigMutex.RUnlock()
 	fake.getNetworkCachedResultMutex.RLock()
 	defer fake.getNetworkCachedResultMutex.RUnlock()
+	fake.getNetworkListCachedConfigMutex.RLock()
+	defer fake.getNetworkListCachedConfigMutex.RUnlock()
 	fake.getNetworkListCachedResultMutex.RLock()
 	defer fake.getNetworkListCachedResultMutex.RUnlock()
 	fake.validateNetworkMutex.RLock()

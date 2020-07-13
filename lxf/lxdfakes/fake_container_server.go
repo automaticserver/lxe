@@ -1790,6 +1790,22 @@ type FakeContainerServer struct {
 		result1 lxd.Operation
 		result2 error
 	}
+	UpdateContainerSnapshotStub        func(string, string, api.ContainerSnapshotPut, string) (lxd.Operation, error)
+	updateContainerSnapshotMutex       sync.RWMutex
+	updateContainerSnapshotArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 api.ContainerSnapshotPut
+		arg4 string
+	}
+	updateContainerSnapshotReturns struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	updateContainerSnapshotReturnsOnCall map[int]struct {
+		result1 lxd.Operation
+		result2 error
+	}
 	UpdateContainerStateStub        func(string, api.ContainerStatePut, string) (lxd.Operation, error)
 	updateContainerStateMutex       sync.RWMutex
 	updateContainerStateArgsForCall []struct {
@@ -10165,6 +10181,72 @@ func (fake *FakeContainerServer) UpdateContainerReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
+func (fake *FakeContainerServer) UpdateContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPut, arg4 string) (lxd.Operation, error) {
+	fake.updateContainerSnapshotMutex.Lock()
+	ret, specificReturn := fake.updateContainerSnapshotReturnsOnCall[len(fake.updateContainerSnapshotArgsForCall)]
+	fake.updateContainerSnapshotArgsForCall = append(fake.updateContainerSnapshotArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 api.ContainerSnapshotPut
+		arg4 string
+	}{arg1, arg2, arg3, arg4})
+	fake.recordInvocation("UpdateContainerSnapshot", []interface{}{arg1, arg2, arg3, arg4})
+	fake.updateContainerSnapshotMutex.Unlock()
+	if fake.UpdateContainerSnapshotStub != nil {
+		return fake.UpdateContainerSnapshotStub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.updateContainerSnapshotReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) UpdateContainerSnapshotCallCount() int {
+	fake.updateContainerSnapshotMutex.RLock()
+	defer fake.updateContainerSnapshotMutex.RUnlock()
+	return len(fake.updateContainerSnapshotArgsForCall)
+}
+
+func (fake *FakeContainerServer) UpdateContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPut, string) (lxd.Operation, error)) {
+	fake.updateContainerSnapshotMutex.Lock()
+	defer fake.updateContainerSnapshotMutex.Unlock()
+	fake.UpdateContainerSnapshotStub = stub
+}
+
+func (fake *FakeContainerServer) UpdateContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPut, string) {
+	fake.updateContainerSnapshotMutex.RLock()
+	defer fake.updateContainerSnapshotMutex.RUnlock()
+	argsForCall := fake.updateContainerSnapshotArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeContainerServer) UpdateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+	fake.updateContainerSnapshotMutex.Lock()
+	defer fake.updateContainerSnapshotMutex.Unlock()
+	fake.UpdateContainerSnapshotStub = nil
+	fake.updateContainerSnapshotReturns = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) UpdateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+	fake.updateContainerSnapshotMutex.Lock()
+	defer fake.updateContainerSnapshotMutex.Unlock()
+	fake.UpdateContainerSnapshotStub = nil
+	if fake.updateContainerSnapshotReturnsOnCall == nil {
+		fake.updateContainerSnapshotReturnsOnCall = make(map[int]struct {
+			result1 lxd.Operation
+			result2 error
+		})
+	}
+	fake.updateContainerSnapshotReturnsOnCall[i] = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeContainerServer) UpdateContainerState(arg1 string, arg2 api.ContainerStatePut, arg3 string) (lxd.Operation, error) {
 	fake.updateContainerStateMutex.Lock()
 	ret, specificReturn := fake.updateContainerStateReturnsOnCall[len(fake.updateContainerStateArgsForCall)]
@@ -11243,6 +11325,8 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.updateClusterMutex.RUnlock()
 	fake.updateContainerMutex.RLock()
 	defer fake.updateContainerMutex.RUnlock()
+	fake.updateContainerSnapshotMutex.RLock()
+	defer fake.updateContainerSnapshotMutex.RUnlock()
 	fake.updateContainerStateMutex.RLock()
 	defer fake.updateContainerStateMutex.RUnlock()
 	fake.updateContainerTemplateFileMutex.RLock()

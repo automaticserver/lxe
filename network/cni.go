@@ -24,7 +24,7 @@ const (
 
 var (
 	ErrNoUpdateRuntimeConfig = errors.New("cniPlugin can't update runtime config")
-	ErrNoNetworksFound       = errors.New("No valid networks found")
+	ErrNoNetworksFound       = errors.New("no valid networks found")
 )
 
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value

@@ -70,7 +70,7 @@ func NewServer(criConfig *Config) *Server {
 			CreateOnly: true,
 		})
 	default:
-		err = fmt.Errorf("Unknown network plugin %s", criConfig.LXENetworkPlugin)
+		err = fmt.Errorf("%w: %s", ErrUnknownNetworkPlugin, criConfig.LXENetworkPlugin)
 	}
 
 	if err != nil {

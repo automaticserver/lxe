@@ -116,40 +116,18 @@ Aside from command-line parameters, LXE also supports configuration files in var
 
 You can also print the currently loaded configuration with `lxd config show yaml` (or any other supported extension). _Right now this only shows what configuration would be loaded if you would run lxe like that, it does not retrieve the current running configuration in case you have already an lxe process running_!
 
-```yaml
-$ lxe config show yaml
-bridge:
-  dhcp:
-    range: ""
-  name: lxebr0
-cni:
-  bin:
-    dir: /opt/cni/bin
-  conf:
-    dir: /etc/cni/net.d
-config: ""
-hostnetwork:
-  file: ""
-log:
-  file:
-    path: ""
-  formatter: pretty
-  level: warning
-  target: stderr
-lxd:
-  image:
-    remote: local
-  profiles:
-  - default
-  remote:
-    config: ""
-  socket: /var/lib/lxd/unix.socket
-network:
-  plugin: bridge
-socket: /run/lxe.sock
-streaming:
-  address: ""
-  endpoint: :44124
+```toml
+$ lxe config show toml
+config = ""
+socket = "/run/lxe.sock"
+
+[bridge]
+  name = "lxebr0"
+
+  [bridge.dhcp]
+    range = ""
+
+...
 ```
 
 If no config argument is provided via command-line or environment, it will automatically look for a file `lxe.<ext>` in `~/.local/lxe/` and `/etc/lxe/` (The folder `lxe` can be customized with the make variable `PACKAGE_NAME`)

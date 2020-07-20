@@ -4,7 +4,6 @@ import (
 	"github.com/automaticserver/lxe/cli"
 	"github.com/automaticserver/lxe/cri"
 	"github.com/automaticserver/lxe/network"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +12,6 @@ var (
 		Type:         cli.TypeService,
 		KeyDelimiter: "-",
 	})
-	log = logrus.StandardLogger()
 )
 
 func main() {

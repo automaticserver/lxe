@@ -39,5 +39,4 @@ snapshot:
 changelog:
   sort: asc
 release:
-  draft: true
-  name_template: "{{.ProjectName}} v{{.Version}}"
+  name_template: "{{toupper .ProjectName}} {{.Version}}"

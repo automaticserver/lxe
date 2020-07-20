@@ -4,6 +4,7 @@ import (
 	"net"
 	"net/url"
 
+	"github.com/sirupsen/logrus"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/kubernetes/pkg/kubelet/server/streaming"
 )
@@ -79,7 +80,7 @@ func setupStreamService(criConfig *Config, runtime *RuntimeServer) error {
 }
 
 func (ss *streamService) serve() error {
-	log.Infof("Starting streaming server on endpoint %v with base address %v", ss.conf.Addr, ss.conf.BaseURL.Host)
+	log.WithFields(logrus.Fields{"endpoint": ss.conf.Addr, "baseurl": ss.conf.BaseURL}).Infof("Started streaming server")
 
 	err := ss.streamServer.Start(true)
 	if err != nil {

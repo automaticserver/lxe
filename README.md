@@ -17,7 +17,7 @@ This project is currently under heavy development, expect incompatible changes.
 
 ## Requirements
 
-You need to have LXD >= 3.3 installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). A LXD built by source is also supported.
+You need to have LXD >= 3.3 installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). Debian is working on a LXD [deb package](https://wiki.debian.org/LXD), other distros might be as well. A LXD built by source is also supported.
 
 ## Installing LXE from packages
 
@@ -27,32 +27,21 @@ There are only manual builds right now, see [releases page](https://github.com/a
 
 ### LXD prerequisites
 
-Please follow these steps carefully. Some parameters and arguments depend on whether you installed lxd by source or via snap.
+Please follow these steps carefully. Some parameters and arguments depend on how you installed LXD.
 
-Make sure [that you have LXD running](https://github.com/lxc/lxd#machine-setup) and your default profile *only includes the root device and no interfaces*, since LXE organizes the networking and so interface names could interfere. Here's an example default profile:
-
-```yaml
-# lxc profile show default
-config: {}
-description: Default LXD profile
-devices:
-  root:
-    path: /
-    pool: default
-    type: disk
-name: default
-used_by: []
-```
-
-Also make sure the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), you'll need that later.
+Make sure [that you have LXD running](https://github.com/lxc/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), you'll need that later.
 
 - if you built LXD by source, this file is located in `~/.config/lxc/config.yml` (LXE will guess this automatically by default)
 - if you installed LXD via snap, the file is located in `~/snap/lxd/current/.config/lxc/config.yml`
-- or you wrote that configration file on a location of your choice
 
-LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control). When using the network-plugin cni root permissions are required.
+You may need to provide the LXD socket path:
+
+- if you built LXD by source, the socket is located in `/var/lib/lxd/unix.socket` (which is also default in LXE)
+- if you installed LXD via snap, the socket is located in `/var/snap/lxd/common/lxd/unix.socket`
 
 ### Running LXE
+
+LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control). When using the network-plugin cni root permissions are required.
 
 #### Parameters
 
@@ -60,15 +49,10 @@ The most important LXE options are the following:
 
 ```c
       --lxd-remote-config string    Path to the LXD remote config (guessed by default)
-      --lxd-socket string           LXD's unix socket (default "/var/lib/lxd/unix.socket")
-      --network-plugin string       The network plugin to use. '' is the standard network plugin and manages a lxd bridge 'lxebr0'. 'cni' uses kubernetes cni tools to attach interfaces.
-      --socket string               The unix socket under which LXE will expose its service to Kubernetes (default "/var/run/lxe.sock")
+      --lxd-socket string           Path of the socket where LXD provides it's API. (default "/var/lib/lxd/unix.socket")
+      --network-plugin string       The network plugin to use. 'bridge' manages the lxd bridge defined in --bridge-name. 'cni' uses kubernetes cni tools to attach interfaces using configuration defined in --cni-conf-dir (default "bridge")
+      --socket string               Path of the socket where it should provide the runtime and image service to kubelet. (default "/run/lxe.sock")
 ```
-
-You may need to provide the LXD socket path:
-
-- if you built LXD by source, the socket is located in `/var/lib/lxd/unix.socket` (which is also default in LXE)
-- if you installed LXD via snap, the socket is located in `/var/snap/lxd/common/lxd/unix.socket`
 
 We recommend to use CNI as the network plugin as it offers more flexibility and integration to [common kubernetes network setups](https://kubernetes.io/docs/concepts/cluster-administration/networking/). But for sure you can use the currently default network plugin, which uses lxd's integrated networking, and build kubernetes cluster networking around it.
 
@@ -109,26 +93,76 @@ For all options, consider looking into `lxe --help`.
 
 #### Starting the daemon
 
-You might want to use `--verbose` for some feedback, otherwise the daemon is pretty silent when no errors occur. Warning: `--debug` is *very* verbose.
+You might want to use `--log-level info` for some feedback, otherwise the daemon is pretty silent when no warnings or errors occur.
 
-- if you built LXD by source, `lxe --network-plugin cni --verbose`
-- if you installed LXD via snap, `lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config ~/snap/lxd/current/.config/lxc/config.yml --network-plugin cni --verbose`
+- if you built LXD by source, `lxe --network-plugin cni --log-level info`
+- if you installed LXD via snap, `lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config ~/snap/lxd/current/.config/lxc/config.yml --network-plugin cni --log-level info`
 
 You should be greeted with:
 
 ```bash
-INFO[10-03|19:02:07] Connected to LXD via "/var/lib/lxd/unix.socket"
-INFO[10-03|19:02:07] Starting streaming server on :44124
-INFO[10-03|19:02:07] Started LXE/0.1.21.gc4ee124.dirty CRI shim on UNIX socket "/var/run/lxe.sock"
+WARNING[07-20|17:11:18.042] starting lxe...                               packagename=lxe version=0.0.0 gitcommit=... gittreestate=dirty buildnumber=undef builddate="..."
+INFO   [07-20|17:11:18.051] Connected to LXD                              lxd-socket=/var/lib/lxd/unix.socket
+INFO   [07-20|17:11:18.068] Started lxe CRI shim                          socket=/run/lxe.sock
+INFO   [07-20|17:11:18.068] Started streaming server                      endpoint=":44124" baseurl="http://10.249.100.169:44124"
 ```
 
-#### Configure Kubelet to use LXE
+#### Configuration options
 
-Now that you have LXE running on your system you can define the LXE socket as CRI endpoint in kubelet. You'll have to define the following options `--container-runtime=remote` and `--container-runtime-endpoint=unix:///var/run/lxe.sock` and your kubelet should be able to connect to your LXE socket.
+Aside from command-line parameters, LXE also supports configuration files in various file formats (YAML, JSON, TOML, etc.) and environment variables. All parameters are automatically detected depending on rules for each configuaration type:
+
+- Environment variables are always upper case and the dashes are underscores: E.g. `--lxd-socket` is `LXD_SOCKET`
+- The keys in config files are split on every dash and the remaining part of the key continues as sub-object: E.g. in JSON `--lxd-socket` is `{"lxd": {"socket": ...}}`
+
+You can also print the currently loaded configuration with `lxd config show yaml` (or any other supported extension). _Right now this only shows what configuration would be loaded if you would run lxe like that, it does not retrieve the current running configuration in case you have already an lxe process running_!
+
+```yaml
+$ lxe config show yaml
+bridge:
+  dhcp:
+    range: ""
+  name: lxebr0
+cni:
+  bin:
+    dir: /opt/cni/bin
+  conf:
+    dir: /etc/cni/net.d
+config: ""
+hostnetwork:
+  file: ""
+log:
+  file:
+    path: ""
+  formatter: pretty
+  level: warning
+  target: stderr
+lxd:
+  image:
+    remote: local
+  profiles:
+  - default
+  remote:
+    config: ""
+  socket: /var/lib/lxd/unix.socket
+network:
+  plugin: bridge
+socket: /run/lxe.sock
+streaming:
+  address: ""
+  endpoint: :44124
+```
+
+If no config argument is provided via command-line or environment, it will automatically look for a file `lxe.<ext>` in `~/.local/lxe/` and `/etc/lxe/` (The folder `lxe` can be customized with the make variable `PACKAGE_NAME`)
+
+You can also combine all these variants. Command-line parameters have precedence over environment variables, which have precedence over configuration file settings, those in turn have precedence over defaults. Please be aware you can't set the config variable in a config file, it has no effect. Once a variable is set in any way, even if empty, the default is overridden.
+
+### Configure Kubelet to use LXE
+
+Now that you have LXE running on your system you can define the LXE socket as CRI endpoint in kubelet. You'll have to define the following options `--container-runtime=remote` and `--container-runtime-endpoint=unix:///run/lxe.sock` and your kubelet should be able to connect to your LXE socket.
 
 ## Installing LXE from source
 
-Currently LXE requires golang 1.13 or newer to be compiled and uses [Go Modules](https://github.com/golang/go/wiki/Modules). Clone this repo to your wished location. If you checked it out _within_ `$GOPATH` set `GO111MODULE=on`.
+Currently LXE requires golang 1.13 or newer to be compiled and uses [Go Modules](https://github.com/golang/go/wiki/Modules). Clone this repo to your wished location.
 
 ### Building & Tests
 
@@ -138,12 +172,20 @@ Build this project using the following command, which will give you the binary i
 make build
 ```
 
+You can also run the program directly using:
+
+```bash
+make run lxe -- --log-level info --network-plugin cni
+```
+
 There are also tests available.
 
-```cmd
+```bash
 make test
 make lint
 ```
+
+To list all available make targets have a look at help target `make help`.
 
 ## Bug reports
 

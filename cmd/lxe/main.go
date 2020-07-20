@@ -71,8 +71,6 @@ func rootCmdRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	log.WithField("socket", venom.GetString("socket")).Warnf("started %s CRI shim", cri.Domain)
-
 	// run forever
 	select {}
 }

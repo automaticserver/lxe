@@ -6,8 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path"
-	"runtime"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -48,20 +46,14 @@ var prettyFormatter = &logrus.TextFormatter{
 	// QuoteEmptyFields: true,
 	FullTimestamp:   true,
 	TimestampFormat: logTimestampFormatPretty,
-	CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-		return fmt.Sprintf("%v:", path.Base(f.Func.Name())), fmt.Sprintf("%v:%v", path.Base(f.File), f.Line)
-	},
-	DisableSorting: true,
-	PadLevelText:   true,
+	// DisableSorting:  true,
+	PadLevelText: true,
 }
 
 var textFormatter = &logrus.TextFormatter{
 	FullTimestamp: true,
 	// QuoteEmptyFields: true,
 	TimestampFormat: logTimestampFormatText,
-	CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-		return path.Base(f.Func.Name()), fmt.Sprintf("%v:%v", path.Base(f.File), f.Line)
-	},
 }
 
 func setLoggingBasic() error {
@@ -72,6 +64,7 @@ func setLoggingBasic() error {
 	}
 
 	logrus.SetLevel(level)
+	logrus.SetReportCaller(false)
 
 	return nil
 }

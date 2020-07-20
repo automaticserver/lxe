@@ -5,7 +5,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/automaticserver/lxe/cli/version"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
@@ -50,7 +49,7 @@ func NewServer(criConfig *Config) *Server {
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
-	log.Infof("Connected to LXD via %q", criConfig.LXDSocket)
+	log.WithField("lxd-socket", criConfig.LXDSocket).Infof("Connected to LXD")
 
 	// Ensure profile and container schema migration
 	migration := lxf.NewMigrationWorkspace(client)
@@ -124,27 +123,28 @@ func (c *Server) Serve() error {
 	var err error
 
 	sock := c.criConfig.UnixSocket
+	log := log.WithField("socket", sock)
 
 	if _, err = os.Stat(sock); err == nil {
 		log.Debugf("Cleaning up stale socket")
 
 		err = os.Remove(sock)
 		if err != nil {
-			log.Fatalf("Error cleaning up stale listening socket %q: %v ", sock, err)
+			log.Fatalf("Error cleaning up stale listening socket: %v ", err)
 			os.Exit(shared.ExitCodeUnspecified)
 		}
 	}
 
 	c.sock, err = net.Listen("unix", sock)
 	if err != nil {
-		log.Fatalf("Error listening on socket %q: %v ", sock, err)
+		log.Fatalf("Error listening on socket: %v ", err)
 		os.Exit(shared.ExitCodeUnspecified)
 	}
 
 	defer c.sock.Close()
 	defer os.Remove(c.criConfig.UnixSocket)
 
-	log.Infof("Started %s/%s CRI shim on UNIX socket %q", Domain, version.Version, sock)
+	log.Infof("Started %s CRI shim", Domain)
 
 	go func() {
 		err := c.stream.serve()

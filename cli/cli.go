@@ -50,8 +50,6 @@ func New(o Options) (*viper.Viper, *cobra.Command) {
 
 	if o.Type == TypeService {
 		ToDaemon(rootCmd)
-	} else {
-		logrus.SetReportCaller(false)
 	}
 
 	return venom, rootCmd

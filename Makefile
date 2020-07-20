@@ -18,7 +18,7 @@ all: build test lint
 .PHONY: version
 version:
 	@echo "$(VERSION)"
-	@echo "package cri\n// Version of LXE\nconst Version = \"$(VERSION)\"" | gofmt > cri/version.go
+	@echo -e "package cri\n// Version of LXE\nconst Version = \"$(VERSION)\"" | gofmt > cri/version.go
 
 .PHONY: build
 build: version

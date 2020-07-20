@@ -6,24 +6,28 @@ builds:
     main: cmd/lxe/main.go
     env:
       - GO111MODULE=on
+      - CGO_ENABLED=0
       # Can't we have a named template which offers us the module name of that current binary?
       - GO_MODULENAME=github.com/automaticserver/lxe
     goos:
       - linux
     goarch:
+      - 386
       - amd64
-    # asmflags:
-    #   - all=-trimpath={{.Env.GOPATH}}
-    # gcflags: 
-    #   - all=-trimpath={{.Env.GOPATH}}
-    ldflags: 
+      - arm
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
       - -s -w
       - -X "{{.Env.GO_MODULENAME}}/cli/version.Version={{replace .Version (print "-" .ShortCommit) ""}}"
       - -X "{{.Env.GO_MODULENAME}}/cli/version.GitCommit={{.FullCommit}}"
       - -X "{{.Env.GO_MODULENAME}}/cli/version.BuildDate={{time "Mon, 02 Jan 2006 15:04:05 -0700"}}"
       - -X "{{.Env.GO_MODULENAME}}/cli/version.PackageName={{.ProjectName}}"
 archives:
-  - files:
+  - replacements:
+      386: i386
+    files:
     - README*
     - COPYING
     - AUTHORS
@@ -33,6 +37,7 @@ checksum:
 snapshot:
   name_template: 0.0.0-{{.ShortCommit}}
 changelog:
+  sort: asc
 release:
   draft: true
   name_template: "{{.ProjectName}} v{{.Version}}"

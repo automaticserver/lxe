@@ -33,6 +33,7 @@ archives:
     - COPYING
     - AUTHORS
     - doc/*
+    - fixtures/hostnetwork*
 checksum:
   name_template: 'checksums.txt'
 snapshot:

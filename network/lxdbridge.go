@@ -115,7 +115,6 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 			return p.server.CreateNetwork(api.NetworksPost{
 				Name:       p.conf.LXDBridge,
 				Type:       "bridge",
-				Managed:    true,
 				NetworkPut: put,
 			})
 		}

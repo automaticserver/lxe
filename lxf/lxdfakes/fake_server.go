@@ -9,6 +9,10 @@ import (
 )
 
 type FakeServer struct {
+	DisconnectStub        func()
+	disconnectMutex       sync.RWMutex
+	disconnectArgsForCall []struct {
+	}
 	GetConnectionInfoStub        func() (*lxd.ConnectionInfo, error)
 	getConnectionInfoMutex       sync.RWMutex
 	getConnectionInfoArgsForCall []struct {
@@ -35,6 +39,29 @@ type FakeServer struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeServer) Disconnect() {
+	fake.disconnectMutex.Lock()
+	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
+	}{})
+	fake.recordInvocation("Disconnect", []interface{}{})
+	fake.disconnectMutex.Unlock()
+	if fake.DisconnectStub != nil {
+		fake.DisconnectStub()
+	}
+}
+
+func (fake *FakeServer) DisconnectCallCount() int {
+	fake.disconnectMutex.RLock()
+	defer fake.disconnectMutex.RUnlock()
+	return len(fake.disconnectArgsForCall)
+}
+
+func (fake *FakeServer) DisconnectCalls(stub func()) {
+	fake.disconnectMutex.Lock()
+	defer fake.disconnectMutex.Unlock()
+	fake.DisconnectStub = stub
 }
 
 func (fake *FakeServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
@@ -150,6 +177,8 @@ func (fake *FakeServer) GetHTTPClientReturnsOnCall(i int, result1 *http.Client, 
 func (fake *FakeServer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.disconnectMutex.RLock()
+	defer fake.disconnectMutex.RUnlock()
 	fake.getConnectionInfoMutex.RLock()
 	defer fake.getConnectionInfoMutex.RUnlock()
 	fake.getHTTPClientMutex.RLock()

@@ -7,6 +7,7 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
 	github.com/elazarl/goproxy v0.0.0-20200710112657-153946a5f232 // indirect
+	github.com/flosch/pongo2 v0.0.0-20200529170236-5abacdfa4915 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.1 // indirect
@@ -23,7 +24,7 @@ require (
 	github.com/juju/persistent-cookiejar v0.0.0-20171026135701-d5e5a8405ef9 // indirect
 	github.com/juju/testing v0.0.0-20200706033705-4c23f9c453cd // indirect
 	github.com/juju/webbrowser v1.0.0 // indirect
-	github.com/lxc/lxd v0.0.0-20190827163136-ff737ec6e385
+	github.com/lxc/lxd v0.0.0-20200720180136-3c16557310d0
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
 	github.com/opencontainers/runtime-spec v1.0.2
@@ -48,6 +49,7 @@ require (
 	gopkg.in/ini.v1 v1.52.0 // indirect
 	gopkg.in/macaroon-bakery.v2 v2.2.0 // indirect
 	gopkg.in/retry.v1 v1.0.3 // indirect
+	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.15.12
 	k8s.io/client-go v0.15.12

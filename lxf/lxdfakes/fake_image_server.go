@@ -10,6 +10,24 @@ import (
 )
 
 type FakeImageServer struct {
+	DisconnectStub        func()
+	disconnectMutex       sync.RWMutex
+	disconnectArgsForCall []struct {
+	}
+	ExportImageStub        func(string, api.ImageExportPost) (lxd.Operation, error)
+	exportImageMutex       sync.RWMutex
+	exportImageArgsForCall []struct {
+		arg1 string
+		arg2 api.ImageExportPost
+	}
+	exportImageReturns struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	exportImageReturnsOnCall map[int]struct {
+		result1 lxd.Operation
+		result2 error
+	}
 	GetConnectionInfoStub        func() (*lxd.ConnectionInfo, error)
 	getConnectionInfoMutex       sync.RWMutex
 	getConnectionInfoArgsForCall []struct {
@@ -64,6 +82,20 @@ type FakeImageServer struct {
 		result2 string
 		result3 error
 	}
+	GetImageAliasArchitecturesStub        func(string, string) (map[string]*api.ImageAliasesEntry, error)
+	getImageAliasArchitecturesMutex       sync.RWMutex
+	getImageAliasArchitecturesArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getImageAliasArchitecturesReturns struct {
+		result1 map[string]*api.ImageAliasesEntry
+		result2 error
+	}
+	getImageAliasArchitecturesReturnsOnCall map[int]struct {
+		result1 map[string]*api.ImageAliasesEntry
+		result2 error
+	}
 	GetImageAliasNamesStub        func() ([]string, error)
 	getImageAliasNamesMutex       sync.RWMutex
 	getImageAliasNamesArgsForCall []struct {
@@ -75,6 +107,22 @@ type FakeImageServer struct {
 	getImageAliasNamesReturnsOnCall map[int]struct {
 		result1 []string
 		result2 error
+	}
+	GetImageAliasTypeStub        func(string, string) (*api.ImageAliasesEntry, string, error)
+	getImageAliasTypeMutex       sync.RWMutex
+	getImageAliasTypeArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getImageAliasTypeReturns struct {
+		result1 *api.ImageAliasesEntry
+		result2 string
+		result3 error
+	}
+	getImageAliasTypeReturnsOnCall map[int]struct {
+		result1 *api.ImageAliasesEntry
+		result2 string
+		result3 error
 	}
 	GetImageAliasesStub        func() ([]api.ImageAliasesEntry, error)
 	getImageAliasesMutex       sync.RWMutex
@@ -172,6 +220,93 @@ type FakeImageServer struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeImageServer) Disconnect() {
+	fake.disconnectMutex.Lock()
+	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
+	}{})
+	fake.recordInvocation("Disconnect", []interface{}{})
+	fake.disconnectMutex.Unlock()
+	if fake.DisconnectStub != nil {
+		fake.DisconnectStub()
+	}
+}
+
+func (fake *FakeImageServer) DisconnectCallCount() int {
+	fake.disconnectMutex.RLock()
+	defer fake.disconnectMutex.RUnlock()
+	return len(fake.disconnectArgsForCall)
+}
+
+func (fake *FakeImageServer) DisconnectCalls(stub func()) {
+	fake.disconnectMutex.Lock()
+	defer fake.disconnectMutex.Unlock()
+	fake.DisconnectStub = stub
+}
+
+func (fake *FakeImageServer) ExportImage(arg1 string, arg2 api.ImageExportPost) (lxd.Operation, error) {
+	fake.exportImageMutex.Lock()
+	ret, specificReturn := fake.exportImageReturnsOnCall[len(fake.exportImageArgsForCall)]
+	fake.exportImageArgsForCall = append(fake.exportImageArgsForCall, struct {
+		arg1 string
+		arg2 api.ImageExportPost
+	}{arg1, arg2})
+	fake.recordInvocation("ExportImage", []interface{}{arg1, arg2})
+	fake.exportImageMutex.Unlock()
+	if fake.ExportImageStub != nil {
+		return fake.ExportImageStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.exportImageReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeImageServer) ExportImageCallCount() int {
+	fake.exportImageMutex.RLock()
+	defer fake.exportImageMutex.RUnlock()
+	return len(fake.exportImageArgsForCall)
+}
+
+func (fake *FakeImageServer) ExportImageCalls(stub func(string, api.ImageExportPost) (lxd.Operation, error)) {
+	fake.exportImageMutex.Lock()
+	defer fake.exportImageMutex.Unlock()
+	fake.ExportImageStub = stub
+}
+
+func (fake *FakeImageServer) ExportImageArgsForCall(i int) (string, api.ImageExportPost) {
+	fake.exportImageMutex.RLock()
+	defer fake.exportImageMutex.RUnlock()
+	argsForCall := fake.exportImageArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeImageServer) ExportImageReturns(result1 lxd.Operation, result2 error) {
+	fake.exportImageMutex.Lock()
+	defer fake.exportImageMutex.Unlock()
+	fake.ExportImageStub = nil
+	fake.exportImageReturns = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImageServer) ExportImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+	fake.exportImageMutex.Lock()
+	defer fake.exportImageMutex.Unlock()
+	fake.ExportImageStub = nil
+	if fake.exportImageReturnsOnCall == nil {
+		fake.exportImageReturnsOnCall = make(map[int]struct {
+			result1 lxd.Operation
+			result2 error
+		})
+	}
+	fake.exportImageReturnsOnCall[i] = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *FakeImageServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
@@ -416,6 +551,70 @@ func (fake *FakeImageServer) GetImageAliasReturnsOnCall(i int, result1 *api.Imag
 	}{result1, result2, result3}
 }
 
+func (fake *FakeImageServer) GetImageAliasArchitectures(arg1 string, arg2 string) (map[string]*api.ImageAliasesEntry, error) {
+	fake.getImageAliasArchitecturesMutex.Lock()
+	ret, specificReturn := fake.getImageAliasArchitecturesReturnsOnCall[len(fake.getImageAliasArchitecturesArgsForCall)]
+	fake.getImageAliasArchitecturesArgsForCall = append(fake.getImageAliasArchitecturesArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	fake.recordInvocation("GetImageAliasArchitectures", []interface{}{arg1, arg2})
+	fake.getImageAliasArchitecturesMutex.Unlock()
+	if fake.GetImageAliasArchitecturesStub != nil {
+		return fake.GetImageAliasArchitecturesStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.getImageAliasArchitecturesReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeImageServer) GetImageAliasArchitecturesCallCount() int {
+	fake.getImageAliasArchitecturesMutex.RLock()
+	defer fake.getImageAliasArchitecturesMutex.RUnlock()
+	return len(fake.getImageAliasArchitecturesArgsForCall)
+}
+
+func (fake *FakeImageServer) GetImageAliasArchitecturesCalls(stub func(string, string) (map[string]*api.ImageAliasesEntry, error)) {
+	fake.getImageAliasArchitecturesMutex.Lock()
+	defer fake.getImageAliasArchitecturesMutex.Unlock()
+	fake.GetImageAliasArchitecturesStub = stub
+}
+
+func (fake *FakeImageServer) GetImageAliasArchitecturesArgsForCall(i int) (string, string) {
+	fake.getImageAliasArchitecturesMutex.RLock()
+	defer fake.getImageAliasArchitecturesMutex.RUnlock()
+	argsForCall := fake.getImageAliasArchitecturesArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeImageServer) GetImageAliasArchitecturesReturns(result1 map[string]*api.ImageAliasesEntry, result2 error) {
+	fake.getImageAliasArchitecturesMutex.Lock()
+	defer fake.getImageAliasArchitecturesMutex.Unlock()
+	fake.GetImageAliasArchitecturesStub = nil
+	fake.getImageAliasArchitecturesReturns = struct {
+		result1 map[string]*api.ImageAliasesEntry
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImageServer) GetImageAliasArchitecturesReturnsOnCall(i int, result1 map[string]*api.ImageAliasesEntry, result2 error) {
+	fake.getImageAliasArchitecturesMutex.Lock()
+	defer fake.getImageAliasArchitecturesMutex.Unlock()
+	fake.GetImageAliasArchitecturesStub = nil
+	if fake.getImageAliasArchitecturesReturnsOnCall == nil {
+		fake.getImageAliasArchitecturesReturnsOnCall = make(map[int]struct {
+			result1 map[string]*api.ImageAliasesEntry
+			result2 error
+		})
+	}
+	fake.getImageAliasArchitecturesReturnsOnCall[i] = struct {
+		result1 map[string]*api.ImageAliasesEntry
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeImageServer) GetImageAliasNames() ([]string, error) {
 	fake.getImageAliasNamesMutex.Lock()
 	ret, specificReturn := fake.getImageAliasNamesReturnsOnCall[len(fake.getImageAliasNamesArgsForCall)]
@@ -469,6 +668,73 @@ func (fake *FakeImageServer) GetImageAliasNamesReturnsOnCall(i int, result1 []st
 		result1 []string
 		result2 error
 	}{result1, result2}
+}
+
+func (fake *FakeImageServer) GetImageAliasType(arg1 string, arg2 string) (*api.ImageAliasesEntry, string, error) {
+	fake.getImageAliasTypeMutex.Lock()
+	ret, specificReturn := fake.getImageAliasTypeReturnsOnCall[len(fake.getImageAliasTypeArgsForCall)]
+	fake.getImageAliasTypeArgsForCall = append(fake.getImageAliasTypeArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	fake.recordInvocation("GetImageAliasType", []interface{}{arg1, arg2})
+	fake.getImageAliasTypeMutex.Unlock()
+	if fake.GetImageAliasTypeStub != nil {
+		return fake.GetImageAliasTypeStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.getImageAliasTypeReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeImageServer) GetImageAliasTypeCallCount() int {
+	fake.getImageAliasTypeMutex.RLock()
+	defer fake.getImageAliasTypeMutex.RUnlock()
+	return len(fake.getImageAliasTypeArgsForCall)
+}
+
+func (fake *FakeImageServer) GetImageAliasTypeCalls(stub func(string, string) (*api.ImageAliasesEntry, string, error)) {
+	fake.getImageAliasTypeMutex.Lock()
+	defer fake.getImageAliasTypeMutex.Unlock()
+	fake.GetImageAliasTypeStub = stub
+}
+
+func (fake *FakeImageServer) GetImageAliasTypeArgsForCall(i int) (string, string) {
+	fake.getImageAliasTypeMutex.RLock()
+	defer fake.getImageAliasTypeMutex.RUnlock()
+	argsForCall := fake.getImageAliasTypeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeImageServer) GetImageAliasTypeReturns(result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+	fake.getImageAliasTypeMutex.Lock()
+	defer fake.getImageAliasTypeMutex.Unlock()
+	fake.GetImageAliasTypeStub = nil
+	fake.getImageAliasTypeReturns = struct {
+		result1 *api.ImageAliasesEntry
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeImageServer) GetImageAliasTypeReturnsOnCall(i int, result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+	fake.getImageAliasTypeMutex.Lock()
+	defer fake.getImageAliasTypeMutex.Unlock()
+	fake.GetImageAliasTypeStub = nil
+	if fake.getImageAliasTypeReturnsOnCall == nil {
+		fake.getImageAliasTypeReturnsOnCall = make(map[int]struct {
+			result1 *api.ImageAliasesEntry
+			result2 string
+			result3 error
+		})
+	}
+	fake.getImageAliasTypeReturnsOnCall[i] = struct {
+		result1 *api.ImageAliasesEntry
+		result2 string
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeImageServer) GetImageAliases() ([]api.ImageAliasesEntry, error) {
@@ -898,6 +1164,10 @@ func (fake *FakeImageServer) GetPrivateImageFileReturnsOnCall(i int, result1 *lx
 func (fake *FakeImageServer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.disconnectMutex.RLock()
+	defer fake.disconnectMutex.RUnlock()
+	fake.exportImageMutex.RLock()
+	defer fake.exportImageMutex.RUnlock()
 	fake.getConnectionInfoMutex.RLock()
 	defer fake.getConnectionInfoMutex.RUnlock()
 	fake.getHTTPClientMutex.RLock()
@@ -906,8 +1176,12 @@ func (fake *FakeImageServer) Invocations() map[string][][]interface{} {
 	defer fake.getImageMutex.RUnlock()
 	fake.getImageAliasMutex.RLock()
 	defer fake.getImageAliasMutex.RUnlock()
+	fake.getImageAliasArchitecturesMutex.RLock()
+	defer fake.getImageAliasArchitecturesMutex.RUnlock()
 	fake.getImageAliasNamesMutex.RLock()
 	defer fake.getImageAliasNamesMutex.RUnlock()
+	fake.getImageAliasTypeMutex.RLock()
+	defer fake.getImageAliasTypeMutex.RUnlock()
 	fake.getImageAliasesMutex.RLock()
 	defer fake.getImageAliasesMutex.RUnlock()
 	fake.getImageFileMutex.RLock()

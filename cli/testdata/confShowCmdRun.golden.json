@@ -25,11 +25,15 @@
     "second": ""
   },
   "short": "",
-  "store-dir": {
+  "store": {
     "another": {
-      "sub-level": "foo"
+      "sub": {
+        "level": "foo"
+      }
     },
     "dir": "store",
-    "log-level": "debug"
+    "log": {
+      "level": "debug"
+    }
   }
 }

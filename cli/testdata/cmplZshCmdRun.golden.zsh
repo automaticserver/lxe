@@ -14,16 +14,16 @@ function _prog {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:' \
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:' \
     '--version[Print version information]' \
     "1: :->cmnds" \
     "*::arg:->args"
@@ -70,16 +70,16 @@ function _prog_completion {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:' \
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:' \
     "1: :->cmnds" \
     "*::arg:->args"
 
@@ -119,16 +119,16 @@ function _prog_completion_bash {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:'
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:'
 }
 
 function _prog_completion_powershell {
@@ -142,16 +142,16 @@ function _prog_completion_powershell {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:'
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:'
 }
 
 function _prog_completion_zsh {
@@ -166,16 +166,16 @@ function _prog_completion_zsh {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:'
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:'
 }
 
 
@@ -192,16 +192,16 @@ function _prog_config {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:' \
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:' \
     "1: :->cmnds" \
     "*::arg:->args"
 
@@ -232,16 +232,16 @@ function _prog_config_show {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:' \
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:' \
     '1: :("dotenv" "env" "hcl" "ini" "json" "prop" "properties" "props" "toml" "yaml" "yml")'
 }
 
@@ -256,16 +256,16 @@ function _prog_help {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:'
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:'
 }
 
 function _prog_version {
@@ -279,15 +279,15 @@ function _prog_version {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
-    '--log.file.path[Path to log file. Only required if --log.target is set to file.]:' \
-    '--log.formatter[Define default log formatter, one of: pretty, text.]:' \
-    '--log.level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
-    '--log.target[Define log output target, one of: stdout, stderr, file.]:' \
-    '--remote.first[A flag which is in in a subtree]:' \
-    '--remote.second[The other part of the subtree flag so we can see what this means]:' \
+    '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
+    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
+    '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
+    '--remote-first[A flag which is in in a subtree]:' \
+    '--remote-second[The other part of the subtree flag so we can see what this means]:' \
     '(-s --short)'{-s,--short}'[A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?]:' \
-    '--store-dir.another.sub-level[A flag with a second sublevel, sometimes with dashes]:' \
-    '(-S --store-dir.dir)'{-S,--store-dir.dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
-    '(-L --store-dir.log-level)'{-L,--store-dir.log-level}'[The other subtree element has a dash as well]:'
+    '--store-another-sub-level[A flag with a second sublevel, sometimes with dashes]:' \
+    '(-S --store-dir)'{-S,--store-dir}'[A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree]:' \
+    '(-L --store-log-level)'{-L,--store-log-level}'[The other subtree element has a dash as well]:'
 }
 

@@ -19,8 +19,8 @@ const (
 )
 
 var (
-	envReplacer  = strings.NewReplacer(".", "_", "-", "_")
-	keyDelimiter = "."
+	envReplacer  = strings.NewReplacer("-", "_")
+	keyDelimiter = "-"
 )
 
 var rootCmd = &cobra.Command{

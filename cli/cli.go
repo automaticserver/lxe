@@ -1,8 +1,6 @@
 package cli // import "github.com/automaticserver/lxe/cli"
 
 import (
-	"strings"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,30 +12,8 @@ var (
 	venom *viper.Viper
 )
 
-type Type string
-
-const (
-	AnnType          = "type"
-	TypeTool    Type = "tool"
-	TypeService Type = "service"
-)
-
-type Options struct {
-	Type         Type
-	KeyDelimiter string
-	EnvReplace   []string
-}
-
 // New instantiates a new root command with defaults based on submitted type
-func New(o Options) (*viper.Viper, *cobra.Command) {
-	if len(o.EnvReplace) > 0 {
-		envReplacer = strings.NewReplacer(o.EnvReplace...)
-	}
-
-	if o.KeyDelimiter != "" {
-		keyDelimiter = o.KeyDelimiter
-	}
-
+func New() (*viper.Viper, *cobra.Command) {
 	venom = viper.NewWithOptions(viper.EnvKeyReplacer(envReplacer), viper.KeyDelimiter(keyDelimiter))
 
 	initRoot()
@@ -46,11 +22,7 @@ func New(o Options) (*viper.Viper, *cobra.Command) {
 	initLog()
 	initVersion()
 
-	rootCmd.Annotations[AnnType] = string(o.Type)
-
-	if o.Type == TypeService {
-		ToDaemon(rootCmd)
-	}
+	ToDaemon(rootCmd)
 
 	return venom, rootCmd
 }
@@ -68,10 +40,6 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func Is(cmd *cobra.Command, t Type) bool {
-	return cmd.Root().Annotations[AnnType] == string(t)
 }
 
 func IsOperational(cmd *cobra.Command) bool {

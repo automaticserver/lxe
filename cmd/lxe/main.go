@@ -8,10 +8,7 @@ import (
 )
 
 var (
-	venom, rootCmd = cli.New(cli.Options{
-		Type:         cli.TypeService,
-		KeyDelimiter: "-",
-	})
+	venom, rootCmd = cli.New()
 )
 
 func main() {

@@ -13,9 +13,7 @@ import (
 )
 
 var (
-	_, cmd = New(Options{
-		Type: TypeTool,
-	})
+	_, cmd = New()
 )
 
 func init() {
@@ -27,11 +25,11 @@ func init() {
 	pflags := cmd.PersistentFlags()
 
 	pflags.StringP("short", "s", "", "A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?")
-	pflags.StringP("remote.first", "", "", "A flag which is in in a subtree")
-	pflags.StringP("remote.second", "", "", "The other part of the subtree flag so we can see what this means")
-	pflags.StringP("store-dir.dir", "S", "store", "A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree")
-	pflags.StringP("store-dir.log-level", "L", "debug", "The other subtree element has a dash as well")
-	pflags.StringP("store-dir.another.sub-level", "", "foo", "A flag with a second sublevel, sometimes with dashes")
+	pflags.StringP("remote-first", "", "", "A flag which is in in a subtree")
+	pflags.StringP("remote-second", "", "", "The other part of the subtree flag so we can see what this means")
+	pflags.StringP("store-dir", "S", "store", "A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree")
+	pflags.StringP("store-log-level", "L", "debug", "The other subtree element has a dash as well")
+	pflags.StringP("store-another-sub-level", "", "foo", "A flag with a second sublevel, sometimes with dashes")
 	pflags.Bool("abool", false, "A bool flag")
 	pflags.BytesBase64("abytes", []byte{'\n'}, "A bytes base64 flag")
 	pflags.Duration("aduration", 30*time.Second, "A duration flag")
@@ -71,9 +69,4 @@ func compareGoldenFile(t *testing.T, c *cobra.Command, a []string, g string) {
 	runC(t, c, a, act)
 
 	assert.Equal(t, string(exp), act.String())
-}
-
-func Test_Is(t *testing.T) {
-	assert.True(t, Is(rootCmd, TypeTool))
-	assert.False(t, Is(rootCmd, TypeService))
 }

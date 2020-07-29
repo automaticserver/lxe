@@ -12,7 +12,7 @@ var (
 )
 
 func String() string {
-	return fmt.Sprintf("version %v (GIT commit %v, treestate %v | BUILD number %v, date %v | PACKAGE name %v)\n", Version, GitCommit, GitTreeState, BuildNumber, BuildDate, PackageName)
+	return fmt.Sprintf("version %v (GIT commit '%v', treestate '%v' | BUILD number '%v', date '%v' | PACKAGE name '%v')\n", Version, GitCommit, GitTreeState, BuildNumber, BuildDate, PackageName)
 }
 
 func Map() map[string]string {

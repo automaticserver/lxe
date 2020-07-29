@@ -1,6 +1,7 @@
 package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
+	"errors"
 	"net"
 	"net/url"
 
@@ -18,22 +19,23 @@ type streamService struct {
 }
 
 func setupStreamService(criConfig *Config, runtime *RuntimeServer) error {
-	sHost, sPort, err := net.SplitHostPort(criConfig.LXEStreamingEndpoint)
+	sHost, sPort, err := net.SplitHostPort(criConfig.LXEStreamingBindAddr)
 	if err != nil {
 		return err
-	}
-
-	if sPort == "" {
-		return &net.ParseError{Type: "Missing port", Text: criConfig.LXEStreamingEndpoint}
 	}
 
 	var bHost string
 	var bPort string
 
-	if criConfig.LXEStreamingAddress != "" {
-		bHost, bPort, err = net.SplitHostPort(criConfig.LXEStreamingAddress)
+	if criConfig.LXEStreamingBaseURL != "" {
+		bHost, bPort, err = net.SplitHostPort(criConfig.LXEStreamingBaseURL)
 		if err != nil {
-			return err
+			var aerr *net.AddrError
+			if errors.As(err, &aerr) && aerr.Err == "missing port in address" {
+				// we allow port to be missing here
+			} else {
+				return err
+			}
 		}
 	}
 
@@ -63,7 +65,7 @@ func setupStreamService(criConfig *Config, runtime *RuntimeServer) error {
 
 	// Prepare streaming server
 	sService.conf = streaming.DefaultConfig
-	sService.conf.Addr = criConfig.LXEStreamingEndpoint
+	sService.conf.Addr = criConfig.LXEStreamingBindAddr
 	sService.conf.BaseURL = &url.URL{
 		Scheme: "http",
 		Host:   net.JoinHostPort(bHost, bPort),

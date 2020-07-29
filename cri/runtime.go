@@ -131,7 +131,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 		// manage network according to selected network plugin
 		// TODO: we could omit these since we use network plugin, but we still need to remember if it is HostNetwork
 		switch s.criConfig.LXENetworkPlugin {
-		case NetworkPluginDefault:
+		case NetworkPluginBridge:
 			sb.NetworkConfig.Mode = lxf.NetworkBridged
 		case NetworkPluginCNI:
 			sb.NetworkConfig.Mode = lxf.NetworkCNI

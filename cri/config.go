@@ -12,10 +12,10 @@ type Config struct {
 	LXDImageRemote string
 	// LXDProfiles which all cri containers inherit
 	LXDProfiles []string
-	// LXEStreamingEndpoint contains the listen address for the streaming server
-	LXEStreamingEndpoint string
-	// LXEStreamingAddress is the base address for constructing streaming URLs
-	LXEStreamingAddress string
+	// LXEStreamingBindAddr contains the listen address for the streaming server
+	LXEStreamingBindAddr string
+	// LXEStreamingBaseURL is the base address for constructing streaming URLs
+	LXEStreamingBaseURL string
 	// LXEHostnetworkFile file path to use for lxc's raw.include
 	LXEHostnetworkFile string
 	// Which LXENetworkPlugin to use

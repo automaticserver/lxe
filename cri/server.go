@@ -15,11 +15,11 @@ import (
 )
 
 // NetworkPlugin defines how the pod network should be setup.
-// NetworkPluginDefault creates and manages a lxd bridge which the containers are attached to
+// NetworkPluginBridge creates and manages a lxd bridge which the containers are attached to
 // NetworkPluginCNI uses the kubernetes cni tools to let it attach interfaces to containers
 const (
-	NetworkPluginDefault = ""
-	NetworkPluginCNI     = "cni"
+	NetworkPluginBridge = "bridge"
+	NetworkPluginCNI    = "cni"
 )
 
 var (
@@ -69,7 +69,7 @@ func NewServer(criConfig *Config) *Server {
 			BinPath:  criConfig.CNIBinDir,
 			ConfPath: criConfig.CNIConfDir,
 		})
-	case NetworkPluginDefault:
+	case NetworkPluginBridge:
 		netPlugin, err = network.InitPluginLXDBridge(client.GetServer(), network.ConfLXDBridge{
 			LXDBridge:  criConfig.LXEBridgeName,
 			Cidr:       criConfig.LXEBridgeDHCPRange,

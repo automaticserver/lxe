@@ -2,6 +2,7 @@ package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 
@@ -65,9 +66,30 @@ func NewServer(criConfig *Config) *Server {
 
 	switch criConfig.LXENetworkPlugin {
 	case NetworkPluginCNI:
+		var writer io.Writer
+
+		switch criConfig.CNIOutputTarget {
+		case "stdout":
+			writer = os.Stdout
+		case "stderr":
+			writer = os.Stderr
+		case "file":
+			if criConfig.CNIOutputFile == "" {
+				log.Fatalf("cni output file path is required when target is set to file")
+			}
+
+			writer, err = os.OpenFile(criConfig.CNIOutputFile, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0660)
+			if err != nil {
+				log.Fatalf("could not open cni output file: %v", err)
+			}
+		default:
+			log.Fatalf("Unknown cni output target: %s", criConfig.CNIOutputTarget)
+		}
+
 		netPlugin, err = network.InitPluginCNI(network.ConfCNI{
-			BinPath:  criConfig.CNIBinDir,
-			ConfPath: criConfig.CNIConfDir,
+			BinPath:      criConfig.CNIBinDir,
+			ConfPath:     criConfig.CNIConfDir,
+			OutputWriter: writer,
 		})
 	case NetworkPluginBridge:
 		netPlugin, err = network.InitPluginLXDBridge(client.GetServer(), network.ConfLXDBridge{

@@ -28,4 +28,8 @@ type Config struct {
 	CNIConfDir string
 	// CNIBinDir is the path where the cni plugins are
 	CNIBinDir string
+	// CNIOutputWriter is the writer for CNI call outputs
+	CNIOutputTarget string
+	// CNIOutputFile is the path to a file
+	CNIOutputFile string
 }

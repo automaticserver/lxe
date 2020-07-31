@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/containernetworking/cni/libcni"
+	"github.com/containernetworking/cni/pkg/invoke"
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
@@ -32,6 +34,8 @@ type ConfCNI struct {
 	BinPath   string
 	ConfPath  string
 	NetnsPath string
+	// CNI output will be written to OutputWriter
+	OutputWriter io.Writer
 }
 
 func (c *ConfCNI) setDefaults() {
@@ -59,8 +63,10 @@ type cniPlugin struct {
 func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // intended to not export cniPlugin
 	conf.setDefaults()
 
+	exec := &invoke.DefaultExec{RawExec: &invoke.RawExec{Stderr: conf.OutputWriter}}
+
 	return &cniPlugin{
-		cni:  libcni.NewCNIConfig([]string{conf.BinPath}, nil),
+		cni:  libcni.NewCNIConfig([]string{conf.BinPath}, exec),
 		conf: conf,
 	}, nil
 }

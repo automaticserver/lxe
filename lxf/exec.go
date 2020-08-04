@@ -34,7 +34,10 @@ var (
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
 func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error) {
-	ses := &session{resize: resize}
+	ses := &session{
+		resize:      resize,
+		closeResize: make(chan struct{}),
+	}
 
 	req := lxdApi.ContainerExecPost{
 		Command:      cmd,
@@ -77,6 +80,9 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 	case <-args.DataDone:
 	}
 
+	// Stop listening on resize channel
+	close(ses.closeResize)
+
 	// Wait for the operation to complete so we can get the return code
 	err = op.Wait()
 	if err != nil {
@@ -94,25 +100,38 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 }
 
 type session struct {
-	resize  <-chan remotecommand.TerminalSize
+	// Channel to consume where resize updates are sent to
+	resize <-chan remotecommand.TerminalSize
+	// The resize channel doesn't get closed automatically, so we have to make that logic ourselves
+	closeResize chan struct{}
+	// control socket of LXD
 	control *websocket.Conn
 }
 
+// Obtains the LXD control socket
 func (s *session) controlHandler(control *websocket.Conn) {
 	s.control = control
 
+	// Since we have a working exec we can start listening on additional channels
 	go s.listenResize()
 }
 
+// Listen for resize events and execute further steps
 func (s *session) listenResize() {
-	for r := range s.resize {
-		err := s.sendResize(r)
-		if err != nil {
-			log.Errorf("session control failed: %v", err)
+	for {
+		select {
+		case r := <-s.resize:
+			err := s.sendResize(r)
+			if err != nil {
+				log.Errorf("session control failed: %v", err)
+			}
+		case <-s.closeResize:
+			return
 		}
 	}
 }
 
+// Send resize to LXD with exec control
 func (s *session) sendResize(r remotecommand.TerminalSize) error {
 	width := strconv.FormatUint(uint64(r.Width), 10)
 	height := strconv.FormatUint(uint64(r.Height), 10)
@@ -152,6 +171,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 	return nil
 }
 
+// Send cancel signal to LXD with exec control
 func (s *session) sendCancel() error {
 	log.Debugf("timeout reached, force closing of connection")
 

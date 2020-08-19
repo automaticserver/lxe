@@ -71,7 +71,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 	case <-deadline:
 		err := ses.sendCancel()
 		if err != nil {
-			log.Errorf("session control failed: %v", err)
+			log.WithError(err).Error("session control failed")
 		}
 
 		return CodeExecTimeout, ErrExecTimeout
@@ -123,7 +123,7 @@ func (s *session) listenResize() {
 		case r := <-s.resize:
 			err := s.sendResize(r)
 			if err != nil {
-				log.Errorf("session control failed: %v", err)
+				log.WithError(err).Error("session resize failed")
 			}
 		case <-s.closeResize:
 			return

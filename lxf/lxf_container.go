@@ -1,17 +1,17 @@
 package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/sirupsen/logrus"
 )
 
 // NewContainer creates a local representation of a container
@@ -216,12 +216,14 @@ func (l *client) toContainer(ct *api.Container, etag string) (*Container, error)
 }
 
 type EventHandler interface {
-	ContainerStarted(ctx context.Context, c *Container) error
-	ContainerStopped(ctx context.Context, c *Container) error
+	ContainerStarted(c *Container) error
+	ContainerStopped(c *Container) error
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
 func (l *client) lifecycleEventHandler(event api.Event) {
+	log := log
+
 	// we should always only get lifecycle events due to the handler setup but just in case ...
 	if event.Type != "lifecycle" {
 		// If the started container is not a cri container, we also get "not found", so this container can be ignored
@@ -232,7 +234,7 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 
 	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
-		log.Errorf("unable to unmarshal to json lifecycle event: %v", event.Metadata)
+		log.WithField("metadata", event.Metadata).Error("unable to unmarshal to json lifecycle event")
 		return
 	}
 
@@ -241,7 +243,13 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
-	containerID := strings.TrimPrefix(eventLifecycle.Source, "/1.0/containers/")
+	containerID := GetContainerIDFromSelflink(eventLifecycle.Source)
+
+	log = log.WithFields(logrus.Fields{
+		"event":       eventLifecycle.Action,
+		"containerid": containerID,
+	})
+	log.Info("event detected")
 
 	c, err := l.GetContainer(containerID)
 	if err != nil {
@@ -249,26 +257,41 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 			return
 		}
 
-		// still return immediately since we can't do anything when we get an error here
-		log.Errorf("lifecycle: ContainerID %v trying to get container: %v", containerID, err)
+		log.WithError(err).Error("unable to find container")
 
+		// return immediately since we can't do anything when we get an error here
 		return
 	}
 
-	log.Infof("EventHandler: Type %v ContainerID %v", event.Type, containerID)
-
 	switch eventLifecycle.Action {
 	case "container-started":
-		err := l.eventHandler.ContainerStarted(context.TODO(), c)
+		err := l.eventHandler.ContainerStarted(c)
 		if err != nil {
-			log.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
+			log.WithError(err).Error("event handler failed")
 			return
 		}
 	case "container-stopped":
-		err := l.eventHandler.ContainerStopped(context.TODO(), c)
+		err := l.eventHandler.ContainerStopped(c)
 		if err != nil {
-			log.Errorf("lifecycle: handling event %v for container %v failed: %v", eventLifecycle.Action, containerID, err)
+			log.WithError(err).Error("event handler failed")
 			return
 		}
 	}
+}
+
+// ContainerSelflinkRegex to extract the containername in selflinks.
+var ContainerSelflinkRegex = regexp.MustCompile(`^/[\d.]+/(instances|containers)/(.*)(\?.*)?$`)
+
+// ContainerSelflinkMatch-es which index of the match contains the containername
+const ContainerSelflinkMatch = 2
+
+// Returns the containername from a selflink address. Returns empty if not found
+func GetContainerIDFromSelflink(path string) string {
+	matches := ContainerSelflinkRegex.FindStringSubmatch(path)
+
+	if len(matches) > ContainerSelflinkMatch {
+		return matches[ContainerSelflinkMatch]
+	}
+
+	return ""
 }

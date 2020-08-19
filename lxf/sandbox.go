@@ -269,7 +269,7 @@ func (s *Sandbox) apply() error {
 	// and config keys
 	for key, val := range s.Config {
 		if sandboxConfigStore.IsReserved(key) {
-			log.Warnf("config key '%v' is reserved and can not be used", key)
+			log.Warnf("config key '%v' is reserved and can't be used", key)
 		} else {
 			config[key] = val
 		}

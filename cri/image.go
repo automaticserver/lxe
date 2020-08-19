@@ -48,14 +48,13 @@ func NewImageServer(s *RuntimeServer, lxf lxf.Client) (*ImageServer, error) {
 
 // ListImages lists existing images.
 func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesRequest) (*rtApi.ListImagesResponse, error) {
-	log.Debugf("ListImages(%v) triggered", req)
+	log := log.WithContext(ctx).WithField("filter", req.GetFilter().GetImage())
 
 	response := &rtApi.ListImagesResponse{}
 
 	imglist, err := s.lxf.ListImages(req.GetFilter().GetImage().GetImage())
 	if err != nil {
-		log.Errorf("Unable to list images, %v", err)
-		return nil, err
+		return nil, AnnErr(log, err, "Unable to list images")
 	}
 
 	for _, imgInfo := range imglist {
@@ -70,8 +69,6 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 		response.Images = append(response.Images, rspImage)
 	}
 
-	log.Debugf("ListImages responded: %v", response)
-
 	return response, nil
 }
 
@@ -79,7 +76,7 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 // present, returns a response with ImageStatusResponse.Image set to
 // nil.
 func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequest) (*rtApi.ImageStatusResponse, error) {
-	log.Debugf("ImageStatus(%v) triggered", req)
+	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
 
 	img, err := s.lxf.GetImage(req.GetImage().GetImage())
 	if err != nil {
@@ -88,9 +85,7 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 			return &rtApi.ImageStatusResponse{}, nil
 		}
 
-		log.Errorf("failed to get image status %v, %v", req.GetImage().GetImage(), err)
-
-		return nil, err
+		return nil, AnnErr(log, err, "failed to get image status")
 	}
 
 	response := &rtApi.ImageStatusResponse{Image: &rtApi.Image{
@@ -102,8 +97,6 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 		RepoTags: img.Aliases,
 	}}
 
-	log.Debugf("ImageStatus responded: %v", response)
-
 	return response, nil
 }
 
@@ -113,19 +106,16 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 
 // PullImage pulls an image with authentication config.
 func (s ImageServer) PullImage(ctx context.Context, req *rtApi.PullImageRequest) (*rtApi.PullImageResponse, error) {
-	log.Debugf("PullImage(%v) triggered", req)
+	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
 
 	hash, err := s.lxf.PullImage(req.GetImage().GetImage())
 	if err != nil {
-		log.Errorf("failed to pull image %v, %v", req.GetImage().GetImage(), err)
-		return nil, err
+		return nil, AnnErr(log, err, "failed to pull image")
 	}
 
 	response := &rtApi.PullImageResponse{
 		ImageRef: hash,
 	}
-
-	log.Debugf("PullImage responded: %v", response)
 
 	return response, nil
 }
@@ -134,29 +124,22 @@ func (s ImageServer) PullImage(ctx context.Context, req *rtApi.PullImageRequest)
 // This call is idempotent, and must not return an error if the image has
 // already been removed.
 func (s ImageServer) RemoveImage(ctx context.Context, req *rtApi.RemoveImageRequest) (*rtApi.RemoveImageResponse, error) {
-	log.Debugf("RemoveImage(%q) triggered", req)
+	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
 
 	err := s.lxf.RemoveImage(req.GetImage().GetImage())
 	if err != nil {
-		log.Errorf("failed to remove image %v, %v", req.GetImage().GetImage(), err)
-		return nil, err
+		return nil, AnnErr(log, err, "failed to remove image")
 	}
 
-	response := &rtApi.RemoveImageResponse{}
-
-	log.Debugf("RemoveImage responded: %v", response)
-
-	return response, nil
+	return &rtApi.RemoveImageResponse{}, nil
 }
 
 // ImageFsInfo returns information of the filesystem that is used to store images.
 func (s ImageServer) ImageFsInfo(ctx context.Context, req *rtApi.ImageFsInfoRequest) (*rtApi.ImageFsInfoResponse, error) {
-	log.Debugf("ImageFsInfo(%v) triggered", req)
-
+	// log := log.WithContext(ctx)
 	// Images are not saved in pools (for now?)
 	// poolUsage, err := s.lxf.GetFSPoolUsage()
 	// if err != nil {
-	// 	log.Errorf("ImageFsInfo: GetFSPoolUsage(): %v", err)
 	// 	return nil, err
 	// }
 	response := &rtApi.ImageFsInfoResponse{}
@@ -177,8 +160,6 @@ func (s ImageServer) ImageFsInfo(ctx context.Context, req *rtApi.ImageFsInfoRequ
 		UsedBytes:  &rtApi.UInt64Value{Value: 0},
 		InodesUsed: &rtApi.UInt64Value{Value: 0},
 	})
-
-	log.Debugf("ImageFsInfo responded: %v", response)
 
 	return response, nil
 }

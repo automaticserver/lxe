@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/containernetworking/cni v0.8.0
+	github.com/dionysius/errand v1.0.0
 	github.com/docker/docker v1.13.1
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
 	github.com/elazarl/goproxy v0.0.0-20200710112657-153946a5f232 // indirect
@@ -29,7 +30,6 @@ require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
 	github.com/opencontainers/runtime-spec v1.0.2
 	github.com/pelletier/go-toml v1.6.0 // indirect
-	github.com/pkg/errors v0.9.1
 	github.com/shurcooL/go v0.0.0-20191216061654-b114cc39af9f // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/assertions v1.0.1 // indirect
@@ -109,3 +109,5 @@ replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.15.12
 replace k8s.io/sample-cli-plugin => k8s.io/sample-cli-plugin v0.15.12
 
 replace k8s.io/sample-controller => k8s.io/sample-controller v0.15.12
+
+replace vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787

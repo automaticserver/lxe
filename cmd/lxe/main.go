@@ -4,11 +4,14 @@ import (
 	"github.com/automaticserver/lxe/cli"
 	"github.com/automaticserver/lxe/cri"
 	"github.com/automaticserver/lxe/network"
+	"github.com/dionysius/errand"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
 	venom, rootCmd = cli.New()
+	log            = logrus.StandardLogger()
 )
 
 func main() {
@@ -45,7 +48,7 @@ func init() {
 }
 
 func rootCmdRunE(cmd *cobra.Command, args []string) error {
-	c := &cri.Config{
+	conf := &cri.Config{
 		UnixSocket:           venom.GetString("socket"),
 		LXDSocket:            venom.GetString("lxd-socket"),
 		LXDRemoteConfig:      venom.GetString("lxd-remote-config"),
@@ -63,12 +66,15 @@ func rootCmdRunE(cmd *cobra.Command, args []string) error {
 		CNIOutputFile:        venom.GetString("cni-output-file-path"),
 	}
 
-	d := cri.NewDaemon(c)
+	criServer := cri.NewServer(conf)
 
-	err := d.Init()
-	if err != nil {
-		return err
-	}
+	go func() {
+		err := errand.Append(nil, criServer.Serve())
+		if err != nil {
+			err = errand.Append(err, criServer.Stop())
+			log.WithError(err).Fatal("unable to start CRI server")
+		}
+	}()
 
 	// run forever
 	select {}

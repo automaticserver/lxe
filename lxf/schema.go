@@ -162,7 +162,7 @@ func (m *MigrationWorkspace) Ensure() error { // nolint: gocognit
 	}
 
 	if anyChanges {
-		log.Warnf("Migration changes applied successfully")
+		log.Warn("Migration changes applied successfully")
 	}
 
 	return nil

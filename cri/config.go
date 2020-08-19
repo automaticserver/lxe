@@ -1,5 +1,8 @@
 package cri // import "github.com/automaticserver/lxe/cri"
 
+// Domain of the daemon
+const Domain = "lxe"
+
 // Config options that LXE will need to interface with LXD
 type Config struct {
 	// UnixSocket this LXE will be reachable under

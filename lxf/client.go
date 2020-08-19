@@ -1,6 +1,7 @@
 package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -66,7 +67,7 @@ type Client interface {
 
 var (
 	lxdHTTPTimeout = 10 * time.Second
-	log            = logrus.StandardLogger()
+	log            = logrus.StandardLogger().WithContext(context.TODO())
 )
 
 type client struct {
@@ -230,6 +231,8 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 		log.Fatal(err.Error())
 	}
 
+	log := log.WithField("lxdsocket", l.socket)
+
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -238,14 +241,14 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 			}
 
 			if event.Op&fsnotify.Create == fsnotify.Create && event.Name == l.socket {
-				log.Infof("socket %s got created, trying to reconnect", l.socket)
+				log.Info("lxd socket got created, trying to reconnect")
 
 				go func() {
 					for {
 						err := l.connect()
 						if err != nil {
 							// print error and try again
-							log.Errorf("tried reconnecting to lxd socket: %v", err)
+							log.WithError(err).Error("failed reconnecting to lxd socket")
 						} else {
 							log.Info("reconnected to lxd socket")
 
@@ -256,14 +259,14 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 			}
 
 			if event.Op&fsnotify.Remove == fsnotify.Remove && event.Name == l.socket {
-				log.Warnf("socket %s got deleted, will try to reconnect once it's created again", l.socket)
+				log.Warn("lxd socket got deleted, will try to reconnect once it's created again")
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				return
 			}
 
-			log.Fatalf("error: %v", err)
+			log.WithError(err).Fatal("watcher error")
 		}
 	}
 }

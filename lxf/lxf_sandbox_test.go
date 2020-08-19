@@ -166,7 +166,7 @@ func TestClient_toSandbox_AllFieldsSuccessful(t *testing.T) {
 				},
 			},
 		},
-		UsedBy: []string{"containerName"},
+		UsedBy: []string{"/1.0/containers/containerName"},
 	}
 
 	exp := &Sandbox{}

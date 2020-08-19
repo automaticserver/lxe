@@ -1,18 +1,20 @@
 package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"os"
+	"path"
 
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
-	"github.com/automaticserver/lxe/shared"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	"k8s.io/utils/exec"
 )
 
 // NetworkPlugin defines how the pod network should be setup.
@@ -25,7 +27,7 @@ const (
 
 var (
 	ErrTimeout = errors.New("timeout error")
-	log        = logrus.StandardLogger()
+	log        = logrus.StandardLogger().WithContext(context.TODO())
 )
 
 // Server implements the kubernetes CRI interface specification
@@ -40,25 +42,22 @@ type Server struct {
 func NewServer(criConfig *Config) *Server {
 	configPath, err := getLXDConfigPath(criConfig)
 	if err != nil {
-		log.Fatalf("Unable to find lxc config: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("Unable to find lxc config")
 	}
 
 	client, err := lxf.NewClient(criConfig.LXDSocket, configPath)
 	if err != nil {
-		log.Fatalf("Unable to initialize lxe facade: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("Unable to initialize lxe facade")
 	}
 
-	log.WithField("lxd-socket", criConfig.LXDSocket).Infof("Connected to LXD")
+	log.WithField("lxdsocket", criConfig.LXDSocket).Info("Connected to LXD")
 
 	// Ensure profile and container schema migration
 	migration := lxf.NewMigrationWorkspace(client)
 
 	err = migration.Ensure()
 	if err != nil {
-		log.Fatalf("Migration failed: %v", err)
-		os.Exit(shared.ExitCodeSchemaMigrationFailure)
+		log.WithError(err).Fatal("Migration failed")
 	}
 
 	// load selected plugin
@@ -75,15 +74,15 @@ func NewServer(criConfig *Config) *Server {
 			writer = os.Stderr
 		case "file":
 			if criConfig.CNIOutputFile == "" {
-				log.Fatalf("cni output file path is required when target is set to file")
+				log.Fatal("cni output file path is required when target is set to file")
 			}
 
 			writer, err = os.OpenFile(criConfig.CNIOutputFile, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0660)
 			if err != nil {
-				log.Fatalf("could not open cni output file: %v", err)
+				log.WithError(err).Fatal("could not open cni output file")
 			}
 		default:
-			log.Fatalf("Unknown cni output target: %s", criConfig.CNIOutputTarget)
+			log.WithField("target", criConfig.CNIOutputTarget).Fatal("Unknown cni output target")
 		}
 
 		netPlugin, err = network.InitPluginCNI(network.ConfCNI{
@@ -103,31 +102,27 @@ func NewServer(criConfig *Config) *Server {
 	}
 
 	if err != nil {
-		log.Fatalf("Unable to initialize network plugin: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("Unable to initialize network plugin")
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(callTracing))
 
 	// for now we bind the http on every interface
 	runtimeServer, err := NewRuntimeServer(criConfig, client, netPlugin)
 	if err != nil {
-		log.Fatalf("Unable to start runtime server: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("Unable to start runtime server")
 	}
 
 	client.SetEventHandler(runtimeServer)
 
 	err = setupStreamService(criConfig, runtimeServer)
 	if err != nil {
-		log.Fatalf("unable to create streaming server: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("unable to create streaming server")
 	}
 
 	imageServer, err := NewImageServer(runtimeServer, client)
 	if err != nil {
-		log.Fatalf("Unable to start image server: %v", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("Unable to start image server")
 	}
 
 	rtApi.RegisterRuntimeServiceServer(grpcServer, *runtimeServer)
@@ -148,25 +143,23 @@ func (c *Server) Serve() error {
 	log := log.WithField("socket", sock)
 
 	if _, err = os.Stat(sock); err == nil {
-		log.Debugf("Cleaning up stale socket")
+		log.Debugf("cleaning up stale socket")
 
 		err = os.Remove(sock)
 		if err != nil {
-			log.Fatalf("Error cleaning up stale listening socket: %v ", err)
-			os.Exit(shared.ExitCodeUnspecified)
+			log.WithError(err).Fatal("error cleaning up stale listening socket")
 		}
 	}
 
 	c.sock, err = net.Listen("unix", sock)
 	if err != nil {
-		log.Fatalf("Error listening on socket: %v ", err)
-		os.Exit(shared.ExitCodeUnspecified)
+		log.WithError(err).Fatal("error listening on socket")
 	}
 
 	defer c.sock.Close()
 	defer os.Remove(c.criConfig.UnixSocket)
 
-	log.Infof("Started %s CRI shim", Domain)
+	log.Infof("started %s CRI shim", Domain)
 
 	go func() {
 		err := c.stream.serve()
@@ -188,4 +181,50 @@ func (c *Server) Stop() error {
 	}
 
 	return os.Remove(c.criConfig.UnixSocket)
+}
+
+// callTracing logs requests, responses and error returned by the handler. What gets logged is influenced by what error types the handler returns and the log level. This simplifies error logging in the CRI implementation.
+func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	log := log.WithContext(ctx)
+	method := path.Base(info.FullMethod)
+
+	log.WithField("req", req).Trace(method)
+
+	resp, err := handler(ctx, req)
+	if err != nil {
+		// Depending on the error type the logging is influenced
+		switch e := err.(type) {
+		// The AnnotatedError uses the provided logger entry to set fields of the actual logger
+		case AnnotatedError:
+			log.WithError(e.Err).WithFields(e.Log.Data).Error(fmt.Sprintf("%s: %s", method, e.Msg))
+		// SilentErrors are useful for not implemented functions, still return the error to the caller!
+		case SilentError:
+			if e.Msg != "" {
+				err = fmt.Errorf("%s: %w", e.Msg, e.Err)
+			} else {
+				err = e.Err
+			}
+		// CodeExitError is a special wrapping of AnnotatedError and exec.CodeExitError
+		// TODO: this can be made better
+		case *exec.CodeExitError:
+			a, is := e.Err.(AnnotatedError)
+			if is {
+				log.WithError(a.Err).WithFields(a.Log.Data).Error(fmt.Sprintf("%s: %s", method, a.Msg))
+			} else {
+				log.Error(fmt.Sprintf("%s: %s", method, err.Error()))
+			}
+		// In any other case just log the error
+		default:
+			log.Error(fmt.Sprintf("%s: %s", method, err.Error()))
+		}
+	}
+
+	log.WithError(err).WithField("resp", resp).Trace(method)
+
+	// It seems like CRI clients don't care about the effective grpc code. The way they interact with errors is the effective error type, so not modifying the error further
+	// if err != nil {
+	// 	err = status.Errorf(codes.NotFound, err.Error())
+	// }
+
+	return resp, err
 }

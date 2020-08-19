@@ -340,7 +340,7 @@ func (c *Container) apply() error {
 
 	for key, val := range c.Config {
 		if containerConfigStore.IsReserved(key) {
-			log.Warnf("config key '%v' is reserved and can not be used", key)
+			log.Warnf("config key '%v' is reserved and can't be used", key)
 		} else {
 			config[key] = val
 		}

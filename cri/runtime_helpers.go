@@ -13,7 +13,6 @@ import (
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	sharedLXD "github.com/lxc/lxd/shared"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
@@ -264,10 +263,10 @@ func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) er
 	return nil
 }
 
-// ContainerStarted implements lxf.EventHandler interface
-func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) error {
-	log.Infof("ContainerStarted called: ContainerName %v", c.ID)
+var NetworkSetupTimeout = 30 * time.Second
 
+// ContainerStarted implements lxf.EventHandler interface
+func (s RuntimeServer) ContainerStarted(c *lxf.Container) error {
 	sb, err := c.Sandbox()
 	if err != nil {
 		return err
@@ -281,13 +280,15 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("can't enter sandbox %v network context", sb.ID))
+			return fmt.Errorf("can't enter pod network context: %w", err)
 		}
 
 		contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("can't enter container %v network context", c.ID))
+			return fmt.Errorf("can't enter container network context: %w", err)
 		}
+
+		ctx, _ := context.WithTimeout(context.Background(), NetworkSetupTimeout)
 
 		res, err := contNet.WhenStarted(ctx, &network.PropertiesRunning{
 			Properties: network.Properties{
@@ -296,12 +297,12 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 			Pid: st.Pid,
 		})
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("can't start container %v network", c.ID))
+			return fmt.Errorf("can't start container network: %w", err)
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("can't save start container %v network result", c.ID))
+			return fmt.Errorf("unable to save create container network result: %w", err)
 		}
 	}
 
@@ -309,7 +310,7 @@ func (s RuntimeServer) ContainerStarted(ctx context.Context, c *lxf.Container) e
 }
 
 // ContainerStopped implements lxf.EventHandler interface
-func (s *RuntimeServer) ContainerStopped(ctx context.Context, c *lxf.Container) error {
+func (s *RuntimeServer) ContainerStopped(c *lxf.Container) error {
 	sb, err := c.Sandbox()
 	if err != nil {
 		return err
@@ -321,6 +322,7 @@ func (s *RuntimeServer) ContainerStopped(ctx context.Context, c *lxf.Container) 
 		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
 			contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 			if err == nil { // dito
+				ctx, _ := context.WithTimeout(context.Background(), NetworkSetupTimeout)
 				_ = contNet.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 			}
 		}

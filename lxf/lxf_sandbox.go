@@ -2,7 +2,6 @@ package lxf // import "github.com/automaticserver/lxe/lxf"
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -12,9 +11,6 @@ import (
 	"github.com/lxc/lxd/shared/api"
 	yaml "gopkg.in/yaml.v2"
 )
-
-// Regex for profile's UsedBy to find containers
-var UsedByRegex = regexp.MustCompile(`^/[\d.]+/(instances|containers)/(.*)(\?.*)?$`)
 
 // NewSandbox creates a local representation of a sandbox
 func (l *client) NewSandbox() *Sandbox {
@@ -132,10 +128,11 @@ func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	}
 
 	// get containers using this sandbox
-	for _, name := range p.UsedBy {
-		matches := UsedByRegex.FindStringSubmatch(name)
-		if len(matches) >= 3 {
-			s.UsedBy = append(s.UsedBy, matches[2])
+	for _, selflink := range p.UsedBy {
+		name := GetContainerIDFromSelflink(selflink)
+
+		if name != "" {
+			s.UsedBy = append(s.UsedBy, name)
 		}
 	}
 

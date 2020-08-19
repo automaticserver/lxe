@@ -132,7 +132,7 @@ func handleSignals(c *cobra.Command) {
 	signal.Notify(ch, syscall.SIGTERM)
 
 	for sig := range ch {
-		log.WithField("sig", sig).Infof("received signal")
+		log.WithField("sig", sig).Info("received signal")
 
 		switch sig {
 		case syscall.SIGINT, syscall.SIGTERM:

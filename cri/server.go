@@ -188,8 +188,6 @@ func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInf
 	log := log.WithContext(ctx)
 	method := path.Base(info.FullMethod)
 
-	log.WithField("req", req).Trace(method)
-
 	resp, err := handler(ctx, req)
 	if err != nil {
 		// Depending on the error type the logging is influenced
@@ -219,7 +217,10 @@ func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInf
 		}
 	}
 
-	log.WithError(err).WithField("resp", resp).Trace(method)
+	log.WithError(err).WithFields(logrus.Fields{
+		"req":  req,
+		"resp": resp,
+	}).Trace(fmt.Sprintf("grpc %s", method))
 
 	// It seems like CRI clients don't care about the effective grpc code. The way they interact with errors is the effective error type, so not modifying the error further
 	// if err != nil {

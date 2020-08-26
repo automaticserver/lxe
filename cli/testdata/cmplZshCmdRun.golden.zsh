@@ -15,7 +15,7 @@ function _prog {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -71,7 +71,7 @@ function _prog_completion {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -120,7 +120,7 @@ function _prog_completion_bash {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -143,7 +143,7 @@ function _prog_completion_powershell {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -167,7 +167,7 @@ function _prog_completion_zsh {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -193,7 +193,7 @@ function _prog_config {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -233,7 +233,7 @@ function _prog_config_show {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -257,7 +257,7 @@ function _prog_help {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \
@@ -280,7 +280,7 @@ function _prog_version {
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
-    '--log-formatter[Define default log formatter, one of: pretty, text.]:' \
+    '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
     '--log-target[Define log output target, one of: stdout, stderr, file.]:' \
     '--remote-first[A flag which is in in a subtree]:' \

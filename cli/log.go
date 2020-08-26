@@ -41,21 +41,6 @@ func (hook *WriterHook) Levels() []logrus.Level {
 	return logrus.AllLevels[:hook.LogLevelMin+1]
 }
 
-var prettyFormatter = &logrus.TextFormatter{
-	ForceColors: true,
-	// QuoteEmptyFields: true,
-	FullTimestamp:   true,
-	TimestampFormat: logTimestampFormatPretty,
-	// DisableSorting:  true,
-	PadLevelText: true,
-}
-
-var textFormatter = &logrus.TextFormatter{
-	FullTimestamp: true,
-	// QuoteEmptyFields: true,
-	TimestampFormat: logTimestampFormatText,
-}
-
 func setLoggingBasic() error {
 	// default logging level
 	level, err := logrus.ParseLevel(venom.GetString(fmt.Sprintf("log%vlevel", keyDelimiter)))
@@ -70,20 +55,12 @@ func setLoggingBasic() error {
 }
 
 var ErrUnknownLogTarget = errors.New("unknown log target defined")
-var ErrUnknownLogFormatter = errors.New("unknown log formatter defined")
 var ErrLogFilePathRequired = errors.New("log file path required")
 
 func setLoggingHook() error {
-	var err error
-	var formatter logrus.Formatter
-
-	switch venom.GetString(fmt.Sprintf("log%vformatter", keyDelimiter)) {
-	case "pretty":
-		formatter = prettyFormatter
-	case "text":
-		formatter = textFormatter
-	default:
-		return fmt.Errorf("%w", ErrUnknownLogFormatter)
+	formatter, err := getFormatter(venom.GetString(fmt.Sprintf("log%vformat", keyDelimiter)))
+	if err != nil {
+		return err
 	}
 
 	var writer io.Writer
@@ -132,12 +109,15 @@ func initLog() {
 	pflags := rootCmd.PersistentFlags()
 	pflags.String(fmt.Sprintf("log%vlevel", keyDelimiter), logrus.WarnLevel.String(), "Define minimum log level, one of: "+strings.Join(logLevels(), ", ")+".")
 	pflags.String(fmt.Sprintf("log%vtarget", keyDelimiter), "stderr", "Define log output target, one of: stdout, stderr, file.")
-	pflags.String(fmt.Sprintf("log%vformatter", keyDelimiter), "pretty", "Define default log formatter, one of: pretty, text.")
+	pflags.String(fmt.Sprintf("log%vformat", keyDelimiter), "pretty", "Define default log format, one of: json, keyvalue, pretty.")
 	pflags.String(fmt.Sprintf("log%vfile%vpath", keyDelimiter, keyDelimiter), "", fmt.Sprintf("Path to log file. Only required if --log%starget is set to file.", keyDelimiter))
 
 	// Setup basic logging before any hook is setup, so error gets correctly output if something fails before that
 	logrus.SetLevel(logrus.WarnLevel)
-	logrus.SetFormatter(prettyFormatter)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: logTimestampFormatText,
+	})
 	logrus.SetOutput(os.Stderr)
 	logrus.SetReportCaller(true)
 }
@@ -149,4 +129,39 @@ func logLevels() []string {
 	}
 
 	return levels
+}
+
+var ErrUnknownLogFormat = errors.New("unknown log format")
+
+func getFormatter(format string) (logrus.Formatter, error) {
+	switch format {
+	case "pretty":
+		return &logrus.TextFormatter{
+			ForceColors: true,
+			// QuoteEmptyFields: true,
+			FullTimestamp:   true,
+			TimestampFormat: logTimestampFormatPretty,
+			// DisableSorting:  true,
+			PadLevelText: true,
+		}, nil
+
+	case "text":
+		fallthrough
+	case "keyvalue":
+		return &logrus.TextFormatter{
+			FullTimestamp: true,
+			// QuoteEmptyFields: true,
+			TimestampFormat: logTimestampFormatText,
+		}, nil
+
+	case "json":
+		return &logrus.JSONFormatter{
+			PrettyPrint:       false,
+			DisableHTMLEscape: true,
+			TimestampFormat:   logTimestampFormatText,
+		}, nil
+
+	default:
+		return nil, fmt.Errorf("%w: %s", ErrUnknownLogFormat, format)
+	}
 }

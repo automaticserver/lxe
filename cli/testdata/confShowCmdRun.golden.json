@@ -16,7 +16,7 @@
     "file": {
       "path": ""
     },
-    "formatter": "pretty",
+    "format": "pretty",
     "level": "warning",
     "target": "stderr"
   },

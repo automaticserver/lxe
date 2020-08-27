@@ -25,7 +25,7 @@ require (
 	github.com/juju/persistent-cookiejar v0.0.0-20171026135701-d5e5a8405ef9 // indirect
 	github.com/juju/testing v0.0.0-20200706033705-4c23f9c453cd // indirect
 	github.com/juju/webbrowser v1.0.0 // indirect
-	github.com/lxc/lxd v0.0.0-20200720180136-3c16557310d0
+	github.com/lxc/lxd v0.0.0-20200825183131-2deb2bfbbce1
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
 	github.com/opencontainers/runtime-spec v1.0.2

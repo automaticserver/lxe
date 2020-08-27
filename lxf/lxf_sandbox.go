@@ -104,8 +104,8 @@ func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 		Mode:        getNetworkMode(p.Config[cfgNetworkConfigMode]),
 		ModeData:    make(map[string]string),
 	}
-	s.Labels = sandboxConfigStore.StripedPrefixMap(p.Config, cfgLabels)
-	s.Annotations = sandboxConfigStore.StripedPrefixMap(p.Config, cfgAnnotations)
+	s.Labels = sandboxConfigStore.StrippedPrefixMap(p.Config, cfgLabels)
+	s.Annotations = sandboxConfigStore.StrippedPrefixMap(p.Config, cfgAnnotations)
 	s.Config = sandboxConfigStore.UnreservedMap(p.Config)
 	s.State = getSandboxState(p.Config[cfgState])
 	s.CreatedAt = time.Unix(0, createdAt)

@@ -125,8 +125,8 @@ func (l *client) toContainer(ct *api.Container, etag string) (*Container, error)
 		Name:    ct.Config[cfgMetaName],
 		Attempt: uint32(attempt),
 	}
-	c.Annotations = containerConfigStore.StripedPrefixMap(ct.Config, cfgAnnotations)
-	c.Labels = containerConfigStore.StripedPrefixMap(ct.Config, cfgLabels)
+	c.Annotations = containerConfigStore.StrippedPrefixMap(ct.Config, cfgAnnotations)
+	c.Labels = containerConfigStore.StrippedPrefixMap(ct.Config, cfgLabels)
 	c.Config = containerConfigStore.UnreservedMap(ct.Config)
 	c.LogPath = ct.Config[cfgLogPath]
 

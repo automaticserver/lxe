@@ -43,6 +43,7 @@ var (
 			cfgCloudInitUserData,
 			cfgCloudInitMetaData,
 			cfgCloudInitNetworkConfig,
+			cfgVolatileBaseImage,
 		}, reservedConfigCRI...,
 		)...,
 	).WithReservedPrefixes(

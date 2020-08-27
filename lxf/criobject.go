@@ -27,7 +27,6 @@ var (
 		cfgCreatedAt,
 	}
 	reservedConfigPrefixesCRI = []string{
-		cfgVolatile,
 		cfgLabels,
 		cfgAnnotations,
 		cfgMetadata,

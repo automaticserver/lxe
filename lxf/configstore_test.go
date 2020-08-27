@@ -80,7 +80,7 @@ func TestConfigStore_UnreservedMap(t *testing.T) {
 	}
 }
 
-func TestConfigStore_StripedPrefixMap(t *testing.T) {
+func TestConfigStore_StrippedPrefixMap(t *testing.T) {
 	t.Parallel()
 
 	cs := NewConfigStore()
@@ -97,5 +97,5 @@ func TestConfigStore_StripedPrefixMap(t *testing.T) {
 		"bar.baz": "yes",
 	}
 
-	assert.Equal(t, expected, cs.StripedPrefixMap(combined, "io.example"))
+	assert.Equal(t, expected, cs.StrippedPrefixMap(combined, "io.example"))
 }

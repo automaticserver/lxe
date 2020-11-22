@@ -1,4 +1,4 @@
-package cri
+package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
 	"fmt"

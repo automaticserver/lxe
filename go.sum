@@ -449,8 +449,6 @@ github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de/go.mod h1:zAbeS9
 github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
 github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/lpabon/godbc v0.1.1/go.mod h1:Jo9QV0cf3U6jZABgiJ2skINAXb9j8m51r07g4KI92ZA=
-github.com/lxc/lxd v0.0.0-20200720180136-3c16557310d0 h1:tFKcWiewJWJjejgLkrMd+M61e05J8Mk1oCluIoaIN4k=
-github.com/lxc/lxd v0.0.0-20200720180136-3c16557310d0/go.mod h1:2BaZflfwsv8a3uy3/Vw+de4Avn4DSrAiqaHJjCIXMV4=
 github.com/lxc/lxd v0.0.0-20200825183131-2deb2bfbbce1 h1:yx4nD6lzKSlgrdqV7vyzv20LsKnOkA7utupomzAJ48g=
 github.com/lxc/lxd v0.0.0-20200825183131-2deb2bfbbce1/go.mod h1:2BaZflfwsv8a3uy3/Vw+de4Avn4DSrAiqaHJjCIXMV4=
 github.com/magiconair/properties v0.0.0-20160816085511-61b492c03cf4/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=

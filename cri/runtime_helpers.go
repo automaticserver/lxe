@@ -81,7 +81,7 @@ func toCriStats(c *lxf.Container) (*rtApi.ContainerStats, error) {
 	disk := rtApi.FilesystemUsage{
 		Timestamp: now,
 		FsId: &rtApi.FilesystemIdentifier{
-			Mountpoint: path.Join(sharedLXD.VarPath("container"), c.ID, "rootfs"),
+			Mountpoint: path.Join(sharedLXD.VarPath("containers"), c.ID, "rootfs"),
 		},
 		UsedBytes:  &rtApi.UInt64Value{Value: st.Stats.FilesystemUsage}, // TODO: root seems not visible? or does it depend?
 		InodesUsed: &rtApi.UInt64Value{Value: 0},                        // TODO: do we have to find out?

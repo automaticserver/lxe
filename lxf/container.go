@@ -205,15 +205,14 @@ func (c *Container) getState() (*ContainerState, error) {
 	return cs, nil
 }
 
-// refresh loads the container again from LXD to obtain new ETag
-// Will not load new data!
+// refresh loads the container again from LXD with data and ETag
 func (c *Container) refresh() error {
 	r, err := c.client.GetContainer(c.ID)
 	if err != nil {
 		return err
 	}
 
-	c.ETag = r.ETag
+	*c = *r
 
 	return nil
 }

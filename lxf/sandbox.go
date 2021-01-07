@@ -177,15 +177,14 @@ func (s *Sandbox) getContainers() ([]*Container, error) {
 	return cl, nil
 }
 
-// refresh loads the profile again from LXD to obtain new ETag
-// Will not load new data!
+// refresh loads the profile again from LXD with data and ETag
 func (s *Sandbox) refresh() error {
 	r, err := s.client.GetSandbox(s.ID)
 	if err != nil {
 		return err
 	}
 
-	s.ETag = r.ETag
+	*s = *r
 
 	return nil
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 	"k8s.io/client-go/tools/remotecommand"
 )
@@ -34,6 +35,19 @@ var (
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated
 // AND all data was written to stdout/stdin. The caller is responsible to provide a sink which doesn't block.
 func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, stderr io.WriteCloser, interactive, tty bool, timeout int64, resize <-chan remotecommand.TerminalSize) (int32, error) {
+	log := log.WithFields(logrus.Fields{
+		"containerid": cid,
+		"cmd":         cmd,
+		"interactive": interactive,
+		"tty":         tty,
+		"timeout":     timeout,
+		"stdin?":      stdin != nil,
+		"stdout?":     stdout != nil,
+		"stderr?":     stderr != nil,
+		"resize?":     resize != nil,
+	})
+	log.Debugf("Exec start")
+
 	ses := &session{
 		resize:      resize,
 		closeResize: make(chan struct{}),
@@ -74,6 +88,11 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 			log.WithError(err).Error("session control failed")
 		}
 
+		// Stop listening on resize channel
+		close(ses.closeResize)
+
+		log.Debugf("Exec timeout")
+
 		return CodeExecTimeout, ErrExecTimeout
 
 	// Wait for any remaining I/O to be flushed
@@ -90,6 +109,8 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 	}
 
 	opAPI := op.Get()
+
+	log.Debugf("Exec done")
 
 	exitCode, ok := opAPI.Metadata["return"].(float64)
 	if !ok {
@@ -112,15 +133,23 @@ type session struct {
 func (s *session) controlHandler(control *websocket.Conn) {
 	s.control = control
 
-	// Since we have a working exec we can start listening on additional channels
-	go s.listenResize()
+	// If we have a resize channel, listen for it
+	if s.resize != nil {
+		go s.listenResize()
+	}
 }
 
 // Listen for resize events and execute further steps
 func (s *session) listenResize() {
 	for {
 		select {
-		case r := <-s.resize:
+		case r, open := <-s.resize:
+			if !open {
+				log.Debug("session resize closed")
+
+				return
+			}
+
 			err := s.sendResize(r)
 			if err != nil {
 				log.WithError(err).Error("session resize failed")
@@ -173,8 +202,6 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 
 // Send cancel signal to LXD with exec control
 func (s *session) sendCancel() error {
-	log.Debugf("timeout reached, force closing of connection")
-
 	if s.control == nil {
 		return ErrNoControlSocket
 	}
@@ -182,7 +209,7 @@ func (s *session) sendCancel() error {
 	// TODO: In noninteractive mode this doesn't stop the command from executing, whatever signal it is set to
 	sig := cancelSignal
 
-	log.Debugf("forwarding signal: %s", sig)
+	log.Debugf("forwarding signal to LXD to cancel exec: %s", sig)
 
 	w, err := s.control.NextWriter(websocket.TextMessage)
 	if err != nil {

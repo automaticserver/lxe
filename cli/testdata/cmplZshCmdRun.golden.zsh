@@ -14,6 +14,8 @@ function _prog {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -70,6 +72,8 @@ function _prog_completion {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -119,6 +123,8 @@ function _prog_completion_bash {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -142,6 +148,8 @@ function _prog_completion_powershell {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -166,6 +174,8 @@ function _prog_completion_zsh {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -192,6 +202,8 @@ function _prog_config {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -232,6 +244,8 @@ function _prog_config_show {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -256,6 +270,8 @@ function _prog_help {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \
@@ -279,6 +295,8 @@ function _prog_version {
     '--anipnet[An IPNet flag]:' \
     '*--astringslice[A string slice flag]:' \
     '(-c --config)'{-c,--config}'[Load configuration from this file. The path may be absolute or relative. Supported extensions: json, toml, yaml, yml, properties, props, prop, hcl, dotenv, env, ini]:' \
+    '--debug-address[Listen address to use for the golang pprof server. Send USR2 signal to the process to toggle the server on and off.]:' \
+    '--debug-autostart[Whether the golang pprof server is automatically started.]' \
     '--log-file-path[Path to log file. Only required if --log-target is set to file.]:' \
     '--log-format[Define default log format, one of: json, keyvalue, pretty.]:' \
     '--log-level[Define minimum log level, one of: panic, fatal, error, warning, info, debug, trace.]:' \

@@ -130,6 +130,9 @@ func handleSignals(c *cobra.Command) {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT)
 	signal.Notify(ch, syscall.SIGTERM)
+	signal.Notify(ch, syscall.SIGUSR2)
+
+	autostartPProf()
 
 	for sig := range ch {
 		log.WithField("sig", sig).Info("received signal")
@@ -141,7 +144,11 @@ func handleSignals(c *cobra.Command) {
 				log.WithError(err).Fatalf("unable to stop %v", c.Name())
 			}
 
+			stopPProf()
+
 			os.Exit(0)
+		case syscall.SIGUSR2:
+			togglePProf()
 		}
 	}
 }

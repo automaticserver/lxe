@@ -27,6 +27,7 @@ require (
 	github.com/lxc/lxd v0.0.0-20200825183131-2deb2bfbbce1
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
+	github.com/mmcloughlin/professor v0.0.0-20170922221822-6b97112ab8b3
 	github.com/opencontainers/runtime-spec v1.0.2
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/shurcooL/go v0.0.0-20191216061654-b114cc39af9f // indirect

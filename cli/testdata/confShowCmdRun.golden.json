@@ -12,6 +12,10 @@
     "mio"
   ],
   "config": "",
+  "debug": {
+    "address": "localhost:10001",
+    "autostart": false
+  },
   "log": {
     "file": {
       "path": ""

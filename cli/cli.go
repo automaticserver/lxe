@@ -20,6 +20,7 @@ func New() (*viper.Viper, *cobra.Command) {
 	initCmpl()
 	initConf()
 	initLog()
+	initPProf()
 	initVersion()
 
 	ToDaemon(rootCmd)

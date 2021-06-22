@@ -32,7 +32,7 @@ func init() {
 	pflags.StringP("lxd-remote-config", "r", "", "Path to the LXD remote config. (guessed by default)")
 	pflags.StringP("lxd-image-remote", "", "local", "Use this remote if ImageSpec doesn't provide an explicit remote.")
 	pflags.StringSliceP("lxd-profiles", "p", []string{"default"}, "Set these additional profiles when creating containers.")
-	pflags.StringP("streaming-bindaddr", "", ":44124", "Listen address for the streaming service. Be careful from where this service can be accessed from as it allows to run exec commands on the containers! Format: [IP]:Port.")
+	pflags.StringP("streaming-bindaddr", "", "localhost:44124", "Listen address for the streaming service. Be careful from where this service can be accessed from as it allows to run exec commands on the containers! Format: [IP]:Port.")
 	pflags.StringP("streaming-baseurl", "", "", "Define which base address to use for constructing streaming URLs for a client to connect to. If this is set to empty, it will use the same host address and port from --streaming-bindaddr. If that has an empty host address, it will obtain the address of the interface to the default gateway. Format: [IP][:Port].")
 	// TODO: I was thinking, can't we just create a tmpfile with those contents when running lxe and remember that? Maybe, but it must be a persistent location, otherwise containers won't be able to start without that file existing.
 	pflags.StringP("hostnetwork-file", "", "", "EXPERIMENTAL! If host networking is defined in the PodSpec, this persisting file will be set as include in raw.lxc container config. (This process is required to workaround LXD, since it doesn't offer such option in the container or device config out of the box). The file must contain: 'lxc.net.0.type=none'.")

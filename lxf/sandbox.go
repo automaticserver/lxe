@@ -234,6 +234,50 @@ func (s *Sandbox) Delete() error {
 
 // apply saves the changes to LXD
 func (s *Sandbox) apply() error {
+	config, err := makeSandboxConfig(s)
+	if err != nil {
+		return err
+	}
+
+	devices := makeSandboxDevices(s)
+
+	profile := api.ProfilePut{
+		Config:  config,
+		Devices: devices,
+	}
+
+	if s.ID == "" { // profile has to be created
+		s.ID = s.CreateID()
+
+		return s.client.server.CreateProfile(api.ProfilesPost{
+			Name:       s.ID,
+			ProfilePut: profile,
+		})
+	}
+	// else profile has to be updated
+	if s.ETag == "" {
+		return fmt.Errorf("update profile not allowed: %w", ErrMissingETag)
+	}
+
+	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
+	if err != nil {
+		if shared.IsErrNotFound(err) {
+			return fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), s.ID)
+		}
+
+		return err
+	}
+
+	return nil
+}
+
+// CreateID creates a unique profile id
+func (s *Sandbox) CreateID() string {
+	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
+	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
+}
+
+func makeSandboxConfig(s *Sandbox) (map[string]string, error) {
 	config := map[string]string{
 		cfgState:                    s.State.String(),
 		cfgIsCRI:                    strconv.FormatBool(true),
@@ -252,7 +296,7 @@ func (s *Sandbox) apply() error {
 	// write NetworkConfigData as yaml
 	yml, err := yaml.Marshal(s.NetworkConfig.ModeData)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	config[cfgNetworkConfigModeData] = string(yml)
@@ -297,7 +341,7 @@ func (s *Sandbox) apply() error {
 
 	yml, err = yaml.Marshal(data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	config[cfgCloudInitNetworkConfig] = string(yml)
@@ -310,6 +354,12 @@ manage_etc_hosts: true
 `, s.Hostname)
 	}
 
+	config[cfgSchema] = SchemaVersionProfile
+
+	return config, nil
+}
+
+func makeSandboxDevices(s *Sandbox) map[string]map[string]string {
 	devices := make(map[string]map[string]string)
 
 	for _, d := range s.Devices {
@@ -317,39 +367,5 @@ manage_etc_hosts: true
 		devices[name] = options
 	}
 
-	config[cfgSchema] = SchemaVersionProfile
-	profile := api.ProfilePut{
-		Config:  config,
-		Devices: devices,
-	}
-
-	if s.ID == "" { // profile has to be created
-		s.ID = s.CreateID()
-
-		return s.client.server.CreateProfile(api.ProfilesPost{
-			Name:       s.ID,
-			ProfilePut: profile,
-		})
-	}
-	// else profile has to be updated
-	if s.ETag == "" {
-		return fmt.Errorf("update profile not allowed: %w", ErrMissingETag)
-	}
-
-	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
-	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), s.ID)
-		}
-
-		return err
-	}
-
-	return nil
-}
-
-// CreateID creates a unique profile id
-func (s *Sandbox) CreateID() string {
-	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
-	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
+	return devices
 }

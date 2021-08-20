@@ -330,13 +330,7 @@ func (c *Container) apply() error {
 	}
 
 	config := makeContainerConfig(c)
-
-	devices := make(map[string]map[string]string)
-
-	for _, d := range c.Devices {
-		name, options := d.ToMap()
-		devices[name] = options
-	}
+	devices := makeContainerDevices(c)
 
 	for key, val := range c.Config {
 		if containerConfigStore.IsReserved(key) {
@@ -346,7 +340,6 @@ func (c *Container) apply() error {
 		}
 	}
 
-	config[cfgSchema] = SchemaVersionContainer
 	contPut := api.ContainerPut{
 		Profiles: c.Profiles,
 		Config:   config,
@@ -486,7 +479,20 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 		}
 	}
 
+	config[cfgSchema] = SchemaVersionContainer
+
 	return config
+}
+
+func makeContainerDevices(c *Container) map[string]map[string]string {
+	devices := make(map[string]map[string]string)
+
+	for _, d := range c.Devices {
+		name, options := d.ToMap()
+		devices[name] = options
+	}
+
+	return devices
 }
 
 // extractEnvVars extracts all the config options that start with "environment."

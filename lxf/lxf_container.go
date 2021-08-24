@@ -191,6 +191,18 @@ func (l *client) toContainer(ct *api.Container, etag string) (*Container, error)
 		c.Resources.Memory.Limit = &memory
 	}
 
+	// In the past there has been forgotten to write the memory limit to the resources config which acts as source of truth, in such case read it from the actual limit if available. Might be removed in the future when all containers have gotten the fix
+	if c.Resources.Memory.Limit == nil {
+		if memoryS := ct.Config[cfgLimitMemory]; memoryS != "" {
+			memory, err := strconv.ParseInt(memoryS, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+
+			c.Resources.Memory.Limit = &memory
+		}
+	}
+
 	c.Profiles = ct.Profiles
 	if len(c.Profiles) == 0 {
 		return nil, fmt.Errorf("%w: container '%v' has no sandbox", ErrConvert, c.ID)

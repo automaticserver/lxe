@@ -474,6 +474,7 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 
 		if c.Resources.Memory != nil {
 			if c.Resources.Memory.Limit != nil && *c.Resources.Memory.Limit > 0 {
+				config[cfgResourcesMemoryLimit] = strconv.FormatInt(*c.Resources.Memory.Limit, 10)
 				config[cfgLimitMemory] = strconv.FormatInt(*c.Resources.Memory.Limit, 10)
 			}
 		}

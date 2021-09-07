@@ -35,7 +35,6 @@ require (
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
-	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
@@ -53,7 +52,7 @@ require (
 	k8s.io/apimachinery v0.16.15
 	k8s.io/client-go v0.16.15
 	k8s.io/cri-api v0.0.0
-	k8s.io/kubernetes v1.16.15
+	k8s.io/kubernetes v1.18.19
 	k8s.io/utils v0.0.0-20200619165400-6e3d28b6ed19
 	mvdan.cc/unparam v0.0.0-20191111180625-960b1ec0f2c2 // indirect
 	sourcegraph.com/sqs/pbtypes v1.0.0 // indirect

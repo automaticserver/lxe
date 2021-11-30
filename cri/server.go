@@ -40,17 +40,24 @@ type Server struct {
 
 // NewServer creates the CRI server
 func NewServer(criConfig *Config) *Server {
-	configPath, err := getLXDConfigPath(criConfig)
+	socketPath, err := getLXDSocketPath(criConfig.LXDSocket)
 	if err != nil {
-		log.WithError(err).Fatal("Unable to find lxc config")
+		log.WithError(err).Fatal("Unable to find lxd socket")
 	}
 
-	client, err := lxf.NewClient(criConfig.LXDSocket, configPath)
+	configPath, err := getLXDConfigPath(criConfig.LXDRemoteConfig)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to find lxd remote config")
+	}
+
+	log.WithField("path", configPath).Debug("Using lxd remote config")
+
+	client, err := lxf.NewClient(socketPath, configPath)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to initialize lxe facade")
 	}
 
-	log.WithField("lxdsocket", criConfig.LXDSocket).Info("Connected to LXD")
+	log.WithField("lxdsocket", socketPath).Info("Connected to LXD")
 
 	// Ensure profile and container schema migration
 	migration := lxf.NewMigrationWorkspace(client)

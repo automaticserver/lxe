@@ -22,13 +22,13 @@ func init() {
 	rootCmd.Use = "lxe"
 	rootCmd.Short = "LXE is a shim of the Kubernetes Container Runtime Interface for LXD"
 	rootCmd.Long = "LXE implements the Kubernetes Container Runtime Interface and creates LXD containers from Pods. Many options in the PodSpec and ContainerSpec are honored but a fundamental perception of containers (application containers like docker does vs system containers which is what LXD does) lead to slight implementation differences. Read the documentation for the full list of caveats."
-	rootCmd.Example = "lxe -s /run/lxe.sock -l /var/lib/lxd/unix.socket"
+	rootCmd.Example = "lxe"
 
 	pflags := rootCmd.PersistentFlags()
 
 	// application flags
 	pflags.StringP("socket", "s", "/run/lxe.sock", "Path of the socket where it should provide the runtime and image service to kubelet.")
-	pflags.StringP("lxd-socket", "l", "/var/lib/lxd/unix.socket", "Path of the socket where LXD provides it's API.")
+	pflags.StringP("lxd-socket", "l", "", "Path of the socket where LXD provides it's API. (guessed by default)")
 	pflags.StringP("lxd-remote-config", "r", "", "Path to the LXD remote config. (guessed by default)")
 	pflags.StringP("lxd-image-remote", "", "local", "Use this remote if ImageSpec doesn't provide an explicit remote.")
 	pflags.StringSliceP("lxd-profiles", "p", []string{"default"}, "Set these additional profiles when creating containers.")

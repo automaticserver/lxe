@@ -1,9 +1,9 @@
 package cri // import "github.com/automaticserver/lxe/cri"
 
 import (
+	"errors"
 	"fmt"
 	"os"
-	"os/user"
 	"path"
 	"strings"
 	"time"
@@ -13,6 +13,7 @@ import (
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
 	sharedLXD "github.com/lxc/lxd/shared"
+	homedir "github.com/mitchellh/go-homedir"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
@@ -156,32 +157,72 @@ func CompareFilterMap(base map[string]string, filter map[string]string) bool {
 	return true
 }
 
-// getLXDConfigPath tries to find the remote configuration file path
-func getLXDConfigPath(cfg *Config) (string, error) {
-	configPath := cfg.LXDRemoteConfig
+var (
+	defaultLXDSocket = []string{
+		"/var/snap/lxd/common/lxd/unix.socket",
+		"/var/lib/lxd/unix.socket",
+	}
+	defaultLXDRemoteConfig = []string{
+		"~/snap/lxd/current/.config/lxc/config.yml",
+		"~/.config/lxc/config.yml",
+	}
+	ErrDetectDefault = errors.New("unable to detect default")
+)
 
-	if cfg.LXDRemoteConfig == "" {
-		// Equality to lxd expected, github.com/lxc/lxd/lxc/main.go:56
-		var configDir string
-
-		switch {
-		case os.Getenv("LXD_CONF") != "":
-			configDir = os.Getenv("LXD_CONF")
-		case os.Getenv("HOME") != "":
-			configDir = path.Join(os.Getenv("HOME"), ".config", "lxc")
-		default:
-			user, err := user.Current()
-			if err != nil {
-				return "", err
-			}
-
-			configDir = path.Join(user.HomeDir, ".config", "lxc")
-		}
-
-		configPath = os.ExpandEnv(path.Join(configDir, "config.yml"))
+// getLXDSocket tries to find the remote socket
+func getLXDSocketPath(x string) (string, error) {
+	if x != "" {
+		return x, nil
 	}
 
-	return configPath, nil
+	for _, f := range defaultLXDSocket {
+		fi, err := os.Stat(f)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				continue
+			}
+
+			return "", fmt.Errorf("unable to check for existing lxd socket: %w", err)
+		}
+
+		if fi.Mode()&os.ModeSocket == 0 {
+			log.WithField("file", fi.Name()).Debug("ignoring non socket file")
+			continue
+		}
+	}
+
+	return "", fmt.Errorf("%w lxd socket, provide --lxd-socket", ErrDetectDefault)
+}
+
+// getLXDConfigPath tries to find the remote configuration file
+func getLXDConfigPath(x string) (string, error) {
+	if x != "" {
+		return x, nil
+	}
+
+	if os.Getenv("LXD_CONF") != "" {
+		return os.ExpandEnv(path.Join(os.Getenv("LXD_CONF"), "config.yml")), nil
+	}
+
+	for _, f := range defaultLXDRemoteConfig {
+		fh, err := homedir.Expand(f)
+		if err != nil {
+			return "", err
+		}
+
+		_, err = os.Stat(fh)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				continue
+			}
+
+			return "", fmt.Errorf("unable to check for existing lxd remote config: %w", err)
+		}
+
+		return fh, nil
+	}
+
+	return "", fmt.Errorf("%w lxd remote config, provide --lxd-remote-config", ErrDetectDefault)
 }
 
 func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {

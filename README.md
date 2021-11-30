@@ -29,15 +29,7 @@ There are only manual builds right now, see [releases page](https://github.com/a
 
 Please follow these steps carefully. Some parameters and arguments depend on how you installed LXD.
 
-Make sure [that you have LXD running](https://github.com/lxc/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), you'll need that later.
-
-- if you built LXD by source, this file is located in `~/.config/lxc/config.yml` (LXE will guess this automatically by default)
-- if you installed LXD via snap, the file is located in `~/snap/lxd/current/.config/lxc/config.yml`
-
-You may need to provide the LXD socket path:
-
-- if you built LXD by source, the socket is located in `/var/lib/lxd/unix.socket` (which is also default in LXE)
-- if you installed LXD via snap, the socket is located in `/var/snap/lxd/common/lxd/unix.socket`
+Make sure [that you have LXD running](https://github.com/lxc/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), LXE will need that later.
 
 ### Running LXE
 
@@ -47,9 +39,9 @@ LXE can be run as a non-privileged user, so give it [access to lxd's socket](htt
 
 The most important LXE options are the following:
 
-```c
-      --lxd-remote-config string    Path to the LXD remote config (guessed by default)
-      --lxd-socket string           Path of the socket where LXD provides it's API. (default "/var/lib/lxd/unix.socket")
+```cmd
+      --lxd-remote-config string    Path to the LXD remote config. (guessed by default)
+      --lxd-socket string           Path of the socket where LXD provides it's API. (guessed by default)
       --network-plugin string       The network plugin to use. 'bridge' manages the lxd bridge defined in --bridge-name. 'cni' uses kubernetes cni tools to attach interfaces using configuration defined in --cni-conf-dir (default "bridge")
       --socket string               Path of the socket where it should provide the runtime and image service to kubelet. (default "/run/lxe.sock")
 ```
@@ -93,10 +85,9 @@ For all options, consider looking into `lxe --help`.
 
 #### Starting the daemon
 
-You might want to use `--log-level info` for some feedback, otherwise the daemon is pretty silent when no warnings or errors occur.
+You might want to use `--log-level info` for some feedback, otherwise the daemon is pretty silent when no warnings or errors occur:
 
-- if you built LXD by source, `lxe --network-plugin cni --log-level info`
-- if you installed LXD via snap, `lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --lxd-remote-config ~/snap/lxd/current/.config/lxc/config.yml --network-plugin cni --log-level info`
+`lxe --network-plugin cni --log-level info`
 
 You should be greeted with:
 

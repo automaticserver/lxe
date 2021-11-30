@@ -1,4 +1,4 @@
-package network // import "github.com/automaticserver/lxe/network"
+package network
 
 import (
 	"bytes"

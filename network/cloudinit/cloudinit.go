@@ -1,4 +1,4 @@
-package cloudinit // import "github.com/automaticserver/lxe/network/cloudinit"
+package cloudinit
 
 // NetworkConfig is used as root element to serialize to cloud config
 type NetworkConfig struct {

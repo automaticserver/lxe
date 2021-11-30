@@ -1,4 +1,4 @@
-package device // import "github.com/automaticserver/lxe/lxf/device"
+package device
 
 const (
 	NoneType = "none"

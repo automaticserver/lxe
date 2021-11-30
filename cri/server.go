@@ -1,4 +1,4 @@
-package cri // import "github.com/automaticserver/lxe/cri"
+package cri
 
 import (
 	"context"

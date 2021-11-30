@@ -1,4 +1,4 @@
-package lxf // import "github.com/automaticserver/lxe/lxf"
+package lxf
 
 import (
 	"crypto/md5" // nolint: gosec

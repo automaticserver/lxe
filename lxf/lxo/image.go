@@ -1,4 +1,4 @@
-package lxo // import "github.com/automaticserver/lxe/lxf/lxo"
+package lxo
 
 import (
 	lxd "github.com/lxc/lxd/client"

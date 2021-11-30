@@ -1,4 +1,4 @@
-package cli // import "github.com/automaticserver/lxe/cli"
+package cli
 
 import (
 	"errors"

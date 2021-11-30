@@ -161,7 +161,6 @@ build-go: $(GO_BINARIES) ## Build the binaries
 
 generate-go: dep-go ## Update/Generate code over the whole code source
 	go generate ./...
-	@echo "$(GO_SOURCES)" | tr ' ' '\n' | fixtures/go/packageimportcomments.sh
 
 lint-go: ## Lint the source code
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint run

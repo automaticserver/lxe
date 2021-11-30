@@ -1,4 +1,4 @@
-package lxf // import "github.com/automaticserver/lxe/lxf"
+package lxf
 
 // Some variable shorthands:
 //  c:    *lxf.Container

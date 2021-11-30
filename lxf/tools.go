@@ -1,6 +1,6 @@
 // +build tools
 
-package lxf // import "github.com/automaticserver/lxe/lxf"
+package lxf
 
 import (
 	_ "github.com/maxbrunsfeld/counterfeiter/v6"

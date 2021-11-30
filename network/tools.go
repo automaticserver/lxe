@@ -1,6 +1,6 @@
 // +build tools
 
-package network // import "github.com/automaticserver/lxe/network"
+package network
 
 import (
 	_ "github.com/maxbrunsfeld/counterfeiter/v6"

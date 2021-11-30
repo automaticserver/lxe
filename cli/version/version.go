@@ -1,4 +1,4 @@
-package version // import "github.com/automaticserver/lxe/cli/version"
+package version
 
 import "fmt"
 

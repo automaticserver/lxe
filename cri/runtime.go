@@ -50,12 +50,7 @@ func NewRuntimeServer(criConfig *Config, lxf lxf.Client, network network.Plugin)
 		network:   network,
 	}
 
-	configPath, err := getLXDConfigPath(criConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	runtime.lxdConfig, err = config.LoadConfig(configPath)
+	runtime.lxdConfig, err = config.LoadConfig(criConfig.LXDRemoteConfig)
 	if err != nil {
 		return nil, err
 	}

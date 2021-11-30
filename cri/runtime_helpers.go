@@ -169,10 +169,10 @@ var (
 	ErrDetectDefault = errors.New("unable to detect default")
 )
 
-// getLXDSocket tries to find the remote socket
-func getLXDSocketPath(x string) (string, error) {
-	if x != "" {
-		return x, nil
+// setDefaultLXDSocketPath tries to find and set the lxd socket if missing
+func setDefaultLXDSocketPath(cfg *Config) error {
+	if cfg.LXDSocket != "" {
+		return nil
 	}
 
 	for _, f := range defaultLXDSocket {
@@ -182,32 +182,37 @@ func getLXDSocketPath(x string) (string, error) {
 				continue
 			}
 
-			return "", fmt.Errorf("unable to check for existing lxd socket: %w", err)
+			return fmt.Errorf("unable to check for existing lxd socket: %w", err)
 		}
 
 		if fi.Mode()&os.ModeSocket == 0 {
 			log.WithField("file", fi.Name()).Debug("ignoring non socket file")
 			continue
 		}
+
+		cfg.LXDSocket = f
+
+		return nil
 	}
 
-	return "", fmt.Errorf("%w lxd socket, provide --lxd-socket", ErrDetectDefault)
+	return fmt.Errorf("%w lxd socket, provide --lxd-socket", ErrDetectDefault)
 }
 
-// getLXDConfigPath tries to find the remote configuration file
-func getLXDConfigPath(x string) (string, error) {
-	if x != "" {
-		return x, nil
+// setDefaultLXDSocketPath tries to find and set the lxd remote config if missing
+func setDefaultLXDConfigPath(cfg *Config) error {
+	if cfg.LXDRemoteConfig != "" {
+		return nil
 	}
 
 	if os.Getenv("LXD_CONF") != "" {
-		return os.ExpandEnv(path.Join(os.Getenv("LXD_CONF"), "config.yml")), nil
+		cfg.LXDRemoteConfig = os.ExpandEnv(path.Join(os.Getenv("LXD_CONF"), "config.yml"))
+		return nil
 	}
 
 	for _, f := range defaultLXDRemoteConfig {
 		fh, err := homedir.Expand(f)
 		if err != nil {
-			return "", err
+			return err
 		}
 
 		_, err = os.Stat(fh)
@@ -216,13 +221,15 @@ func getLXDConfigPath(x string) (string, error) {
 				continue
 			}
 
-			return "", fmt.Errorf("unable to check for existing lxd remote config: %w", err)
+			return fmt.Errorf("unable to check for existing lxd remote config: %w", err)
 		}
 
-		return fh, nil
+		cfg.LXDSocket = f
+
+		return nil
 	}
 
-	return "", fmt.Errorf("%w lxd remote config, provide --lxd-remote-config", ErrDetectDefault)
+	return fmt.Errorf("%w lxd remote config, provide --lxd-remote-config", ErrDetectDefault)
 }
 
 func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {

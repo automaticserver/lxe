@@ -23,6 +23,8 @@ type ImageServer struct {
 // NewImageServer returns a new ImageServer backed by LXD
 // we only need one connection — until we start distinguishing runtime & image service
 func NewImageServer(s *RuntimeServer, lxf lxf.Client) (*ImageServer, error) {
+	var err error
+
 	i := ImageServer{
 		lxdConfig: s.lxdConfig,
 		criConfig: s.criConfig,
@@ -31,12 +33,7 @@ func NewImageServer(s *RuntimeServer, lxf lxf.Client) (*ImageServer, error) {
 	// apply default image remote
 	i.runtimeRemote = i.lxdConfig.DefaultRemote
 
-	configPath, err := getLXDConfigPath(i.criConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	i.lxdConfig, err = config.LoadConfig(configPath)
+	i.lxdConfig, err = config.LoadConfig(s.criConfig.LXDRemoteConfig)
 	if err != nil {
 		return nil, err
 	}

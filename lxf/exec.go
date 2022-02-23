@@ -21,15 +21,16 @@ const (
 	WindowWidthDefault  = 80
 )
 
+// nolint: revive
 var (
 	ErrExecTimeout     = errors.New("timeout reached")
 	ErrNoControlSocket = errors.New("no control socket found")
 
 	cancelSignal = unix.SIGTERM
 
-	CodeExecOk      int32 = 0 // nolint: revive
+	CodeExecOk      int32 = 0
 	CodeExecError   int32 = 128
-	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // nolint: revive // 128+15=143
+	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // 128+15=143
 )
 
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated

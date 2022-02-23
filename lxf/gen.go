@@ -1,8 +1,10 @@
 package lxf
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+
 // lxdfakes
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_operation.go github.com/lxc/lxd/client.Operation
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_remote_operation.go github.com/lxc/lxd/client.RemoteOperation
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_server.go github.com/lxc/lxd/client.Server
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_image_server.go github.com/lxc/lxd/client.ImageServer
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o lxdfakes/fake_container_server.go github.com/lxc/lxd/client.ContainerServer
+//counterfeiter:generate -o lxdfakes/fake_operation.go github.com/lxc/lxd/client.Operation
+//counterfeiter:generate -o lxdfakes/fake_remote_operation.go github.com/lxc/lxd/client.RemoteOperation
+//counterfeiter:generate -o lxdfakes/fake_server.go github.com/lxc/lxd/client.Server
+//counterfeiter:generate -o lxdfakes/fake_image_server.go github.com/lxc/lxd/client.ImageServer
+//counterfeiter:generate -o lxdfakes/fake_container_server.go github.com/lxc/lxd/client.ContainerServer

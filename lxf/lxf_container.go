@@ -72,7 +72,7 @@ func (l *client) ListContainers() ([]*Container, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
-func (l *client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit
+func (l *client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit, cyclop
 	var err error
 
 	var attempt uint64
@@ -233,7 +233,7 @@ type EventHandler interface {
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
-func (l *client) lifecycleEventHandler(event api.Event) {
+func (l *client) lifecycleEventHandler(event api.Event) { // nolint: cyclop
 	log := log
 
 	// we should always only get lifecycle events due to the handler setup but just in case ...
@@ -247,6 +247,7 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 	err := json.Unmarshal(event.Metadata, &eventLifecycle)
 	if err != nil {
 		log.WithField("metadata", event.Metadata).Error("unable to unmarshal to json lifecycle event")
+
 		return
 	}
 
@@ -280,12 +281,14 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		err := l.eventHandler.ContainerStarted(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")
+
 			return
 		}
 	case "container-stopped":
 		err := l.eventHandler.ContainerStopped(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")
+
 			return
 		}
 	}

@@ -34,7 +34,7 @@ type MigrationWorkspace struct {
 // Migration initializes the migration workspace
 func NewMigrationWorkspace(l Client) *MigrationWorkspace {
 	return &MigrationWorkspace{
-		lxf: l.(*client),
+		lxf: l.(*client), // nolint: forcetypeassert
 	}
 }
 
@@ -68,7 +68,7 @@ func IsSchemaCurrent(i interface{}) bool {
 }
 
 // Ensure applies all migration steps from detected schema to current schema
-func (m *MigrationWorkspace) Ensure() error { // nolint: gocognit
+func (m *MigrationWorkspace) Ensure() error { // nolint: gocognit, cyclop
 	profiles, err := m.lxf.server.GetProfiles()
 	if err != nil {
 		return err
@@ -208,6 +208,7 @@ func (m *MigrationWorkspace) ensureProfileZeroThree(p *api.Profile) bool {
 func (m *MigrationWorkspace) ensureContainerZeroOne(c *api.Container) bool {
 	if c.Config[cfgSchema] == "" {
 		c.Config[cfgSchema] = zeroOne
+
 		return true
 	}
 
@@ -266,6 +267,7 @@ func (m *MigrationWorkspace) ensureContainerZeroThree(c *api.Container) bool {
 func (m *MigrationWorkspace) ensureContainerZeroFour(c *api.Container) bool {
 	if c.Config[cfgSchema] == zeroThree {
 		c.Config[cfgSchema] = zeroFour
+
 		return true
 	}
 

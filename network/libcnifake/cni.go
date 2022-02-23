@@ -192,15 +192,16 @@ func (fake *FakeCNI) AddNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig
 		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.AddNetworkStub
+	fakeReturns := fake.addNetworkReturns
 	fake.recordInvocation("AddNetwork", []interface{}{arg1, arg2, arg3})
 	fake.addNetworkMutex.Unlock()
-	if fake.AddNetworkStub != nil {
-		return fake.AddNetworkStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.addNetworkReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -257,15 +258,16 @@ func (fake *FakeCNI) AddNetworkList(arg1 context.Context, arg2 *libcni.NetworkCo
 		arg2 *libcni.NetworkConfigList
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.AddNetworkListStub
+	fakeReturns := fake.addNetworkListReturns
 	fake.recordInvocation("AddNetworkList", []interface{}{arg1, arg2, arg3})
 	fake.addNetworkListMutex.Unlock()
-	if fake.AddNetworkListStub != nil {
-		return fake.AddNetworkListStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.addNetworkListReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -322,15 +324,16 @@ func (fake *FakeCNI) CheckNetwork(arg1 context.Context, arg2 *libcni.NetworkConf
 		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.CheckNetworkStub
+	fakeReturns := fake.checkNetworkReturns
 	fake.recordInvocation("CheckNetwork", []interface{}{arg1, arg2, arg3})
 	fake.checkNetworkMutex.Unlock()
-	if fake.CheckNetworkStub != nil {
-		return fake.CheckNetworkStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.checkNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -384,15 +387,16 @@ func (fake *FakeCNI) CheckNetworkList(arg1 context.Context, arg2 *libcni.Network
 		arg2 *libcni.NetworkConfigList
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.CheckNetworkListStub
+	fakeReturns := fake.checkNetworkListReturns
 	fake.recordInvocation("CheckNetworkList", []interface{}{arg1, arg2, arg3})
 	fake.checkNetworkListMutex.Unlock()
-	if fake.CheckNetworkListStub != nil {
-		return fake.CheckNetworkListStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.checkNetworkListReturns
 	return fakeReturns.result1
 }
 
@@ -446,15 +450,16 @@ func (fake *FakeCNI) DelNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig
 		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.DelNetworkStub
+	fakeReturns := fake.delNetworkReturns
 	fake.recordInvocation("DelNetwork", []interface{}{arg1, arg2, arg3})
 	fake.delNetworkMutex.Unlock()
-	if fake.DelNetworkStub != nil {
-		return fake.DelNetworkStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.delNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -508,15 +513,16 @@ func (fake *FakeCNI) DelNetworkList(arg1 context.Context, arg2 *libcni.NetworkCo
 		arg2 *libcni.NetworkConfigList
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
+	stub := fake.DelNetworkListStub
+	fakeReturns := fake.delNetworkListReturns
 	fake.recordInvocation("DelNetworkList", []interface{}{arg1, arg2, arg3})
 	fake.delNetworkListMutex.Unlock()
-	if fake.DelNetworkListStub != nil {
-		return fake.DelNetworkListStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.delNetworkListReturns
 	return fakeReturns.result1
 }
 
@@ -569,15 +575,16 @@ func (fake *FakeCNI) GetNetworkCachedConfig(arg1 *libcni.NetworkConfig, arg2 *li
 		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
+	stub := fake.GetNetworkCachedConfigStub
+	fakeReturns := fake.getNetworkCachedConfigReturns
 	fake.recordInvocation("GetNetworkCachedConfig", []interface{}{arg1, arg2})
 	fake.getNetworkCachedConfigMutex.Unlock()
-	if fake.GetNetworkCachedConfigStub != nil {
-		return fake.GetNetworkCachedConfigStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getNetworkCachedConfigReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -636,15 +643,16 @@ func (fake *FakeCNI) GetNetworkCachedResult(arg1 *libcni.NetworkConfig, arg2 *li
 		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
+	stub := fake.GetNetworkCachedResultStub
+	fakeReturns := fake.getNetworkCachedResultReturns
 	fake.recordInvocation("GetNetworkCachedResult", []interface{}{arg1, arg2})
 	fake.getNetworkCachedResultMutex.Unlock()
-	if fake.GetNetworkCachedResultStub != nil {
-		return fake.GetNetworkCachedResultStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworkCachedResultReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -700,15 +708,16 @@ func (fake *FakeCNI) GetNetworkListCachedConfig(arg1 *libcni.NetworkConfigList, 
 		arg1 *libcni.NetworkConfigList
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
+	stub := fake.GetNetworkListCachedConfigStub
+	fakeReturns := fake.getNetworkListCachedConfigReturns
 	fake.recordInvocation("GetNetworkListCachedConfig", []interface{}{arg1, arg2})
 	fake.getNetworkListCachedConfigMutex.Unlock()
-	if fake.GetNetworkListCachedConfigStub != nil {
-		return fake.GetNetworkListCachedConfigStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getNetworkListCachedConfigReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -767,15 +776,16 @@ func (fake *FakeCNI) GetNetworkListCachedResult(arg1 *libcni.NetworkConfigList, 
 		arg1 *libcni.NetworkConfigList
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
+	stub := fake.GetNetworkListCachedResultStub
+	fakeReturns := fake.getNetworkListCachedResultReturns
 	fake.recordInvocation("GetNetworkListCachedResult", []interface{}{arg1, arg2})
 	fake.getNetworkListCachedResultMutex.Unlock()
-	if fake.GetNetworkListCachedResultStub != nil {
-		return fake.GetNetworkListCachedResultStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworkListCachedResultReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -831,15 +841,16 @@ func (fake *FakeCNI) ValidateNetwork(arg1 context.Context, arg2 *libcni.NetworkC
 		arg1 context.Context
 		arg2 *libcni.NetworkConfig
 	}{arg1, arg2})
+	stub := fake.ValidateNetworkStub
+	fakeReturns := fake.validateNetworkReturns
 	fake.recordInvocation("ValidateNetwork", []interface{}{arg1, arg2})
 	fake.validateNetworkMutex.Unlock()
-	if fake.ValidateNetworkStub != nil {
-		return fake.ValidateNetworkStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.validateNetworkReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -895,15 +906,16 @@ func (fake *FakeCNI) ValidateNetworkList(arg1 context.Context, arg2 *libcni.Netw
 		arg1 context.Context
 		arg2 *libcni.NetworkConfigList
 	}{arg1, arg2})
+	stub := fake.ValidateNetworkListStub
+	fakeReturns := fake.validateNetworkListReturns
 	fake.recordInvocation("ValidateNetworkList", []interface{}{arg1, arg2})
 	fake.validateNetworkListMutex.Unlock()
-	if fake.ValidateNetworkListStub != nil {
-		return fake.ValidateNetworkListStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.validateNetworkListReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

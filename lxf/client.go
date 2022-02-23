@@ -79,7 +79,7 @@ type client struct {
 }
 
 // NewClient will set up a connection and return the client
-func NewClient(socket string, configPath string) (Client, error) {
+func NewClient(socket string, configPath string) (Client, error) { // nolint: ireturn
 	config, err := config.LoadConfig(configPath)
 	if err != nil {
 		return nil, err
@@ -218,7 +218,7 @@ func (l *client) connect() error {
 }
 
 // detect if server needs to be connected again to. Seems to be needed if we get a lxd.RemoteOperation (e.g. in CopyImage), the op.Wait() never succeeds unless we have connected to the lxd socket again. All other lxd.Operations seem to work fine and wouldn't be needed for them.
-func (l *client) detectNeedReconnect() { // nolint: gocognit
+func (l *client) detectNeedReconnect() { // nolint: gocognit, cyclop
 	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.ContainerServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -228,7 +228,7 @@ func (l *client) detectNeedReconnect() { // nolint: gocognit
 
 	err = watcher.Add(path.Dir(l.socket))
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err.Error()) // nolint: gocritic
 	}
 
 	log := log.WithField("lxdsocket", l.socket)

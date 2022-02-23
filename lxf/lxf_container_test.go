@@ -63,7 +63,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	s, err := client.GetContainer("foo")
 
-	var expected *Container = nil
+	var expected *Container
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)
@@ -79,7 +79,7 @@ func TestClient_GetContainer_NonCri(t *testing.T) {
 
 	s, err := client.GetContainer("foo")
 
-	var expected *Container = nil
+	var expected *Container
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)

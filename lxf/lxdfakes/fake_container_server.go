@@ -2741,15 +2741,16 @@ func (fake *FakeContainerServer) ConsoleContainer(arg1 string, arg2 api.Containe
 		arg2 api.ContainerConsolePost
 		arg3 *lxd.ContainerConsoleArgs
 	}{arg1, arg2, arg3})
+	stub := fake.ConsoleContainerStub
+	fakeReturns := fake.consoleContainerReturns
 	fake.recordInvocation("ConsoleContainer", []interface{}{arg1, arg2, arg3})
 	fake.consoleContainerMutex.Unlock()
-	if fake.ConsoleContainerStub != nil {
-		return fake.ConsoleContainerStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.consoleContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -2806,15 +2807,16 @@ func (fake *FakeContainerServer) ConsoleInstance(arg1 string, arg2 api.InstanceC
 		arg2 api.InstanceConsolePost
 		arg3 *lxd.InstanceConsoleArgs
 	}{arg1, arg2, arg3})
+	stub := fake.ConsoleInstanceStub
+	fakeReturns := fake.consoleInstanceReturns
 	fake.recordInvocation("ConsoleInstance", []interface{}{arg1, arg2, arg3})
 	fake.consoleInstanceMutex.Unlock()
-	if fake.ConsoleInstanceStub != nil {
-		return fake.ConsoleInstanceStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.consoleInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -2871,15 +2873,16 @@ func (fake *FakeContainerServer) ConsoleInstanceDynamic(arg1 string, arg2 api.In
 		arg2 api.InstanceConsolePost
 		arg3 *lxd.InstanceConsoleArgs
 	}{arg1, arg2, arg3})
+	stub := fake.ConsoleInstanceDynamicStub
+	fakeReturns := fake.consoleInstanceDynamicReturns
 	fake.recordInvocation("ConsoleInstanceDynamic", []interface{}{arg1, arg2, arg3})
 	fake.consoleInstanceDynamicMutex.Unlock()
-	if fake.ConsoleInstanceDynamicStub != nil {
-		return fake.ConsoleInstanceDynamicStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.consoleInstanceDynamicReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -2939,15 +2942,16 @@ func (fake *FakeContainerServer) CopyContainer(arg1 lxd.InstanceServer, arg2 api
 		arg2 api.Container
 		arg3 *lxd.ContainerCopyArgs
 	}{arg1, arg2, arg3})
+	stub := fake.CopyContainerStub
+	fakeReturns := fake.copyContainerReturns
 	fake.recordInvocation("CopyContainer", []interface{}{arg1, arg2, arg3})
 	fake.copyContainerMutex.Unlock()
-	if fake.CopyContainerStub != nil {
-		return fake.CopyContainerStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3005,15 +3009,16 @@ func (fake *FakeContainerServer) CopyContainerSnapshot(arg1 lxd.InstanceServer, 
 		arg3 api.ContainerSnapshot
 		arg4 *lxd.ContainerSnapshotCopyArgs
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.CopyContainerSnapshotStub
+	fakeReturns := fake.copyContainerSnapshotReturns
 	fake.recordInvocation("CopyContainerSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.copyContainerSnapshotMutex.Unlock()
-	if fake.CopyContainerSnapshotStub != nil {
-		return fake.CopyContainerSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3070,15 +3075,16 @@ func (fake *FakeContainerServer) CopyImage(arg1 lxd.ImageServer, arg2 api.Image,
 		arg2 api.Image
 		arg3 *lxd.ImageCopyArgs
 	}{arg1, arg2, arg3})
+	stub := fake.CopyImageStub
+	fakeReturns := fake.copyImageReturns
 	fake.recordInvocation("CopyImage", []interface{}{arg1, arg2, arg3})
 	fake.copyImageMutex.Unlock()
-	if fake.CopyImageStub != nil {
-		return fake.CopyImageStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3135,15 +3141,16 @@ func (fake *FakeContainerServer) CopyInstance(arg1 lxd.InstanceServer, arg2 api.
 		arg2 api.Instance
 		arg3 *lxd.InstanceCopyArgs
 	}{arg1, arg2, arg3})
+	stub := fake.CopyInstanceStub
+	fakeReturns := fake.copyInstanceReturns
 	fake.recordInvocation("CopyInstance", []interface{}{arg1, arg2, arg3})
 	fake.copyInstanceMutex.Unlock()
-	if fake.CopyInstanceStub != nil {
-		return fake.CopyInstanceStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3201,15 +3208,16 @@ func (fake *FakeContainerServer) CopyInstanceSnapshot(arg1 lxd.InstanceServer, a
 		arg3 api.InstanceSnapshot
 		arg4 *lxd.InstanceSnapshotCopyArgs
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.CopyInstanceSnapshotStub
+	fakeReturns := fake.copyInstanceSnapshotReturns
 	fake.recordInvocation("CopyInstanceSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.copyInstanceSnapshotMutex.Unlock()
-	if fake.CopyInstanceSnapshotStub != nil {
-		return fake.CopyInstanceSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3268,15 +3276,16 @@ func (fake *FakeContainerServer) CopyStoragePoolVolume(arg1 string, arg2 lxd.Ins
 		arg4 api.StorageVolume
 		arg5 *lxd.StoragePoolVolumeCopyArgs
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.CopyStoragePoolVolumeStub
+	fakeReturns := fake.copyStoragePoolVolumeReturns
 	fake.recordInvocation("CopyStoragePoolVolume", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.copyStoragePoolVolumeMutex.Unlock()
-	if fake.CopyStoragePoolVolumeStub != nil {
-		return fake.CopyStoragePoolVolumeStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.copyStoragePoolVolumeReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3331,15 +3340,16 @@ func (fake *FakeContainerServer) CreateCertificate(arg1 api.CertificatesPost) er
 	fake.createCertificateArgsForCall = append(fake.createCertificateArgsForCall, struct {
 		arg1 api.CertificatesPost
 	}{arg1})
+	stub := fake.CreateCertificateStub
+	fakeReturns := fake.createCertificateReturns
 	fake.recordInvocation("CreateCertificate", []interface{}{arg1})
 	fake.createCertificateMutex.Unlock()
-	if fake.CreateCertificateStub != nil {
-		return fake.CreateCertificateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createCertificateReturns
 	return fakeReturns.result1
 }
 
@@ -3391,15 +3401,16 @@ func (fake *FakeContainerServer) CreateContainer(arg1 api.ContainersPost) (lxd.O
 	fake.createContainerArgsForCall = append(fake.createContainerArgsForCall, struct {
 		arg1 api.ContainersPost
 	}{arg1})
+	stub := fake.CreateContainerStub
+	fakeReturns := fake.createContainerReturns
 	fake.recordInvocation("CreateContainer", []interface{}{arg1})
 	fake.createContainerMutex.Unlock()
-	if fake.CreateContainerStub != nil {
-		return fake.CreateContainerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3455,15 +3466,16 @@ func (fake *FakeContainerServer) CreateContainerBackup(arg1 string, arg2 api.Con
 		arg1 string
 		arg2 api.ContainerBackupsPost
 	}{arg1, arg2})
+	stub := fake.CreateContainerBackupStub
+	fakeReturns := fake.createContainerBackupReturns
 	fake.recordInvocation("CreateContainerBackup", []interface{}{arg1, arg2})
 	fake.createContainerBackupMutex.Unlock()
-	if fake.CreateContainerBackupStub != nil {
-		return fake.CreateContainerBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createContainerBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3520,15 +3532,16 @@ func (fake *FakeContainerServer) CreateContainerFile(arg1 string, arg2 string, a
 		arg2 string
 		arg3 lxd.ContainerFileArgs
 	}{arg1, arg2, arg3})
+	stub := fake.CreateContainerFileStub
+	fakeReturns := fake.createContainerFileReturns
 	fake.recordInvocation("CreateContainerFile", []interface{}{arg1, arg2, arg3})
 	fake.createContainerFileMutex.Unlock()
-	if fake.CreateContainerFileStub != nil {
-		return fake.CreateContainerFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createContainerFileReturns
 	return fakeReturns.result1
 }
 
@@ -3580,15 +3593,16 @@ func (fake *FakeContainerServer) CreateContainerFromBackup(arg1 lxd.ContainerBac
 	fake.createContainerFromBackupArgsForCall = append(fake.createContainerFromBackupArgsForCall, struct {
 		arg1 lxd.ContainerBackupArgs
 	}{arg1})
+	stub := fake.CreateContainerFromBackupStub
+	fakeReturns := fake.createContainerFromBackupReturns
 	fake.recordInvocation("CreateContainerFromBackup", []interface{}{arg1})
 	fake.createContainerFromBackupMutex.Unlock()
-	if fake.CreateContainerFromBackupStub != nil {
-		return fake.CreateContainerFromBackupStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createContainerFromBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3645,15 +3659,16 @@ func (fake *FakeContainerServer) CreateContainerFromImage(arg1 lxd.ImageServer, 
 		arg2 api.Image
 		arg3 api.ContainersPost
 	}{arg1, arg2, arg3})
+	stub := fake.CreateContainerFromImageStub
+	fakeReturns := fake.createContainerFromImageReturns
 	fake.recordInvocation("CreateContainerFromImage", []interface{}{arg1, arg2, arg3})
 	fake.createContainerFromImageMutex.Unlock()
-	if fake.CreateContainerFromImageStub != nil {
-		return fake.CreateContainerFromImageStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createContainerFromImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3709,15 +3724,16 @@ func (fake *FakeContainerServer) CreateContainerSnapshot(arg1 string, arg2 api.C
 		arg1 string
 		arg2 api.ContainerSnapshotsPost
 	}{arg1, arg2})
+	stub := fake.CreateContainerSnapshotStub
+	fakeReturns := fake.createContainerSnapshotReturns
 	fake.recordInvocation("CreateContainerSnapshot", []interface{}{arg1, arg2})
 	fake.createContainerSnapshotMutex.Unlock()
-	if fake.CreateContainerSnapshotStub != nil {
-		return fake.CreateContainerSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3774,15 +3790,16 @@ func (fake *FakeContainerServer) CreateContainerTemplateFile(arg1 string, arg2 s
 		arg2 string
 		arg3 io.ReadSeeker
 	}{arg1, arg2, arg3})
+	stub := fake.CreateContainerTemplateFileStub
+	fakeReturns := fake.createContainerTemplateFileReturns
 	fake.recordInvocation("CreateContainerTemplateFile", []interface{}{arg1, arg2, arg3})
 	fake.createContainerTemplateFileMutex.Unlock()
-	if fake.CreateContainerTemplateFileStub != nil {
-		return fake.CreateContainerTemplateFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createContainerTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -3835,15 +3852,16 @@ func (fake *FakeContainerServer) CreateImage(arg1 api.ImagesPost, arg2 *lxd.Imag
 		arg1 api.ImagesPost
 		arg2 *lxd.ImageCreateArgs
 	}{arg1, arg2})
+	stub := fake.CreateImageStub
+	fakeReturns := fake.createImageReturns
 	fake.recordInvocation("CreateImage", []interface{}{arg1, arg2})
 	fake.createImageMutex.Unlock()
-	if fake.CreateImageStub != nil {
-		return fake.CreateImageStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -3898,15 +3916,16 @@ func (fake *FakeContainerServer) CreateImageAlias(arg1 api.ImageAliasesPost) err
 	fake.createImageAliasArgsForCall = append(fake.createImageAliasArgsForCall, struct {
 		arg1 api.ImageAliasesPost
 	}{arg1})
+	stub := fake.CreateImageAliasStub
+	fakeReturns := fake.createImageAliasReturns
 	fake.recordInvocation("CreateImageAlias", []interface{}{arg1})
 	fake.createImageAliasMutex.Unlock()
-	if fake.CreateImageAliasStub != nil {
-		return fake.CreateImageAliasStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createImageAliasReturns
 	return fakeReturns.result1
 }
 
@@ -3958,15 +3977,16 @@ func (fake *FakeContainerServer) CreateImageSecret(arg1 string) (lxd.Operation, 
 	fake.createImageSecretArgsForCall = append(fake.createImageSecretArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.CreateImageSecretStub
+	fakeReturns := fake.createImageSecretReturns
 	fake.recordInvocation("CreateImageSecret", []interface{}{arg1})
 	fake.createImageSecretMutex.Unlock()
-	if fake.CreateImageSecretStub != nil {
-		return fake.CreateImageSecretStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createImageSecretReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4021,15 +4041,16 @@ func (fake *FakeContainerServer) CreateInstance(arg1 api.InstancesPost) (lxd.Ope
 	fake.createInstanceArgsForCall = append(fake.createInstanceArgsForCall, struct {
 		arg1 api.InstancesPost
 	}{arg1})
+	stub := fake.CreateInstanceStub
+	fakeReturns := fake.createInstanceReturns
 	fake.recordInvocation("CreateInstance", []interface{}{arg1})
 	fake.createInstanceMutex.Unlock()
-	if fake.CreateInstanceStub != nil {
-		return fake.CreateInstanceStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4085,15 +4106,16 @@ func (fake *FakeContainerServer) CreateInstanceBackup(arg1 string, arg2 api.Inst
 		arg1 string
 		arg2 api.InstanceBackupsPost
 	}{arg1, arg2})
+	stub := fake.CreateInstanceBackupStub
+	fakeReturns := fake.createInstanceBackupReturns
 	fake.recordInvocation("CreateInstanceBackup", []interface{}{arg1, arg2})
 	fake.createInstanceBackupMutex.Unlock()
-	if fake.CreateInstanceBackupStub != nil {
-		return fake.CreateInstanceBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createInstanceBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4150,15 +4172,16 @@ func (fake *FakeContainerServer) CreateInstanceFile(arg1 string, arg2 string, ar
 		arg2 string
 		arg3 lxd.InstanceFileArgs
 	}{arg1, arg2, arg3})
+	stub := fake.CreateInstanceFileStub
+	fakeReturns := fake.createInstanceFileReturns
 	fake.recordInvocation("CreateInstanceFile", []interface{}{arg1, arg2, arg3})
 	fake.createInstanceFileMutex.Unlock()
-	if fake.CreateInstanceFileStub != nil {
-		return fake.CreateInstanceFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createInstanceFileReturns
 	return fakeReturns.result1
 }
 
@@ -4210,15 +4233,16 @@ func (fake *FakeContainerServer) CreateInstanceFromBackup(arg1 lxd.InstanceBacku
 	fake.createInstanceFromBackupArgsForCall = append(fake.createInstanceFromBackupArgsForCall, struct {
 		arg1 lxd.InstanceBackupArgs
 	}{arg1})
+	stub := fake.CreateInstanceFromBackupStub
+	fakeReturns := fake.createInstanceFromBackupReturns
 	fake.recordInvocation("CreateInstanceFromBackup", []interface{}{arg1})
 	fake.createInstanceFromBackupMutex.Unlock()
-	if fake.CreateInstanceFromBackupStub != nil {
-		return fake.CreateInstanceFromBackupStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createInstanceFromBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4275,15 +4299,16 @@ func (fake *FakeContainerServer) CreateInstanceFromImage(arg1 lxd.ImageServer, a
 		arg2 api.Image
 		arg3 api.InstancesPost
 	}{arg1, arg2, arg3})
+	stub := fake.CreateInstanceFromImageStub
+	fakeReturns := fake.createInstanceFromImageReturns
 	fake.recordInvocation("CreateInstanceFromImage", []interface{}{arg1, arg2, arg3})
 	fake.createInstanceFromImageMutex.Unlock()
-	if fake.CreateInstanceFromImageStub != nil {
-		return fake.CreateInstanceFromImageStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createInstanceFromImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4339,15 +4364,16 @@ func (fake *FakeContainerServer) CreateInstanceSnapshot(arg1 string, arg2 api.In
 		arg1 string
 		arg2 api.InstanceSnapshotsPost
 	}{arg1, arg2})
+	stub := fake.CreateInstanceSnapshotStub
+	fakeReturns := fake.createInstanceSnapshotReturns
 	fake.recordInvocation("CreateInstanceSnapshot", []interface{}{arg1, arg2})
 	fake.createInstanceSnapshotMutex.Unlock()
-	if fake.CreateInstanceSnapshotStub != nil {
-		return fake.CreateInstanceSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4404,15 +4430,16 @@ func (fake *FakeContainerServer) CreateInstanceTemplateFile(arg1 string, arg2 st
 		arg2 string
 		arg3 io.ReadSeeker
 	}{arg1, arg2, arg3})
+	stub := fake.CreateInstanceTemplateFileStub
+	fakeReturns := fake.createInstanceTemplateFileReturns
 	fake.recordInvocation("CreateInstanceTemplateFile", []interface{}{arg1, arg2, arg3})
 	fake.createInstanceTemplateFileMutex.Unlock()
-	if fake.CreateInstanceTemplateFileStub != nil {
-		return fake.CreateInstanceTemplateFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createInstanceTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -4464,15 +4491,16 @@ func (fake *FakeContainerServer) CreateNetwork(arg1 api.NetworksPost) error {
 	fake.createNetworkArgsForCall = append(fake.createNetworkArgsForCall, struct {
 		arg1 api.NetworksPost
 	}{arg1})
+	stub := fake.CreateNetworkStub
+	fakeReturns := fake.createNetworkReturns
 	fake.recordInvocation("CreateNetwork", []interface{}{arg1})
 	fake.createNetworkMutex.Unlock()
-	if fake.CreateNetworkStub != nil {
-		return fake.CreateNetworkStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -4524,15 +4552,16 @@ func (fake *FakeContainerServer) CreateProfile(arg1 api.ProfilesPost) error {
 	fake.createProfileArgsForCall = append(fake.createProfileArgsForCall, struct {
 		arg1 api.ProfilesPost
 	}{arg1})
+	stub := fake.CreateProfileStub
+	fakeReturns := fake.createProfileReturns
 	fake.recordInvocation("CreateProfile", []interface{}{arg1})
 	fake.createProfileMutex.Unlock()
-	if fake.CreateProfileStub != nil {
-		return fake.CreateProfileStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createProfileReturns
 	return fakeReturns.result1
 }
 
@@ -4584,15 +4613,16 @@ func (fake *FakeContainerServer) CreateProject(arg1 api.ProjectsPost) error {
 	fake.createProjectArgsForCall = append(fake.createProjectArgsForCall, struct {
 		arg1 api.ProjectsPost
 	}{arg1})
+	stub := fake.CreateProjectStub
+	fakeReturns := fake.createProjectReturns
 	fake.recordInvocation("CreateProject", []interface{}{arg1})
 	fake.createProjectMutex.Unlock()
-	if fake.CreateProjectStub != nil {
-		return fake.CreateProjectStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createProjectReturns
 	return fakeReturns.result1
 }
 
@@ -4644,15 +4674,16 @@ func (fake *FakeContainerServer) CreateStoragePool(arg1 api.StoragePoolsPost) er
 	fake.createStoragePoolArgsForCall = append(fake.createStoragePoolArgsForCall, struct {
 		arg1 api.StoragePoolsPost
 	}{arg1})
+	stub := fake.CreateStoragePoolStub
+	fakeReturns := fake.createStoragePoolReturns
 	fake.recordInvocation("CreateStoragePool", []interface{}{arg1})
 	fake.createStoragePoolMutex.Unlock()
-	if fake.CreateStoragePoolStub != nil {
-		return fake.CreateStoragePoolStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createStoragePoolReturns
 	return fakeReturns.result1
 }
 
@@ -4705,15 +4736,16 @@ func (fake *FakeContainerServer) CreateStoragePoolVolume(arg1 string, arg2 api.S
 		arg1 string
 		arg2 api.StorageVolumesPost
 	}{arg1, arg2})
+	stub := fake.CreateStoragePoolVolumeStub
+	fakeReturns := fake.createStoragePoolVolumeReturns
 	fake.recordInvocation("CreateStoragePoolVolume", []interface{}{arg1, arg2})
 	fake.createStoragePoolVolumeMutex.Unlock()
-	if fake.CreateStoragePoolVolumeStub != nil {
-		return fake.CreateStoragePoolVolumeStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.createStoragePoolVolumeReturns
 	return fakeReturns.result1
 }
 
@@ -4768,15 +4800,16 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshot(arg1 string, ar
 		arg3 string
 		arg4 api.StorageVolumeSnapshotsPost
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.CreateStoragePoolVolumeSnapshotStub
+	fakeReturns := fake.createStoragePoolVolumeSnapshotReturns
 	fake.recordInvocation("CreateStoragePoolVolumeSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.createStoragePoolVolumeSnapshotMutex.Unlock()
-	if fake.CreateStoragePoolVolumeSnapshotStub != nil {
-		return fake.CreateStoragePoolVolumeSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.createStoragePoolVolumeSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -4831,15 +4864,16 @@ func (fake *FakeContainerServer) DeleteCertificate(arg1 string) error {
 	fake.deleteCertificateArgsForCall = append(fake.deleteCertificateArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteCertificateStub
+	fakeReturns := fake.deleteCertificateReturns
 	fake.recordInvocation("DeleteCertificate", []interface{}{arg1})
 	fake.deleteCertificateMutex.Unlock()
-	if fake.DeleteCertificateStub != nil {
-		return fake.DeleteCertificateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteCertificateReturns
 	return fakeReturns.result1
 }
 
@@ -4892,15 +4926,16 @@ func (fake *FakeContainerServer) DeleteClusterMember(arg1 string, arg2 bool) err
 		arg1 string
 		arg2 bool
 	}{arg1, arg2})
+	stub := fake.DeleteClusterMemberStub
+	fakeReturns := fake.deleteClusterMemberReturns
 	fake.recordInvocation("DeleteClusterMember", []interface{}{arg1, arg2})
 	fake.deleteClusterMemberMutex.Unlock()
-	if fake.DeleteClusterMemberStub != nil {
-		return fake.DeleteClusterMemberStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteClusterMemberReturns
 	return fakeReturns.result1
 }
 
@@ -4952,15 +4987,16 @@ func (fake *FakeContainerServer) DeleteContainer(arg1 string) (lxd.Operation, er
 	fake.deleteContainerArgsForCall = append(fake.deleteContainerArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteContainerStub
+	fakeReturns := fake.deleteContainerReturns
 	fake.recordInvocation("DeleteContainer", []interface{}{arg1})
 	fake.deleteContainerMutex.Unlock()
-	if fake.DeleteContainerStub != nil {
-		return fake.DeleteContainerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5016,15 +5052,16 @@ func (fake *FakeContainerServer) DeleteContainerBackup(arg1 string, arg2 string)
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteContainerBackupStub
+	fakeReturns := fake.deleteContainerBackupReturns
 	fake.recordInvocation("DeleteContainerBackup", []interface{}{arg1, arg2})
 	fake.deleteContainerBackupMutex.Unlock()
-	if fake.DeleteContainerBackupStub != nil {
-		return fake.DeleteContainerBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteContainerBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5080,15 +5117,16 @@ func (fake *FakeContainerServer) DeleteContainerConsoleLog(arg1 string, arg2 *lx
 		arg1 string
 		arg2 *lxd.ContainerConsoleLogArgs
 	}{arg1, arg2})
+	stub := fake.DeleteContainerConsoleLogStub
+	fakeReturns := fake.deleteContainerConsoleLogReturns
 	fake.recordInvocation("DeleteContainerConsoleLog", []interface{}{arg1, arg2})
 	fake.deleteContainerConsoleLogMutex.Unlock()
-	if fake.DeleteContainerConsoleLogStub != nil {
-		return fake.DeleteContainerConsoleLogStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteContainerConsoleLogReturns
 	return fakeReturns.result1
 }
 
@@ -5141,15 +5179,16 @@ func (fake *FakeContainerServer) DeleteContainerFile(arg1 string, arg2 string) e
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteContainerFileStub
+	fakeReturns := fake.deleteContainerFileReturns
 	fake.recordInvocation("DeleteContainerFile", []interface{}{arg1, arg2})
 	fake.deleteContainerFileMutex.Unlock()
-	if fake.DeleteContainerFileStub != nil {
-		return fake.DeleteContainerFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteContainerFileReturns
 	return fakeReturns.result1
 }
 
@@ -5202,15 +5241,16 @@ func (fake *FakeContainerServer) DeleteContainerLogfile(arg1 string, arg2 string
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteContainerLogfileStub
+	fakeReturns := fake.deleteContainerLogfileReturns
 	fake.recordInvocation("DeleteContainerLogfile", []interface{}{arg1, arg2})
 	fake.deleteContainerLogfileMutex.Unlock()
-	if fake.DeleteContainerLogfileStub != nil {
-		return fake.DeleteContainerLogfileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteContainerLogfileReturns
 	return fakeReturns.result1
 }
 
@@ -5263,15 +5303,16 @@ func (fake *FakeContainerServer) DeleteContainerSnapshot(arg1 string, arg2 strin
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteContainerSnapshotStub
+	fakeReturns := fake.deleteContainerSnapshotReturns
 	fake.recordInvocation("DeleteContainerSnapshot", []interface{}{arg1, arg2})
 	fake.deleteContainerSnapshotMutex.Unlock()
-	if fake.DeleteContainerSnapshotStub != nil {
-		return fake.DeleteContainerSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5327,15 +5368,16 @@ func (fake *FakeContainerServer) DeleteContainerTemplateFile(arg1 string, arg2 s
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteContainerTemplateFileStub
+	fakeReturns := fake.deleteContainerTemplateFileReturns
 	fake.recordInvocation("DeleteContainerTemplateFile", []interface{}{arg1, arg2})
 	fake.deleteContainerTemplateFileMutex.Unlock()
-	if fake.DeleteContainerTemplateFileStub != nil {
-		return fake.DeleteContainerTemplateFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteContainerTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -5387,15 +5429,16 @@ func (fake *FakeContainerServer) DeleteImage(arg1 string) (lxd.Operation, error)
 	fake.deleteImageArgsForCall = append(fake.deleteImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteImageStub
+	fakeReturns := fake.deleteImageReturns
 	fake.recordInvocation("DeleteImage", []interface{}{arg1})
 	fake.deleteImageMutex.Unlock()
-	if fake.DeleteImageStub != nil {
-		return fake.DeleteImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5450,15 +5493,16 @@ func (fake *FakeContainerServer) DeleteImageAlias(arg1 string) error {
 	fake.deleteImageAliasArgsForCall = append(fake.deleteImageAliasArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteImageAliasStub
+	fakeReturns := fake.deleteImageAliasReturns
 	fake.recordInvocation("DeleteImageAlias", []interface{}{arg1})
 	fake.deleteImageAliasMutex.Unlock()
-	if fake.DeleteImageAliasStub != nil {
-		return fake.DeleteImageAliasStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteImageAliasReturns
 	return fakeReturns.result1
 }
 
@@ -5510,15 +5554,16 @@ func (fake *FakeContainerServer) DeleteInstance(arg1 string) (lxd.Operation, err
 	fake.deleteInstanceArgsForCall = append(fake.deleteInstanceArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteInstanceStub
+	fakeReturns := fake.deleteInstanceReturns
 	fake.recordInvocation("DeleteInstance", []interface{}{arg1})
 	fake.deleteInstanceMutex.Unlock()
-	if fake.DeleteInstanceStub != nil {
-		return fake.DeleteInstanceStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5574,15 +5619,16 @@ func (fake *FakeContainerServer) DeleteInstanceBackup(arg1 string, arg2 string) 
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceBackupStub
+	fakeReturns := fake.deleteInstanceBackupReturns
 	fake.recordInvocation("DeleteInstanceBackup", []interface{}{arg1, arg2})
 	fake.deleteInstanceBackupMutex.Unlock()
-	if fake.DeleteInstanceBackupStub != nil {
-		return fake.DeleteInstanceBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteInstanceBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5638,15 +5684,16 @@ func (fake *FakeContainerServer) DeleteInstanceConsoleLog(arg1 string, arg2 *lxd
 		arg1 string
 		arg2 *lxd.InstanceConsoleLogArgs
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceConsoleLogStub
+	fakeReturns := fake.deleteInstanceConsoleLogReturns
 	fake.recordInvocation("DeleteInstanceConsoleLog", []interface{}{arg1, arg2})
 	fake.deleteInstanceConsoleLogMutex.Unlock()
-	if fake.DeleteInstanceConsoleLogStub != nil {
-		return fake.DeleteInstanceConsoleLogStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteInstanceConsoleLogReturns
 	return fakeReturns.result1
 }
 
@@ -5699,15 +5746,16 @@ func (fake *FakeContainerServer) DeleteInstanceFile(arg1 string, arg2 string) er
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceFileStub
+	fakeReturns := fake.deleteInstanceFileReturns
 	fake.recordInvocation("DeleteInstanceFile", []interface{}{arg1, arg2})
 	fake.deleteInstanceFileMutex.Unlock()
-	if fake.DeleteInstanceFileStub != nil {
-		return fake.DeleteInstanceFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteInstanceFileReturns
 	return fakeReturns.result1
 }
 
@@ -5760,15 +5808,16 @@ func (fake *FakeContainerServer) DeleteInstanceLogfile(arg1 string, arg2 string)
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceLogfileStub
+	fakeReturns := fake.deleteInstanceLogfileReturns
 	fake.recordInvocation("DeleteInstanceLogfile", []interface{}{arg1, arg2})
 	fake.deleteInstanceLogfileMutex.Unlock()
-	if fake.DeleteInstanceLogfileStub != nil {
-		return fake.DeleteInstanceLogfileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteInstanceLogfileReturns
 	return fakeReturns.result1
 }
 
@@ -5821,15 +5870,16 @@ func (fake *FakeContainerServer) DeleteInstanceSnapshot(arg1 string, arg2 string
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceSnapshotStub
+	fakeReturns := fake.deleteInstanceSnapshotReturns
 	fake.recordInvocation("DeleteInstanceSnapshot", []interface{}{arg1, arg2})
 	fake.deleteInstanceSnapshotMutex.Unlock()
-	if fake.DeleteInstanceSnapshotStub != nil {
-		return fake.DeleteInstanceSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -5885,15 +5935,16 @@ func (fake *FakeContainerServer) DeleteInstanceTemplateFile(arg1 string, arg2 st
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DeleteInstanceTemplateFileStub
+	fakeReturns := fake.deleteInstanceTemplateFileReturns
 	fake.recordInvocation("DeleteInstanceTemplateFile", []interface{}{arg1, arg2})
 	fake.deleteInstanceTemplateFileMutex.Unlock()
-	if fake.DeleteInstanceTemplateFileStub != nil {
-		return fake.DeleteInstanceTemplateFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteInstanceTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -5945,15 +5996,16 @@ func (fake *FakeContainerServer) DeleteNetwork(arg1 string) error {
 	fake.deleteNetworkArgsForCall = append(fake.deleteNetworkArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteNetworkStub
+	fakeReturns := fake.deleteNetworkReturns
 	fake.recordInvocation("DeleteNetwork", []interface{}{arg1})
 	fake.deleteNetworkMutex.Unlock()
-	if fake.DeleteNetworkStub != nil {
-		return fake.DeleteNetworkStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -6005,15 +6057,16 @@ func (fake *FakeContainerServer) DeleteOperation(arg1 string) error {
 	fake.deleteOperationArgsForCall = append(fake.deleteOperationArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteOperationStub
+	fakeReturns := fake.deleteOperationReturns
 	fake.recordInvocation("DeleteOperation", []interface{}{arg1})
 	fake.deleteOperationMutex.Unlock()
-	if fake.DeleteOperationStub != nil {
-		return fake.DeleteOperationStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteOperationReturns
 	return fakeReturns.result1
 }
 
@@ -6065,15 +6118,16 @@ func (fake *FakeContainerServer) DeleteProfile(arg1 string) error {
 	fake.deleteProfileArgsForCall = append(fake.deleteProfileArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteProfileStub
+	fakeReturns := fake.deleteProfileReturns
 	fake.recordInvocation("DeleteProfile", []interface{}{arg1})
 	fake.deleteProfileMutex.Unlock()
-	if fake.DeleteProfileStub != nil {
-		return fake.DeleteProfileStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteProfileReturns
 	return fakeReturns.result1
 }
 
@@ -6125,15 +6179,16 @@ func (fake *FakeContainerServer) DeleteProject(arg1 string) error {
 	fake.deleteProjectArgsForCall = append(fake.deleteProjectArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteProjectStub
+	fakeReturns := fake.deleteProjectReturns
 	fake.recordInvocation("DeleteProject", []interface{}{arg1})
 	fake.deleteProjectMutex.Unlock()
-	if fake.DeleteProjectStub != nil {
-		return fake.DeleteProjectStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteProjectReturns
 	return fakeReturns.result1
 }
 
@@ -6185,15 +6240,16 @@ func (fake *FakeContainerServer) DeleteStoragePool(arg1 string) error {
 	fake.deleteStoragePoolArgsForCall = append(fake.deleteStoragePoolArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.DeleteStoragePoolStub
+	fakeReturns := fake.deleteStoragePoolReturns
 	fake.recordInvocation("DeleteStoragePool", []interface{}{arg1})
 	fake.deleteStoragePoolMutex.Unlock()
-	if fake.DeleteStoragePoolStub != nil {
-		return fake.DeleteStoragePoolStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteStoragePoolReturns
 	return fakeReturns.result1
 }
 
@@ -6247,15 +6303,16 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolume(arg1 string, arg2 strin
 		arg2 string
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.DeleteStoragePoolVolumeStub
+	fakeReturns := fake.deleteStoragePoolVolumeReturns
 	fake.recordInvocation("DeleteStoragePoolVolume", []interface{}{arg1, arg2, arg3})
 	fake.deleteStoragePoolVolumeMutex.Unlock()
-	if fake.DeleteStoragePoolVolumeStub != nil {
-		return fake.DeleteStoragePoolVolumeStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.deleteStoragePoolVolumeReturns
 	return fakeReturns.result1
 }
 
@@ -6310,15 +6367,16 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshot(arg1 string, ar
 		arg3 string
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.DeleteStoragePoolVolumeSnapshotStub
+	fakeReturns := fake.deleteStoragePoolVolumeSnapshotReturns
 	fake.recordInvocation("DeleteStoragePoolVolumeSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.deleteStoragePoolVolumeSnapshotMutex.Unlock()
-	if fake.DeleteStoragePoolVolumeSnapshotStub != nil {
-		return fake.DeleteStoragePoolVolumeSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.deleteStoragePoolVolumeSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6371,9 +6429,10 @@ func (fake *FakeContainerServer) Disconnect() {
 	fake.disconnectMutex.Lock()
 	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
 	}{})
+	stub := fake.DisconnectStub
 	fake.recordInvocation("Disconnect", []interface{}{})
 	fake.disconnectMutex.Unlock()
-	if fake.DisconnectStub != nil {
+	if stub != nil {
 		fake.DisconnectStub()
 	}
 }
@@ -6398,15 +6457,16 @@ func (fake *FakeContainerServer) ExecContainer(arg1 string, arg2 api.ContainerEx
 		arg2 api.ContainerExecPost
 		arg3 *lxd.ContainerExecArgs
 	}{arg1, arg2, arg3})
+	stub := fake.ExecContainerStub
+	fakeReturns := fake.execContainerReturns
 	fake.recordInvocation("ExecContainer", []interface{}{arg1, arg2, arg3})
 	fake.execContainerMutex.Unlock()
-	if fake.ExecContainerStub != nil {
-		return fake.ExecContainerStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.execContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6463,15 +6523,16 @@ func (fake *FakeContainerServer) ExecInstance(arg1 string, arg2 api.InstanceExec
 		arg2 api.InstanceExecPost
 		arg3 *lxd.InstanceExecArgs
 	}{arg1, arg2, arg3})
+	stub := fake.ExecInstanceStub
+	fakeReturns := fake.execInstanceReturns
 	fake.recordInvocation("ExecInstance", []interface{}{arg1, arg2, arg3})
 	fake.execInstanceMutex.Unlock()
-	if fake.ExecInstanceStub != nil {
-		return fake.ExecInstanceStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.execInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6527,15 +6588,16 @@ func (fake *FakeContainerServer) ExportImage(arg1 string, arg2 api.ImageExportPo
 		arg1 string
 		arg2 api.ImageExportPost
 	}{arg1, arg2})
+	stub := fake.ExportImageStub
+	fakeReturns := fake.exportImageReturns
 	fake.recordInvocation("ExportImage", []interface{}{arg1, arg2})
 	fake.exportImageMutex.Unlock()
-	if fake.ExportImageStub != nil {
-		return fake.ExportImageStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.exportImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6590,15 +6652,16 @@ func (fake *FakeContainerServer) GetCertificate(arg1 string) (*api.Certificate, 
 	fake.getCertificateArgsForCall = append(fake.getCertificateArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetCertificateStub
+	fakeReturns := fake.getCertificateReturns
 	fake.recordInvocation("GetCertificate", []interface{}{arg1})
 	fake.getCertificateMutex.Unlock()
-	if fake.GetCertificateStub != nil {
-		return fake.GetCertificateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getCertificateReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -6655,15 +6718,16 @@ func (fake *FakeContainerServer) GetCertificateFingerprints() ([]string, error) 
 	ret, specificReturn := fake.getCertificateFingerprintsReturnsOnCall[len(fake.getCertificateFingerprintsArgsForCall)]
 	fake.getCertificateFingerprintsArgsForCall = append(fake.getCertificateFingerprintsArgsForCall, struct {
 	}{})
+	stub := fake.GetCertificateFingerprintsStub
+	fakeReturns := fake.getCertificateFingerprintsReturns
 	fake.recordInvocation("GetCertificateFingerprints", []interface{}{})
 	fake.getCertificateFingerprintsMutex.Unlock()
-	if fake.GetCertificateFingerprintsStub != nil {
-		return fake.GetCertificateFingerprintsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getCertificateFingerprintsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6710,15 +6774,16 @@ func (fake *FakeContainerServer) GetCertificates() ([]api.Certificate, error) {
 	ret, specificReturn := fake.getCertificatesReturnsOnCall[len(fake.getCertificatesArgsForCall)]
 	fake.getCertificatesArgsForCall = append(fake.getCertificatesArgsForCall, struct {
 	}{})
+	stub := fake.GetCertificatesStub
+	fakeReturns := fake.getCertificatesReturns
 	fake.recordInvocation("GetCertificates", []interface{}{})
 	fake.getCertificatesMutex.Unlock()
-	if fake.GetCertificatesStub != nil {
-		return fake.GetCertificatesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getCertificatesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6765,15 +6830,16 @@ func (fake *FakeContainerServer) GetCluster() (*api.Cluster, string, error) {
 	ret, specificReturn := fake.getClusterReturnsOnCall[len(fake.getClusterArgsForCall)]
 	fake.getClusterArgsForCall = append(fake.getClusterArgsForCall, struct {
 	}{})
+	stub := fake.GetClusterStub
+	fakeReturns := fake.getClusterReturns
 	fake.recordInvocation("GetCluster", []interface{}{})
 	fake.getClusterMutex.Unlock()
-	if fake.GetClusterStub != nil {
-		return fake.GetClusterStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getClusterReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -6824,15 +6890,16 @@ func (fake *FakeContainerServer) GetClusterMember(arg1 string) (*api.ClusterMemb
 	fake.getClusterMemberArgsForCall = append(fake.getClusterMemberArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetClusterMemberStub
+	fakeReturns := fake.getClusterMemberReturns
 	fake.recordInvocation("GetClusterMember", []interface{}{arg1})
 	fake.getClusterMemberMutex.Unlock()
-	if fake.GetClusterMemberStub != nil {
-		return fake.GetClusterMemberStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getClusterMemberReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -6889,15 +6956,16 @@ func (fake *FakeContainerServer) GetClusterMemberNames() ([]string, error) {
 	ret, specificReturn := fake.getClusterMemberNamesReturnsOnCall[len(fake.getClusterMemberNamesArgsForCall)]
 	fake.getClusterMemberNamesArgsForCall = append(fake.getClusterMemberNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetClusterMemberNamesStub
+	fakeReturns := fake.getClusterMemberNamesReturns
 	fake.recordInvocation("GetClusterMemberNames", []interface{}{})
 	fake.getClusterMemberNamesMutex.Unlock()
-	if fake.GetClusterMemberNamesStub != nil {
-		return fake.GetClusterMemberNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getClusterMemberNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6944,15 +7012,16 @@ func (fake *FakeContainerServer) GetClusterMembers() ([]api.ClusterMember, error
 	ret, specificReturn := fake.getClusterMembersReturnsOnCall[len(fake.getClusterMembersArgsForCall)]
 	fake.getClusterMembersArgsForCall = append(fake.getClusterMembersArgsForCall, struct {
 	}{})
+	stub := fake.GetClusterMembersStub
+	fakeReturns := fake.getClusterMembersReturns
 	fake.recordInvocation("GetClusterMembers", []interface{}{})
 	fake.getClusterMembersMutex.Unlock()
-	if fake.GetClusterMembersStub != nil {
-		return fake.GetClusterMembersStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getClusterMembersReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -6999,15 +7068,16 @@ func (fake *FakeContainerServer) GetConnectionInfo() (*lxd.ConnectionInfo, error
 	ret, specificReturn := fake.getConnectionInfoReturnsOnCall[len(fake.getConnectionInfoArgsForCall)]
 	fake.getConnectionInfoArgsForCall = append(fake.getConnectionInfoArgsForCall, struct {
 	}{})
+	stub := fake.GetConnectionInfoStub
+	fakeReturns := fake.getConnectionInfoReturns
 	fake.recordInvocation("GetConnectionInfo", []interface{}{})
 	fake.getConnectionInfoMutex.Unlock()
-	if fake.GetConnectionInfoStub != nil {
-		return fake.GetConnectionInfoStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getConnectionInfoReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7055,15 +7125,16 @@ func (fake *FakeContainerServer) GetContainer(arg1 string) (*api.Container, stri
 	fake.getContainerArgsForCall = append(fake.getContainerArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerStub
+	fakeReturns := fake.getContainerReturns
 	fake.recordInvocation("GetContainer", []interface{}{arg1})
 	fake.getContainerMutex.Unlock()
-	if fake.GetContainerStub != nil {
-		return fake.GetContainerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -7122,15 +7193,16 @@ func (fake *FakeContainerServer) GetContainerBackup(arg1 string, arg2 string) (*
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetContainerBackupStub
+	fakeReturns := fake.getContainerBackupReturns
 	fake.recordInvocation("GetContainerBackup", []interface{}{arg1, arg2})
 	fake.getContainerBackupMutex.Unlock()
-	if fake.GetContainerBackupStub != nil {
-		return fake.GetContainerBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerBackupReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -7190,15 +7262,16 @@ func (fake *FakeContainerServer) GetContainerBackupFile(arg1 string, arg2 string
 		arg2 string
 		arg3 *lxd.BackupFileRequest
 	}{arg1, arg2, arg3})
+	stub := fake.GetContainerBackupFileStub
+	fakeReturns := fake.getContainerBackupFileReturns
 	fake.recordInvocation("GetContainerBackupFile", []interface{}{arg1, arg2, arg3})
 	fake.getContainerBackupFileMutex.Unlock()
-	if fake.GetContainerBackupFileStub != nil {
-		return fake.GetContainerBackupFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerBackupFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7253,15 +7326,16 @@ func (fake *FakeContainerServer) GetContainerBackupNames(arg1 string) ([]string,
 	fake.getContainerBackupNamesArgsForCall = append(fake.getContainerBackupNamesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerBackupNamesStub
+	fakeReturns := fake.getContainerBackupNamesReturns
 	fake.recordInvocation("GetContainerBackupNames", []interface{}{arg1})
 	fake.getContainerBackupNamesMutex.Unlock()
-	if fake.GetContainerBackupNamesStub != nil {
-		return fake.GetContainerBackupNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerBackupNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7316,15 +7390,16 @@ func (fake *FakeContainerServer) GetContainerBackups(arg1 string) ([]api.Contain
 	fake.getContainerBackupsArgsForCall = append(fake.getContainerBackupsArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerBackupsStub
+	fakeReturns := fake.getContainerBackupsReturns
 	fake.recordInvocation("GetContainerBackups", []interface{}{arg1})
 	fake.getContainerBackupsMutex.Unlock()
-	if fake.GetContainerBackupsStub != nil {
-		return fake.GetContainerBackupsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerBackupsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7380,15 +7455,16 @@ func (fake *FakeContainerServer) GetContainerConsoleLog(arg1 string, arg2 *lxd.C
 		arg1 string
 		arg2 *lxd.ContainerConsoleLogArgs
 	}{arg1, arg2})
+	stub := fake.GetContainerConsoleLogStub
+	fakeReturns := fake.getContainerConsoleLogReturns
 	fake.recordInvocation("GetContainerConsoleLog", []interface{}{arg1, arg2})
 	fake.getContainerConsoleLogMutex.Unlock()
-	if fake.GetContainerConsoleLogStub != nil {
-		return fake.GetContainerConsoleLogStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerConsoleLogReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7444,15 +7520,16 @@ func (fake *FakeContainerServer) GetContainerFile(arg1 string, arg2 string) (io.
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetContainerFileStub
+	fakeReturns := fake.getContainerFileReturns
 	fake.recordInvocation("GetContainerFile", []interface{}{arg1, arg2})
 	fake.getContainerFileMutex.Unlock()
-	if fake.GetContainerFileStub != nil {
-		return fake.GetContainerFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerFileReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -7511,15 +7588,16 @@ func (fake *FakeContainerServer) GetContainerLogfile(arg1 string, arg2 string) (
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetContainerLogfileStub
+	fakeReturns := fake.getContainerLogfileReturns
 	fake.recordInvocation("GetContainerLogfile", []interface{}{arg1, arg2})
 	fake.getContainerLogfileMutex.Unlock()
-	if fake.GetContainerLogfileStub != nil {
-		return fake.GetContainerLogfileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerLogfileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7574,15 +7652,16 @@ func (fake *FakeContainerServer) GetContainerLogfiles(arg1 string) ([]string, er
 	fake.getContainerLogfilesArgsForCall = append(fake.getContainerLogfilesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerLogfilesStub
+	fakeReturns := fake.getContainerLogfilesReturns
 	fake.recordInvocation("GetContainerLogfiles", []interface{}{arg1})
 	fake.getContainerLogfilesMutex.Unlock()
-	if fake.GetContainerLogfilesStub != nil {
-		return fake.GetContainerLogfilesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerLogfilesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7637,15 +7716,16 @@ func (fake *FakeContainerServer) GetContainerMetadata(arg1 string) (*api.ImageMe
 	fake.getContainerMetadataArgsForCall = append(fake.getContainerMetadataArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerMetadataStub
+	fakeReturns := fake.getContainerMetadataReturns
 	fake.recordInvocation("GetContainerMetadata", []interface{}{arg1})
 	fake.getContainerMetadataMutex.Unlock()
-	if fake.GetContainerMetadataStub != nil {
-		return fake.GetContainerMetadataStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerMetadataReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -7702,15 +7782,16 @@ func (fake *FakeContainerServer) GetContainerNames() ([]string, error) {
 	ret, specificReturn := fake.getContainerNamesReturnsOnCall[len(fake.getContainerNamesArgsForCall)]
 	fake.getContainerNamesArgsForCall = append(fake.getContainerNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetContainerNamesStub
+	fakeReturns := fake.getContainerNamesReturns
 	fake.recordInvocation("GetContainerNames", []interface{}{})
 	fake.getContainerNamesMutex.Unlock()
-	if fake.GetContainerNamesStub != nil {
-		return fake.GetContainerNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7759,15 +7840,16 @@ func (fake *FakeContainerServer) GetContainerSnapshot(arg1 string, arg2 string) 
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetContainerSnapshotStub
+	fakeReturns := fake.getContainerSnapshotReturns
 	fake.recordInvocation("GetContainerSnapshot", []interface{}{arg1, arg2})
 	fake.getContainerSnapshotMutex.Unlock()
-	if fake.GetContainerSnapshotStub != nil {
-		return fake.GetContainerSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -7825,15 +7907,16 @@ func (fake *FakeContainerServer) GetContainerSnapshotNames(arg1 string) ([]strin
 	fake.getContainerSnapshotNamesArgsForCall = append(fake.getContainerSnapshotNamesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerSnapshotNamesStub
+	fakeReturns := fake.getContainerSnapshotNamesReturns
 	fake.recordInvocation("GetContainerSnapshotNames", []interface{}{arg1})
 	fake.getContainerSnapshotNamesMutex.Unlock()
-	if fake.GetContainerSnapshotNamesStub != nil {
-		return fake.GetContainerSnapshotNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerSnapshotNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7888,15 +7971,16 @@ func (fake *FakeContainerServer) GetContainerSnapshots(arg1 string) ([]api.Conta
 	fake.getContainerSnapshotsArgsForCall = append(fake.getContainerSnapshotsArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerSnapshotsStub
+	fakeReturns := fake.getContainerSnapshotsReturns
 	fake.recordInvocation("GetContainerSnapshots", []interface{}{arg1})
 	fake.getContainerSnapshotsMutex.Unlock()
-	if fake.GetContainerSnapshotsStub != nil {
-		return fake.GetContainerSnapshotsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerSnapshotsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -7951,15 +8035,16 @@ func (fake *FakeContainerServer) GetContainerState(arg1 string) (*api.ContainerS
 	fake.getContainerStateArgsForCall = append(fake.getContainerStateArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerStateStub
+	fakeReturns := fake.getContainerStateReturns
 	fake.recordInvocation("GetContainerState", []interface{}{arg1})
 	fake.getContainerStateMutex.Unlock()
-	if fake.GetContainerStateStub != nil {
-		return fake.GetContainerStateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getContainerStateReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -8018,15 +8103,16 @@ func (fake *FakeContainerServer) GetContainerTemplateFile(arg1 string, arg2 stri
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetContainerTemplateFileStub
+	fakeReturns := fake.getContainerTemplateFileReturns
 	fake.recordInvocation("GetContainerTemplateFile", []interface{}{arg1, arg2})
 	fake.getContainerTemplateFileMutex.Unlock()
-	if fake.GetContainerTemplateFileStub != nil {
-		return fake.GetContainerTemplateFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerTemplateFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8081,15 +8167,16 @@ func (fake *FakeContainerServer) GetContainerTemplateFiles(arg1 string) ([]strin
 	fake.getContainerTemplateFilesArgsForCall = append(fake.getContainerTemplateFilesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerTemplateFilesStub
+	fakeReturns := fake.getContainerTemplateFilesReturns
 	fake.recordInvocation("GetContainerTemplateFiles", []interface{}{arg1})
 	fake.getContainerTemplateFilesMutex.Unlock()
-	if fake.GetContainerTemplateFilesStub != nil {
-		return fake.GetContainerTemplateFilesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerTemplateFilesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8143,15 +8230,16 @@ func (fake *FakeContainerServer) GetContainers() ([]api.Container, error) {
 	ret, specificReturn := fake.getContainersReturnsOnCall[len(fake.getContainersArgsForCall)]
 	fake.getContainersArgsForCall = append(fake.getContainersArgsForCall, struct {
 	}{})
+	stub := fake.GetContainersStub
+	fakeReturns := fake.getContainersReturns
 	fake.recordInvocation("GetContainers", []interface{}{})
 	fake.getContainersMutex.Unlock()
-	if fake.GetContainersStub != nil {
-		return fake.GetContainersStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainersReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8198,15 +8286,16 @@ func (fake *FakeContainerServer) GetContainersFull() ([]api.ContainerFull, error
 	ret, specificReturn := fake.getContainersFullReturnsOnCall[len(fake.getContainersFullArgsForCall)]
 	fake.getContainersFullArgsForCall = append(fake.getContainersFullArgsForCall, struct {
 	}{})
+	stub := fake.GetContainersFullStub
+	fakeReturns := fake.getContainersFullReturns
 	fake.recordInvocation("GetContainersFull", []interface{}{})
 	fake.getContainersFullMutex.Unlock()
-	if fake.GetContainersFullStub != nil {
-		return fake.GetContainersFullStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainersFullReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8253,15 +8342,16 @@ func (fake *FakeContainerServer) GetEvents() (*lxd.EventListener, error) {
 	ret, specificReturn := fake.getEventsReturnsOnCall[len(fake.getEventsArgsForCall)]
 	fake.getEventsArgsForCall = append(fake.getEventsArgsForCall, struct {
 	}{})
+	stub := fake.GetEventsStub
+	fakeReturns := fake.getEventsReturns
 	fake.recordInvocation("GetEvents", []interface{}{})
 	fake.getEventsMutex.Unlock()
-	if fake.GetEventsStub != nil {
-		return fake.GetEventsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getEventsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8308,15 +8398,16 @@ func (fake *FakeContainerServer) GetHTTPClient() (*http.Client, error) {
 	ret, specificReturn := fake.getHTTPClientReturnsOnCall[len(fake.getHTTPClientArgsForCall)]
 	fake.getHTTPClientArgsForCall = append(fake.getHTTPClientArgsForCall, struct {
 	}{})
+	stub := fake.GetHTTPClientStub
+	fakeReturns := fake.getHTTPClientReturns
 	fake.recordInvocation("GetHTTPClient", []interface{}{})
 	fake.getHTTPClientMutex.Unlock()
-	if fake.GetHTTPClientStub != nil {
-		return fake.GetHTTPClientStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getHTTPClientReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8364,15 +8455,16 @@ func (fake *FakeContainerServer) GetImage(arg1 string) (*api.Image, string, erro
 	fake.getImageArgsForCall = append(fake.getImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageStub
+	fakeReturns := fake.getImageReturns
 	fake.recordInvocation("GetImage", []interface{}{arg1})
 	fake.getImageMutex.Unlock()
-	if fake.GetImageStub != nil {
-		return fake.GetImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -8430,15 +8522,16 @@ func (fake *FakeContainerServer) GetImageAlias(arg1 string) (*api.ImageAliasesEn
 	fake.getImageAliasArgsForCall = append(fake.getImageAliasArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageAliasStub
+	fakeReturns := fake.getImageAliasReturns
 	fake.recordInvocation("GetImageAlias", []interface{}{arg1})
 	fake.getImageAliasMutex.Unlock()
-	if fake.GetImageAliasStub != nil {
-		return fake.GetImageAliasStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageAliasReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -8497,15 +8590,16 @@ func (fake *FakeContainerServer) GetImageAliasArchitectures(arg1 string, arg2 st
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetImageAliasArchitecturesStub
+	fakeReturns := fake.getImageAliasArchitecturesReturns
 	fake.recordInvocation("GetImageAliasArchitectures", []interface{}{arg1, arg2})
 	fake.getImageAliasArchitecturesMutex.Unlock()
-	if fake.GetImageAliasArchitecturesStub != nil {
-		return fake.GetImageAliasArchitecturesStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasArchitecturesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8559,15 +8653,16 @@ func (fake *FakeContainerServer) GetImageAliasNames() ([]string, error) {
 	ret, specificReturn := fake.getImageAliasNamesReturnsOnCall[len(fake.getImageAliasNamesArgsForCall)]
 	fake.getImageAliasNamesArgsForCall = append(fake.getImageAliasNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetImageAliasNamesStub
+	fakeReturns := fake.getImageAliasNamesReturns
 	fake.recordInvocation("GetImageAliasNames", []interface{}{})
 	fake.getImageAliasNamesMutex.Unlock()
-	if fake.GetImageAliasNamesStub != nil {
-		return fake.GetImageAliasNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8616,15 +8711,16 @@ func (fake *FakeContainerServer) GetImageAliasType(arg1 string, arg2 string) (*a
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetImageAliasTypeStub
+	fakeReturns := fake.getImageAliasTypeReturns
 	fake.recordInvocation("GetImageAliasType", []interface{}{arg1, arg2})
 	fake.getImageAliasTypeMutex.Unlock()
-	if fake.GetImageAliasTypeStub != nil {
-		return fake.GetImageAliasTypeStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageAliasTypeReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -8681,15 +8777,16 @@ func (fake *FakeContainerServer) GetImageAliases() ([]api.ImageAliasesEntry, err
 	ret, specificReturn := fake.getImageAliasesReturnsOnCall[len(fake.getImageAliasesArgsForCall)]
 	fake.getImageAliasesArgsForCall = append(fake.getImageAliasesArgsForCall, struct {
 	}{})
+	stub := fake.GetImageAliasesStub
+	fakeReturns := fake.getImageAliasesReturns
 	fake.recordInvocation("GetImageAliases", []interface{}{})
 	fake.getImageAliasesMutex.Unlock()
-	if fake.GetImageAliasesStub != nil {
-		return fake.GetImageAliasesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8738,15 +8835,16 @@ func (fake *FakeContainerServer) GetImageFile(arg1 string, arg2 lxd.ImageFileReq
 		arg1 string
 		arg2 lxd.ImageFileRequest
 	}{arg1, arg2})
+	stub := fake.GetImageFileStub
+	fakeReturns := fake.getImageFileReturns
 	fake.recordInvocation("GetImageFile", []interface{}{arg1, arg2})
 	fake.getImageFileMutex.Unlock()
-	if fake.GetImageFileStub != nil {
-		return fake.GetImageFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8800,15 +8898,16 @@ func (fake *FakeContainerServer) GetImageFingerprints() ([]string, error) {
 	ret, specificReturn := fake.getImageFingerprintsReturnsOnCall[len(fake.getImageFingerprintsArgsForCall)]
 	fake.getImageFingerprintsArgsForCall = append(fake.getImageFingerprintsArgsForCall, struct {
 	}{})
+	stub := fake.GetImageFingerprintsStub
+	fakeReturns := fake.getImageFingerprintsReturns
 	fake.recordInvocation("GetImageFingerprints", []interface{}{})
 	fake.getImageFingerprintsMutex.Unlock()
-	if fake.GetImageFingerprintsStub != nil {
-		return fake.GetImageFingerprintsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageFingerprintsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8856,15 +8955,16 @@ func (fake *FakeContainerServer) GetImageSecret(arg1 string) (string, error) {
 	fake.getImageSecretArgsForCall = append(fake.getImageSecretArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageSecretStub
+	fakeReturns := fake.getImageSecretReturns
 	fake.recordInvocation("GetImageSecret", []interface{}{arg1})
 	fake.getImageSecretMutex.Unlock()
-	if fake.GetImageSecretStub != nil {
-		return fake.GetImageSecretStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageSecretReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8918,15 +9018,16 @@ func (fake *FakeContainerServer) GetImages() ([]api.Image, error) {
 	ret, specificReturn := fake.getImagesReturnsOnCall[len(fake.getImagesArgsForCall)]
 	fake.getImagesArgsForCall = append(fake.getImagesArgsForCall, struct {
 	}{})
+	stub := fake.GetImagesStub
+	fakeReturns := fake.getImagesReturns
 	fake.recordInvocation("GetImages", []interface{}{})
 	fake.getImagesMutex.Unlock()
-	if fake.GetImagesStub != nil {
-		return fake.GetImagesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImagesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -8974,15 +9075,16 @@ func (fake *FakeContainerServer) GetInstance(arg1 string) (*api.Instance, string
 	fake.getInstanceArgsForCall = append(fake.getInstanceArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceStub
+	fakeReturns := fake.getInstanceReturns
 	fake.recordInvocation("GetInstance", []interface{}{arg1})
 	fake.getInstanceMutex.Unlock()
-	if fake.GetInstanceStub != nil {
-		return fake.GetInstanceStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9041,15 +9143,16 @@ func (fake *FakeContainerServer) GetInstanceBackup(arg1 string, arg2 string) (*a
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetInstanceBackupStub
+	fakeReturns := fake.getInstanceBackupReturns
 	fake.recordInvocation("GetInstanceBackup", []interface{}{arg1, arg2})
 	fake.getInstanceBackupMutex.Unlock()
-	if fake.GetInstanceBackupStub != nil {
-		return fake.GetInstanceBackupStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceBackupReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9109,15 +9212,16 @@ func (fake *FakeContainerServer) GetInstanceBackupFile(arg1 string, arg2 string,
 		arg2 string
 		arg3 *lxd.BackupFileRequest
 	}{arg1, arg2, arg3})
+	stub := fake.GetInstanceBackupFileStub
+	fakeReturns := fake.getInstanceBackupFileReturns
 	fake.recordInvocation("GetInstanceBackupFile", []interface{}{arg1, arg2, arg3})
 	fake.getInstanceBackupFileMutex.Unlock()
-	if fake.GetInstanceBackupFileStub != nil {
-		return fake.GetInstanceBackupFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceBackupFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9172,15 +9276,16 @@ func (fake *FakeContainerServer) GetInstanceBackupNames(arg1 string) ([]string, 
 	fake.getInstanceBackupNamesArgsForCall = append(fake.getInstanceBackupNamesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceBackupNamesStub
+	fakeReturns := fake.getInstanceBackupNamesReturns
 	fake.recordInvocation("GetInstanceBackupNames", []interface{}{arg1})
 	fake.getInstanceBackupNamesMutex.Unlock()
-	if fake.GetInstanceBackupNamesStub != nil {
-		return fake.GetInstanceBackupNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceBackupNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9235,15 +9340,16 @@ func (fake *FakeContainerServer) GetInstanceBackups(arg1 string) ([]api.Instance
 	fake.getInstanceBackupsArgsForCall = append(fake.getInstanceBackupsArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceBackupsStub
+	fakeReturns := fake.getInstanceBackupsReturns
 	fake.recordInvocation("GetInstanceBackups", []interface{}{arg1})
 	fake.getInstanceBackupsMutex.Unlock()
-	if fake.GetInstanceBackupsStub != nil {
-		return fake.GetInstanceBackupsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceBackupsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9299,15 +9405,16 @@ func (fake *FakeContainerServer) GetInstanceConsoleLog(arg1 string, arg2 *lxd.In
 		arg1 string
 		arg2 *lxd.InstanceConsoleLogArgs
 	}{arg1, arg2})
+	stub := fake.GetInstanceConsoleLogStub
+	fakeReturns := fake.getInstanceConsoleLogReturns
 	fake.recordInvocation("GetInstanceConsoleLog", []interface{}{arg1, arg2})
 	fake.getInstanceConsoleLogMutex.Unlock()
-	if fake.GetInstanceConsoleLogStub != nil {
-		return fake.GetInstanceConsoleLogStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceConsoleLogReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9363,15 +9470,16 @@ func (fake *FakeContainerServer) GetInstanceFile(arg1 string, arg2 string) (io.R
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetInstanceFileStub
+	fakeReturns := fake.getInstanceFileReturns
 	fake.recordInvocation("GetInstanceFile", []interface{}{arg1, arg2})
 	fake.getInstanceFileMutex.Unlock()
-	if fake.GetInstanceFileStub != nil {
-		return fake.GetInstanceFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceFileReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9430,15 +9538,16 @@ func (fake *FakeContainerServer) GetInstanceLogfile(arg1 string, arg2 string) (i
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetInstanceLogfileStub
+	fakeReturns := fake.getInstanceLogfileReturns
 	fake.recordInvocation("GetInstanceLogfile", []interface{}{arg1, arg2})
 	fake.getInstanceLogfileMutex.Unlock()
-	if fake.GetInstanceLogfileStub != nil {
-		return fake.GetInstanceLogfileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceLogfileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9493,15 +9602,16 @@ func (fake *FakeContainerServer) GetInstanceLogfiles(arg1 string) ([]string, err
 	fake.getInstanceLogfilesArgsForCall = append(fake.getInstanceLogfilesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceLogfilesStub
+	fakeReturns := fake.getInstanceLogfilesReturns
 	fake.recordInvocation("GetInstanceLogfiles", []interface{}{arg1})
 	fake.getInstanceLogfilesMutex.Unlock()
-	if fake.GetInstanceLogfilesStub != nil {
-		return fake.GetInstanceLogfilesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceLogfilesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9556,15 +9666,16 @@ func (fake *FakeContainerServer) GetInstanceMetadata(arg1 string) (*api.ImageMet
 	fake.getInstanceMetadataArgsForCall = append(fake.getInstanceMetadataArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceMetadataStub
+	fakeReturns := fake.getInstanceMetadataReturns
 	fake.recordInvocation("GetInstanceMetadata", []interface{}{arg1})
 	fake.getInstanceMetadataMutex.Unlock()
-	if fake.GetInstanceMetadataStub != nil {
-		return fake.GetInstanceMetadataStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceMetadataReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9622,15 +9733,16 @@ func (fake *FakeContainerServer) GetInstanceNames(arg1 api.InstanceType) ([]stri
 	fake.getInstanceNamesArgsForCall = append(fake.getInstanceNamesArgsForCall, struct {
 		arg1 api.InstanceType
 	}{arg1})
+	stub := fake.GetInstanceNamesStub
+	fakeReturns := fake.getInstanceNamesReturns
 	fake.recordInvocation("GetInstanceNames", []interface{}{arg1})
 	fake.getInstanceNamesMutex.Unlock()
-	if fake.GetInstanceNamesStub != nil {
-		return fake.GetInstanceNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9686,15 +9798,16 @@ func (fake *FakeContainerServer) GetInstanceSnapshot(arg1 string, arg2 string) (
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetInstanceSnapshotStub
+	fakeReturns := fake.getInstanceSnapshotReturns
 	fake.recordInvocation("GetInstanceSnapshot", []interface{}{arg1, arg2})
 	fake.getInstanceSnapshotMutex.Unlock()
-	if fake.GetInstanceSnapshotStub != nil {
-		return fake.GetInstanceSnapshotStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9752,15 +9865,16 @@ func (fake *FakeContainerServer) GetInstanceSnapshotNames(arg1 string) ([]string
 	fake.getInstanceSnapshotNamesArgsForCall = append(fake.getInstanceSnapshotNamesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceSnapshotNamesStub
+	fakeReturns := fake.getInstanceSnapshotNamesReturns
 	fake.recordInvocation("GetInstanceSnapshotNames", []interface{}{arg1})
 	fake.getInstanceSnapshotNamesMutex.Unlock()
-	if fake.GetInstanceSnapshotNamesStub != nil {
-		return fake.GetInstanceSnapshotNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceSnapshotNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9815,15 +9929,16 @@ func (fake *FakeContainerServer) GetInstanceSnapshots(arg1 string) ([]api.Instan
 	fake.getInstanceSnapshotsArgsForCall = append(fake.getInstanceSnapshotsArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceSnapshotsStub
+	fakeReturns := fake.getInstanceSnapshotsReturns
 	fake.recordInvocation("GetInstanceSnapshots", []interface{}{arg1})
 	fake.getInstanceSnapshotsMutex.Unlock()
-	if fake.GetInstanceSnapshotsStub != nil {
-		return fake.GetInstanceSnapshotsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceSnapshotsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -9878,15 +9993,16 @@ func (fake *FakeContainerServer) GetInstanceState(arg1 string) (*api.InstanceSta
 	fake.getInstanceStateArgsForCall = append(fake.getInstanceStateArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceStateStub
+	fakeReturns := fake.getInstanceStateReturns
 	fake.recordInvocation("GetInstanceState", []interface{}{arg1})
 	fake.getInstanceStateMutex.Unlock()
-	if fake.GetInstanceStateStub != nil {
-		return fake.GetInstanceStateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getInstanceStateReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -9945,15 +10061,16 @@ func (fake *FakeContainerServer) GetInstanceTemplateFile(arg1 string, arg2 strin
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetInstanceTemplateFileStub
+	fakeReturns := fake.getInstanceTemplateFileReturns
 	fake.recordInvocation("GetInstanceTemplateFile", []interface{}{arg1, arg2})
 	fake.getInstanceTemplateFileMutex.Unlock()
-	if fake.GetInstanceTemplateFileStub != nil {
-		return fake.GetInstanceTemplateFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceTemplateFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10008,15 +10125,16 @@ func (fake *FakeContainerServer) GetInstanceTemplateFiles(arg1 string) ([]string
 	fake.getInstanceTemplateFilesArgsForCall = append(fake.getInstanceTemplateFilesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetInstanceTemplateFilesStub
+	fakeReturns := fake.getInstanceTemplateFilesReturns
 	fake.recordInvocation("GetInstanceTemplateFiles", []interface{}{arg1})
 	fake.getInstanceTemplateFilesMutex.Unlock()
-	if fake.GetInstanceTemplateFilesStub != nil {
-		return fake.GetInstanceTemplateFilesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstanceTemplateFilesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10071,15 +10189,16 @@ func (fake *FakeContainerServer) GetInstances(arg1 api.InstanceType) ([]api.Inst
 	fake.getInstancesArgsForCall = append(fake.getInstancesArgsForCall, struct {
 		arg1 api.InstanceType
 	}{arg1})
+	stub := fake.GetInstancesStub
+	fakeReturns := fake.getInstancesReturns
 	fake.recordInvocation("GetInstances", []interface{}{arg1})
 	fake.getInstancesMutex.Unlock()
-	if fake.GetInstancesStub != nil {
-		return fake.GetInstancesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstancesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10134,15 +10253,16 @@ func (fake *FakeContainerServer) GetInstancesFull(arg1 api.InstanceType) ([]api.
 	fake.getInstancesFullArgsForCall = append(fake.getInstancesFullArgsForCall, struct {
 		arg1 api.InstanceType
 	}{arg1})
+	stub := fake.GetInstancesFullStub
+	fakeReturns := fake.getInstancesFullReturns
 	fake.recordInvocation("GetInstancesFull", []interface{}{arg1})
 	fake.getInstancesFullMutex.Unlock()
-	if fake.GetInstancesFullStub != nil {
-		return fake.GetInstancesFullStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getInstancesFullReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10197,15 +10317,16 @@ func (fake *FakeContainerServer) GetNetwork(arg1 string) (*api.Network, string, 
 	fake.getNetworkArgsForCall = append(fake.getNetworkArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetNetworkStub
+	fakeReturns := fake.getNetworkReturns
 	fake.recordInvocation("GetNetwork", []interface{}{arg1})
 	fake.getNetworkMutex.Unlock()
-	if fake.GetNetworkStub != nil {
-		return fake.GetNetworkStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getNetworkReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -10263,15 +10384,16 @@ func (fake *FakeContainerServer) GetNetworkLeases(arg1 string) ([]api.NetworkLea
 	fake.getNetworkLeasesArgsForCall = append(fake.getNetworkLeasesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetNetworkLeasesStub
+	fakeReturns := fake.getNetworkLeasesReturns
 	fake.recordInvocation("GetNetworkLeases", []interface{}{arg1})
 	fake.getNetworkLeasesMutex.Unlock()
-	if fake.GetNetworkLeasesStub != nil {
-		return fake.GetNetworkLeasesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworkLeasesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10325,15 +10447,16 @@ func (fake *FakeContainerServer) GetNetworkNames() ([]string, error) {
 	ret, specificReturn := fake.getNetworkNamesReturnsOnCall[len(fake.getNetworkNamesArgsForCall)]
 	fake.getNetworkNamesArgsForCall = append(fake.getNetworkNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetNetworkNamesStub
+	fakeReturns := fake.getNetworkNamesReturns
 	fake.recordInvocation("GetNetworkNames", []interface{}{})
 	fake.getNetworkNamesMutex.Unlock()
-	if fake.GetNetworkNamesStub != nil {
-		return fake.GetNetworkNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworkNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10381,15 +10504,16 @@ func (fake *FakeContainerServer) GetNetworkState(arg1 string) (*api.NetworkState
 	fake.getNetworkStateArgsForCall = append(fake.getNetworkStateArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetNetworkStateStub
+	fakeReturns := fake.getNetworkStateReturns
 	fake.recordInvocation("GetNetworkState", []interface{}{arg1})
 	fake.getNetworkStateMutex.Unlock()
-	if fake.GetNetworkStateStub != nil {
-		return fake.GetNetworkStateStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworkStateReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10443,15 +10567,16 @@ func (fake *FakeContainerServer) GetNetworks() ([]api.Network, error) {
 	ret, specificReturn := fake.getNetworksReturnsOnCall[len(fake.getNetworksArgsForCall)]
 	fake.getNetworksArgsForCall = append(fake.getNetworksArgsForCall, struct {
 	}{})
+	stub := fake.GetNetworksStub
+	fakeReturns := fake.getNetworksReturns
 	fake.recordInvocation("GetNetworks", []interface{}{})
 	fake.getNetworksMutex.Unlock()
-	if fake.GetNetworksStub != nil {
-		return fake.GetNetworksStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getNetworksReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10499,15 +10624,16 @@ func (fake *FakeContainerServer) GetOperation(arg1 string) (*api.Operation, stri
 	fake.getOperationArgsForCall = append(fake.getOperationArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetOperationStub
+	fakeReturns := fake.getOperationReturns
 	fake.recordInvocation("GetOperation", []interface{}{arg1})
 	fake.getOperationMutex.Unlock()
-	if fake.GetOperationStub != nil {
-		return fake.GetOperationStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getOperationReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -10564,15 +10690,16 @@ func (fake *FakeContainerServer) GetOperationUUIDs() ([]string, error) {
 	ret, specificReturn := fake.getOperationUUIDsReturnsOnCall[len(fake.getOperationUUIDsArgsForCall)]
 	fake.getOperationUUIDsArgsForCall = append(fake.getOperationUUIDsArgsForCall, struct {
 	}{})
+	stub := fake.GetOperationUUIDsStub
+	fakeReturns := fake.getOperationUUIDsReturns
 	fake.recordInvocation("GetOperationUUIDs", []interface{}{})
 	fake.getOperationUUIDsMutex.Unlock()
-	if fake.GetOperationUUIDsStub != nil {
-		return fake.GetOperationUUIDsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getOperationUUIDsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10621,15 +10748,16 @@ func (fake *FakeContainerServer) GetOperationWait(arg1 string, arg2 int) (*api.O
 		arg1 string
 		arg2 int
 	}{arg1, arg2})
+	stub := fake.GetOperationWaitStub
+	fakeReturns := fake.getOperationWaitReturns
 	fake.recordInvocation("GetOperationWait", []interface{}{arg1, arg2})
 	fake.getOperationWaitMutex.Unlock()
-	if fake.GetOperationWaitStub != nil {
-		return fake.GetOperationWaitStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getOperationWaitReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -10689,15 +10817,16 @@ func (fake *FakeContainerServer) GetOperationWaitSecret(arg1 string, arg2 string
 		arg2 string
 		arg3 int
 	}{arg1, arg2, arg3})
+	stub := fake.GetOperationWaitSecretStub
+	fakeReturns := fake.getOperationWaitSecretReturns
 	fake.recordInvocation("GetOperationWaitSecret", []interface{}{arg1, arg2, arg3})
 	fake.getOperationWaitSecretMutex.Unlock()
-	if fake.GetOperationWaitSecretStub != nil {
-		return fake.GetOperationWaitSecretStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getOperationWaitSecretReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -10756,15 +10885,16 @@ func (fake *FakeContainerServer) GetOperationWebsocket(arg1 string, arg2 string)
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetOperationWebsocketStub
+	fakeReturns := fake.getOperationWebsocketReturns
 	fake.recordInvocation("GetOperationWebsocket", []interface{}{arg1, arg2})
 	fake.getOperationWebsocketMutex.Unlock()
-	if fake.GetOperationWebsocketStub != nil {
-		return fake.GetOperationWebsocketStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getOperationWebsocketReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10818,15 +10948,16 @@ func (fake *FakeContainerServer) GetOperations() ([]api.Operation, error) {
 	ret, specificReturn := fake.getOperationsReturnsOnCall[len(fake.getOperationsArgsForCall)]
 	fake.getOperationsArgsForCall = append(fake.getOperationsArgsForCall, struct {
 	}{})
+	stub := fake.GetOperationsStub
+	fakeReturns := fake.getOperationsReturns
 	fake.recordInvocation("GetOperations", []interface{}{})
 	fake.getOperationsMutex.Unlock()
-	if fake.GetOperationsStub != nil {
-		return fake.GetOperationsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getOperationsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -10875,15 +11006,16 @@ func (fake *FakeContainerServer) GetPrivateImage(arg1 string, arg2 string) (*api
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetPrivateImageStub
+	fakeReturns := fake.getPrivateImageReturns
 	fake.recordInvocation("GetPrivateImage", []interface{}{arg1, arg2})
 	fake.getPrivateImageMutex.Unlock()
-	if fake.GetPrivateImageStub != nil {
-		return fake.GetPrivateImageStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getPrivateImageReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -10943,15 +11075,16 @@ func (fake *FakeContainerServer) GetPrivateImageFile(arg1 string, arg2 string, a
 		arg2 string
 		arg3 lxd.ImageFileRequest
 	}{arg1, arg2, arg3})
+	stub := fake.GetPrivateImageFileStub
+	fakeReturns := fake.getPrivateImageFileReturns
 	fake.recordInvocation("GetPrivateImageFile", []interface{}{arg1, arg2, arg3})
 	fake.getPrivateImageFileMutex.Unlock()
-	if fake.GetPrivateImageFileStub != nil {
-		return fake.GetPrivateImageFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getPrivateImageFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11006,15 +11139,16 @@ func (fake *FakeContainerServer) GetProfile(arg1 string) (*api.Profile, string, 
 	fake.getProfileArgsForCall = append(fake.getProfileArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetProfileStub
+	fakeReturns := fake.getProfileReturns
 	fake.recordInvocation("GetProfile", []interface{}{arg1})
 	fake.getProfileMutex.Unlock()
-	if fake.GetProfileStub != nil {
-		return fake.GetProfileStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getProfileReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11071,15 +11205,16 @@ func (fake *FakeContainerServer) GetProfileNames() ([]string, error) {
 	ret, specificReturn := fake.getProfileNamesReturnsOnCall[len(fake.getProfileNamesArgsForCall)]
 	fake.getProfileNamesArgsForCall = append(fake.getProfileNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetProfileNamesStub
+	fakeReturns := fake.getProfileNamesReturns
 	fake.recordInvocation("GetProfileNames", []interface{}{})
 	fake.getProfileNamesMutex.Unlock()
-	if fake.GetProfileNamesStub != nil {
-		return fake.GetProfileNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getProfileNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11126,15 +11261,16 @@ func (fake *FakeContainerServer) GetProfiles() ([]api.Profile, error) {
 	ret, specificReturn := fake.getProfilesReturnsOnCall[len(fake.getProfilesArgsForCall)]
 	fake.getProfilesArgsForCall = append(fake.getProfilesArgsForCall, struct {
 	}{})
+	stub := fake.GetProfilesStub
+	fakeReturns := fake.getProfilesReturns
 	fake.recordInvocation("GetProfiles", []interface{}{})
 	fake.getProfilesMutex.Unlock()
-	if fake.GetProfilesStub != nil {
-		return fake.GetProfilesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getProfilesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11182,15 +11318,16 @@ func (fake *FakeContainerServer) GetProject(arg1 string) (*api.Project, string, 
 	fake.getProjectArgsForCall = append(fake.getProjectArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetProjectStub
+	fakeReturns := fake.getProjectReturns
 	fake.recordInvocation("GetProject", []interface{}{arg1})
 	fake.getProjectMutex.Unlock()
-	if fake.GetProjectStub != nil {
-		return fake.GetProjectStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getProjectReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11247,15 +11384,16 @@ func (fake *FakeContainerServer) GetProjectNames() ([]string, error) {
 	ret, specificReturn := fake.getProjectNamesReturnsOnCall[len(fake.getProjectNamesArgsForCall)]
 	fake.getProjectNamesArgsForCall = append(fake.getProjectNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetProjectNamesStub
+	fakeReturns := fake.getProjectNamesReturns
 	fake.recordInvocation("GetProjectNames", []interface{}{})
 	fake.getProjectNamesMutex.Unlock()
-	if fake.GetProjectNamesStub != nil {
-		return fake.GetProjectNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getProjectNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11302,15 +11440,16 @@ func (fake *FakeContainerServer) GetProjects() ([]api.Project, error) {
 	ret, specificReturn := fake.getProjectsReturnsOnCall[len(fake.getProjectsArgsForCall)]
 	fake.getProjectsArgsForCall = append(fake.getProjectsArgsForCall, struct {
 	}{})
+	stub := fake.GetProjectsStub
+	fakeReturns := fake.getProjectsReturns
 	fake.recordInvocation("GetProjects", []interface{}{})
 	fake.getProjectsMutex.Unlock()
-	if fake.GetProjectsStub != nil {
-		return fake.GetProjectsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getProjectsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11357,15 +11496,16 @@ func (fake *FakeContainerServer) GetServer() (*api.Server, string, error) {
 	ret, specificReturn := fake.getServerReturnsOnCall[len(fake.getServerArgsForCall)]
 	fake.getServerArgsForCall = append(fake.getServerArgsForCall, struct {
 	}{})
+	stub := fake.GetServerStub
+	fakeReturns := fake.getServerReturns
 	fake.recordInvocation("GetServer", []interface{}{})
 	fake.getServerMutex.Unlock()
-	if fake.GetServerStub != nil {
-		return fake.GetServerStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getServerReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11415,15 +11555,16 @@ func (fake *FakeContainerServer) GetServerResources() (*api.Resources, error) {
 	ret, specificReturn := fake.getServerResourcesReturnsOnCall[len(fake.getServerResourcesArgsForCall)]
 	fake.getServerResourcesArgsForCall = append(fake.getServerResourcesArgsForCall, struct {
 	}{})
+	stub := fake.GetServerResourcesStub
+	fakeReturns := fake.getServerResourcesReturns
 	fake.recordInvocation("GetServerResources", []interface{}{})
 	fake.getServerResourcesMutex.Unlock()
-	if fake.GetServerResourcesStub != nil {
-		return fake.GetServerResourcesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getServerResourcesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11471,15 +11612,16 @@ func (fake *FakeContainerServer) GetStoragePool(arg1 string) (*api.StoragePool, 
 	fake.getStoragePoolArgsForCall = append(fake.getStoragePoolArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetStoragePoolStub
+	fakeReturns := fake.getStoragePoolReturns
 	fake.recordInvocation("GetStoragePool", []interface{}{arg1})
 	fake.getStoragePoolMutex.Unlock()
-	if fake.GetStoragePoolStub != nil {
-		return fake.GetStoragePoolStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getStoragePoolReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11536,15 +11678,16 @@ func (fake *FakeContainerServer) GetStoragePoolNames() ([]string, error) {
 	ret, specificReturn := fake.getStoragePoolNamesReturnsOnCall[len(fake.getStoragePoolNamesArgsForCall)]
 	fake.getStoragePoolNamesArgsForCall = append(fake.getStoragePoolNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetStoragePoolNamesStub
+	fakeReturns := fake.getStoragePoolNamesReturns
 	fake.recordInvocation("GetStoragePoolNames", []interface{}{})
 	fake.getStoragePoolNamesMutex.Unlock()
-	if fake.GetStoragePoolNamesStub != nil {
-		return fake.GetStoragePoolNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11592,15 +11735,16 @@ func (fake *FakeContainerServer) GetStoragePoolResources(arg1 string) (*api.Reso
 	fake.getStoragePoolResourcesArgsForCall = append(fake.getStoragePoolResourcesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetStoragePoolResourcesStub
+	fakeReturns := fake.getStoragePoolResourcesReturns
 	fake.recordInvocation("GetStoragePoolResources", []interface{}{arg1})
 	fake.getStoragePoolResourcesMutex.Unlock()
-	if fake.GetStoragePoolResourcesStub != nil {
-		return fake.GetStoragePoolResourcesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolResourcesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11657,15 +11801,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolume(arg1 string, arg2 string, 
 		arg2 string
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.GetStoragePoolVolumeStub
+	fakeReturns := fake.getStoragePoolVolumeReturns
 	fake.recordInvocation("GetStoragePoolVolume", []interface{}{arg1, arg2, arg3})
 	fake.getStoragePoolVolumeMutex.Unlock()
-	if fake.GetStoragePoolVolumeStub != nil {
-		return fake.GetStoragePoolVolumeStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getStoragePoolVolumeReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11723,15 +11868,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNames(arg1 string) ([]strin
 	fake.getStoragePoolVolumeNamesArgsForCall = append(fake.getStoragePoolVolumeNamesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetStoragePoolVolumeNamesStub
+	fakeReturns := fake.getStoragePoolVolumeNamesReturns
 	fake.recordInvocation("GetStoragePoolVolumeNames", []interface{}{arg1})
 	fake.getStoragePoolVolumeNamesMutex.Unlock()
-	if fake.GetStoragePoolVolumeNamesStub != nil {
-		return fake.GetStoragePoolVolumeNamesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolVolumeNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11789,15 +11935,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshot(arg1 string, arg2 
 		arg3 string
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.GetStoragePoolVolumeSnapshotStub
+	fakeReturns := fake.getStoragePoolVolumeSnapshotReturns
 	fake.recordInvocation("GetStoragePoolVolumeSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.getStoragePoolVolumeSnapshotMutex.Unlock()
-	if fake.GetStoragePoolVolumeSnapshotStub != nil {
-		return fake.GetStoragePoolVolumeSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getStoragePoolVolumeSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -11857,15 +12004,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNames(arg1 string, 
 		arg2 string
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.GetStoragePoolVolumeSnapshotNamesStub
+	fakeReturns := fake.getStoragePoolVolumeSnapshotNamesReturns
 	fake.recordInvocation("GetStoragePoolVolumeSnapshotNames", []interface{}{arg1, arg2, arg3})
 	fake.getStoragePoolVolumeSnapshotNamesMutex.Unlock()
-	if fake.GetStoragePoolVolumeSnapshotNamesStub != nil {
-		return fake.GetStoragePoolVolumeSnapshotNamesStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolVolumeSnapshotNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11922,15 +12070,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshots(arg1 string, arg2
 		arg2 string
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.GetStoragePoolVolumeSnapshotsStub
+	fakeReturns := fake.getStoragePoolVolumeSnapshotsReturns
 	fake.recordInvocation("GetStoragePoolVolumeSnapshots", []interface{}{arg1, arg2, arg3})
 	fake.getStoragePoolVolumeSnapshotsMutex.Unlock()
-	if fake.GetStoragePoolVolumeSnapshotsStub != nil {
-		return fake.GetStoragePoolVolumeSnapshotsStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolVolumeSnapshotsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -11985,15 +12134,16 @@ func (fake *FakeContainerServer) GetStoragePoolVolumes(arg1 string) ([]api.Stora
 	fake.getStoragePoolVolumesArgsForCall = append(fake.getStoragePoolVolumesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetStoragePoolVolumesStub
+	fakeReturns := fake.getStoragePoolVolumesReturns
 	fake.recordInvocation("GetStoragePoolVolumes", []interface{}{arg1})
 	fake.getStoragePoolVolumesMutex.Unlock()
-	if fake.GetStoragePoolVolumesStub != nil {
-		return fake.GetStoragePoolVolumesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolVolumesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12047,15 +12197,16 @@ func (fake *FakeContainerServer) GetStoragePools() ([]api.StoragePool, error) {
 	ret, specificReturn := fake.getStoragePoolsReturnsOnCall[len(fake.getStoragePoolsArgsForCall)]
 	fake.getStoragePoolsArgsForCall = append(fake.getStoragePoolsArgsForCall, struct {
 	}{})
+	stub := fake.GetStoragePoolsStub
+	fakeReturns := fake.getStoragePoolsReturns
 	fake.recordInvocation("GetStoragePools", []interface{}{})
 	fake.getStoragePoolsMutex.Unlock()
-	if fake.GetStoragePoolsStub != nil {
-		return fake.GetStoragePoolsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getStoragePoolsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12103,15 +12254,16 @@ func (fake *FakeContainerServer) HasExtension(arg1 string) bool {
 	fake.hasExtensionArgsForCall = append(fake.hasExtensionArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.HasExtensionStub
+	fakeReturns := fake.hasExtensionReturns
 	fake.recordInvocation("HasExtension", []interface{}{arg1})
 	fake.hasExtensionMutex.Unlock()
-	if fake.HasExtensionStub != nil {
-		return fake.HasExtensionStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.hasExtensionReturns
 	return fakeReturns.result1
 }
 
@@ -12162,15 +12314,16 @@ func (fake *FakeContainerServer) IsClustered() bool {
 	ret, specificReturn := fake.isClusteredReturnsOnCall[len(fake.isClusteredArgsForCall)]
 	fake.isClusteredArgsForCall = append(fake.isClusteredArgsForCall, struct {
 	}{})
+	stub := fake.IsClusteredStub
+	fakeReturns := fake.isClusteredReturns
 	fake.recordInvocation("IsClustered", []interface{}{})
 	fake.isClusteredMutex.Unlock()
-	if fake.IsClusteredStub != nil {
-		return fake.IsClusteredStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.isClusteredReturns
 	return fakeReturns.result1
 }
 
@@ -12216,15 +12369,16 @@ func (fake *FakeContainerServer) MigrateContainer(arg1 string, arg2 api.Containe
 		arg1 string
 		arg2 api.ContainerPost
 	}{arg1, arg2})
+	stub := fake.MigrateContainerStub
+	fakeReturns := fake.migrateContainerReturns
 	fake.recordInvocation("MigrateContainer", []interface{}{arg1, arg2})
 	fake.migrateContainerMutex.Unlock()
-	if fake.MigrateContainerStub != nil {
-		return fake.MigrateContainerStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.migrateContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12281,15 +12435,16 @@ func (fake *FakeContainerServer) MigrateContainerSnapshot(arg1 string, arg2 stri
 		arg2 string
 		arg3 api.ContainerSnapshotPost
 	}{arg1, arg2, arg3})
+	stub := fake.MigrateContainerSnapshotStub
+	fakeReturns := fake.migrateContainerSnapshotReturns
 	fake.recordInvocation("MigrateContainerSnapshot", []interface{}{arg1, arg2, arg3})
 	fake.migrateContainerSnapshotMutex.Unlock()
-	if fake.MigrateContainerSnapshotStub != nil {
-		return fake.MigrateContainerSnapshotStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.migrateContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12345,15 +12500,16 @@ func (fake *FakeContainerServer) MigrateInstance(arg1 string, arg2 api.InstanceP
 		arg1 string
 		arg2 api.InstancePost
 	}{arg1, arg2})
+	stub := fake.MigrateInstanceStub
+	fakeReturns := fake.migrateInstanceReturns
 	fake.recordInvocation("MigrateInstance", []interface{}{arg1, arg2})
 	fake.migrateInstanceMutex.Unlock()
-	if fake.MigrateInstanceStub != nil {
-		return fake.MigrateInstanceStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.migrateInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12410,15 +12566,16 @@ func (fake *FakeContainerServer) MigrateInstanceSnapshot(arg1 string, arg2 strin
 		arg2 string
 		arg3 api.InstanceSnapshotPost
 	}{arg1, arg2, arg3})
+	stub := fake.MigrateInstanceSnapshotStub
+	fakeReturns := fake.migrateInstanceSnapshotReturns
 	fake.recordInvocation("MigrateInstanceSnapshot", []interface{}{arg1, arg2, arg3})
 	fake.migrateInstanceSnapshotMutex.Unlock()
-	if fake.MigrateInstanceSnapshotStub != nil {
-		return fake.MigrateInstanceSnapshotStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.migrateInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12474,15 +12631,16 @@ func (fake *FakeContainerServer) MigrateStoragePoolVolume(arg1 string, arg2 api.
 		arg1 string
 		arg2 api.StorageVolumePost
 	}{arg1, arg2})
+	stub := fake.MigrateStoragePoolVolumeStub
+	fakeReturns := fake.migrateStoragePoolVolumeReturns
 	fake.recordInvocation("MigrateStoragePoolVolume", []interface{}{arg1, arg2})
 	fake.migrateStoragePoolVolumeMutex.Unlock()
-	if fake.MigrateStoragePoolVolumeStub != nil {
-		return fake.MigrateStoragePoolVolumeStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.migrateStoragePoolVolumeReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12541,15 +12699,16 @@ func (fake *FakeContainerServer) MoveStoragePoolVolume(arg1 string, arg2 lxd.Ins
 		arg4 api.StorageVolume
 		arg5 *lxd.StoragePoolVolumeMoveArgs
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.MoveStoragePoolVolumeStub
+	fakeReturns := fake.moveStoragePoolVolumeReturns
 	fake.recordInvocation("MoveStoragePoolVolume", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.moveStoragePoolVolumeMutex.Unlock()
-	if fake.MoveStoragePoolVolumeStub != nil {
-		return fake.MoveStoragePoolVolumeStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.moveStoragePoolVolumeReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12607,15 +12766,16 @@ func (fake *FakeContainerServer) RawOperation(arg1 string, arg2 string, arg3 int
 		arg3 interface{}
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.RawOperationStub
+	fakeReturns := fake.rawOperationReturns
 	fake.recordInvocation("RawOperation", []interface{}{arg1, arg2, arg3, arg4})
 	fake.rawOperationMutex.Unlock()
-	if fake.RawOperationStub != nil {
-		return fake.RawOperationStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.rawOperationReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -12676,15 +12836,16 @@ func (fake *FakeContainerServer) RawQuery(arg1 string, arg2 string, arg3 interfa
 		arg3 interface{}
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.RawQueryStub
+	fakeReturns := fake.rawQueryReturns
 	fake.recordInvocation("RawQuery", []interface{}{arg1, arg2, arg3, arg4})
 	fake.rawQueryMutex.Unlock()
-	if fake.RawQueryStub != nil {
-		return fake.RawQueryStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.rawQueryReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -12742,15 +12903,16 @@ func (fake *FakeContainerServer) RawWebsocket(arg1 string) (*websocket.Conn, err
 	fake.rawWebsocketArgsForCall = append(fake.rawWebsocketArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.RawWebsocketStub
+	fakeReturns := fake.rawWebsocketReturns
 	fake.recordInvocation("RawWebsocket", []interface{}{arg1})
 	fake.rawWebsocketMutex.Unlock()
-	if fake.RawWebsocketStub != nil {
-		return fake.RawWebsocketStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.rawWebsocketReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12805,15 +12967,16 @@ func (fake *FakeContainerServer) RefreshImage(arg1 string) (lxd.Operation, error
 	fake.refreshImageArgsForCall = append(fake.refreshImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.RefreshImageStub
+	fakeReturns := fake.refreshImageReturns
 	fake.recordInvocation("RefreshImage", []interface{}{arg1})
 	fake.refreshImageMutex.Unlock()
-	if fake.RefreshImageStub != nil {
-		return fake.RefreshImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.refreshImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12869,15 +13032,16 @@ func (fake *FakeContainerServer) RenameClusterMember(arg1 string, arg2 api.Clust
 		arg1 string
 		arg2 api.ClusterMemberPost
 	}{arg1, arg2})
+	stub := fake.RenameClusterMemberStub
+	fakeReturns := fake.renameClusterMemberReturns
 	fake.recordInvocation("RenameClusterMember", []interface{}{arg1, arg2})
 	fake.renameClusterMemberMutex.Unlock()
-	if fake.RenameClusterMemberStub != nil {
-		return fake.RenameClusterMemberStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.renameClusterMemberReturns
 	return fakeReturns.result1
 }
 
@@ -12930,15 +13094,16 @@ func (fake *FakeContainerServer) RenameContainer(arg1 string, arg2 api.Container
 		arg1 string
 		arg2 api.ContainerPost
 	}{arg1, arg2})
+	stub := fake.RenameContainerStub
+	fakeReturns := fake.renameContainerReturns
 	fake.recordInvocation("RenameContainer", []interface{}{arg1, arg2})
 	fake.renameContainerMutex.Unlock()
-	if fake.RenameContainerStub != nil {
-		return fake.RenameContainerStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -12995,15 +13160,16 @@ func (fake *FakeContainerServer) RenameContainerBackup(arg1 string, arg2 string,
 		arg2 string
 		arg3 api.ContainerBackupPost
 	}{arg1, arg2, arg3})
+	stub := fake.RenameContainerBackupStub
+	fakeReturns := fake.renameContainerBackupReturns
 	fake.recordInvocation("RenameContainerBackup", []interface{}{arg1, arg2, arg3})
 	fake.renameContainerBackupMutex.Unlock()
-	if fake.RenameContainerBackupStub != nil {
-		return fake.RenameContainerBackupStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameContainerBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13060,15 +13226,16 @@ func (fake *FakeContainerServer) RenameContainerSnapshot(arg1 string, arg2 strin
 		arg2 string
 		arg3 api.ContainerSnapshotPost
 	}{arg1, arg2, arg3})
+	stub := fake.RenameContainerSnapshotStub
+	fakeReturns := fake.renameContainerSnapshotReturns
 	fake.recordInvocation("RenameContainerSnapshot", []interface{}{arg1, arg2, arg3})
 	fake.renameContainerSnapshotMutex.Unlock()
-	if fake.RenameContainerSnapshotStub != nil {
-		return fake.RenameContainerSnapshotStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13124,15 +13291,16 @@ func (fake *FakeContainerServer) RenameImageAlias(arg1 string, arg2 api.ImageAli
 		arg1 string
 		arg2 api.ImageAliasesEntryPost
 	}{arg1, arg2})
+	stub := fake.RenameImageAliasStub
+	fakeReturns := fake.renameImageAliasReturns
 	fake.recordInvocation("RenameImageAlias", []interface{}{arg1, arg2})
 	fake.renameImageAliasMutex.Unlock()
-	if fake.RenameImageAliasStub != nil {
-		return fake.RenameImageAliasStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.renameImageAliasReturns
 	return fakeReturns.result1
 }
 
@@ -13185,15 +13353,16 @@ func (fake *FakeContainerServer) RenameInstance(arg1 string, arg2 api.InstancePo
 		arg1 string
 		arg2 api.InstancePost
 	}{arg1, arg2})
+	stub := fake.RenameInstanceStub
+	fakeReturns := fake.renameInstanceReturns
 	fake.recordInvocation("RenameInstance", []interface{}{arg1, arg2})
 	fake.renameInstanceMutex.Unlock()
-	if fake.RenameInstanceStub != nil {
-		return fake.RenameInstanceStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13250,15 +13419,16 @@ func (fake *FakeContainerServer) RenameInstanceBackup(arg1 string, arg2 string, 
 		arg2 string
 		arg3 api.InstanceBackupPost
 	}{arg1, arg2, arg3})
+	stub := fake.RenameInstanceBackupStub
+	fakeReturns := fake.renameInstanceBackupReturns
 	fake.recordInvocation("RenameInstanceBackup", []interface{}{arg1, arg2, arg3})
 	fake.renameInstanceBackupMutex.Unlock()
-	if fake.RenameInstanceBackupStub != nil {
-		return fake.RenameInstanceBackupStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameInstanceBackupReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13315,15 +13485,16 @@ func (fake *FakeContainerServer) RenameInstanceSnapshot(arg1 string, arg2 string
 		arg2 string
 		arg3 api.InstanceSnapshotPost
 	}{arg1, arg2, arg3})
+	stub := fake.RenameInstanceSnapshotStub
+	fakeReturns := fake.renameInstanceSnapshotReturns
 	fake.recordInvocation("RenameInstanceSnapshot", []interface{}{arg1, arg2, arg3})
 	fake.renameInstanceSnapshotMutex.Unlock()
-	if fake.RenameInstanceSnapshotStub != nil {
-		return fake.RenameInstanceSnapshotStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13379,15 +13550,16 @@ func (fake *FakeContainerServer) RenameNetwork(arg1 string, arg2 api.NetworkPost
 		arg1 string
 		arg2 api.NetworkPost
 	}{arg1, arg2})
+	stub := fake.RenameNetworkStub
+	fakeReturns := fake.renameNetworkReturns
 	fake.recordInvocation("RenameNetwork", []interface{}{arg1, arg2})
 	fake.renameNetworkMutex.Unlock()
-	if fake.RenameNetworkStub != nil {
-		return fake.RenameNetworkStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.renameNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -13440,15 +13612,16 @@ func (fake *FakeContainerServer) RenameProfile(arg1 string, arg2 api.ProfilePost
 		arg1 string
 		arg2 api.ProfilePost
 	}{arg1, arg2})
+	stub := fake.RenameProfileStub
+	fakeReturns := fake.renameProfileReturns
 	fake.recordInvocation("RenameProfile", []interface{}{arg1, arg2})
 	fake.renameProfileMutex.Unlock()
-	if fake.RenameProfileStub != nil {
-		return fake.RenameProfileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.renameProfileReturns
 	return fakeReturns.result1
 }
 
@@ -13501,15 +13674,16 @@ func (fake *FakeContainerServer) RenameProject(arg1 string, arg2 api.ProjectPost
 		arg1 string
 		arg2 api.ProjectPost
 	}{arg1, arg2})
+	stub := fake.RenameProjectStub
+	fakeReturns := fake.renameProjectReturns
 	fake.recordInvocation("RenameProject", []interface{}{arg1, arg2})
 	fake.renameProjectMutex.Unlock()
-	if fake.RenameProjectStub != nil {
-		return fake.RenameProjectStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameProjectReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13567,15 +13741,16 @@ func (fake *FakeContainerServer) RenameStoragePoolVolume(arg1 string, arg2 strin
 		arg3 string
 		arg4 api.StorageVolumePost
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.RenameStoragePoolVolumeStub
+	fakeReturns := fake.renameStoragePoolVolumeReturns
 	fake.recordInvocation("RenameStoragePoolVolume", []interface{}{arg1, arg2, arg3, arg4})
 	fake.renameStoragePoolVolumeMutex.Unlock()
-	if fake.RenameStoragePoolVolumeStub != nil {
-		return fake.RenameStoragePoolVolumeStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.renameStoragePoolVolumeReturns
 	return fakeReturns.result1
 }
 
@@ -13631,15 +13806,16 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshot(arg1 string, ar
 		arg4 string
 		arg5 api.StorageVolumeSnapshotPost
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.RenameStoragePoolVolumeSnapshotStub
+	fakeReturns := fake.renameStoragePoolVolumeSnapshotReturns
 	fake.recordInvocation("RenameStoragePoolVolumeSnapshot", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.renameStoragePoolVolumeSnapshotMutex.Unlock()
-	if fake.RenameStoragePoolVolumeSnapshotStub != nil {
-		return fake.RenameStoragePoolVolumeSnapshotStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.renameStoragePoolVolumeSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13693,9 +13869,10 @@ func (fake *FakeContainerServer) RequireAuthenticated(arg1 bool) {
 	fake.requireAuthenticatedArgsForCall = append(fake.requireAuthenticatedArgsForCall, struct {
 		arg1 bool
 	}{arg1})
+	stub := fake.RequireAuthenticatedStub
 	fake.recordInvocation("RequireAuthenticated", []interface{}{arg1})
 	fake.requireAuthenticatedMutex.Unlock()
-	if fake.RequireAuthenticatedStub != nil {
+	if stub != nil {
 		fake.RequireAuthenticatedStub(arg1)
 	}
 }
@@ -13727,15 +13904,16 @@ func (fake *FakeContainerServer) SetContainerMetadata(arg1 string, arg2 api.Imag
 		arg2 api.ImageMetadata
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.SetContainerMetadataStub
+	fakeReturns := fake.setContainerMetadataReturns
 	fake.recordInvocation("SetContainerMetadata", []interface{}{arg1, arg2, arg3})
 	fake.setContainerMetadataMutex.Unlock()
-	if fake.SetContainerMetadataStub != nil {
-		return fake.SetContainerMetadataStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.setContainerMetadataReturns
 	return fakeReturns.result1
 }
 
@@ -13789,15 +13967,16 @@ func (fake *FakeContainerServer) SetInstanceMetadata(arg1 string, arg2 api.Image
 		arg2 api.ImageMetadata
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.SetInstanceMetadataStub
+	fakeReturns := fake.setInstanceMetadataReturns
 	fake.recordInvocation("SetInstanceMetadata", []interface{}{arg1, arg2, arg3})
 	fake.setInstanceMetadataMutex.Unlock()
-	if fake.SetInstanceMetadataStub != nil {
-		return fake.SetInstanceMetadataStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.setInstanceMetadataReturns
 	return fakeReturns.result1
 }
 
@@ -13851,15 +14030,16 @@ func (fake *FakeContainerServer) UpdateCertificate(arg1 string, arg2 api.Certifi
 		arg2 api.CertificatePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateCertificateStub
+	fakeReturns := fake.updateCertificateReturns
 	fake.recordInvocation("UpdateCertificate", []interface{}{arg1, arg2, arg3})
 	fake.updateCertificateMutex.Unlock()
-	if fake.UpdateCertificateStub != nil {
-		return fake.UpdateCertificateStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateCertificateReturns
 	return fakeReturns.result1
 }
 
@@ -13912,15 +14092,16 @@ func (fake *FakeContainerServer) UpdateCluster(arg1 api.ClusterPut, arg2 string)
 		arg1 api.ClusterPut
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.UpdateClusterStub
+	fakeReturns := fake.updateClusterReturns
 	fake.recordInvocation("UpdateCluster", []interface{}{arg1, arg2})
 	fake.updateClusterMutex.Unlock()
-	if fake.UpdateClusterStub != nil {
-		return fake.UpdateClusterStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateClusterReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -13977,15 +14158,16 @@ func (fake *FakeContainerServer) UpdateClusterMember(arg1 string, arg2 api.Clust
 		arg2 api.ClusterMemberPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateClusterMemberStub
+	fakeReturns := fake.updateClusterMemberReturns
 	fake.recordInvocation("UpdateClusterMember", []interface{}{arg1, arg2, arg3})
 	fake.updateClusterMemberMutex.Unlock()
-	if fake.UpdateClusterMemberStub != nil {
-		return fake.UpdateClusterMemberStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateClusterMemberReturns
 	return fakeReturns.result1
 }
 
@@ -14039,15 +14221,16 @@ func (fake *FakeContainerServer) UpdateContainer(arg1 string, arg2 api.Container
 		arg2 api.ContainerPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateContainerStub
+	fakeReturns := fake.updateContainerReturns
 	fake.recordInvocation("UpdateContainer", []interface{}{arg1, arg2, arg3})
 	fake.updateContainerMutex.Unlock()
-	if fake.UpdateContainerStub != nil {
-		return fake.UpdateContainerStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14105,15 +14288,16 @@ func (fake *FakeContainerServer) UpdateContainerSnapshot(arg1 string, arg2 strin
 		arg3 api.ContainerSnapshotPut
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.UpdateContainerSnapshotStub
+	fakeReturns := fake.updateContainerSnapshotReturns
 	fake.recordInvocation("UpdateContainerSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.updateContainerSnapshotMutex.Unlock()
-	if fake.UpdateContainerSnapshotStub != nil {
-		return fake.UpdateContainerSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateContainerSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14170,15 +14354,16 @@ func (fake *FakeContainerServer) UpdateContainerState(arg1 string, arg2 api.Cont
 		arg2 api.ContainerStatePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateContainerStateStub
+	fakeReturns := fake.updateContainerStateReturns
 	fake.recordInvocation("UpdateContainerState", []interface{}{arg1, arg2, arg3})
 	fake.updateContainerStateMutex.Unlock()
-	if fake.UpdateContainerStateStub != nil {
-		return fake.UpdateContainerStateStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateContainerStateReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14235,15 +14420,16 @@ func (fake *FakeContainerServer) UpdateContainerTemplateFile(arg1 string, arg2 s
 		arg2 string
 		arg3 io.ReadSeeker
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateContainerTemplateFileStub
+	fakeReturns := fake.updateContainerTemplateFileReturns
 	fake.recordInvocation("UpdateContainerTemplateFile", []interface{}{arg1, arg2, arg3})
 	fake.updateContainerTemplateFileMutex.Unlock()
-	if fake.UpdateContainerTemplateFileStub != nil {
-		return fake.UpdateContainerTemplateFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateContainerTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -14297,15 +14483,16 @@ func (fake *FakeContainerServer) UpdateImage(arg1 string, arg2 api.ImagePut, arg
 		arg2 api.ImagePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateImageStub
+	fakeReturns := fake.updateImageReturns
 	fake.recordInvocation("UpdateImage", []interface{}{arg1, arg2, arg3})
 	fake.updateImageMutex.Unlock()
-	if fake.UpdateImageStub != nil {
-		return fake.UpdateImageStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateImageReturns
 	return fakeReturns.result1
 }
 
@@ -14359,15 +14546,16 @@ func (fake *FakeContainerServer) UpdateImageAlias(arg1 string, arg2 api.ImageAli
 		arg2 api.ImageAliasesEntryPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateImageAliasStub
+	fakeReturns := fake.updateImageAliasReturns
 	fake.recordInvocation("UpdateImageAlias", []interface{}{arg1, arg2, arg3})
 	fake.updateImageAliasMutex.Unlock()
-	if fake.UpdateImageAliasStub != nil {
-		return fake.UpdateImageAliasStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateImageAliasReturns
 	return fakeReturns.result1
 }
 
@@ -14421,15 +14609,16 @@ func (fake *FakeContainerServer) UpdateInstance(arg1 string, arg2 api.InstancePu
 		arg2 api.InstancePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateInstanceStub
+	fakeReturns := fake.updateInstanceReturns
 	fake.recordInvocation("UpdateInstance", []interface{}{arg1, arg2, arg3})
 	fake.updateInstanceMutex.Unlock()
-	if fake.UpdateInstanceStub != nil {
-		return fake.UpdateInstanceStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateInstanceReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14487,15 +14676,16 @@ func (fake *FakeContainerServer) UpdateInstanceSnapshot(arg1 string, arg2 string
 		arg3 api.InstanceSnapshotPut
 		arg4 string
 	}{arg1, arg2, arg3, arg4})
+	stub := fake.UpdateInstanceSnapshotStub
+	fakeReturns := fake.updateInstanceSnapshotReturns
 	fake.recordInvocation("UpdateInstanceSnapshot", []interface{}{arg1, arg2, arg3, arg4})
 	fake.updateInstanceSnapshotMutex.Unlock()
-	if fake.UpdateInstanceSnapshotStub != nil {
-		return fake.UpdateInstanceSnapshotStub(arg1, arg2, arg3, arg4)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateInstanceSnapshotReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14552,15 +14742,16 @@ func (fake *FakeContainerServer) UpdateInstanceState(arg1 string, arg2 api.Insta
 		arg2 api.InstanceStatePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateInstanceStateStub
+	fakeReturns := fake.updateInstanceStateReturns
 	fake.recordInvocation("UpdateInstanceState", []interface{}{arg1, arg2, arg3})
 	fake.updateInstanceStateMutex.Unlock()
-	if fake.UpdateInstanceStateStub != nil {
-		return fake.UpdateInstanceStateStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.updateInstanceStateReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -14617,15 +14808,16 @@ func (fake *FakeContainerServer) UpdateInstanceTemplateFile(arg1 string, arg2 st
 		arg2 string
 		arg3 io.ReadSeeker
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateInstanceTemplateFileStub
+	fakeReturns := fake.updateInstanceTemplateFileReturns
 	fake.recordInvocation("UpdateInstanceTemplateFile", []interface{}{arg1, arg2, arg3})
 	fake.updateInstanceTemplateFileMutex.Unlock()
-	if fake.UpdateInstanceTemplateFileStub != nil {
-		return fake.UpdateInstanceTemplateFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateInstanceTemplateFileReturns
 	return fakeReturns.result1
 }
 
@@ -14679,15 +14871,16 @@ func (fake *FakeContainerServer) UpdateNetwork(arg1 string, arg2 api.NetworkPut,
 		arg2 api.NetworkPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateNetworkStub
+	fakeReturns := fake.updateNetworkReturns
 	fake.recordInvocation("UpdateNetwork", []interface{}{arg1, arg2, arg3})
 	fake.updateNetworkMutex.Unlock()
-	if fake.UpdateNetworkStub != nil {
-		return fake.UpdateNetworkStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateNetworkReturns
 	return fakeReturns.result1
 }
 
@@ -14741,15 +14934,16 @@ func (fake *FakeContainerServer) UpdateProfile(arg1 string, arg2 api.ProfilePut,
 		arg2 api.ProfilePut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateProfileStub
+	fakeReturns := fake.updateProfileReturns
 	fake.recordInvocation("UpdateProfile", []interface{}{arg1, arg2, arg3})
 	fake.updateProfileMutex.Unlock()
-	if fake.UpdateProfileStub != nil {
-		return fake.UpdateProfileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateProfileReturns
 	return fakeReturns.result1
 }
 
@@ -14803,15 +14997,16 @@ func (fake *FakeContainerServer) UpdateProject(arg1 string, arg2 api.ProjectPut,
 		arg2 api.ProjectPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateProjectStub
+	fakeReturns := fake.updateProjectReturns
 	fake.recordInvocation("UpdateProject", []interface{}{arg1, arg2, arg3})
 	fake.updateProjectMutex.Unlock()
-	if fake.UpdateProjectStub != nil {
-		return fake.UpdateProjectStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateProjectReturns
 	return fakeReturns.result1
 }
 
@@ -14864,15 +15059,16 @@ func (fake *FakeContainerServer) UpdateServer(arg1 api.ServerPut, arg2 string) e
 		arg1 api.ServerPut
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.UpdateServerStub
+	fakeReturns := fake.updateServerReturns
 	fake.recordInvocation("UpdateServer", []interface{}{arg1, arg2})
 	fake.updateServerMutex.Unlock()
-	if fake.UpdateServerStub != nil {
-		return fake.UpdateServerStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateServerReturns
 	return fakeReturns.result1
 }
 
@@ -14926,15 +15122,16 @@ func (fake *FakeContainerServer) UpdateStoragePool(arg1 string, arg2 api.Storage
 		arg2 api.StoragePoolPut
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.UpdateStoragePoolStub
+	fakeReturns := fake.updateStoragePoolReturns
 	fake.recordInvocation("UpdateStoragePool", []interface{}{arg1, arg2, arg3})
 	fake.updateStoragePoolMutex.Unlock()
-	if fake.UpdateStoragePoolStub != nil {
-		return fake.UpdateStoragePoolStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateStoragePoolReturns
 	return fakeReturns.result1
 }
 
@@ -14990,15 +15187,16 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolume(arg1 string, arg2 strin
 		arg4 api.StorageVolumePut
 		arg5 string
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.UpdateStoragePoolVolumeStub
+	fakeReturns := fake.updateStoragePoolVolumeReturns
 	fake.recordInvocation("UpdateStoragePoolVolume", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.updateStoragePoolVolumeMutex.Unlock()
-	if fake.UpdateStoragePoolVolumeStub != nil {
-		return fake.UpdateStoragePoolVolumeStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateStoragePoolVolumeReturns
 	return fakeReturns.result1
 }
 
@@ -15055,15 +15253,16 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshot(arg1 string, ar
 		arg5 api.StorageVolumeSnapshotPut
 		arg6 string
 	}{arg1, arg2, arg3, arg4, arg5, arg6})
+	stub := fake.UpdateStoragePoolVolumeSnapshotStub
+	fakeReturns := fake.updateStoragePoolVolumeSnapshotReturns
 	fake.recordInvocation("UpdateStoragePoolVolumeSnapshot", []interface{}{arg1, arg2, arg3, arg4, arg5, arg6})
 	fake.updateStoragePoolVolumeSnapshotMutex.Unlock()
-	if fake.UpdateStoragePoolVolumeSnapshotStub != nil {
-		return fake.UpdateStoragePoolVolumeSnapshotStub(arg1, arg2, arg3, arg4, arg5, arg6)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5, arg6)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.updateStoragePoolVolumeSnapshotReturns
 	return fakeReturns.result1
 }
 
@@ -15115,15 +15314,16 @@ func (fake *FakeContainerServer) UseProject(arg1 string) lxd.InstanceServer {
 	fake.useProjectArgsForCall = append(fake.useProjectArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.UseProjectStub
+	fakeReturns := fake.useProjectReturns
 	fake.recordInvocation("UseProject", []interface{}{arg1})
 	fake.useProjectMutex.Unlock()
-	if fake.UseProjectStub != nil {
-		return fake.UseProjectStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.useProjectReturns
 	return fakeReturns.result1
 }
 
@@ -15175,15 +15375,16 @@ func (fake *FakeContainerServer) UseTarget(arg1 string) lxd.InstanceServer {
 	fake.useTargetArgsForCall = append(fake.useTargetArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.UseTargetStub
+	fakeReturns := fake.useTargetReturns
 	fake.recordInvocation("UseTarget", []interface{}{arg1})
 	fake.useTargetMutex.Unlock()
-	if fake.UseTargetStub != nil {
-		return fake.UseTargetStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.useTargetReturns
 	return fakeReturns.result1
 }
 

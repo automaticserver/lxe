@@ -14,13 +14,60 @@ linters:
     - testpackage
     - godot
     - gofumpt
+    - exhaustive
+    - exhaustivestruct
+    - ifshort
+    - ireturn
+    - varnamelen
+    - gomoddirectives
+    # deprecated
+    - interfacer
+    - golint
+    - maligned
+    - scopelint
+    # TODO: fix and remove
+    - thelper
+    - wrapcheck
 
 issues:
   exclude-rules:
-  # Exclude some linters from running on tests files.
-  - path: _test\.go
-    linters:
-      - gocyclo
-      - errcheck
-      - dupl
-      - goerr113
+    # some linters in tests files
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - goerr113
+        - dogsled
+        - forcetypeassert
+    # file and dir permissions can be read by more or we would use umask
+    - text: "permissions to be 0[0-9]{3} or less"
+      linters:
+        - gosec
+    # magic number from persistent flags
+    - source: "(pflags\\.|PersistentFlags\\(\\)\\.)"
+      linters:
+        - gomnd
+    # magic number from cobra args definition
+    - source: "Args: +cobra\\."
+      linters:
+        - gomnd
+    # False positive: https://github.com/kunwardeep/paralleltest/issues/8
+    - text: "does not use range value in test Run"
+      linters:
+        - paralleltest
+    # Tests in cli cannot be run parallel as of now
+    - path: cli
+      linters:
+        - paralleltest
+    # Use a lot of base 10 conversions
+    - text: "Magic number: 10"
+      linters:
+        - gomnd
+    # And 32/64 bit sizes
+    - text: "Magic number: 32"
+      linters:
+        - gomnd
+    - text: "Magic number: 64"
+      linters:
+        - gomnd

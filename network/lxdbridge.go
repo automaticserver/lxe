@@ -45,7 +45,7 @@ type lxdBridgePlugin struct {
 }
 
 // InitPluginLXDBridge instantiates the LXDBridge plugin using the provided config
-func InitPluginLXDBridge(server lxd.ContainerServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint // intended to not export lxdBridgePlugin
+func InitPluginLXDBridge(server lxd.ContainerServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint, revive // intended to not export lxdBridgePlugin
 	conf.setDefaults()
 
 	p := &lxdBridgePlugin{
@@ -74,6 +74,7 @@ func (p *lxdBridgePlugin) PodNetwork(id string, annotations map[string]string) (
 func (p *lxdBridgePlugin) UpdateRuntimeConfig(conf *rtApi.RuntimeConfig) error {
 	if cidr := conf.GetNetworkConfig().GetPodCidr(); cidr != "" {
 		p.conf.Cidr = cidr
+
 		return p.ensureBridge()
 	}
 

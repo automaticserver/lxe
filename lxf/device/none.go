@@ -23,6 +23,7 @@ func (d *None) ToMap() (string, map[string]string) {
 // FromMap loads assigned name (can be empty) and options
 func (d *None) FromMap(name string, options map[string]string) error {
 	d.KeyName = name
+
 	return nil
 }
 

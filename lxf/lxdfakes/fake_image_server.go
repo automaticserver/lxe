@@ -226,9 +226,10 @@ func (fake *FakeImageServer) Disconnect() {
 	fake.disconnectMutex.Lock()
 	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
 	}{})
+	stub := fake.DisconnectStub
 	fake.recordInvocation("Disconnect", []interface{}{})
 	fake.disconnectMutex.Unlock()
-	if fake.DisconnectStub != nil {
+	if stub != nil {
 		fake.DisconnectStub()
 	}
 }
@@ -252,15 +253,16 @@ func (fake *FakeImageServer) ExportImage(arg1 string, arg2 api.ImageExportPost) 
 		arg1 string
 		arg2 api.ImageExportPost
 	}{arg1, arg2})
+	stub := fake.ExportImageStub
+	fakeReturns := fake.exportImageReturns
 	fake.recordInvocation("ExportImage", []interface{}{arg1, arg2})
 	fake.exportImageMutex.Unlock()
-	if fake.ExportImageStub != nil {
-		return fake.ExportImageStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.exportImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -314,15 +316,16 @@ func (fake *FakeImageServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
 	ret, specificReturn := fake.getConnectionInfoReturnsOnCall[len(fake.getConnectionInfoArgsForCall)]
 	fake.getConnectionInfoArgsForCall = append(fake.getConnectionInfoArgsForCall, struct {
 	}{})
+	stub := fake.GetConnectionInfoStub
+	fakeReturns := fake.getConnectionInfoReturns
 	fake.recordInvocation("GetConnectionInfo", []interface{}{})
 	fake.getConnectionInfoMutex.Unlock()
-	if fake.GetConnectionInfoStub != nil {
-		return fake.GetConnectionInfoStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getConnectionInfoReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -369,15 +372,16 @@ func (fake *FakeImageServer) GetHTTPClient() (*http.Client, error) {
 	ret, specificReturn := fake.getHTTPClientReturnsOnCall[len(fake.getHTTPClientArgsForCall)]
 	fake.getHTTPClientArgsForCall = append(fake.getHTTPClientArgsForCall, struct {
 	}{})
+	stub := fake.GetHTTPClientStub
+	fakeReturns := fake.getHTTPClientReturns
 	fake.recordInvocation("GetHTTPClient", []interface{}{})
 	fake.getHTTPClientMutex.Unlock()
-	if fake.GetHTTPClientStub != nil {
-		return fake.GetHTTPClientStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getHTTPClientReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -425,15 +429,16 @@ func (fake *FakeImageServer) GetImage(arg1 string) (*api.Image, string, error) {
 	fake.getImageArgsForCall = append(fake.getImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageStub
+	fakeReturns := fake.getImageReturns
 	fake.recordInvocation("GetImage", []interface{}{arg1})
 	fake.getImageMutex.Unlock()
-	if fake.GetImageStub != nil {
-		return fake.GetImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -491,15 +496,16 @@ func (fake *FakeImageServer) GetImageAlias(arg1 string) (*api.ImageAliasesEntry,
 	fake.getImageAliasArgsForCall = append(fake.getImageAliasArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageAliasStub
+	fakeReturns := fake.getImageAliasReturns
 	fake.recordInvocation("GetImageAlias", []interface{}{arg1})
 	fake.getImageAliasMutex.Unlock()
-	if fake.GetImageAliasStub != nil {
-		return fake.GetImageAliasStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageAliasReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -558,15 +564,16 @@ func (fake *FakeImageServer) GetImageAliasArchitectures(arg1 string, arg2 string
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetImageAliasArchitecturesStub
+	fakeReturns := fake.getImageAliasArchitecturesReturns
 	fake.recordInvocation("GetImageAliasArchitectures", []interface{}{arg1, arg2})
 	fake.getImageAliasArchitecturesMutex.Unlock()
-	if fake.GetImageAliasArchitecturesStub != nil {
-		return fake.GetImageAliasArchitecturesStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasArchitecturesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -620,15 +627,16 @@ func (fake *FakeImageServer) GetImageAliasNames() ([]string, error) {
 	ret, specificReturn := fake.getImageAliasNamesReturnsOnCall[len(fake.getImageAliasNamesArgsForCall)]
 	fake.getImageAliasNamesArgsForCall = append(fake.getImageAliasNamesArgsForCall, struct {
 	}{})
+	stub := fake.GetImageAliasNamesStub
+	fakeReturns := fake.getImageAliasNamesReturns
 	fake.recordInvocation("GetImageAliasNames", []interface{}{})
 	fake.getImageAliasNamesMutex.Unlock()
-	if fake.GetImageAliasNamesStub != nil {
-		return fake.GetImageAliasNamesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasNamesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -677,15 +685,16 @@ func (fake *FakeImageServer) GetImageAliasType(arg1 string, arg2 string) (*api.I
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetImageAliasTypeStub
+	fakeReturns := fake.getImageAliasTypeReturns
 	fake.recordInvocation("GetImageAliasType", []interface{}{arg1, arg2})
 	fake.getImageAliasTypeMutex.Unlock()
-	if fake.GetImageAliasTypeStub != nil {
-		return fake.GetImageAliasTypeStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getImageAliasTypeReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -742,15 +751,16 @@ func (fake *FakeImageServer) GetImageAliases() ([]api.ImageAliasesEntry, error) 
 	ret, specificReturn := fake.getImageAliasesReturnsOnCall[len(fake.getImageAliasesArgsForCall)]
 	fake.getImageAliasesArgsForCall = append(fake.getImageAliasesArgsForCall, struct {
 	}{})
+	stub := fake.GetImageAliasesStub
+	fakeReturns := fake.getImageAliasesReturns
 	fake.recordInvocation("GetImageAliases", []interface{}{})
 	fake.getImageAliasesMutex.Unlock()
-	if fake.GetImageAliasesStub != nil {
-		return fake.GetImageAliasesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageAliasesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -799,15 +809,16 @@ func (fake *FakeImageServer) GetImageFile(arg1 string, arg2 lxd.ImageFileRequest
 		arg1 string
 		arg2 lxd.ImageFileRequest
 	}{arg1, arg2})
+	stub := fake.GetImageFileStub
+	fakeReturns := fake.getImageFileReturns
 	fake.recordInvocation("GetImageFile", []interface{}{arg1, arg2})
 	fake.getImageFileMutex.Unlock()
-	if fake.GetImageFileStub != nil {
-		return fake.GetImageFileStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -861,15 +872,16 @@ func (fake *FakeImageServer) GetImageFingerprints() ([]string, error) {
 	ret, specificReturn := fake.getImageFingerprintsReturnsOnCall[len(fake.getImageFingerprintsArgsForCall)]
 	fake.getImageFingerprintsArgsForCall = append(fake.getImageFingerprintsArgsForCall, struct {
 	}{})
+	stub := fake.GetImageFingerprintsStub
+	fakeReturns := fake.getImageFingerprintsReturns
 	fake.recordInvocation("GetImageFingerprints", []interface{}{})
 	fake.getImageFingerprintsMutex.Unlock()
-	if fake.GetImageFingerprintsStub != nil {
-		return fake.GetImageFingerprintsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageFingerprintsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -917,15 +929,16 @@ func (fake *FakeImageServer) GetImageSecret(arg1 string) (string, error) {
 	fake.getImageSecretArgsForCall = append(fake.getImageSecretArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageSecretStub
+	fakeReturns := fake.getImageSecretReturns
 	fake.recordInvocation("GetImageSecret", []interface{}{arg1})
 	fake.getImageSecretMutex.Unlock()
-	if fake.GetImageSecretStub != nil {
-		return fake.GetImageSecretStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageSecretReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -979,15 +992,16 @@ func (fake *FakeImageServer) GetImages() ([]api.Image, error) {
 	ret, specificReturn := fake.getImagesReturnsOnCall[len(fake.getImagesArgsForCall)]
 	fake.getImagesArgsForCall = append(fake.getImagesArgsForCall, struct {
 	}{})
+	stub := fake.GetImagesStub
+	fakeReturns := fake.getImagesReturns
 	fake.recordInvocation("GetImages", []interface{}{})
 	fake.getImagesMutex.Unlock()
-	if fake.GetImagesStub != nil {
-		return fake.GetImagesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImagesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -1036,15 +1050,16 @@ func (fake *FakeImageServer) GetPrivateImage(arg1 string, arg2 string) (*api.Ima
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.GetPrivateImageStub
+	fakeReturns := fake.getPrivateImageReturns
 	fake.recordInvocation("GetPrivateImage", []interface{}{arg1, arg2})
 	fake.getPrivateImageMutex.Unlock()
-	if fake.GetPrivateImageStub != nil {
-		return fake.GetPrivateImageStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.getPrivateImageReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -1104,15 +1119,16 @@ func (fake *FakeImageServer) GetPrivateImageFile(arg1 string, arg2 string, arg3 
 		arg2 string
 		arg3 lxd.ImageFileRequest
 	}{arg1, arg2, arg3})
+	stub := fake.GetPrivateImageFileStub
+	fakeReturns := fake.getPrivateImageFileReturns
 	fake.recordInvocation("GetPrivateImageFile", []interface{}{arg1, arg2, arg3})
 	fake.getPrivateImageFileMutex.Unlock()
-	if fake.GetPrivateImageFileStub != nil {
-		return fake.GetPrivateImageFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getPrivateImageFileReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

@@ -53,6 +53,7 @@ func (d *Devices) Upsert(a Device) {
 
 		if eName == aName {
 			(*d)[k] = a
+
 			return
 		}
 	}

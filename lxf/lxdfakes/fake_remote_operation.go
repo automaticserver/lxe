@@ -64,15 +64,16 @@ func (fake *FakeRemoteOperation) AddHandler(arg1 func(api.Operation)) (*lxd.Even
 	fake.addHandlerArgsForCall = append(fake.addHandlerArgsForCall, struct {
 		arg1 func(api.Operation)
 	}{arg1})
+	stub := fake.AddHandlerStub
+	fakeReturns := fake.addHandlerReturns
 	fake.recordInvocation("AddHandler", []interface{}{arg1})
 	fake.addHandlerMutex.Unlock()
-	if fake.AddHandlerStub != nil {
-		return fake.AddHandlerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.addHandlerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -126,15 +127,16 @@ func (fake *FakeRemoteOperation) CancelTarget() error {
 	ret, specificReturn := fake.cancelTargetReturnsOnCall[len(fake.cancelTargetArgsForCall)]
 	fake.cancelTargetArgsForCall = append(fake.cancelTargetArgsForCall, struct {
 	}{})
+	stub := fake.CancelTargetStub
+	fakeReturns := fake.cancelTargetReturns
 	fake.recordInvocation("CancelTarget", []interface{}{})
 	fake.cancelTargetMutex.Unlock()
-	if fake.CancelTargetStub != nil {
-		return fake.CancelTargetStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.cancelTargetReturns
 	return fakeReturns.result1
 }
 
@@ -178,15 +180,16 @@ func (fake *FakeRemoteOperation) GetTarget() (*api.Operation, error) {
 	ret, specificReturn := fake.getTargetReturnsOnCall[len(fake.getTargetArgsForCall)]
 	fake.getTargetArgsForCall = append(fake.getTargetArgsForCall, struct {
 	}{})
+	stub := fake.GetTargetStub
+	fakeReturns := fake.getTargetReturns
 	fake.recordInvocation("GetTarget", []interface{}{})
 	fake.getTargetMutex.Unlock()
-	if fake.GetTargetStub != nil {
-		return fake.GetTargetStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getTargetReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -233,15 +236,16 @@ func (fake *FakeRemoteOperation) Wait() error {
 	ret, specificReturn := fake.waitReturnsOnCall[len(fake.waitArgsForCall)]
 	fake.waitArgsForCall = append(fake.waitArgsForCall, struct {
 	}{})
+	stub := fake.WaitStub
+	fakeReturns := fake.waitReturns
 	fake.recordInvocation("Wait", []interface{}{})
 	fake.waitMutex.Unlock()
-	if fake.WaitStub != nil {
-		return fake.WaitStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.waitReturns
 	return fakeReturns.result1
 }
 

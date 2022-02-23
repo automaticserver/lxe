@@ -57,7 +57,9 @@ func setLoggingBasic() error {
 var ErrUnknownLogTarget = errors.New("unknown log target defined")
 var ErrLogFilePathRequired = errors.New("log file path required")
 
-func setLoggingHook() error {
+const logFileMode = 0660
+
+func setLoggingHook() error { // nolint: cyclop
 	formatter, err := getFormatter(venom.GetString(fmt.Sprintf("log%vformat", keyDelimiter)))
 	if err != nil {
 		return err
@@ -76,7 +78,7 @@ func setLoggingHook() error {
 			return fmt.Errorf("%w, but was: %v", ErrLogFilePathRequired, filePath)
 		}
 
-		writer, err = os.OpenFile(filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0660)
+		writer, err = os.OpenFile(filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, logFileMode)
 		if err != nil {
 			return err
 		}

@@ -38,8 +38,10 @@ type Server struct {
 	criConfig *Config
 }
 
+const cniFileMode = 0660
+
 // NewServer creates the CRI server
-func NewServer(criConfig *Config) *Server {
+func NewServer(criConfig *Config) *Server { // nolint: cyclop
 	err := setDefaultLXDSocketPath(criConfig)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to find lxd socket")
@@ -84,7 +86,7 @@ func NewServer(criConfig *Config) *Server {
 				log.Fatal("cni output file path is required when target is set to file")
 			}
 
-			writer, err = os.OpenFile(criConfig.CNIOutputFile, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0660)
+			writer, err = os.OpenFile(criConfig.CNIOutputFile, os.O_CREATE|os.O_RDWR|os.O_APPEND, cniFileMode)
 			if err != nil {
 				log.WithError(err).Fatal("could not open cni output file")
 			}
@@ -198,7 +200,7 @@ func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInf
 	resp, err := handler(ctx, req)
 	if err != nil {
 		// Depending on the error type the logging is influenced
-		switch e := err.(type) {
+		switch e := err.(type) { // nolint: errorlint
 		// The AnnotatedError uses the provided logger entry to set fields of the actual logger
 		case AnnotatedError:
 			log.WithError(e.Err).WithFields(e.Log.Data).Error(fmt.Sprintf("%s: %s", method, e.Msg))
@@ -212,7 +214,7 @@ func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInf
 		// CodeExitError is a special wrapping of AnnotatedError and exec.CodeExitError
 		// TODO: this can be made better
 		case *exec.CodeExitError:
-			a, is := e.Err.(AnnotatedError)
+			a, is := e.Err.(AnnotatedError) // nolint: errorlint
 			if is {
 				log.WithError(a.Err).WithFields(a.Log.Data).Error(fmt.Sprintf("%s: %s", method, a.Msg))
 			} else {

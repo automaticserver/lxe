@@ -22,6 +22,8 @@ func testClient() (*client, *lxdfakes.FakeContainerServer) {
 }
 
 func TestClient_GetRuntimeInfo_Ok(t *testing.T) {
+	t.Parallel()
+
 	client, fake := testClient()
 	fake.GetServerReturns(&api.Server{
 		ServerUntrusted: api.ServerUntrusted{
@@ -36,6 +38,8 @@ func TestClient_GetRuntimeInfo_Ok(t *testing.T) {
 }
 
 func TestClient_GetRuntimeInfo_Error(t *testing.T) {
+	t.Parallel()
+
 	client, fake := testClient()
 	fake.GetServerReturns(nil, "", errors.New("some connection error"))
 

@@ -83,7 +83,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure the sandbox is in the ready state on
 // success
-func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit
+func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit, cyclop
 	log := log.WithContext(ctx).WithFields(logrus.Fields{
 		"podname":   req.GetConfig().GetMetadata().GetName(),
 		"namespace": req.GetConfig().GetMetadata().GetNamespace(),
@@ -421,7 +421,7 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 }
 
 // getInetAddress returns the ip address of the sandbox. empty string if nothing was found
-func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string {
+func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string { // nolint: cyclop
 	log := log.WithContext(ctx).WithField("podid", sb.ID)
 
 	switch sb.NetworkConfig.Mode {
@@ -429,6 +429,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 		ip, err := utilNet.ChooseHostInterface()
 		if err != nil {
 			log.WithError(err).Error("Couldn't choose host interface")
+
 			return ""
 		}
 
@@ -441,12 +442,14 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
 			log.WithError(err).Error("Couldn't get cni pod network")
+
 			return ""
 		}
 
 		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
 		if err != nil {
 			log.WithError(err).Error("Couldn't get status of cni pod network")
+
 			return ""
 		}
 
@@ -460,6 +463,7 @@ func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) stri
 	cl, err := sb.Containers()
 	if err != nil {
 		log.WithError(err).Error("Couldn't list containers while trying to get inet address")
+
 		return ""
 	}
 
@@ -527,7 +531,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 }
 
 // CreateContainer creates a new container in specified PodSandbox
-func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) {
+func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) { // nolint: cyclop
 	log := log.WithContext(ctx).WithFields(logrus.Fields{
 		"containername": req.GetConfig().GetMetadata().GetName(),
 		"attempt":       req.GetConfig().GetMetadata().GetAttempt(),
@@ -650,7 +654,6 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 }
 
 // StartContainer starts the container.
-// nolint: dupl
 func (s RuntimeServer) StartContainer(ctx context.Context, req *rtApi.StartContainerRequest) (*rtApi.StartContainerResponse, error) {
 	log := log.WithContext(ctx).WithField("containerid", req.GetContainerId())
 	log.Info("start container")
@@ -721,7 +724,7 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 }
 
 // ListContainers lists all containers by filters.
-func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContainersRequest) (*rtApi.ListContainersResponse, error) {
+func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContainersRequest) (*rtApi.ListContainersResponse, error) { // nolint: cyclop
 	log := log.WithContext(ctx).WithField("filter", req.GetFilter().String())
 
 	response := &rtApi.ListContainersResponse{}

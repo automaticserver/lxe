@@ -27,9 +27,9 @@ var (
 
 	cancelSignal = unix.SIGTERM
 
-	CodeExecOk      int32 = 0
+	CodeExecOk      int32 = 0 // nolint: revive
 	CodeExecError   int32 = 128
-	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // 128+15=143
+	CodeExecTimeout int32 = CodeExecError + int32(cancelSignal) // nolint: revive // 128+15=143
 )
 
 // Exec will start a command on the server and attach the provided streams. It will block till the command terminated

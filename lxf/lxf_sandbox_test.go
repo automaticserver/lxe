@@ -58,7 +58,7 @@ func TestClient_GetSandbox_Missing(t *testing.T) {
 
 	s, err := client.GetSandbox("foo")
 
-	var expected *Sandbox = nil
+	var expected *Sandbox
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)
@@ -74,7 +74,7 @@ func TestClient_GetSandbox_NonCri(t *testing.T) {
 
 	s, err := client.GetSandbox("foo")
 
-	var expected *Sandbox = nil
+	var expected *Sandbox
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)

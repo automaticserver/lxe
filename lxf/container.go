@@ -379,6 +379,7 @@ func (c *Container) apply() error {
 // CreateID creates a unique container id
 func (c *Container) CreateID() string {
 	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
+
 	return string(c.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
@@ -403,7 +404,7 @@ func (c *Container) GetInetAddress(ifs []string) string {
 	return ""
 }
 
-func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
+func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit, cyclop
 	// default values for new containers
 	if c.ID == "" {
 		c.Config[cfgState] = ContainerStateCreated.String()
@@ -464,7 +465,6 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit
 			}
 
 			if c.Resources.CPU.Quota != nil && *c.Resources.CPU.Quota > 0 && c.Resources.CPU.Period != nil && *c.Resources.CPU.Period > 0 {
-				// nolint:gomnd
 				config[cfgLimitCPUAllowance] = fmt.Sprintf("%dms/%dms",
 					int(math.Ceil(float64(*c.Resources.CPU.Quota)/1000)),
 					int(math.Ceil(float64(*c.Resources.CPU.Period)/1000)),

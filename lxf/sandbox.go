@@ -274,10 +274,11 @@ func (s *Sandbox) apply() error {
 // CreateID creates a unique profile id
 func (s *Sandbox) CreateID() string {
 	bin := md5.Sum([]byte(uuid.NewUUID())) // nolint: gosec
+
 	return string(s.Metadata.Name[0]) + b32lowerEncoder.EncodeToString(bin[:])[:15]
 }
 
-func makeSandboxConfig(s *Sandbox) (map[string]string, error) {
+func makeSandboxConfig(s *Sandbox) (map[string]string, error) { // nolint: cyclop
 	config := map[string]string{
 		cfgState:                    s.State.String(),
 		cfgIsCRI:                    strconv.FormatBool(true),

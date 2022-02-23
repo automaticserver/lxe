@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"os"
 	"os/signal"
 	"path"
@@ -90,13 +91,13 @@ func readConfig() {
 	err := venom.ReadInConfig()
 	if err != nil {
 		// if it was explicitly set from a parameter, show any error, otherwise show error only when it's not the not found error
-		_, is := err.(viper.ConfigFileNotFoundError)
-		if c != "" || !is {
+		var as *viper.ConfigFileNotFoundError
+		if c != "" || errors.As(err, &as) {
 			log.WithError(err).Fatal("unable to read config")
 		}
 
-		// else show a warning that no config file was loaded
-		//log.WithError(err).Warn("no config file was loaded")
+		// // else show a warning that no config file was loaded
+		// log.WithError(err).Warn("no config file was loaded")
 	} // nolint: wsl
 
 	// Reset config variable from config file, as this makes no sense to be able to override that from config files

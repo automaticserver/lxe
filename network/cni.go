@@ -60,7 +60,7 @@ type cniPlugin struct {
 }
 
 // InitPluginCNI instantiates the cni plugin using the provided config
-func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // intended to not export cniPlugin
+func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint, revive // intended to not export cniPlugin
 	conf.setDefaults()
 
 	exec := &invoke.DefaultExec{RawExec: &invoke.RawExec{Stderr: conf.OutputWriter}}
@@ -116,30 +116,35 @@ func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, err
 			confList, err = libcni.ConfListFromFile(confFile)
 			if err != nil {
 				warnings = fmt.Errorf("%v: %w, error loading CNI config list file %s", warnings, err, confFile)
+
 				continue
 			}
 		} else {
 			conf, err := libcni.ConfFromFile(confFile)
 			if err != nil {
 				warnings = fmt.Errorf("%v: %w, error loading CNI config file %s", warnings, err, confFile)
+
 				continue
 			}
 			// Ensure the config has a "type" so we know what plugin to run.
 			// Also catches the case where somebody put a conflist into a conf file.
 			if conf.Network.Type == "" {
 				warnings = fmt.Errorf("%w: error loading CNI config file %s: no 'type'; perhaps this is a .conflist?", warnings, confFile)
+
 				continue
 			}
 
 			confList, err = libcni.ConfListFromConf(conf)
 			if err != nil {
 				warnings = fmt.Errorf("%v: %w, error converting CNI config file %s to list", warnings, err, confFile)
+
 				continue
 			}
 		}
 
 		if len(confList.Plugins) == 0 {
 			warnings = fmt.Errorf("%w: CNI config list %s has no networks, skipping", warnings, confFile)
+
 			continue
 		}
 
@@ -209,6 +214,7 @@ func (s *cniPodNetwork) setup(ctx context.Context, netfile string) (types.Result
 // Teardown removes the network compeletely as good as possible
 func (s *cniPodNetwork) teardown(ctx context.Context) error {
 	s.runtimeConf.NetNS = ""
+
 	return s.plugin.cni.DelNetworkList(ctx, s.netList, s.runtimeConf)
 }
 

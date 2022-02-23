@@ -22,6 +22,8 @@ func testImageServer() (*ImageServer, *crifakes.FakeClient) {
 }
 
 func TestImageServer_PullImage(t *testing.T) {
+	t.Parallel()
+
 	s, fake := testImageServer()
 
 	fake.PullImageReturns("something", nil)

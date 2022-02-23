@@ -95,6 +95,7 @@ func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 		if ca.Name == alias {
 			if ca.Target == fingerprint {
 				alreadyCorrect = true
+
 				break
 			}
 
@@ -292,6 +293,7 @@ func convertDockerImageNameToLXC(inputName string) (string, error) {
 	re = regexp.MustCompile(`(.+?)/(.*)`)
 	if re.MatchString(inputName) {
 		match := re.FindStringSubmatch(inputName)
+
 		return match[1] + ":" + match[2], nil
 	}
 

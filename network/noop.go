@@ -1,3 +1,4 @@
+// nolint: nilnil
 package network
 
 import (
@@ -20,7 +21,7 @@ var (
 type noopPlugin struct{}
 
 // InitPluginNoop instantiates the noop plugin
-func InitPluginNoop() (*noopPlugin, error) { // nolint: golint // intended to not export
+func InitPluginNoop() (*noopPlugin, error) { // nolint: golint, revive // intended to not export
 	return &noopPlugin{}, nil
 }
 

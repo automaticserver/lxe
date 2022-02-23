@@ -216,15 +216,16 @@ func (fake *FakeClient) Exec(arg1 string, arg2 []string, arg3 io.ReadCloser, arg
 		arg8 int64
 		arg9 <-chan remotecommand.TerminalSize
 	}{arg1, arg2Copy, arg3, arg4, arg5, arg6, arg7, arg8, arg9})
+	stub := fake.ExecStub
+	fakeReturns := fake.execReturns
 	fake.recordInvocation("Exec", []interface{}{arg1, arg2Copy, arg3, arg4, arg5, arg6, arg7, arg8, arg9})
 	fake.execMutex.Unlock()
-	if fake.ExecStub != nil {
-		return fake.ExecStub(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.execReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -279,15 +280,16 @@ func (fake *FakeClient) GetContainer(arg1 string) (*lxf.Container, error) {
 	fake.getContainerArgsForCall = append(fake.getContainerArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetContainerStub
+	fakeReturns := fake.getContainerReturns
 	fake.recordInvocation("GetContainer", []interface{}{arg1})
 	fake.getContainerMutex.Unlock()
-	if fake.GetContainerStub != nil {
-		return fake.GetContainerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getContainerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -341,15 +343,16 @@ func (fake *FakeClient) GetFSPoolUsage() ([]lxf.FSPoolUsage, error) {
 	ret, specificReturn := fake.getFSPoolUsageReturnsOnCall[len(fake.getFSPoolUsageArgsForCall)]
 	fake.getFSPoolUsageArgsForCall = append(fake.getFSPoolUsageArgsForCall, struct {
 	}{})
+	stub := fake.GetFSPoolUsageStub
+	fakeReturns := fake.getFSPoolUsageReturns
 	fake.recordInvocation("GetFSPoolUsage", []interface{}{})
 	fake.getFSPoolUsageMutex.Unlock()
-	if fake.GetFSPoolUsageStub != nil {
-		return fake.GetFSPoolUsageStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getFSPoolUsageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -397,15 +400,16 @@ func (fake *FakeClient) GetImage(arg1 string) (*lxf.Image, error) {
 	fake.getImageArgsForCall = append(fake.getImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetImageStub
+	fakeReturns := fake.getImageReturns
 	fake.recordInvocation("GetImage", []interface{}{arg1})
 	fake.getImageMutex.Unlock()
-	if fake.GetImageStub != nil {
-		return fake.GetImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -459,15 +463,16 @@ func (fake *FakeClient) GetRuntimeInfo() (*lxf.RuntimeInfo, error) {
 	ret, specificReturn := fake.getRuntimeInfoReturnsOnCall[len(fake.getRuntimeInfoArgsForCall)]
 	fake.getRuntimeInfoArgsForCall = append(fake.getRuntimeInfoArgsForCall, struct {
 	}{})
+	stub := fake.GetRuntimeInfoStub
+	fakeReturns := fake.getRuntimeInfoReturns
 	fake.recordInvocation("GetRuntimeInfo", []interface{}{})
 	fake.getRuntimeInfoMutex.Unlock()
-	if fake.GetRuntimeInfoStub != nil {
-		return fake.GetRuntimeInfoStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getRuntimeInfoReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -515,15 +520,16 @@ func (fake *FakeClient) GetSandbox(arg1 string) (*lxf.Sandbox, error) {
 	fake.getSandboxArgsForCall = append(fake.getSandboxArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetSandboxStub
+	fakeReturns := fake.getSandboxReturns
 	fake.recordInvocation("GetSandbox", []interface{}{arg1})
 	fake.getSandboxMutex.Unlock()
-	if fake.GetSandboxStub != nil {
-		return fake.GetSandboxStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getSandboxReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -577,15 +583,16 @@ func (fake *FakeClient) GetServer() lxd.ContainerServer {
 	ret, specificReturn := fake.getServerReturnsOnCall[len(fake.getServerArgsForCall)]
 	fake.getServerArgsForCall = append(fake.getServerArgsForCall, struct {
 	}{})
+	stub := fake.GetServerStub
+	fakeReturns := fake.getServerReturns
 	fake.recordInvocation("GetServer", []interface{}{})
 	fake.getServerMutex.Unlock()
-	if fake.GetServerStub != nil {
-		return fake.GetServerStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.getServerReturns
 	return fakeReturns.result1
 }
 
@@ -629,15 +636,16 @@ func (fake *FakeClient) ListContainers() ([]*lxf.Container, error) {
 	ret, specificReturn := fake.listContainersReturnsOnCall[len(fake.listContainersArgsForCall)]
 	fake.listContainersArgsForCall = append(fake.listContainersArgsForCall, struct {
 	}{})
+	stub := fake.ListContainersStub
+	fakeReturns := fake.listContainersReturns
 	fake.recordInvocation("ListContainers", []interface{}{})
 	fake.listContainersMutex.Unlock()
-	if fake.ListContainersStub != nil {
-		return fake.ListContainersStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listContainersReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -685,15 +693,16 @@ func (fake *FakeClient) ListImages(arg1 string) ([]lxf.Image, error) {
 	fake.listImagesArgsForCall = append(fake.listImagesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.ListImagesStub
+	fakeReturns := fake.listImagesReturns
 	fake.recordInvocation("ListImages", []interface{}{arg1})
 	fake.listImagesMutex.Unlock()
-	if fake.ListImagesStub != nil {
-		return fake.ListImagesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listImagesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -747,15 +756,16 @@ func (fake *FakeClient) ListSandboxes() ([]*lxf.Sandbox, error) {
 	ret, specificReturn := fake.listSandboxesReturnsOnCall[len(fake.listSandboxesArgsForCall)]
 	fake.listSandboxesArgsForCall = append(fake.listSandboxesArgsForCall, struct {
 	}{})
+	stub := fake.ListSandboxesStub
+	fakeReturns := fake.listSandboxesReturns
 	fake.recordInvocation("ListSandboxes", []interface{}{})
 	fake.listSandboxesMutex.Unlock()
-	if fake.ListSandboxesStub != nil {
-		return fake.ListSandboxesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listSandboxesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -804,15 +814,16 @@ func (fake *FakeClient) NewContainer(arg1 string, arg2 ...string) *lxf.Container
 		arg1 string
 		arg2 []string
 	}{arg1, arg2})
+	stub := fake.NewContainerStub
+	fakeReturns := fake.newContainerReturns
 	fake.recordInvocation("NewContainer", []interface{}{arg1, arg2})
 	fake.newContainerMutex.Unlock()
-	if fake.NewContainerStub != nil {
-		return fake.NewContainerStub(arg1, arg2...)
+	if stub != nil {
+		return stub(arg1, arg2...)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.newContainerReturns
 	return fakeReturns.result1
 }
 
@@ -863,15 +874,16 @@ func (fake *FakeClient) NewSandbox() *lxf.Sandbox {
 	ret, specificReturn := fake.newSandboxReturnsOnCall[len(fake.newSandboxArgsForCall)]
 	fake.newSandboxArgsForCall = append(fake.newSandboxArgsForCall, struct {
 	}{})
+	stub := fake.NewSandboxStub
+	fakeReturns := fake.newSandboxReturns
 	fake.recordInvocation("NewSandbox", []interface{}{})
 	fake.newSandboxMutex.Unlock()
-	if fake.NewSandboxStub != nil {
-		return fake.NewSandboxStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.newSandboxReturns
 	return fakeReturns.result1
 }
 
@@ -916,15 +928,16 @@ func (fake *FakeClient) PullImage(arg1 string) (string, error) {
 	fake.pullImageArgsForCall = append(fake.pullImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.PullImageStub
+	fakeReturns := fake.pullImageReturns
 	fake.recordInvocation("PullImage", []interface{}{arg1})
 	fake.pullImageMutex.Unlock()
-	if fake.PullImageStub != nil {
-		return fake.PullImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.pullImageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -979,15 +992,16 @@ func (fake *FakeClient) RemoveImage(arg1 string) error {
 	fake.removeImageArgsForCall = append(fake.removeImageArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.RemoveImageStub
+	fakeReturns := fake.removeImageReturns
 	fake.recordInvocation("RemoveImage", []interface{}{arg1})
 	fake.removeImageMutex.Unlock()
-	if fake.RemoveImageStub != nil {
-		return fake.RemoveImageStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.removeImageReturns
 	return fakeReturns.result1
 }
 
@@ -1038,9 +1052,10 @@ func (fake *FakeClient) SetEventHandler(arg1 lxf.EventHandler) {
 	fake.setEventHandlerArgsForCall = append(fake.setEventHandlerArgsForCall, struct {
 		arg1 lxf.EventHandler
 	}{arg1})
+	stub := fake.SetEventHandlerStub
 	fake.recordInvocation("SetEventHandler", []interface{}{arg1})
 	fake.setEventHandlerMutex.Unlock()
-	if fake.SetEventHandlerStub != nil {
+	if stub != nil {
 		fake.SetEventHandlerStub(arg1)
 	}
 }

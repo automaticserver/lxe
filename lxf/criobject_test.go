@@ -83,10 +83,12 @@ func TestIsCRIPointer(t *testing.T) {
 
 func satisfyContainerCri(ct *api.Container) *api.Container {
 	ct.Config[cfgIsCRI] = "true"
+
 	return ct
 }
 
 func satisfyProfileCri(p *api.Profile) *api.Profile {
 	p.Config[cfgIsCRI] = "true"
+
 	return p
 }

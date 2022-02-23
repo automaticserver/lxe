@@ -2,7 +2,7 @@
 
 __prog_debug()
 {
-    if [[ -n ${BASH_COMP_DEBUG_FILE} ]]; then
+    if [[ -n ${BASH_COMP_DEBUG_FILE:-} ]]; then
         echo "$*" >> "${BASH_COMP_DEBUG_FILE}"
     fi
 }
@@ -40,6 +40,12 @@ __prog_handle_go_custom_completion()
 {
     __prog_debug "${FUNCNAME[0]}: cur is ${cur}, words[*] is ${words[*]}, #words[@] is ${#words[@]}"
 
+    local shellCompDirectiveError=1
+    local shellCompDirectiveNoSpace=2
+    local shellCompDirectiveNoFileComp=4
+    local shellCompDirectiveFilterFileExt=8
+    local shellCompDirectiveFilterDirs=16
+
     local out requestComp lastParam lastChar comp directive args
 
     # Prepare the command to request completions for the program.
@@ -73,24 +79,50 @@ __prog_handle_go_custom_completion()
     __prog_debug "${FUNCNAME[0]}: the completion directive is: ${directive}"
     __prog_debug "${FUNCNAME[0]}: the completions are: ${out[*]}"
 
-    if [ $((directive & 1)) -ne 0 ]; then
+    if [ $((directive & shellCompDirectiveError)) -ne 0 ]; then
         # Error code.  No completion.
         __prog_debug "${FUNCNAME[0]}: received error from custom completion go code"
         return
     else
-        if [ $((directive & 2)) -ne 0 ]; then
+        if [ $((directive & shellCompDirectiveNoSpace)) -ne 0 ]; then
             if [[ $(type -t compopt) = "builtin" ]]; then
                 __prog_debug "${FUNCNAME[0]}: activating no space"
                 compopt -o nospace
             fi
         fi
-        if [ $((directive & 4)) -ne 0 ]; then
+        if [ $((directive & shellCompDirectiveNoFileComp)) -ne 0 ]; then
             if [[ $(type -t compopt) = "builtin" ]]; then
                 __prog_debug "${FUNCNAME[0]}: activating no file completion"
                 compopt +o default
             fi
         fi
+    fi
 
+    if [ $((directive & shellCompDirectiveFilterFileExt)) -ne 0 ]; then
+        # File extension filtering
+        local fullFilter filter filteringCmd
+        # Do not use quotes around the $out variable or else newline
+        # characters will be kept.
+        for filter in ${out[*]}; do
+            fullFilter+="$filter|"
+        done
+
+        filteringCmd="_filedir $fullFilter"
+        __prog_debug "File filtering command: $filteringCmd"
+        $filteringCmd
+    elif [ $((directive & shellCompDirectiveFilterDirs)) -ne 0 ]; then
+        # File completion for directories only
+        local subdir
+        # Use printf to strip any trailing newline
+        subdir=$(printf "%s" "${out[0]}")
+        if [ -n "$subdir" ]; then
+            __prog_debug "Listing directories in $subdir"
+            __prog_handle_subdirs_in_dir_flag "$subdir"
+        else
+            __prog_debug "Listing directories in ."
+            _filedir -d
+        fi
+    else
         while IFS='' read -r comp; do
             COMPREPLY+=("$comp")
         done < <(compgen -W "${out[*]}" -- "$cur")
@@ -133,13 +165,19 @@ __prog_handle_reply()
                     PREFIX=""
                     cur="${cur#*=}"
                     ${flags_completion[${index}]}
-                    if [ -n "${ZSH_VERSION}" ]; then
+                    if [ -n "${ZSH_VERSION:-}" ]; then
                         # zsh completion needs --flag= prefix
                         eval "COMPREPLY=( \"\${COMPREPLY[@]/#/${flag}=}\" )"
                     fi
                 fi
             fi
-            return 0;
+
+            if [[ -z "${flag_parsing_disabled}" ]]; then
+                # If flag parsing is enabled, we have completed the flags and can return.
+                # If flag parsing is disabled, we may not know all (or any) of the flags, so we fallthrough
+                # to possibly call handle_go_custom_completion.
+                return 0;
+            fi
             ;;
     esac
 
@@ -159,10 +197,9 @@ __prog_handle_reply()
     local completions
     completions=("${commands[@]}")
     if [[ ${#must_have_one_noun[@]} -ne 0 ]]; then
-        completions=("${must_have_one_noun[@]}")
+        completions+=("${must_have_one_noun[@]}")
     elif [[ -n "${has_completion_function}" ]]; then
         # if a go completion function is provided, defer to that function
-        completions=()
         __prog_handle_go_custom_completion
     fi
     if [[ ${#must_have_one_flag[@]} -ne 0 ]]; then
@@ -179,13 +216,13 @@ __prog_handle_reply()
     fi
 
     if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
-		if declare -F __prog_custom_func >/dev/null; then
-			# try command name qualified custom func
-			__prog_custom_func
-		else
-			# otherwise fall back to unqualified for compatibility
-			declare -F __custom_func >/dev/null && __custom_func
-		fi
+        if declare -F __prog_custom_func >/dev/null; then
+            # try command name qualified custom func
+            __prog_custom_func
+        else
+            # otherwise fall back to unqualified for compatibility
+            declare -F __custom_func >/dev/null && __custom_func
+        fi
     fi
 
     # available in bash-completion >= 2, not always present on macOS
@@ -219,7 +256,7 @@ __prog_handle_flag()
 
     # if a command required a flag, and we found it, unset must_have_one_flag()
     local flagname=${words[c]}
-    local flagvalue
+    local flagvalue=""
     # if the word contained an =
     if [[ ${words[c]} == *"="* ]]; then
         flagvalue=${flagname#*=} # take in as flagvalue after the =
@@ -238,7 +275,7 @@ __prog_handle_flag()
 
     # keep flag value with flagname as flaghash
     # flaghash variable is an associative array which is only supported in bash > 3.
-    if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+    if [[ -z "${BASH_VERSION:-}" || "${BASH_VERSINFO[0]:-}" -gt 3 ]]; then
         if [ -n "${flagvalue}" ] ; then
             flaghash[${flagname}]=${flagvalue}
         elif [ -n "${words[ $((c+1)) ]}" ] ; then
@@ -250,7 +287,7 @@ __prog_handle_flag()
 
     # skip the argument to a two word flag
     if [[ ${words[c]} != *"="* ]] && __prog_contains_word "${words[c]}" "${two_word_flags[@]}"; then
-			  __prog_debug "${FUNCNAME[0]}: found a flag ${words[c]}, skip the next argument"
+        __prog_debug "${FUNCNAME[0]}: found a flag ${words[c]}, skip the next argument"
         c=$((c+1))
         # if we are looking for a flags value, don't show commands
         if [[ $c -eq $cword ]]; then
@@ -310,7 +347,7 @@ __prog_handle_word()
         __prog_handle_command
     elif __prog_contains_word "${words[c]}" "${command_aliases[@]}"; then
         # aliashash variable is an associative array which is only supported in bash > 3.
-        if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+        if [[ -z "${BASH_VERSION:-}" || "${BASH_VERSINFO[0]:-}" -gt 3 ]]; then
             words[c]=${aliashash[${words[c]}]}
             __prog_handle_command
         else
@@ -339,6 +376,7 @@ _prog_completion_bash()
     flags+=("--help")
     flags+=("-h")
     local_nonpersistent_flags+=("--help")
+    local_nonpersistent_flags+=("-h")
     flags+=("--abool")
     flags+=("--abytes=")
     two_word_flags+=("--abytes")
@@ -653,6 +691,7 @@ _prog_config_show()
     must_have_one_noun+=("prop")
     must_have_one_noun+=("properties")
     must_have_one_noun+=("props")
+    must_have_one_noun+=("tfvars")
     must_have_one_noun+=("toml")
     must_have_one_noun+=("yaml")
     must_have_one_noun+=("yml")
@@ -721,6 +760,71 @@ _prog_config()
 
     must_have_one_flag=()
     must_have_one_noun=()
+    noun_aliases=()
+}
+
+_prog_help()
+{
+    last_command="prog_help"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--abool")
+    flags+=("--abytes=")
+    two_word_flags+=("--abytes")
+    flags+=("--aduration=")
+    two_word_flags+=("--aduration")
+    flags+=("--afloat=")
+    two_word_flags+=("--afloat")
+    flags+=("--anint=")
+    two_word_flags+=("--anint")
+    flags+=("--anip=")
+    two_word_flags+=("--anip")
+    flags+=("--anipnet=")
+    two_word_flags+=("--anipnet")
+    flags+=("--astringslice=")
+    two_word_flags+=("--astringslice")
+    flags+=("--config=")
+    two_word_flags+=("--config")
+    two_word_flags+=("-c")
+    flags+=("--debug-address=")
+    two_word_flags+=("--debug-address")
+    flags+=("--debug-autostart")
+    flags+=("--log-file-path=")
+    two_word_flags+=("--log-file-path")
+    flags+=("--log-format=")
+    two_word_flags+=("--log-format")
+    flags+=("--log-level=")
+    two_word_flags+=("--log-level")
+    flags+=("--log-target=")
+    two_word_flags+=("--log-target")
+    flags+=("--remote-first=")
+    two_word_flags+=("--remote-first")
+    flags+=("--remote-second=")
+    two_word_flags+=("--remote-second")
+    flags+=("--short=")
+    two_word_flags+=("--short")
+    two_word_flags+=("-s")
+    flags+=("--store-another-sub-level=")
+    two_word_flags+=("--store-another-sub-level")
+    flags+=("--store-dir=")
+    two_word_flags+=("--store-dir")
+    two_word_flags+=("-S")
+    flags+=("--store-log-level=")
+    two_word_flags+=("--store-log-level")
+    two_word_flags+=("-L")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    has_completion_function=1
     noun_aliases=()
 }
 
@@ -796,15 +900,16 @@ _prog_root_command()
 
     commands=()
     commands+=("completion")
-    if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+    if [[ -z "${BASH_VERSION:-}" || "${BASH_VERSINFO[0]:-}" -gt 3 ]]; then
         command_aliases+=("compl")
         aliashash["compl"]="completion"
     fi
     commands+=("config")
-    if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+    if [[ -z "${BASH_VERSION:-}" || "${BASH_VERSINFO[0]:-}" -gt 3 ]]; then
         command_aliases+=("conf")
         aliashash["conf"]="config"
     fi
+    commands+=("help")
     commands+=("version")
 
     flags=()
@@ -867,7 +972,7 @@ _prog_root_command()
 
 __start_prog()
 {
-    local cur prev words cword
+    local cur prev words cword split
     declare -A flaghash 2>/dev/null || :
     declare -A aliashash 2>/dev/null || :
     if declare -F _init_completion >/dev/null 2>&1; then
@@ -877,17 +982,20 @@ __start_prog()
     fi
 
     local c=0
+    local flag_parsing_disabled=
     local flags=()
     local two_word_flags=()
     local local_nonpersistent_flags=()
     local flags_with_completion=()
     local flags_completion=()
     local commands=("prog")
+    local command_aliases=()
     local must_have_one_flag=()
     local must_have_one_noun=()
-    local has_completion_function
-    local last_command
+    local has_completion_function=""
+    local last_command=""
     local nouns=()
+    local noun_aliases=()
 
     __prog_handle_word
 }

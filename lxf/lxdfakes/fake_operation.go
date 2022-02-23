@@ -97,15 +97,16 @@ func (fake *FakeOperation) AddHandler(arg1 func(api.Operation)) (*lxd.EventTarge
 	fake.addHandlerArgsForCall = append(fake.addHandlerArgsForCall, struct {
 		arg1 func(api.Operation)
 	}{arg1})
+	stub := fake.AddHandlerStub
+	fakeReturns := fake.addHandlerReturns
 	fake.recordInvocation("AddHandler", []interface{}{arg1})
 	fake.addHandlerMutex.Unlock()
-	if fake.AddHandlerStub != nil {
-		return fake.AddHandlerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.addHandlerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -159,15 +160,16 @@ func (fake *FakeOperation) Cancel() error {
 	ret, specificReturn := fake.cancelReturnsOnCall[len(fake.cancelArgsForCall)]
 	fake.cancelArgsForCall = append(fake.cancelArgsForCall, struct {
 	}{})
+	stub := fake.CancelStub
+	fakeReturns := fake.cancelReturns
 	fake.recordInvocation("Cancel", []interface{}{})
 	fake.cancelMutex.Unlock()
-	if fake.CancelStub != nil {
-		return fake.CancelStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.cancelReturns
 	return fakeReturns.result1
 }
 
@@ -211,15 +213,16 @@ func (fake *FakeOperation) Get() api.Operation {
 	ret, specificReturn := fake.getReturnsOnCall[len(fake.getArgsForCall)]
 	fake.getArgsForCall = append(fake.getArgsForCall, struct {
 	}{})
+	stub := fake.GetStub
+	fakeReturns := fake.getReturns
 	fake.recordInvocation("Get", []interface{}{})
 	fake.getMutex.Unlock()
-	if fake.GetStub != nil {
-		return fake.GetStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.getReturns
 	return fakeReturns.result1
 }
 
@@ -264,15 +267,16 @@ func (fake *FakeOperation) GetWebsocket(arg1 string) (*websocket.Conn, error) {
 	fake.getWebsocketArgsForCall = append(fake.getWebsocketArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.GetWebsocketStub
+	fakeReturns := fake.getWebsocketReturns
 	fake.recordInvocation("GetWebsocket", []interface{}{arg1})
 	fake.getWebsocketMutex.Unlock()
-	if fake.GetWebsocketStub != nil {
-		return fake.GetWebsocketStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getWebsocketReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -326,15 +330,16 @@ func (fake *FakeOperation) Refresh() error {
 	ret, specificReturn := fake.refreshReturnsOnCall[len(fake.refreshArgsForCall)]
 	fake.refreshArgsForCall = append(fake.refreshArgsForCall, struct {
 	}{})
+	stub := fake.RefreshStub
+	fakeReturns := fake.refreshReturns
 	fake.recordInvocation("Refresh", []interface{}{})
 	fake.refreshMutex.Unlock()
-	if fake.RefreshStub != nil {
-		return fake.RefreshStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.refreshReturns
 	return fakeReturns.result1
 }
 
@@ -379,15 +384,16 @@ func (fake *FakeOperation) RemoveHandler(arg1 *lxd.EventTarget) error {
 	fake.removeHandlerArgsForCall = append(fake.removeHandlerArgsForCall, struct {
 		arg1 *lxd.EventTarget
 	}{arg1})
+	stub := fake.RemoveHandlerStub
+	fakeReturns := fake.removeHandlerReturns
 	fake.recordInvocation("RemoveHandler", []interface{}{arg1})
 	fake.removeHandlerMutex.Unlock()
-	if fake.RemoveHandlerStub != nil {
-		return fake.RemoveHandlerStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.removeHandlerReturns
 	return fakeReturns.result1
 }
 
@@ -438,15 +444,16 @@ func (fake *FakeOperation) Wait() error {
 	ret, specificReturn := fake.waitReturnsOnCall[len(fake.waitArgsForCall)]
 	fake.waitArgsForCall = append(fake.waitArgsForCall, struct {
 	}{})
+	stub := fake.WaitStub
+	fakeReturns := fake.waitReturns
 	fake.recordInvocation("Wait", []interface{}{})
 	fake.waitMutex.Unlock()
-	if fake.WaitStub != nil {
-		return fake.WaitStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.waitReturns
 	return fakeReturns.result1
 }
 

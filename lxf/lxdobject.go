@@ -12,9 +12,9 @@ type LXDObject struct {
 	// ETag uniquely identifies user modifiable content of this resource, prevents race conditions when saving
 	// see: https://lxd.readthedocs.io/en/latest/api-extensions/#etag
 	ETag string
-	// ETag uniquely identifies user modifiable content of the state of this resource, prevents race conditions when
-	// trying to modify the state
-	//Stateetag string
+	// // ETag uniquely identifies user modifiable content of the state of this resource, prevents race conditions when
+	// // trying to modify the state
+	// Stateetag string
 	// Devices
 	Devices device.Devices
 	// Config contains options not provided by a own property

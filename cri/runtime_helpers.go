@@ -187,6 +187,7 @@ func setDefaultLXDSocketPath(cfg *Config) error {
 
 		if fi.Mode()&os.ModeSocket == 0 {
 			log.WithField("file", fi.Name()).Debug("ignoring non socket file")
+
 			continue
 		}
 
@@ -206,6 +207,7 @@ func setDefaultLXDConfigPath(cfg *Config) error {
 
 	if os.Getenv("LXD_CONF") != "" {
 		cfg.LXDRemoteConfig = os.ExpandEnv(path.Join(os.Getenv("LXD_CONF"), "config.yml"))
+
 		return nil
 	}
 
@@ -232,6 +234,8 @@ func setDefaultLXDConfigPath(cfg *Config) error {
 	return fmt.Errorf("%w lxd remote config, provide --lxd-remote-config", ErrDetectDefault)
 }
 
+const defaultTimeoutContainerStop = 30
+
 func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
 	cl, err := sb.Containers()
 	if err != nil {
@@ -239,7 +243,7 @@ func (s RuntimeServer) stopContainers(sb *lxf.Sandbox) error {
 	}
 
 	for _, c := range cl {
-		err := s.stopContainer(c, 30)
+		err := s.stopContainer(c, defaultTimeoutContainerStop)
 		if err != nil {
 			return err
 		}

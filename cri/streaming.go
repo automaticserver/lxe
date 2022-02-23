@@ -28,7 +28,7 @@ type streamService struct {
 	streamServer  streaming.Server
 }
 
-func setupStreamService(criConfig *Config, runtime *RuntimeServer) error {
+func setupStreamService(criConfig *Config, runtime *RuntimeServer) error { // nolint: cyclop
 	sHost, sPort, err := net.SplitHostPort(criConfig.LXEStreamingBindAddr)
 	if err != nil {
 		return err

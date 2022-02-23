@@ -66,6 +66,8 @@ func Test_newProtocol(t *testing.T) {
 		tt := tt // pin!
 
 		t.Run("", func(t *testing.T) {
+			t.Parallel()
+
 			got, err := newProtocol(tt.input)
 			assert.False(t, (err != nil) != tt.wantErr)
 			assert.Equal(t, tt.want, got)
@@ -95,6 +97,8 @@ func TestNewProxyEndpoint(t *testing.T) {
 		tt := tt // pin!
 
 		t.Run("", func(t *testing.T) {
+			t.Parallel()
+
 			got, err := NewProxyEndpoint(tt.input)
 			assert.False(t, (err != nil) != tt.wantErr)
 			assert.Exactly(t, tt.want, got)

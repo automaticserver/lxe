@@ -121,8 +121,10 @@ func TestClient_Exec_Parallel(t *testing.T) {
 
 		fakeOp := &lxdfakes.FakeOperation{}
 		fakeOp.WaitReturns(nil)
-		returnCode, err := strconv.ParseFloat(arg2.Command[0], 10)
+
+		returnCode, err := strconv.ParseFloat(arg2.Command[0], 64)
 		assert.NoError(t, err)
+
 		fakeOp.GetReturns(lxdApi.Operation{
 			Metadata: map[string]interface{}{
 				"return": returnCode,

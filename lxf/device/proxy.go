@@ -68,7 +68,6 @@ func (d *Proxy) FromMap(name string, options map[string]string) error {
 // Protocol defines the type of a proxy endpoint
 type Protocol int
 
-// nolint: gomnd
 const (
 	// ProtocolUndefined is not a valid protocol
 	ProtocolUndefined = Protocol(0)

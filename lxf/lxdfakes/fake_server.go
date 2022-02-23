@@ -45,9 +45,10 @@ func (fake *FakeServer) Disconnect() {
 	fake.disconnectMutex.Lock()
 	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
 	}{})
+	stub := fake.DisconnectStub
 	fake.recordInvocation("Disconnect", []interface{}{})
 	fake.disconnectMutex.Unlock()
-	if fake.DisconnectStub != nil {
+	if stub != nil {
 		fake.DisconnectStub()
 	}
 }
@@ -69,15 +70,16 @@ func (fake *FakeServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
 	ret, specificReturn := fake.getConnectionInfoReturnsOnCall[len(fake.getConnectionInfoArgsForCall)]
 	fake.getConnectionInfoArgsForCall = append(fake.getConnectionInfoArgsForCall, struct {
 	}{})
+	stub := fake.GetConnectionInfoStub
+	fakeReturns := fake.getConnectionInfoReturns
 	fake.recordInvocation("GetConnectionInfo", []interface{}{})
 	fake.getConnectionInfoMutex.Unlock()
-	if fake.GetConnectionInfoStub != nil {
-		return fake.GetConnectionInfoStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getConnectionInfoReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -124,15 +126,16 @@ func (fake *FakeServer) GetHTTPClient() (*http.Client, error) {
 	ret, specificReturn := fake.getHTTPClientReturnsOnCall[len(fake.getHTTPClientArgsForCall)]
 	fake.getHTTPClientArgsForCall = append(fake.getHTTPClientArgsForCall, struct {
 	}{})
+	stub := fake.GetHTTPClientStub
+	fakeReturns := fake.getHTTPClientReturns
 	fake.recordInvocation("GetHTTPClient", []interface{}{})
 	fake.getHTTPClientMutex.Unlock()
-	if fake.GetHTTPClientStub != nil {
-		return fake.GetHTTPClientStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getHTTPClientReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

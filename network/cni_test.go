@@ -107,7 +107,7 @@ func Test_cniPlugin_UpdateRuntimeConfig(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	err := plugin.UpdateRuntimeConfig(nil)
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 // TODO: test getCNINetworkConfig

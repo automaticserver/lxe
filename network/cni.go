@@ -25,8 +25,7 @@ const (
 )
 
 var (
-	ErrNoUpdateRuntimeConfig = errors.New("cniPlugin can't update runtime config")
-	ErrNoNetworksFound       = errors.New("no valid networks found")
+	ErrNoNetworksFound = errors.New("no valid networks found")
 )
 
 // ConfCNI are configuration options for the cni plugin. All properties are optional and get a default value
@@ -89,8 +88,10 @@ func (p *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNet
 }
 
 // UpdateRuntimeConfig is called when there are updates to the configuration which the plugin might need to apply
+// According to cri-o https://github.com/cri-o/cri-o/blob/8d4d158935929800c4300b82eb4b5a83ded400f4/server/cri/v1/rpc_update_runtime_config.go
+// there is no need to apply the changes, just accept the call silently
 func (p *cniPlugin) UpdateRuntimeConfig(_ *rtApi.RuntimeConfig) error {
-	return ErrNoUpdateRuntimeConfig
+	return nil
 }
 
 // getCNINetworkConfig looks into the cni configuration dir for configs to load

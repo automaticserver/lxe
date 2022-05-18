@@ -13,7 +13,7 @@ import (
 	"github.com/automaticserver/lxe/network"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 	"k8s.io/utils/exec"
 )
 

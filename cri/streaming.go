@@ -11,12 +11,12 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/automaticserver/lxe/third_party/streaming"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
-	"k8s.io/kubernetes/pkg/kubelet/server/streaming"
 	utilExec "k8s.io/utils/exec"
 )
 

@@ -13,6 +13,19 @@ type FakeServer struct {
 	disconnectMutex       sync.RWMutex
 	disconnectArgsForCall []struct {
 	}
+	DoHTTPStub        func(*http.Request) (*http.Response, error)
+	doHTTPMutex       sync.RWMutex
+	doHTTPArgsForCall []struct {
+		arg1 *http.Request
+	}
+	doHTTPReturns struct {
+		result1 *http.Response
+		result2 error
+	}
+	doHTTPReturnsOnCall map[int]struct {
+		result1 *http.Response
+		result2 error
+	}
 	GetConnectionInfoStub        func() (*lxd.ConnectionInfo, error)
 	getConnectionInfoMutex       sync.RWMutex
 	getConnectionInfoArgsForCall []struct {
@@ -63,6 +76,70 @@ func (fake *FakeServer) DisconnectCalls(stub func()) {
 	fake.disconnectMutex.Lock()
 	defer fake.disconnectMutex.Unlock()
 	fake.DisconnectStub = stub
+}
+
+func (fake *FakeServer) DoHTTP(arg1 *http.Request) (*http.Response, error) {
+	fake.doHTTPMutex.Lock()
+	ret, specificReturn := fake.doHTTPReturnsOnCall[len(fake.doHTTPArgsForCall)]
+	fake.doHTTPArgsForCall = append(fake.doHTTPArgsForCall, struct {
+		arg1 *http.Request
+	}{arg1})
+	stub := fake.DoHTTPStub
+	fakeReturns := fake.doHTTPReturns
+	fake.recordInvocation("DoHTTP", []interface{}{arg1})
+	fake.doHTTPMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeServer) DoHTTPCallCount() int {
+	fake.doHTTPMutex.RLock()
+	defer fake.doHTTPMutex.RUnlock()
+	return len(fake.doHTTPArgsForCall)
+}
+
+func (fake *FakeServer) DoHTTPCalls(stub func(*http.Request) (*http.Response, error)) {
+	fake.doHTTPMutex.Lock()
+	defer fake.doHTTPMutex.Unlock()
+	fake.DoHTTPStub = stub
+}
+
+func (fake *FakeServer) DoHTTPArgsForCall(i int) *http.Request {
+	fake.doHTTPMutex.RLock()
+	defer fake.doHTTPMutex.RUnlock()
+	argsForCall := fake.doHTTPArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeServer) DoHTTPReturns(result1 *http.Response, result2 error) {
+	fake.doHTTPMutex.Lock()
+	defer fake.doHTTPMutex.Unlock()
+	fake.DoHTTPStub = nil
+	fake.doHTTPReturns = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeServer) DoHTTPReturnsOnCall(i int, result1 *http.Response, result2 error) {
+	fake.doHTTPMutex.Lock()
+	defer fake.doHTTPMutex.Unlock()
+	fake.DoHTTPStub = nil
+	if fake.doHTTPReturnsOnCall == nil {
+		fake.doHTTPReturnsOnCall = make(map[int]struct {
+			result1 *http.Response
+			result2 error
+		})
+	}
+	fake.doHTTPReturnsOnCall[i] = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *FakeServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
@@ -182,6 +259,8 @@ func (fake *FakeServer) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.disconnectMutex.RLock()
 	defer fake.disconnectMutex.RUnlock()
+	fake.doHTTPMutex.RLock()
+	defer fake.doHTTPMutex.RUnlock()
 	fake.getConnectionInfoMutex.RLock()
 	defer fake.getConnectionInfoMutex.RUnlock()
 	fake.getHTTPClientMutex.RLock()

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 var (

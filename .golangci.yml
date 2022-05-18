@@ -20,6 +20,8 @@ linters:
     - ireturn
     - varnamelen
     - gomoddirectives
+    - exhaustruct
+    - nonamedreturns
     # deprecated
     - interfacer
     - golint
@@ -34,12 +36,12 @@ issues:
     # some linters in tests files
     - path: _test\.go
       linters:
-        - gocyclo
-        - errcheck
-        - dupl
-        - goerr113
         - dogsled
+        - dupl
+        - errcheck
         - forcetypeassert
+        - gocyclo
+        - goerr113
     # file and dir permissions can be read by more or we would use umask
     - text: "permissions to be 0[0-9]{3} or less"
       linters:

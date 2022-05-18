@@ -1,5 +1,5 @@
 #!/bin/bash
-#ref: https://github.com/kubernetes/kubernetes/issues/79384#issuecomment-521493597
+#based on: https://github.com/kubernetes/kubernetes/issues/79384#issuecomment-521493597
 
 set -euo pipefail
 
@@ -17,6 +17,5 @@ for MOD in "${MODS[@]}"; do
         go mod download -json "${MOD}@kubernetes-${VERSION}" |
         sed -n 's|.*"Version": "\(.*\)".*|\1|p'
     )
-    go mod edit "-replace=${MOD}=${MOD}@${V}"
+    go get "${MOD}@${V}"
 done
-go get "k8s.io/kubernetes@v${VERSION}"

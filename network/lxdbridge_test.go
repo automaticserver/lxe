@@ -8,7 +8,7 @@ import (
 	lxd "github.com/lxc/lxd/client"
 	lxdApi "github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 const (

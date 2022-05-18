@@ -15,7 +15,7 @@ import (
 	"github.com/containernetworking/cni/pkg/invoke"
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 const (

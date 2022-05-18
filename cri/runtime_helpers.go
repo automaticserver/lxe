@@ -15,7 +15,7 @@ import (
 	sharedLXD "github.com/lxc/lxd/shared"
 	homedir "github.com/mitchellh/go-homedir"
 	"golang.org/x/net/context"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 func toCriStatusResponse(c *lxf.Container) *rtApi.ContainerStatusResponse {

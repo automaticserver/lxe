@@ -8,7 +8,7 @@ import (
 	"github.com/lxc/lxd/lxc/config"
 	sharedLXD "github.com/lxc/lxd/shared"
 	"golang.org/x/net/context"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 // ImageServer is the PoC implementation of the CRI ImageServer

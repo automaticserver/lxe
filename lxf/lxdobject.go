@@ -5,7 +5,6 @@ import "github.com/automaticserver/lxe/lxf/device"
 // LXDObject contains common properties of containers and sandboxes without CRI influence
 type LXDObject struct {
 	// client holds the lxf.Client representing as a lxd client
-	// nolint: structcheck
 	client *client
 	// ID is a unique generated ID and is read-only
 	ID string

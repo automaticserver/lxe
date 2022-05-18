@@ -13,13 +13,13 @@ import (
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/shared"
+	"github.com/automaticserver/lxe/third_party/ioutils"
 	"github.com/lxc/lxd/lxc/config"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
-	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
-	"k8s.io/kubernetes/pkg/kubelet/util/ioutils"
+	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
 const (

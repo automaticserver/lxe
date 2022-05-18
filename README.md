@@ -131,11 +131,21 @@ Now that you have LXE running on your system you can define the LXE socket as CR
 
 ## Installing LXE from source
 
-Currently LXE requires golang 1.13 or newer to be compiled and uses [Go Modules](https://github.com/golang/go/wiki/Modules). Clone this repo to your wished location.
+LXE requires golang 1.18.
+
+### Quick Installation
+
+Simply run:
+
+```bash
+go install github.com/automaticserver/lxe/cmd/lxe@latest
+```
+
+And the binary will be located in `$GOPATH/bin`
 
 ### Building & Tests
 
-Build this project using the following command, which will give you the binary in `./bin/`
+Clone this repo to your wished location. Build this project using the following command, which will give you the binary in `./bin/`
 
 ```bash
 make build
@@ -156,13 +166,13 @@ make lint
 
 To list all available make targets have a look at help target `make help`.
 
+## Examples
+
+Please have a look at the [multi node cluster guide](doc/examples/multi-node-cluster-with-k3s.md)
+
 ## Bug reports
 
 Bug reports can be filed at the [github issue tracker](https://github.com/automaticserver/lxe/issues/new)
-
-## Contributing
-
-Contribution guidelines are not yet defined.
 
 ## Documentation / FAQ
 

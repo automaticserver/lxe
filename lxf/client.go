@@ -85,6 +85,8 @@ func NewClient(socket string, configPath string) (Client, error) { // nolint: ir
 		return nil, err
 	}
 
+	log.WithField("remotes", config.Remotes).Debug("loaded remote config")
+
 	cl := &client{
 		config: config,
 		socket: socket,

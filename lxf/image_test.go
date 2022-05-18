@@ -1,98 +1,36 @@
 package lxf
 
-// func TestListImages(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	imgs := lt.listImages("")
-// 	if len(imgs) != 1 {
-// 		t.Errorf("expected one local image but there are %v", len(imgs))
-// 	}
-// }
+import (
+	"testing"
+)
 
-// func TestGetMissingImageRemote(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	img := lt.getImage("lala.com/foobar")
-// 	if img != nil {
-// 		t.Errorf("expected missing image to be nil but is %v", img)
-// 	}
-// }
-// func TestGetMissingImage(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	img := lt.getImage("critest.asag.io/foobar/lala")
-// 	if img != nil {
-// 		t.Errorf("expected missing image to be nil but is %v", img)
-// 	}
-// }
+func Test_convertDockerImageNameToLXC(t *testing.T) {
+	tests := []struct {
+		inputName string
+		want      string
+		wantErr   bool
+	}{
+		{"busybox", "busybox", false},
+		{"busybox:other", "busybox", false},
+		{"hub.example.io/busybox:other", "hub.example.io:busybox", false},
+		{"hub.example.io/someuser/images/busybox:other", "hub.example.io:someuser/images/busybox", false},
+		{"images/ubuntu/14.04", "images:ubuntu/14.04", false},
+		{"images/ubuntu/14.04:latest", "images:ubuntu/14.04", false},
+		{"missingremote/example/ubuntu/14.04", "missingremote:example/ubuntu/14.04", false},
+	}
+	for _, tt := range tests {
+		tt := tt
 
-// func TestGetImage(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	hash := lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	img := lt.getImage("critest.asag.io/cri-tools/test-image-1")
-// 	if img == nil {
-// 		t.Errorf("expected to find image but it's nil")
-// 	}
-// 	if hash != img.Hash {
-// 		t.Errorf("expected image to have same hash but they are different")
-// 	}
-// }
+		t.Run(tt.inputName, func(t *testing.T) {
+			got, err := convertDockerImageNameToLXC(tt.inputName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("convertDockerImageNameToLXC() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 
-// func TestGetImageByHash(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	hash := lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	img := lt.getImage(hash)
-// 	if img == nil {
-// 		t.Errorf("expected to find image by hash but it's nil")
-// 	}
-// }
-
-// func TestPullImage(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	imgs := lt.listImages("")
-// 	if len(imgs) != 2 {
-// 		t.Errorf("expected two local images but there are %v", len(imgs))
-// 	}
-// }
-
-// func TestFilterImage(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	imgs := lt.listImages("")
-// 	imgs = lt.listImages(imgs[1].Hash)
-// 	if len(imgs) != 1 {
-// 		t.Errorf("expected to get only one image but got %v", len(imgs))
-// 	}
-// }
-
-// func TestRemoveImage(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	lt.removeImage("critest.asag.io/cri-tools/test-image-1")
-
-// 	imgs := lt.listImages("")
-// 	if len(imgs) != 1 {
-// 		t.Errorf("expected one local image but there are %v", len(imgs))
-// 	}
-// }
-
-// func TestRemoveImageByHASH(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	hash := lt.pullImage("critest.asag.io/cri-tools/test-image-1")
-// 	lt.removeImage(hash)
-
-// 	imgs := lt.listImages("")
-// 	if len(imgs) != 1 {
-// 		t.Errorf("expected one local image but there are %v", len(imgs))
-// 	}
-// }
-
-// func TestPullBigImageCache(t *testing.T) {
-// 	lt := newLXFTest(t)
-// 	lt.pullImage("images/ubuntu/18.04")
-// 	start := time.Now()
-// 	lt.pullImage("images/ubuntu/18.04")
-// 	duration := time.Since(start)
-// 	if duration > time.Second {
-// 		t.Errorf("took to long (%v) to download big image which is already on target server",
-// 			duration)
-// 	}
-// }
+			if got != tt.want {
+				t.Errorf("convertDockerImageNameToLXC() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

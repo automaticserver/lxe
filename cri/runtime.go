@@ -353,7 +353,7 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 			log.WithError(err).Error("unable to delete networking: unable to enter pod network")
 		} else {
 			err := netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
-			if err == nil {
+			if err != nil {
 				log.WithError(err).Error("unable to delete networking: call to network plugin errored")
 			}
 		}

@@ -6,25 +6,25 @@ linters-settings:
 linters:
   enable-all: true
   disable:
-    - lll
+    - funlen
     - gochecknoglobals
     - gochecknoinits
-    - godox
-    - funlen
-    - testpackage
     - godot
+    - godox
     - gofumpt
+    - gomoddirectives
     - exhaustive
     - exhaustivestruct
+    - exhaustruct
     - ifshort
     - ireturn
-    - varnamelen
-    - gomoddirectives
-    - exhaustruct
+    - lll
     - nonamedreturns
+    - testpackage
+    - varnamelen
     # deprecated
-    - interfacer
     - golint
+    - interfacer
     - maligned
     - scopelint
     # TODO: fix and remove

@@ -1,6 +1,7 @@
 
 # LXE
 
+<!-- markdownlint-disable-next-line MD033 -->
 <img src="fixtures/logo/logo_lxe_150.png" align="right" title="LXE Logo">
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-go.svg)](https://forthebadge.com)
@@ -157,7 +158,7 @@ You can also run the program directly using:
 make run lxe -- --log-level info --network-plugin cni
 ```
 
-There are also tests available.
+There are also tests and lints available.
 
 ```bash
 make test

@@ -5,6 +5,8 @@ import (
 )
 
 func Test_convertDockerImageNameToLXC(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		inputName string
 		want      string
@@ -22,9 +24,12 @@ func Test_convertDockerImageNameToLXC(t *testing.T) {
 		tt := tt
 
 		t.Run(tt.inputName, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := convertDockerImageNameToLXC(tt.inputName)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("convertDockerImageNameToLXC() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 

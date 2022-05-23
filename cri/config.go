@@ -15,6 +15,10 @@ type Config struct {
 	LXDImageRemote string
 	// LXDProfiles which all cri containers inherit
 	LXDProfiles []string
+	// LXDBridgeName is the name of the bridge to create and use
+	LXDBridgeName string
+	// LXDBridgeDHCPRange to configure for bridge if NetworkPlugin is default
+	LXDBridgeDHCPRange string
 	// LXEStreamingBindAddr contains the listen address for the streaming server
 	LXEStreamingBindAddr string
 	// LXEStreamingBaseURL is the base address for constructing streaming URLs
@@ -23,10 +27,6 @@ type Config struct {
 	LXEHostnetworkFile string
 	// Which LXENetworkPlugin to use
 	LXENetworkPlugin string
-	// LXEBridgeName is the name of the bridge to create and use
-	LXEBridgeName string
-	// LXEBridgeDHCPRange to configure for lxebr0 if NetworkPlugin is default
-	LXEBridgeDHCPRange string
 	// CNIConfDir is the path where the cni configuration files are
 	CNIConfDir string
 	// CNIBinDir is the path where the cni plugins are

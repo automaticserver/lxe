@@ -38,7 +38,7 @@ func TestInitPluginLXDBridge_DefaultsAndCreate(t *testing.T) {
 	p, err := InitPluginLXDBridge(server, ConfLXDBridge{})
 	assert.NoError(t, err)
 	assert.Exactly(t, fake, p.server)
-	assert.NotEmpty(t, p.conf.LXDBridge, "lxebr0 is the the default")
+	assert.NotEmpty(t, p.conf.LXDBridge, "lxdbr0 is the the default")
 
 	assert.Equal(t, 1, fake.GetNetworkCallCount())
 	assert.Equal(t, 1, fake.CreateNetworkCallCount())

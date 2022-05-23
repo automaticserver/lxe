@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	DefaultLXDBridge = "lxebr0"
+	DefaultLXDBridge = "lxdbr0"
 )
 
 var (

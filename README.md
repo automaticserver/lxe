@@ -17,7 +17,7 @@ This project is currently under heavy development, expect incompatible changes.
 
 ## Requirements
 
-You need to have LXD 5.0 LTS installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). Debian is working on a LXD [deb package](https://wiki.debian.org/LXD), other distros might be as well. A LXD built by source is also supported.
+You need to have LXD installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). Debian is working on a LXD [deb package](https://wiki.debian.org/LXD), other distros might be as well. A LXD built by source is also supported.
 
 ## Installing LXE from packages
 
@@ -113,7 +113,7 @@ config = ""
 socket = "/run/lxe.sock"
 
 [bridge]
-  name = "lxebr0"
+  name = "lxdbr0"
 
   [bridge.dhcp]
     range = ""

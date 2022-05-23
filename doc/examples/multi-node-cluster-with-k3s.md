@@ -258,7 +258,7 @@ We're also going to reuse the default LXD bridge `lxdbr0` for now which LXD has 
 Start lxe with the obtained informations above and leave the terminal open:
 
 ```
-root@node2:~# /root/go/bin/lxe --lxd-socket /var/snap/lxd/common/lxd/unix.socket --socket /run/lxe.socket --lxd-remote-config /root/snap/lxd/common/config/config.yml --network-plugin bridge --bridge-name lxdbr0 --log-level info
+root@node2:~# /root/go/bin/lxe --socket /run/lxe.socket --log-level info
 WARNING[05-18|16:58:30.422] starting lxe...                               builddate=undef buildnumber=undef gitcommit=undef gittreestate=undef packagename=undef version=0.0.0
 INFO   [05-18|16:58:30.452] Connected to LXD                              lxdsocket=/var/snap/lxd/common/lxd/unix.socket
 INFO   [05-18|16:58:30.543] started lxe CRI shim                          socket=/run/lxe.socket

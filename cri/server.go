@@ -101,8 +101,8 @@ func NewServer(criConfig *Config) *Server { // nolint: cyclop
 		})
 	case NetworkPluginBridge:
 		netPlugin, err = network.InitPluginLXDBridge(client.GetServer(), network.ConfLXDBridge{
-			LXDBridge:  criConfig.LXEBridgeName,
-			Cidr:       criConfig.LXEBridgeDHCPRange,
+			LXDBridge:  criConfig.LXDBridgeName,
+			Cidr:       criConfig.LXDBridgeDHCPRange,
 			Nat:        true,
 			CreateOnly: true,
 		})

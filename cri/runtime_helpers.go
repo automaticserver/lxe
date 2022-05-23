@@ -163,6 +163,7 @@ var (
 		"/var/lib/lxd/unix.socket",
 	}
 	defaultLXDRemoteConfig = []string{
+		"~/snap/lxd/common/config/config.yml",
 		"~/snap/lxd/current/.config/lxc/config.yml",
 		"~/.config/lxc/config.yml",
 	}

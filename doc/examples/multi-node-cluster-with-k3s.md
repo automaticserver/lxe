@@ -4,9 +4,9 @@ In this step by step example we create a multinode kubernetes cluster with the h
 
 ## Preparations
 
-### Install LXD on the host and create 2 VMs
+Either already have 2 separate VMS ready or create those VMs with one host VM using LXD:
 
-This step can be skipped if you already have two VMs ready.
+### Install LXD on the host and create 2 VMs
 
 On the host [install or update LXD](https://linuxcontainers.org/lxd/getting-started-cli/#installing-a-package):
 
@@ -200,13 +200,13 @@ kube-system   traefik-df4ff85d6-jnh9r                   1/1     Running     0   
 [Install or update LXD](https://linuxcontainers.org/lxd/getting-started-cli/#installing-a-package) here as well:
 
 ```
-root@host:~# snap install lxd
+root@node2:~# snap install lxd
 snap "lxd" is already installed, see 'snap help refresh'
 
-root@host:~# snap refresh lxd
+root@node2:~# snap refresh lxd
 snap "lxd" has no updates available
 
-root@host:~# lxc version
+root@node2:~# lxc version
 Client version: 5.0.0
 Server version: 5.0.0
 ```
@@ -214,7 +214,7 @@ Server version: 5.0.0
 And initialize a [minimal LXD setup](https://linuxcontainers.org/lxd/getting-started-cli/#initial-configuration) here as well:
 
 ```
-root@host:~# lxd init --minimal
+root@node2:~# lxd init --minimal
 ```
 
 ## Install LXE
@@ -228,7 +228,7 @@ root@node2:~# apt-get install golang
 root@node2:~# go version
 go version go1.18.1 linux/amd64
 
-root@node2:~# go install github.com/automaticserver/lxe/cmd/lxe@v0.4.0-rc1
+root@node2:~# go install github.com/automaticserver/lxe/cmd/lxe@v0.4.0-rc2
 go: downloading ...
 [...]
 ```
@@ -237,7 +237,7 @@ Make sure you have run an lxc command at least once as the lxc command will gene
 
 > If this is your first time running LXD on this machine ...
 
-There should be a remote config file now in `/root/snap/lxd/common/config/config.yml` (For this guide we use the same remote config file in LXE. This way any additions to this file benefit both the root user and LXE):
+There should be a remote config file now in `/root/snap/lxd/common/config/config.yml` (Here we use the same remote config file in LXE. This way any additions to this file benefit both the root user and LXE):
 
 ```
 root@node2:~# cat /root/snap/lxd/common/config/config.yml
@@ -255,6 +255,19 @@ aliases: {}
 
 We're also going to reuse the default LXD bridge `lxdbr0` (for now) which LXD has created during initialisation.
 
+```
+root@node2:~# lxc network list
++--------+----------+---------+-----------------+---------------------------+-------------+---------+---------+
+|  NAME  |   TYPE   | MANAGED |      IPV4       |           IPV6            | DESCRIPTION | USED BY |  STATE  |
++--------+----------+---------+-----------------+---------------------------+-------------+---------+---------+
+| cni0   | bridge   | NO      |                 |                           |             | 0       |         |
++--------+----------+---------+-----------------+---------------------------+-------------+---------+---------+
+| enp5s0 | physical | NO      |                 |                           |             | 0       |         |
++--------+----------+---------+-----------------+---------------------------+-------------+---------+---------+
+| lxdbr0 | bridge   | YES     | 10.108.115.1/24 | fd42:5694:8d95:4f1c::1/64 |             | 1       | CREATED |
++--------+----------+---------+-----------------+---------------------------+-------------+---------+---------+
+```
+
 Start lxe with the obtained informations above and leave the terminal open:
 
 ```
@@ -264,6 +277,8 @@ INFO   [05-18|16:58:30.452] Connected to LXD                              lxdsoc
 INFO   [05-18|16:58:30.543] started lxe CRI shim                          socket=/run/lxe.sock
 INFO   [05-18|16:58:30.544] started streaming server                      baseurl="http://localhost:44124" endpoint="localhost:44124"
 ```
+
+## Set LXE as runtime
 
 In a new terminal session login again to the second node and now we configure the k3s agent to use some specific kubelet flags so it uses the LXE socket:
 
@@ -293,8 +308,10 @@ If we check with kubectl (from the first node) we can also see that the node is 
 ```
 root@node1:~# kubectl get node node2 -o wide
 NAME    STATUS   ROLES    AGE     VERSION        INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION    CONTAINER-RUNTIME
-node2   Ready    <none>   6m36s   v1.23.6+k3s1   10.4.147.154   <none>        Ubuntu 22.04 LTS   5.15.0-1005-kvm   lxe://0.0.0
+node2   Ready    <none>   8m10s   v1.23.6+k3s1   10.4.147.106   <none>        Ubuntu 22.04 LTS   5.15.0-1008-kvm   lxe://0.0.0
 ```
+
+## Launch the first pod
 
 We are ready to launch the first pod on LXD:
 
@@ -316,3 +333,40 @@ EOF
 
 pod/ubuntu created
 ```
+
+You'll see that kubelet is sending commands to LXE in its output:
+
+```
+INFO   [06-08|11:08:48.064] run pod                                       namespace=default podname=ubuntu poduid=ede51976-e988-4ae9-a9c0-6f0c5d0b26c1
+INFO   [06-08|11:08:48.387] run pod successful                            namespace=default podid=uk7h64y23ycwf7hs podname=ubuntu poduid=ede51976-e988-4ae9-a9c0-6f0c5d0b26c1
+INFO   [06-08|11:09:05.410] create container                              attempt=0 containername=ubuntu image=c73fb1ddeb3ba971b230e79565817cd5a8e6053bfa9526afe19cd10e3008f895 podid=uk7h64y23ycwf7hs
+INFO   [06-08|11:09:51.655] create container successful                   attempt=0 containername=ubuntu image=c73fb1ddeb3ba971b230e79565817cd5a8e6053bfa9526afe19cd10e3008f895 podid=uk7h64y23ycwf7hs
+INFO   [06-08|11:09:51.697] start container                               containerid=uetrgnza3i2rugcr
+INFO   [06-08|11:09:55.016] start container successful                    containerid=uetrgnza3i2rugcr
+```
+
+And kubernetes sees the pod as running:
+
+```
+root@node1:~# kubectl get pod ubuntu -o wide
+NAME     READY   STATUS    RESTARTS   AGE     IP              NODE    NOMINATED NODE   READINESS GATES
+ubuntu   1/1     Running   0          2m10s   10.108.115.23   node2   <none>           <none>
+```
+
+We can now exec into the pod and do stuff:
+
+```
+root@node1:~# kubectl exec -it ubuntu -- bash
+root@ubuntu:~# uptime
+ 11:12:07 up 2 min,  0 users,  load average: 0.60, 0.95, 0.69
+root@ubuntu:~# apt-get update && apt-get dist-upgrade
+[...]
+root@ubuntu:~# exit
+exit
+```
+
+## What's next?
+
+This example took a little shortcut in networking by using the default lxd bridge. Node administrators usually want to hook up these containers into the kubernetes networking setup using CNI, kubeproxy, flannel or whatever they use.
+
+LXE supports CNI by definining `--network-mode cni`. Ubuntu and Debian offer officially the package `containernetworking-plugins` for the standard CNI plugins. You either install and setup the appropriate networking services on the second node itself or create appropriate pods/daemonsets with either the finished prepared image or using cloud-init to install and setup those services. Using the former variant requires the pods to want host networking capability and for that LXE needs a little file prepared with `lxc.net.0.type=none` as content anywhere **persisted** for `--hostnetwork-file`, e.g. in `/var/lib/lxe/hostnetwork.conf`. See `lxe --help` for more info and further configuration options.

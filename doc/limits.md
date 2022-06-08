@@ -14,5 +14,3 @@ Kuberenetes has [specific resource limits section in the podspec](https://kubern
 | `spec.containers[].resources.limits.cpu`      | `limits.cpu.allowance`              | Translated into allowed cpu time usage. E.g. Kuberentes cpu limit of `1.5` or `1500m` cpu will result to `150ms/100ms`. |
 | `spec.containers[].resources.requests.memory` | - (not used)                        | -                                                                                                                       |
 | `spec.containers[].resources.limits.memory`   | `limits.memory`                     | -                                                                                                                       |
-
-(TODO: Apply `spec.containers[].resources.requests.cpu` to `limits.cpu.allowance` in percentage form? E.g. * Only set if limit is not set. Translated into scheduler priority relative to other containers when under load (simplified note). E.g. Kuberentes cpu request of `1` will result to `1`/`<amount-cpu>`%`. Difficult here is that it's the same field as for the limits...)

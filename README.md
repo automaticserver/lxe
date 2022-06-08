@@ -165,6 +165,8 @@ make test
 make lint
 ```
 
+For testing with [`critest` from cri-tools](https://github.com/kubernetes-sigs/cri-tools/) have a look in the [testing documentation](doc/testing.md).
+
 To list all available make targets have a look at help target `make help`.
 
 ## Examples

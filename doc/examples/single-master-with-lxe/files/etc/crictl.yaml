@@ -1,3 +1,0 @@
-runtime-endpoint: unix:///var/run/lxe.sock
-image-endpoint: unix:///var/run/lxe.sock
-timeout: 10

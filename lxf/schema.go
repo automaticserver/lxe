@@ -62,6 +62,12 @@ func IsSchemaCurrent(i interface{}) bool {
 		return val == SchemaVersionProfile
 	case *api.Profile:
 		return IsSchemaCurrent(*o)
+	// Images are always schema conform for now
+	case api.Image:
+		return true
+	case *api.Image:
+		return IsSchemaCurrent(*o)
+
 	default:
 		return false
 	}

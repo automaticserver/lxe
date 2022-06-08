@@ -35,4 +35,6 @@ type Config struct {
 	CNIOutputTarget string
 	// CNIOutputFile is the path to a file
 	CNIOutputFile string
+	// CRITest mode that enables rewriting of requested images as cri-tools only refer to OCI-images
+	CRITest bool
 }

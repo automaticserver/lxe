@@ -43,7 +43,7 @@ type CRIObject struct {
 }
 
 // IsCRI checks if a object is a cri object
-func IsCRI(i interface{}) bool {
+func (l *client) IsCRI(i interface{}) bool { // nolint: cyclop
 	if !IsSchemaCurrent(i) {
 		return false
 	}
@@ -59,13 +59,24 @@ func IsCRI(i interface{}) bool {
 			return false
 		}
 	case *api.Container:
-		return IsCRI(*o)
+		return l.IsCRI(*o)
 	case api.Profile:
 		if val, has = o.Config[cfgIsCRI]; !has {
 			return false
 		}
 	case *api.Profile:
-		return IsCRI(*o)
+		return l.IsCRI(*o)
+	case api.Image:
+		if l.critestMode {
+			return isCRITestImage(o)
+		}
+
+		if val, has = o.Properties[cfgIsCRI]; !has {
+			return false
+		}
+	case *api.Image:
+		return l.IsCRI(*o)
+
 	default:
 		return false
 	}

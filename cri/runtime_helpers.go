@@ -11,7 +11,6 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
-	"github.com/automaticserver/lxe/shared"
 	sharedLXD "github.com/lxc/lxd/shared"
 	homedir "github.com/mitchellh/go-homedir"
 	"golang.org/x/net/context"
@@ -227,7 +226,7 @@ func setDefaultLXDConfigPath(cfg *Config) error {
 			return fmt.Errorf("unable to check for existing lxd remote config: %w", err)
 		}
 
-		cfg.LXDSocket = f
+		cfg.LXDRemoteConfig = fh
 
 		return nil
 	}
@@ -261,7 +260,7 @@ func (s RuntimeServer) stopContainer(c *lxf.Container, timeout int) error {
 
 	err := c.Stop(timeout)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return nil
 		}
 
@@ -287,10 +286,11 @@ func (s RuntimeServer) deleteContainers(ctx context.Context, sb *lxf.Sandbox) er
 	return nil
 }
 
+// Delete container ignoring not found errors and cleaning up network
 func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) error {
 	err := c.Delete()
 	if err != nil {
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return nil
 		}
 
@@ -299,6 +299,10 @@ func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) er
 
 	sb, err := c.Sandbox()
 	if err != nil {
+		if lxf.IsNotFoundError(err) {
+			return nil
+		}
+
 		return err
 	}
 
@@ -309,6 +313,56 @@ func (s RuntimeServer) deleteContainer(ctx context.Context, c *lxf.Container) er
 			contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 			if err == nil { // dito
 				_ = contNet.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+			}
+		}
+	}
+
+	return nil
+}
+
+// Stop sandbox and network ignoring not found errors
+func (s RuntimeServer) stopSandbox(ctx context.Context, sb *lxf.Sandbox) error {
+	err := sb.Stop()
+	if err != nil {
+		if lxf.IsNotFoundError(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	// stop network
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
+		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
+			_ = netw.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+		}
+	}
+
+	return nil
+}
+
+// Delete sandbox and network ignoring not found errors
+func (s RuntimeServer) deleteSandbox(ctx context.Context, sb *lxf.Sandbox) error {
+	err := sb.Delete()
+	if err != nil {
+		if lxf.IsNotFoundError(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	// Delete networking
+	if sb.NetworkConfig.Mode != lxf.NetworkHost {
+		// report errors when trying to delete the network. still continue on an error
+		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
+		if err != nil {
+			log.WithError(err).Error("unable to delete networking: unable to enter pod network")
+		} else {
+			err := netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
+			if err != nil {
+				log.WithError(err).Error("unable to delete networking: call to network plugin errored")
 			}
 		}
 	}

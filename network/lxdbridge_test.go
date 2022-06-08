@@ -3,10 +3,10 @@ package network
 import (
 	"testing"
 
+	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
-	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
-	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
@@ -33,7 +33,7 @@ func TestInitPluginLXDBridge_DefaultsAndCreate(t *testing.T) {
 
 	server, fake := testLXDClient()
 
-	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
+	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	p, err := InitPluginLXDBridge(server, ConfLXDBridge{})
 	assert.NoError(t, err)
@@ -56,9 +56,9 @@ func TestInitPluginLXDBridge_DefinedAndUpdate(t *testing.T) {
 	cidr := "192.168.224.0/24"
 	cidrExp := "192.168.224.1/24"
 
-	fake.GetNetworkReturns(&lxdApi.Network{
+	fake.GetNetworkReturns(&api.Network{
 		Type: "bridge",
-		NetworkPut: lxdApi.NetworkPut{
+		NetworkPut: api.NetworkPut{
 			Config: make(map[string]string),
 		},
 	}, "", nil)
@@ -106,7 +106,7 @@ func Test_lxdBridgePlugin_UpdateRuntimeConfig(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
+	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.UpdateRuntimeConfig(&rtApi.RuntimeConfig{NetworkConfig: &rtApi.NetworkConfig{PodCidr: "192.168.224.0/24"}})
 	assert.NoError(t, err)
@@ -122,7 +122,7 @@ func Test_lxdBridgePlugin_ensureBridge_WrongNetworkTypeExists(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(&lxdApi.Network{Type: "other"}, "", nil)
+	fake.GetNetworkReturns(&api.Network{Type: "other"}, "", nil)
 
 	err := plugin.ensureBridge()
 	assert.Error(t, err)
@@ -136,7 +136,7 @@ func Test_lxdBridgePlugin_ensureBridge_CreateOnly(t *testing.T) {
 	plugin, fake := testLXDBridgePlugin()
 	plugin.conf.CreateOnly = true
 
-	fake.GetNetworkReturns(&lxdApi.Network{Type: "bridge", Name: testLXDBridge}, "", nil)
+	fake.GetNetworkReturns(&api.Network{Type: "bridge", Name: testLXDBridge}, "", nil)
 
 	err := plugin.ensureBridge()
 	assert.NoError(t, err)
@@ -151,7 +151,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeBridgeIP(t *testing.T) {
 	plugin.conf.Cidr = "192.168.224.0/24"
 	cidrExp := "192.168.224.1/24"
 
-	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
+	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.ensureBridge()
 	assert.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeAuto(t *testing.T) {
 	plugin, fake := testLXDBridgePlugin()
 	plugin.conf.Cidr = ""
 
-	fake.GetNetworkReturns(nil, "", shared.NewErrNotFound())
+	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.ensureBridge()
 	assert.NoError(t, err)
@@ -184,17 +184,17 @@ func Test_lxdBridgePlugin_findFreeIP_Simple(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(&lxdApi.Network{
+	fake.GetNetworkReturns(&api.Network{
 		Type: "bridge",
 		Name: testLXDBridge,
-		NetworkPut: lxdApi.NetworkPut{
+		NetworkPut: api.NetworkPut{
 			Config: map[string]string{
 				"ipv4.address":     "192.168.224.1/30",
 				"ipv4.dhcp.ranges": "",
 			},
 		},
 	}, "", nil)
-	fake.GetNetworkLeasesReturns([]lxdApi.NetworkLease{}, nil)
+	fake.GetNetworkLeasesReturns([]api.NetworkLease{}, nil)
 
 	ip, err := plugin.findFreeIP()
 	assert.NoError(t, err)
@@ -206,17 +206,17 @@ func Test_lxdBridgePlugin_findFreeIP_WithLeases(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(&lxdApi.Network{
+	fake.GetNetworkReturns(&api.Network{
 		Type: "bridge",
 		Name: testLXDBridge,
-		NetworkPut: lxdApi.NetworkPut{
+		NetworkPut: api.NetworkPut{
 			Config: map[string]string{
 				"ipv4.address":     "192.168.224.1/29",
 				"ipv4.dhcp.ranges": "",
 			},
 		},
 	}, "", nil)
-	fake.GetNetworkLeasesReturns([]lxdApi.NetworkLease{
+	fake.GetNetworkLeasesReturns([]api.NetworkLease{
 		{Address: "192.168.224.2"},
 		{Address: "192.168.224.3"},
 		{Address: "192.168.224.4"},
@@ -233,10 +233,10 @@ func Test_lxdBridgePlugin_findFreeIP_NoRangeSupportYet(t *testing.T) {
 
 	plugin, fake := testLXDBridgePlugin()
 
-	fake.GetNetworkReturns(&lxdApi.Network{
+	fake.GetNetworkReturns(&api.Network{
 		Type: "bridge",
 		Name: testLXDBridge,
-		NetworkPut: lxdApi.NetworkPut{
+		NetworkPut: api.NetworkPut{
 			Config: map[string]string{
 				"ipv4.address":     "192.168.224.1/29",
 				"ipv4.dhcp.ranges": "192.168.224.2-192.168.224.3,192.168.224.4-192.168.224.6",
@@ -304,17 +304,17 @@ func Test_lxdBridgePodNetwork_WhenCreated_Simple(t *testing.T) {
 
 	podNet, fake := testLXDBridgePodNetwork()
 
-	fake.GetNetworkReturns(&lxdApi.Network{
+	fake.GetNetworkReturns(&api.Network{
 		Type: "bridge",
 		Name: testLXDBridge,
-		NetworkPut: lxdApi.NetworkPut{
+		NetworkPut: api.NetworkPut{
 			Config: map[string]string{
 				"ipv4.address":     "192.168.224.1/30",
 				"ipv4.dhcp.ranges": "",
 			},
 		},
 	}, "", nil)
-	fake.GetNetworkLeasesReturns([]lxdApi.NetworkLease{}, nil)
+	fake.GetNetworkLeasesReturns([]api.NetworkLease{}, nil)
 
 	res, err := podNet.WhenCreated(ctx, &Properties{})
 	assert.NoError(t, err)

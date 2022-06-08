@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 )
@@ -54,7 +53,7 @@ func TestClient_GetSandbox_Missing(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetProfileReturns(nil, "", shared.NewErrNotFound())
+	fake.GetProfileReturns(nil, "", ErrNotFound)
 
 	s, err := client.GetSandbox("foo")
 
@@ -99,7 +98,7 @@ func TestClient_ListSandboxes_Error(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetProfilesReturns([]api.Profile{*basicProfile("foo"), *basicProfile("bar")}, shared.NewErrNotFound())
+	fake.GetProfilesReturns([]api.Profile{*basicProfile("foo"), *basicProfile("bar")}, ErrNotFound)
 
 	sl, err := client.ListSandboxes()
 	assert.Error(t, err)

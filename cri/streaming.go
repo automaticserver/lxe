@@ -15,6 +15,7 @@ import (
 	"github.com/docker/docker/pkg/pools"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/tools/remotecommand"
 	utilExec "k8s.io/utils/exec"
@@ -120,7 +121,7 @@ func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader,
 
 	if err != nil || code != 0 {
 		return &utilExec.CodeExitError{
-			Err:  AnnErr(log, err, "error executing command"),
+			Err:  AnnErr(log, codes.Unknown, err, "error executing command"),
 			Code: int(code),
 		}
 	}
@@ -133,14 +134,14 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 
 	sb, err := ss.runtimeServer.lxf.GetSandbox(podSandboxID)
 	if err != nil {
-		return AnnErr(log, err, "unable to find pod")
+		return AnnErr(log, codes.Unknown, err, "unable to find pod")
 	}
 
 	podIP := ss.runtimeServer.getInetAddress(context.TODO(), sb)
 
 	_, err = exec.LookPath("socat")
 	if err != nil {
-		return AnnErr(log, err, "unable to do port forwarding")
+		return AnnErr(log, codes.Unknown, err, "unable to do port forwarding")
 	}
 
 	args := []string{"-", fmt.Sprintf("TCP4:%s:%d,keepalive", podIP, port)}
@@ -162,7 +163,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 	// exits.
 	inPipe, err := command.StdinPipe()
 	if err != nil {
-		return AnnErr(log, err, "unable to do port forwarding")
+		return AnnErr(log, codes.Unknown, err, "unable to do port forwarding")
 	}
 
 	go func() {
@@ -179,7 +180,7 @@ func (ss streamService) PortForward(podSandboxID string, port int32, stream io.R
 
 	err = command.Run()
 	if err != nil {
-		return AnnErr(log, err, stderr.String())
+		return AnnErr(log, codes.Unknown, err, stderr.String())
 	}
 
 	return nil

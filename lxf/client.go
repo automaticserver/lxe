@@ -34,15 +34,17 @@ type Client interface {
 	GetRuntimeInfo() (*RuntimeInfo, error)
 	// SetEventHandler for container's starting and stopping events
 	SetEventHandler(eh EventHandler)
+	// SetCRITestMode enables the critest mode
+	SetCRITestMode()
 
 	// PullImage copies the given image from the remote server
-	PullImage(name string) (string, error)
-	// RemoveImage will remove the given image
-	RemoveImage(name string) error
-	// ListImages will list all local images from the lxd server
-	ListImages(filter string) ([]Image, error)
-	// GetImage will fetch information about the already downloaded image identified by name
-	GetImage(name string) (*Image, error)
+	PullImage(image string) (string, error)
+	// RemoveImage will remove a pulled image
+	RemoveImage(image string) error
+	// ListImages will list all pulled images
+	ListImages(filter string) ([]*Image, error)
+	// GetImage will fetch information about a pulled image
+	GetImage(image string) (*Image, error)
 	// GetFSPoolUsage returns a list of usage information about the used storage pools
 	GetFSPoolUsage() ([]FSPoolUsage, error)
 
@@ -76,6 +78,7 @@ type client struct {
 	opwait       *lxo.LXO
 	eventHandler EventHandler
 	socket       string
+	critestMode  bool
 }
 
 // NewClient will set up a connection and return the client
@@ -112,6 +115,16 @@ func (l *client) GetServer() lxd.ContainerServer {
 // SetEventHandler for container's starting and stopping events
 func (l *client) SetEventHandler(eh EventHandler) {
 	l.eventHandler = eh
+}
+
+// SetCRITestMode enables the critest mode
+func (l *client) SetCRITestMode() {
+	l.critestMode = true
+
+	err := l.createCRITestImages()
+	if err != nil {
+		log.WithError(err).Fatal("failed creating critest images")
+	}
 }
 
 type RuntimeInfo struct {
@@ -219,7 +232,7 @@ func (l *client) connect() error {
 	return nil
 }
 
-// detect if server needs to be connected again to. Seems to be needed if we get a lxd.RemoteOperation (e.g. in CopyImage), the op.Wait() never succeeds unless we have connected to the lxd socket again. All other lxd.Operations seem to work fine and wouldn't be needed for them.
+// Detect if server needs to be connected again to. Seems to be needed if we get a lxd.RemoteOperation (e.g. in CopyImage), the op.Wait() never succeeds unless we have connected to the lxd socket again. All other lxd.Operations seem to work fine and this wouldn't be needed for them.
 func (l *client) detectNeedReconnect() { // nolint: gocognit, cyclop
 	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.ContainerServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
 	watcher, err := fsnotify.NewWatcher()

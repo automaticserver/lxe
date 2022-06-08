@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/stretchr/testify/assert"
@@ -59,7 +58,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainerReturns(nil, "", shared.NewErrNotFound())
+	fake.GetContainerReturns(nil, "", ErrNotFound)
 
 	s, err := client.GetContainer("foo")
 
@@ -104,7 +103,7 @@ func TestClient_ListContainers_Error(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, shared.NewErrNotFound())
+	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, ErrNotFound)
 
 	sl, err := client.ListContainers()
 	assert.Error(t, err)

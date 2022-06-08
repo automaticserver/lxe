@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"k8s.io/apimachinery/pkg/util/uuid"
@@ -62,7 +61,7 @@ type Container struct {
 	// Profiles of the container. First entry is always the sandbox profile
 	// The default profile is always excluded and managed according to the settings automatically
 	Profiles []string
-	// Image defines the image to use, can be the hash or local alias
+	// The image fingerprint to use
 	Image string
 	// Privileged defines if the container is run privileged
 	Privileged bool
@@ -236,10 +235,6 @@ func (c *Container) Apply() error {
 func (c *Container) Start() error {
 	err := c.client.opwait.StartContainer(c.ID)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return fmt.Errorf("container %w: %s", shared.NewErrNotFound(), c.ID)
-		}
-
 		return err
 	}
 
@@ -261,10 +256,6 @@ func (c *Container) Start() error {
 func (c *Container) Stop(timeout int) error {
 	err := c.client.opwait.StopContainer(c.ID, timeout, 1)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return nil
-		}
-
 		return err
 	}
 
@@ -284,10 +275,6 @@ func (c *Container) Stop(timeout int) error {
 func (c *Container) Delete() error {
 	err := c.client.opwait.DeleteContainer(c.ID)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return nil
-		}
-
 		return err
 	}
 
@@ -314,21 +301,6 @@ func (c *Container) validate() error {
 // apply saves the changes to LXD
 // Will not obtain the new ETag!
 func (c *Container) apply() error {
-	// TODO: can't this be done easier?
-	imageID, err := c.client.parseImage(c.Image)
-	if err != nil {
-		return err
-	}
-
-	hash, found, err := imageID.Hash(c.client)
-	if err != nil {
-		return err
-	}
-
-	if !found {
-		return fmt.Errorf("image %w on local remote: %s", shared.NewErrNotFound(), c.Image)
-	}
-
 	config := makeContainerConfig(c)
 	devices := makeContainerDevices(c)
 
@@ -354,7 +326,7 @@ func (c *Container) apply() error {
 			Name:         c.ID,
 			ContainerPut: contPut,
 			Source: api.ContainerSource{
-				Fingerprint: hash,
+				Fingerprint: c.Image,
 				Type:        "image",
 			},
 		})
@@ -364,12 +336,8 @@ func (c *Container) apply() error {
 		return fmt.Errorf("update container not allowed: %w", ErrMissingETag)
 	}
 
-	err = c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
+	err := c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return fmt.Errorf("container %w: %s", shared.NewErrNotFound(), c.ID)
-		}
-
 		return err
 	}
 

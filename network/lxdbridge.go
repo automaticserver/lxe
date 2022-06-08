@@ -7,9 +7,9 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network/cloudinit"
-	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
@@ -112,7 +112,7 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 
 	network, ETag, err := p.server.GetNetwork(p.conf.LXDBridge)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return p.server.CreateNetwork(api.NetworksPost{
 				Name:       p.conf.LXDBridge,
 				Type:       "bridge",

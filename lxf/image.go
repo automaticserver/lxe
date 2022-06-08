@@ -2,14 +2,15 @@ package lxf
 
 import (
 	"fmt"
-	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/automaticserver/lxe/shared"
 	lxd "github.com/lxc/lxd/client"
-	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/api"
 )
+
+const lxeAliasPrefix = "lxe/"
 
 // Image is here to translate the relevant data from lxd image to cri image
 type Image struct {
@@ -18,69 +19,107 @@ type Image struct {
 	Size    int64
 }
 
-// PullImage copies the given image from the remote server
-func (l *client) PullImage(name string) (string, error) {
-	imageID, err := l.parseImage(name)
+// PullImage copies the given image from the remote server. The image is remembered by setting a specific alias.
+func (l *client) PullImage(image string) (string, error) {
+	orig := image
+
+	if l.critestMode {
+		image = replaceCRITestImage(image, l.config.DefaultRemote)
+	}
+
+	remote, aliasOrFingerprint, err := l.config.ParseRemote(image)
 	if err != nil {
 		return "", err
 	}
 
-	// we will cretae an image server for the remote.
-	// we will also create one when it's the default remote, because the default does not always
-	// need to be the local.
-	imgServer, err := l.config.GetImageServer(imageID.Remote)
+	// get the image server for the remote also when it's the explicitly defined default (local) remote
+	imgServer, err := l.config.GetImageServer(remote)
 	if err != nil {
 		return "", err
 	}
 
-	imageRef := dereferenceAlias(imgServer, imageID.Alias)
-
-	image, _, err := imgServer.GetImage(imageRef)
+	lxdImg, err := getRemoteImageFromAliasOrFingerprint(imgServer, aliasOrFingerprint)
 	if err != nil {
 		return "", err
 	}
 
-	args := lxd.ImageCopyArgs{
-		CopyAliases: false, // We shouldn't rely on default aliases, as aliases are unique per remote
-		AutoUpdate:  true,  // Maybe bug: currently NOT a technical requirement to know where the source is
-	}
-
-	err = l.opwait.CopyImage(imgServer, *image, &args)
-	if err != nil {
-		return "", fmt.Errorf("unable to pull requested image %v from server %v, %w",
-			image, imageID.Remote, err)
-	}
-
-	return image.Fingerprint, l.ensureImageAlias(imageID.Tag(), image.Fingerprint)
-}
-
-// RemoveImage will remove the given image
-func (l *client) RemoveImage(name string) error {
-	imageID, err := l.parseImage(name)
-	if err != nil {
-		return err
-	}
-
-	hash, found, err := imageID.Hash(l)
-	if err != nil {
-		return err
-	} else if !found {
-		return nil
-	}
-
-	err = l.opwait.DeleteImage(hash)
-	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return nil
+	// copy only if it is a foreign remote
+	if remote != l.config.DefaultRemote {
+		args := lxd.ImageCopyArgs{
+			CopyAliases: false,
 		}
 
+		err = l.opwait.CopyImage(imgServer, *lxdImg, &args)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	setAlias := lxeAlias(image)
+
+	if l.critestMode {
+		setAlias = lxeAlias(orig)
+	} else {
+		err = l.ensureCRIImage(lxdImg.Fingerprint)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	err = l.ensureImageAlias(setAlias, lxdImg.Fingerprint)
+	if err != nil {
+		return "", err
+	}
+
+	return lxdImg.Fingerprint, nil
+}
+
+// RemoveImage will remove a pulled image
+func (l *client) RemoveImage(image string) error {
+	if l.critestMode {
+		return l.removeCRITestImage(image)
+	}
+
+	lxdImg, err := l.getLocalImageFromAliasOrFingerprint(image)
+	if err != nil {
+		return err
+	}
+
+	err = l.opwait.DeleteImage(lxdImg.Fingerprint)
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// Create the specified image alis, update if already exist
+// Return the alias how lxe is remembering pulled images
+func lxeAlias(image string) string {
+	return fmt.Sprintf("%s%s", lxeAliasPrefix, strings.Replace(image, ":", "/", 1))
+}
+
+// Reverts the lxe specific alias modification
+func revLxeAlias(alias string) string {
+	return strings.TrimPrefix(alias, lxeAliasPrefix)
+}
+
+// Set a cri field property so we know which images are part of the CRI
+func (l *client) ensureCRIImage(fingerprint string) error {
+	lxdImg, err := l.getLocalImageFromAliasOrFingerprint(fingerprint)
+	if err != nil {
+		return err
+	}
+
+	if lxdImg.Properties == nil {
+		lxdImg.Properties = map[string]string{}
+	}
+
+	lxdImg.Properties[cfgIsCRI] = strconv.FormatBool(true)
+
+	return l.server.UpdateImage(lxdImg.Fingerprint, lxdImg.Writable(), "")
+}
+
+// Create the specified image alias, update if already exist
 // from github.com/lxc/lxd/lxc/image.go:172 + changes
 func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 	current, err := l.server.GetImageAliases()
@@ -112,7 +151,7 @@ func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 	}
 
 	// Create new alias
-	aliasPost := lxdApi.ImageAliasesPost{}
+	aliasPost := api.ImageAliasesPost{}
 	aliasPost.Name = alias
 	aliasPost.Target = fingerprint
 
@@ -124,68 +163,100 @@ func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 	return nil
 }
 
-// ListImages will list all local images from the lxd server
-func (l *client) ListImages(filter string) ([]Image, error) {
-	response := []Image{}
+// ListImages will list all pulled images
+func (l *client) ListImages(filter string) ([]*Image, error) {
+	response := []*Image{}
 
 	imglist, err := l.server.GetImages()
 	if err != nil {
 		return nil, fmt.Errorf("unable to list images: %w", err)
 	}
 
-	for _, imgInfo := range imglist {
-		if filter != "" && filter != imgInfo.Fingerprint {
+	for _, lxdImg := range imglist {
+		lxdImg := lxdImg
+
+		if !l.IsCRI(lxdImg) {
 			continue
 		}
 
-		aliases := []string{}
-		for _, ali := range imgInfo.Aliases {
-			aliases = append(aliases, ali.Name+":latest")
+		if filter != "" && filter != lxdImg.Fingerprint {
+			continue
 		}
 
-		response = append(response, Image{
-			Hash:    imgInfo.Fingerprint,
-			Aliases: aliases,
-			Size:    imgInfo.Size,
-		})
+		response = append(response, toImage(&lxdImg))
 	}
 
 	return response, nil
 }
 
-// GetImage will fetch information about the already downloaded image identified by name
-func (l *client) GetImage(name string) (*Image, error) {
-	imageID, err := l.parseImage(name)
+// GetImage will fetch information about a pulled image
+func (l *client) GetImage(image string) (*Image, error) {
+	lxdImg, err := l.getLocalImageFromAliasOrFingerprint(image)
 	if err != nil {
-		if strings.HasSuffix(err.Error(), "doesn't exist") {
-			return nil, fmt.Errorf("image %w: %s, %v", shared.NewErrNotFound(), name, err)
+		return nil, err
+	}
+
+	if !l.IsCRI(lxdImg) {
+		return nil, ErrNotFound
+	}
+
+	return toImage(lxdImg), nil
+}
+
+func getImageFingerprint(imgServer lxd.ImageServer, alias string) (string, error) {
+	lxdAlias, _, err := imgServer.GetImageAlias(alias)
+	if err != nil {
+		return "", err
+	}
+
+	return lxdAlias.Target, err
+}
+
+// similar to l.getLocalImageFromAliasOrFingerprint but remote aliases wont have the lxe specific prefix
+func getRemoteImageFromAliasOrFingerprint(imgServer lxd.ImageServer, aliasOrFingerprint string) (*api.Image, error) {
+	// try to find out if aliasOrFingerprint is a known alias on the server
+	fingerprint, err := getImageFingerprint(imgServer, aliasOrFingerprint)
+	if err != nil {
+		// if the alias is not found, try to find it by fingerprint
+		if IsNotFoundError(err) {
+			lxdImg, _, err := imgServer.GetImage(aliasOrFingerprint)
+
+			return lxdImg, err
 		}
 
 		return nil, err
 	}
 
-	hash, found, err := imageID.Hash(l)
+	// get the image from alias' target fingerprint
+	lxdImg, _, err := imgServer.GetImage(fingerprint)
 	if err != nil {
-		return nil, fmt.Errorf("failed to resolve image: %v, %w", name, err)
-	} else if !found {
-		return nil, fmt.Errorf("image %w: %s, unable to find hash", shared.NewErrNotFound(), name)
+		return nil, err
 	}
 
-	img, _, err := l.server.GetImage(hash)
+	return lxdImg, nil
+}
+
+func (l *client) getLocalImageFromAliasOrFingerprint(aliasOrFingerprint string) (*api.Image, error) {
+	// try to find out if aliasOrFingerprint is a known alias on the server
+	fingerprint, err := getImageFingerprint(l.server, lxeAlias(aliasOrFingerprint))
 	if err != nil {
-		return nil, fmt.Errorf("unable to get image: %v, %w", name, err)
+		// if the alias is not found, try to find it by fingerprint
+		if IsNotFoundError(err) {
+			lxdImg, _, err := l.server.GetImage(aliasOrFingerprint)
+
+			return lxdImg, err
+		}
+
+		return nil, err
 	}
 
-	aliases := []string{}
-	for _, ali := range img.Aliases {
-		aliases = append(aliases, ali.Name+":latest")
+	// get the image from alias' target fingerprint
+	lxdImg, _, err := l.server.GetImage(fingerprint)
+	if err != nil {
+		return nil, err
 	}
 
-	return &Image{
-		Hash:    img.Fingerprint,
-		Aliases: aliases,
-		Size:    img.Size,
-	}, nil
+	return lxdImg, nil
 }
 
 // FSPoolUsage contains fields to describe the usage of a filesystem / storagepool
@@ -222,92 +293,17 @@ func (l *client) GetFSPoolUsage() ([]FSPoolUsage, error) {
 	return rval, nil
 }
 
-// ImageID contains the remote and alias of an image identifier.
-type ImageID struct {
-	Remote string
-	Alias  string
-}
+func toImage(lxdImg *api.Image) *Image {
+	img := &Image{
+		Hash: lxdImg.Fingerprint,
+		Size: lxdImg.Size,
+	}
 
-// Tag builds from remote and alias an alias for local
-func (i ImageID) Tag() string {
-	return i.Remote + "/" + i.Alias
-}
-
-// Hash returns the hash from the combined local tag or if it's
-// already a hash this one.
-// It it's not found second return will be false and error will be zero.
-func (i ImageID) Hash(l *client) (string, bool, error) {
-	exists, _, err := l.server.GetImageAlias(i.Tag())
-	if err != nil { // nolint: nestif
-		if shared.IsErrNotFound(err) {
-			// it still might be a hash, check that
-			_, _, err = l.server.GetImage(i.Alias)
-			if err != nil {
-				if shared.IsErrNotFound(err) {
-					return "", false, nil
-				}
-
-				return "", false, err
-			}
-			// it worked so it must be a hash
-			return i.Alias, true, nil
+	for _, a := range lxdImg.Aliases {
+		if strings.HasPrefix(a.Name, lxeAliasPrefix) {
+			img.Aliases = append(img.Aliases, revLxeAlias(a.Name))
 		}
-
-		return "", false, err
 	}
 
-	// we could resolve the local alias
-	return exists.Target, true, nil
-}
-
-// parseImage will take an external image and split it up into
-// remote and tag
-func (l *client) parseImage(name string) (ImageID, error) {
-	img, err := convertDockerImageNameToLXC(name)
-	if err != nil {
-		return ImageID{}, err
-	}
-
-	remote, tag, err := l.config.ParseRemote(img)
-	if err != nil {
-		return ImageID{}, err
-	}
-
-	return ImageID{Remote: remote, Alias: tag}, nil
-}
-
-func convertDockerImageNameToLXC(inputName string) (string, error) {
-	// always remove docker tags
-	var re = regexp.MustCompile(`(.*)(:.*)`)
-	if re.MatchString(inputName) {
-		match := re.FindStringSubmatch(inputName)
-		inputName = match[1]
-	}
-
-	// no path, easy everything is the imageName
-	if !strings.Contains(inputName, "/") {
-		return inputName, nil
-	}
-
-	// with remote/path, use first part as remote only if it contains a dot
-	re = regexp.MustCompile(`(.+?)/(.*)`)
-	if re.MatchString(inputName) {
-		match := re.FindStringSubmatch(inputName)
-
-		return match[1] + ":" + match[2], nil
-	}
-
-	return "", fmt.Errorf("image name %w: %s", ErrParse, inputName)
-}
-
-// dereferenceAlias from github.com/lxc/lxd/lxc/image.go:102
-// default tag handling removed, that can not happen with our docker-> lxc
-// conversion.
-func dereferenceAlias(d lxd.ImageServer, inName string) string {
-	result, _, err := d.GetImageAlias(inName)
-	if result == nil || err != nil {
-		return inName
-	}
-
-	return result.Target
+	return img
 }

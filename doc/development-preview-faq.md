@@ -35,11 +35,11 @@ separator          := /[_.]|[-]*/
 | Pod.Container[].Image  | Kubelet validator | Kubelet interpretes | LXE interpretes | equals LXE alias | in LXC syntax |
 | -- | -- | -- | -- | -- | -- |
 | busybox | docker.io/library/busybox | busybox:latest | busybox | ???/busybox | [invalid] |
-| busybox:other | docker.io/library/busybox:other | busybox:other | busybox | ???/busybox | [invalid] |
-| hub.example.io/busybox:other | hub.example.io/busybox:other | hub.example.io/busybox:other | hub.example.io/busybox | hub.example.io/busybox | hub.example.io:busybox |
+| busybox:other | docker.io/library/busybox:other | busybox:other | busybox | ???/busybox%other | [invalid] |
+| hub.example.io/busybox:other | hub.example.io/busybox:other | hub.example.io/busybox:other | hub.example.io/busybox | hub.example.io/busybox | hub.example.io:busybox%other |
 | hub.example.io/someuser/images/busybox:other | hub.example.io/someuser/images/busybox:other | hub.example.io/someuser/images/busybox:other | hub.example.io/someuser/images/busybox | hub.example.io/someuser/images/busybox | hub.example.io:someuser/images/busybox |
 | images/ubuntu/14.04 | docker.io/images/ubuntu/14.04 | images/ubuntu/14.04:latest | images/ubuntu/14.04 | images/ubuntu/14.04 | images:ubuntu/14.04 |
-| missingremote/example/ubuntu/14.04 | docker.io/missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04:latest | missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04 | [notfound] |
+| missingremote/example/ubuntu/14.04 | docker.io/library/missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04:latest | missingremote/example/ubuntu/14.04 | missingremote/example/ubuntu/14.04 | [notfound] |
 
 ## Environment variables
 

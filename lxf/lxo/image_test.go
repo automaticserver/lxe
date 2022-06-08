@@ -72,3 +72,39 @@ func TestLXO_DeleteImage_Error(t *testing.T) {
 	assert.Equal(t, 1, fake.DeleteImageCallCount())
 	assert.Equal(t, 0, fakeOp.WaitCallCount())
 }
+
+func TestLXO_CreateImage_Simple(t *testing.T) {
+	t.Parallel()
+
+	lxo, fake := newFakeClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+
+	fake.CreateImageReturns(fakeOp, nil)
+	fakeOp.WaitReturns(nil)
+	fakeOp.GetReturns(api.Operation{Metadata: map[string]any{"fingerprint": "abcdefg"}})
+
+	fingerprint, err := lxo.CreateImage(api.ImagesPost{}, nil)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "abcdefg", fingerprint)
+	assert.Equal(t, 1, fake.CreateImageCallCount())
+	assert.Equal(t, 1, fakeOp.WaitCallCount())
+	assert.Equal(t, 1, fakeOp.GetCallCount())
+}
+
+func TestLXO_CreateImage_Error(t *testing.T) {
+	t.Parallel()
+
+	lxo, fake := newFakeClient()
+	fakeOp := &lxdfakes.FakeOperation{}
+
+	fake.CreateImageReturns(fakeOp, errors.New("something failed"))
+
+	fingerprint, err := lxo.CreateImage(api.ImagesPost{}, nil)
+	assert.Error(t, err)
+
+	assert.Equal(t, "", fingerprint)
+	assert.Equal(t, 1, fake.CreateImageCallCount())
+	assert.Equal(t, 0, fakeOp.WaitCallCount())
+	assert.Equal(t, 0, fakeOp.GetCallCount())
+}

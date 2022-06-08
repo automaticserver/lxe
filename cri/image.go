@@ -1,13 +1,14 @@
 package cri
 
 import (
+	"strings"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/lxc/config"
 	sharedLXD "github.com/lxc/lxd/shared"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -51,18 +52,25 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 
 	imglist, err := s.lxf.ListImages(req.GetFilter().GetImage().GetImage())
 	if err != nil {
-		return nil, AnnErr(log, err, "Unable to list images")
+		return nil, AnnErr(log, codes.Unknown, err, "Unable to list images")
 	}
 
 	for _, imgInfo := range imglist {
 		rspImage := &rtApi.Image{
-			Id:    imgInfo.Hash,
-			Size_: uint64(imgInfo.Size),
-			RepoDigests: []string{
-				imgInfo.Hash,
-			},
-			RepoTags: imgInfo.Aliases,
+			Id:          imgInfo.Hash,
+			Size_:       uint64(imgInfo.Size),
+			RepoDigests: []string{},
+			RepoTags:    []string{},
 		}
+
+		for _, a := range imgInfo.Aliases {
+			if strings.Contains(a, "@sha256:") {
+				rspImage.RepoDigests = append(rspImage.RepoDigests, convertLXEAliasNameToDocker(a))
+			} else {
+				rspImage.RepoTags = append(rspImage.RepoTags, convertLXEAliasNameToDocker(a))
+			}
+		}
+
 		response.Images = append(response.Images, rspImage)
 	}
 
@@ -73,28 +81,35 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 // present, returns a response with ImageStatusResponse.Image set to
 // nil.
 func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequest) (*rtApi.ImageStatusResponse, error) {
-	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
+	image := convertDockerImageNameToLXD(req.GetImage().GetImage())
+	log := log.WithContext(ctx).WithField("image", image)
 
-	img, err := s.lxf.GetImage(req.GetImage().GetImage())
+	imgInfo, err := s.lxf.GetImage(image)
 	if err != nil {
 		// If the image can't be found, return no error with empty result
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return &rtApi.ImageStatusResponse{}, nil
 		}
 
-		return nil, AnnErr(log, err, "failed to get image status")
+		return nil, AnnErr(log, codes.Unknown, err, "failed to get image status")
 	}
 
-	response := &rtApi.ImageStatusResponse{Image: &rtApi.Image{
-		Id:    img.Hash,
-		Size_: uint64(img.Size),
-		RepoDigests: []string{
-			img.Hash,
-		},
-		RepoTags: img.Aliases,
-	}}
+	rspImage := &rtApi.Image{
+		Id:          imgInfo.Hash,
+		Size_:       uint64(imgInfo.Size),
+		RepoDigests: []string{},
+		RepoTags:    []string{},
+	}
 
-	return response, nil
+	for _, a := range imgInfo.Aliases {
+		if strings.Contains(a, "@sha256") {
+			rspImage.RepoDigests = append(rspImage.RepoDigests, convertLXEAliasNameToDocker(a))
+		} else {
+			rspImage.RepoTags = append(rspImage.RepoTags, convertLXEAliasNameToDocker(a))
+		}
+	}
+
+	return &rtApi.ImageStatusResponse{Image: rspImage}, nil
 }
 
 // TODO
@@ -103,29 +118,27 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 
 // PullImage pulls an image with authentication config.
 func (s ImageServer) PullImage(ctx context.Context, req *rtApi.PullImageRequest) (*rtApi.PullImageResponse, error) {
-	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
+	image := convertDockerImageNameToLXD(req.GetImage().GetImage())
+	log := log.WithContext(ctx).WithField("image", image)
 
-	hash, err := s.lxf.PullImage(req.GetImage().GetImage())
+	hash, err := s.lxf.PullImage(image)
 	if err != nil {
-		return nil, AnnErr(log, err, "failed to pull image")
+		return nil, AnnErr(log, codes.Unknown, err, "failed to pull image")
 	}
 
-	response := &rtApi.PullImageResponse{
-		ImageRef: hash,
-	}
-
-	return response, nil
+	return &rtApi.PullImageResponse{ImageRef: hash}, nil
 }
 
 // RemoveImage removes the image.
 // This call is idempotent, and must not return an error if the image has
 // already been removed.
 func (s ImageServer) RemoveImage(ctx context.Context, req *rtApi.RemoveImageRequest) (*rtApi.RemoveImageResponse, error) {
-	log := log.WithContext(ctx).WithField("image", req.GetImage().GetImage())
+	image := convertDockerImageNameToLXD(req.GetImage().GetImage())
+	log := log.WithContext(ctx).WithField("image", image)
 
-	err := s.lxf.RemoveImage(req.GetImage().GetImage())
-	if err != nil {
-		return nil, AnnErr(log, err, "failed to remove image")
+	err := s.lxf.RemoveImage(image)
+	if err != nil && !lxf.IsNotFoundError(err) {
+		return nil, AnnErr(log, codes.Unknown, err, "failed to remove image")
 	}
 
 	return &rtApi.RemoveImageResponse{}, nil

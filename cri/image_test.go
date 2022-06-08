@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/automaticserver/lxe/cri/crifakes"
+	"github.com/lxc/lxd/lxc/config"
 	"github.com/stretchr/testify/assert"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
@@ -17,11 +18,12 @@ func testImageServer() (*ImageServer, *crifakes.FakeClient) {
 	fake := &crifakes.FakeClient{}
 
 	return &ImageServer{
-		lxf: fake,
+		lxf:       fake,
+		lxdConfig: &config.DefaultConfig,
 	}, fake
 }
 
-func TestImageServer_PullImage(t *testing.T) {
+func Test_ImageServer_PullImage(t *testing.T) {
 	t.Parallel()
 
 	s, fake := testImageServer()
@@ -30,12 +32,12 @@ func TestImageServer_PullImage(t *testing.T) {
 
 	resp, err := s.PullImage(ctx, &rtApi.PullImageRequest{
 		Image: &rtApi.ImageSpec{
-			Image: "an/image",
+			Image: "ubuntu/nextgen",
 		},
 	})
 
 	assert.NoError(t, err)
 	assert.Equal(t, 1, fake.PullImageCallCount())
-	assert.Equal(t, "an/image", fake.PullImageArgsForCall(0))
 	assert.Equal(t, "something", resp.ImageRef)
+	assert.Equal(t, "ubuntu:nextgen", fake.PullImageArgsForCall(0))
 }

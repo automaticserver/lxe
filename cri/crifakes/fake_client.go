@@ -117,17 +117,17 @@ type FakeClient struct {
 		result1 []*lxf.Container
 		result2 error
 	}
-	ListImagesStub        func(string) ([]lxf.Image, error)
+	ListImagesStub        func(string) ([]*lxf.Image, error)
 	listImagesMutex       sync.RWMutex
 	listImagesArgsForCall []struct {
 		arg1 string
 	}
 	listImagesReturns struct {
-		result1 []lxf.Image
+		result1 []*lxf.Image
 		result2 error
 	}
 	listImagesReturnsOnCall map[int]struct {
-		result1 []lxf.Image
+		result1 []*lxf.Image
 		result2 error
 	}
 	ListSandboxesStub        func() ([]*lxf.Sandbox, error)
@@ -187,6 +187,10 @@ type FakeClient struct {
 	}
 	removeImageReturnsOnCall map[int]struct {
 		result1 error
+	}
+	SetCRITestModeStub        func()
+	setCRITestModeMutex       sync.RWMutex
+	setCRITestModeArgsForCall []struct {
 	}
 	SetEventHandlerStub        func(lxf.EventHandler)
 	setEventHandlerMutex       sync.RWMutex
@@ -687,7 +691,7 @@ func (fake *FakeClient) ListContainersReturnsOnCall(i int, result1 []*lxf.Contai
 	}{result1, result2}
 }
 
-func (fake *FakeClient) ListImages(arg1 string) ([]lxf.Image, error) {
+func (fake *FakeClient) ListImages(arg1 string) ([]*lxf.Image, error) {
 	fake.listImagesMutex.Lock()
 	ret, specificReturn := fake.listImagesReturnsOnCall[len(fake.listImagesArgsForCall)]
 	fake.listImagesArgsForCall = append(fake.listImagesArgsForCall, struct {
@@ -712,7 +716,7 @@ func (fake *FakeClient) ListImagesCallCount() int {
 	return len(fake.listImagesArgsForCall)
 }
 
-func (fake *FakeClient) ListImagesCalls(stub func(string) ([]lxf.Image, error)) {
+func (fake *FakeClient) ListImagesCalls(stub func(string) ([]*lxf.Image, error)) {
 	fake.listImagesMutex.Lock()
 	defer fake.listImagesMutex.Unlock()
 	fake.ListImagesStub = stub
@@ -725,28 +729,28 @@ func (fake *FakeClient) ListImagesArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
-func (fake *FakeClient) ListImagesReturns(result1 []lxf.Image, result2 error) {
+func (fake *FakeClient) ListImagesReturns(result1 []*lxf.Image, result2 error) {
 	fake.listImagesMutex.Lock()
 	defer fake.listImagesMutex.Unlock()
 	fake.ListImagesStub = nil
 	fake.listImagesReturns = struct {
-		result1 []lxf.Image
+		result1 []*lxf.Image
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeClient) ListImagesReturnsOnCall(i int, result1 []lxf.Image, result2 error) {
+func (fake *FakeClient) ListImagesReturnsOnCall(i int, result1 []*lxf.Image, result2 error) {
 	fake.listImagesMutex.Lock()
 	defer fake.listImagesMutex.Unlock()
 	fake.ListImagesStub = nil
 	if fake.listImagesReturnsOnCall == nil {
 		fake.listImagesReturnsOnCall = make(map[int]struct {
-			result1 []lxf.Image
+			result1 []*lxf.Image
 			result2 error
 		})
 	}
 	fake.listImagesReturnsOnCall[i] = struct {
-		result1 []lxf.Image
+		result1 []*lxf.Image
 		result2 error
 	}{result1, result2}
 }
@@ -1047,6 +1051,30 @@ func (fake *FakeClient) RemoveImageReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeClient) SetCRITestMode() {
+	fake.setCRITestModeMutex.Lock()
+	fake.setCRITestModeArgsForCall = append(fake.setCRITestModeArgsForCall, struct {
+	}{})
+	stub := fake.SetCRITestModeStub
+	fake.recordInvocation("SetCRITestMode", []interface{}{})
+	fake.setCRITestModeMutex.Unlock()
+	if stub != nil {
+		fake.SetCRITestModeStub()
+	}
+}
+
+func (fake *FakeClient) SetCRITestModeCallCount() int {
+	fake.setCRITestModeMutex.RLock()
+	defer fake.setCRITestModeMutex.RUnlock()
+	return len(fake.setCRITestModeArgsForCall)
+}
+
+func (fake *FakeClient) SetCRITestModeCalls(stub func()) {
+	fake.setCRITestModeMutex.Lock()
+	defer fake.setCRITestModeMutex.Unlock()
+	fake.SetCRITestModeStub = stub
+}
+
 func (fake *FakeClient) SetEventHandler(arg1 lxf.EventHandler) {
 	fake.setEventHandlerMutex.Lock()
 	fake.setEventHandlerArgsForCall = append(fake.setEventHandlerArgsForCall, struct {
@@ -1110,6 +1138,8 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.pullImageMutex.RUnlock()
 	fake.removeImageMutex.RLock()
 	defer fake.removeImageMutex.RUnlock()
+	fake.setCRITestModeMutex.RLock()
+	defer fake.setCRITestModeMutex.RUnlock()
 	fake.setEventHandlerMutex.RLock()
 	defer fake.setEventHandlerMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

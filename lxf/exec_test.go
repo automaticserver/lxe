@@ -9,7 +9,7 @@ import (
 	"github.com/automaticserver/lxe/lxf/lxdfakes"
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
-	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/tools/remotecommand"
 )
@@ -20,14 +20,14 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 	client, fake := testClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		go sendDataDone(arg3, 0)
 
 		return fakeOp, nil
 	})
 	fakeOp.WaitReturns(nil)
 
-	fakeOp.GetReturns(lxdApi.Operation{
+	fakeOp.GetReturns(api.Operation{
 		Metadata: map[string]interface{}{
 			"return": float64(CodeExecError),
 		},
@@ -47,7 +47,7 @@ func TestClient_Exec_Timeout(t *testing.T) {
 
 	var fakeControl *websocket.Conn
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
 		go sendDataDone(arg3, 1200*time.Millisecond)
@@ -56,7 +56,7 @@ func TestClient_Exec_Timeout(t *testing.T) {
 	})
 	fakeOp.WaitReturns(nil)
 
-	fakeOp.GetReturns(lxdApi.Operation{
+	fakeOp.GetReturns(api.Operation{
 		Metadata: map[string]interface{}{
 			"return": float64(8),
 		},
@@ -80,7 +80,7 @@ func TestClient_Exec_Resize(t *testing.T) {
 
 	var fakeControl *websocket.Conn
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
 		go sendDataDone(arg3, 0)
@@ -89,7 +89,7 @@ func TestClient_Exec_Resize(t *testing.T) {
 	})
 	fakeOp.WaitReturns(nil)
 
-	fakeOp.GetReturns(lxdApi.Operation{
+	fakeOp.GetReturns(api.Operation{
 		Metadata: map[string]interface{}{
 			"return": float64(0),
 		},
@@ -116,7 +116,7 @@ func TestClient_Exec_Parallel(t *testing.T) {
 
 	// take the first command argument as a number and use that to return to ensure the a specific command gets the
 	// matching return
-	fake.ExecContainerCalls(func(arg1 string, arg2 lxdApi.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		go sendDataDone(arg3, 0)
 
 		fakeOp := &lxdfakes.FakeOperation{}
@@ -125,7 +125,7 @@ func TestClient_Exec_Parallel(t *testing.T) {
 		returnCode, err := strconv.ParseFloat(arg2.Command[0], 64)
 		assert.NoError(t, err)
 
-		fakeOp.GetReturns(lxdApi.Operation{
+		fakeOp.GetReturns(api.Operation{
 			Metadata: map[string]interface{}{
 				"return": returnCode,
 			},

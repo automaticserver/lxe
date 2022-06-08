@@ -197,7 +197,7 @@ kube-system   svclb-traefik-c4tjr                       2/2     Running     0   
 kube-system   traefik-df4ff85d6-jnh9r                   1/1     Running     0          16m   10.42.0.7   node1   <none>           <none>
 ```
 
-And [install or update LXD](https://linuxcontainers.org/lxd/getting-started-cli/#installing-a-package) here as well:
+[Install or update LXD](https://linuxcontainers.org/lxd/getting-started-cli/#installing-a-package) here as well:
 
 ```
 root@host:~# snap install lxd
@@ -253,15 +253,15 @@ remotes:
 aliases: {}
 ```
 
-We're also going to reuse the default LXD bridge `lxdbr0` for now which LXD has created during initialisation.
+We're also going to reuse the default LXD bridge `lxdbr0` (for now) which LXD has created during initialisation.
 
 Start lxe with the obtained informations above and leave the terminal open:
 
 ```
-root@node2:~# /root/go/bin/lxe --socket /run/lxe.socket --log-level info
+root@node2:~# /root/go/bin/lxe --log-level info
 WARNING[05-18|16:58:30.422] starting lxe...                               builddate=undef buildnumber=undef gitcommit=undef gittreestate=undef packagename=undef version=0.0.0
 INFO   [05-18|16:58:30.452] Connected to LXD                              lxdsocket=/var/snap/lxd/common/lxd/unix.socket
-INFO   [05-18|16:58:30.543] started lxe CRI shim                          socket=/run/lxe.socket
+INFO   [05-18|16:58:30.543] started lxe CRI shim                          socket=/run/lxe.sock
 INFO   [05-18|16:58:30.544] started streaming server                      baseurl="http://localhost:44124" endpoint="localhost:44124"
 ```
 
@@ -273,7 +273,7 @@ root@node2:~# mkdir /etc/rancher/k3s
 root@node2:~# cat <<EOF >/etc/rancher/k3s/config.yaml
 kubelet-arg:
   - "container-runtime=remote"
-  - "container-runtime-endpoint=unix:///run/lxe.socket"
+  - "container-runtime-endpoint=unix:///run/lxe.sock"
   - "containerd="
 EOF
 ```
@@ -285,7 +285,7 @@ root@node2:~# systemctl restart k3s-agent
 
 root@node2:~# journalctl -u k3s-agent | grep "Running kubelet"
 [...]
-May 18 19:57:23 node2 k3s[15774]: time="2022-05-18T19:57:23Z" level=info msg="Running kubelet --address=0.0.0.0 --anonymous-auth=false --authentication-token-webhook=true --authorization-mode=Webhook --cgroup-driver=cgroupfs --client-ca-file=/var/lib/rancher/k3s/agent/client-ca.crt --cloud-provider=external --cluster-dns=10.43.0.10 --cluster-domain=cluster.local --cni-bin-dir=/var/lib/rancher/k3s/data/8c2b0191f6e36ec6f3cb68e2302fcc4be850c6db31ec5f8a74e4b3be403101d8/bin --cni-conf-dir=/var/lib/rancher/k3s/agent/etc/cni/net.d --container-runtime=remote --container-runtime-endpoint=unix:///run/lxe.socket --containerd= --eviction-hard=imagefs.available<5%,nodefs.available<5% --eviction-minimum-reclaim=imagefs.available=10%,nodefs.available=10% --fail-swap-on=false --healthz-bind-address=127.0.0.1 --hostname-override=node2 --kubeconfig=/var/lib/rancher/k3s/agent/kubelet.kubeconfig --node-labels= --pod-manifest-path=/var/lib/rancher/k3s/agent/pod-manifests --read-only-port=0 --resolv-conf=/tmp/k3s-resolv.conf --serialize-image-pulls=false --tls-cert-file=/var/lib/rancher/k3s/agent/serving-kubelet.crt --tls-private-key-file=/var/lib/rancher/k3s/agent/serving-kubelet.key"
+May 18 19:57:23 node2 k3s[15774]: time="2022-05-18T19:57:23Z" level=info msg="Running kubelet --address=0.0.0.0 --anonymous-auth=false --authentication-token-webhook=true --authorization-mode=Webhook --cgroup-driver=cgroupfs --client-ca-file=/var/lib/rancher/k3s/agent/client-ca.crt --cloud-provider=external --cluster-dns=10.43.0.10 --cluster-domain=cluster.local --cni-bin-dir=/var/lib/rancher/k3s/data/8c2b0191f6e36ec6f3cb68e2302fcc4be850c6db31ec5f8a74e4b3be403101d8/bin --cni-conf-dir=/var/lib/rancher/k3s/agent/etc/cni/net.d --container-runtime=remote --container-runtime-endpoint=unix:///run/lxe.sock --containerd= --eviction-hard=imagefs.available<5%,nodefs.available<5% --eviction-minimum-reclaim=imagefs.available=10%,nodefs.available=10% --fail-swap-on=false --healthz-bind-address=127.0.0.1 --hostname-override=node2 --kubeconfig=/var/lib/rancher/k3s/agent/kubelet.kubeconfig --node-labels= --pod-manifest-path=/var/lib/rancher/k3s/agent/pod-manifests --read-only-port=0 --resolv-conf=/tmp/k3s-resolv.conf --serialize-image-pulls=false --tls-cert-file=/var/lib/rancher/k3s/agent/serving-kubelet.crt --tls-private-key-file=/var/lib/rancher/k3s/agent/serving-kubelet.key"
 ```
 
 If we check with kubectl (from the first node) we can also see that the node is now running on LXE:

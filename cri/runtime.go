@@ -12,12 +12,12 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/automaticserver/lxe/third_party/ioutils"
 	"github.com/lxc/lxd/lxc/config"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
 	utilNet "k8s.io/apimachinery/pkg/util/net"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
@@ -68,7 +68,7 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 	// RuntimeApiVersion=someAPIVersion. The actual runtime name and version is not present
 	info, err := s.lxf.GetRuntimeInfo()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get server environment")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get server environment")
 	}
 
 	response := &rtApi.VersionResponse{
@@ -127,7 +127,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 			sb.NetworkConfig.Mode = lxf.NetworkCNI
 		default:
 			// unknown plugin name provided
-			return nil, AnnErr(log, ErrUnknownNetworkPlugin, s.criConfig.LXENetworkPlugin)
+			return nil, AnnErr(log, codes.Unknown, ErrUnknownNetworkPlugin, s.criConfig.LXENetworkPlugin)
 		}
 	}
 
@@ -228,7 +228,7 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 
 	err = sb.Apply()
 	if err != nil {
-		return nil, AnnErr(log, err, "failed to create pod")
+		return nil, AnnErr(log, codes.Unknown, err, "failed to create pod")
 	}
 
 	log = log.WithField("podid", sb.ID)
@@ -237,17 +237,17 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	if sb.NetworkConfig.Mode != lxf.NetworkHost { // nolint: nestif
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			return nil, AnnErr(log, err, "can't enter pod network context")
+			return nil, AnnErr(log, codes.Unknown, err, "can't enter pod network context")
 		}
 
 		res, err := podNet.WhenCreated(ctx, &network.Properties{})
 		if err != nil {
-			return nil, AnnErr(log, err, "can't create pod network")
+			return nil, AnnErr(log, codes.Unknown, err, "can't create pod network")
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to save pod network result")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to save pod network result")
 		}
 
 		// Since a PodSandbox is created "started", also fire started network
@@ -258,12 +258,12 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 			Pid: 0, // if we had real 1:n pod:container we would add here the pid of the pod process
 		})
 		if err != nil {
-			return nil, AnnErr(log, err, "can't start pod network")
+			return nil, AnnErr(log, codes.Unknown, err, "can't start pod network")
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to save start pod network result")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to save start pod network result")
 		}
 	}
 
@@ -284,29 +284,21 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return &rtApi.StopPodSandboxResponse{}, nil
 		}
 
-		return nil, AnnErr(log, err, "unable to get pod")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get pod")
 	}
 
 	err = s.stopContainers(sb)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to stop containers")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to stop containers")
 	}
 
-	err = sb.Stop()
+	err = s.stopSandbox(ctx, sb)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to stop pod")
-	}
-
-	// Stop networking
-	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
-		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
-			_ = netw.WhenStopped(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
-		}
+		return nil, AnnErr(log, codes.Unknown, err, "unable to stop pod")
 	}
 
 	log.Info("stop pod successful")
@@ -323,40 +315,26 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
 		// If the sandbox can't be found, return no error with empty result
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return &rtApi.RemovePodSandboxResponse{}, nil
 		}
 
-		return nil, AnnErr(log, err, "unable to get pod")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get pod")
 	}
 
 	err = s.stopContainers(sb)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to stop containers")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to stop containers")
 	}
 
 	err = s.deleteContainers(ctx, sb)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to delete containers")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to delete containers")
 	}
 
-	err = sb.Delete()
+	err = s.deleteSandbox(ctx, sb)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to delete pod")
-	}
-
-	// Delete networking
-	if sb.NetworkConfig.Mode != lxf.NetworkHost {
-		// report errors when trying to delete the network. still continue on an error
-		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
-		if err != nil {
-			log.WithError(err).Error("unable to delete networking: unable to enter pod network")
-		} else {
-			err := netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
-			if err != nil {
-				log.WithError(err).Error("unable to delete networking: call to network plugin errored")
-			}
-		}
+		return nil, AnnErr(log, codes.Unknown, err, "unable to delete pod")
 	}
 
 	log.Info("remove pod successful")
@@ -370,7 +348,11 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 
 	sb, err := s.lxf.GetSandbox(req.GetPodSandboxId())
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get pod")
+		if lxf.IsNotFoundError(err) {
+			return nil, AnnErr(log, codes.NotFound, err, "pod not found")
+		}
+
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get pod")
 	}
 
 	response := &rtApi.PodSandboxStatusResponse{
@@ -489,7 +471,7 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 
 	sandboxes, err := s.lxf.ListSandboxes()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to list pods")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to list pods")
 	}
 
 	response := &rtApi.ListPodSandboxResponse{}
@@ -532,17 +514,22 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 
 // CreateContainer creates a new container in specified PodSandbox
 func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) { // nolint: cyclop
+	image := convertDockerImageNameToLXD(req.GetConfig().GetImage().GetImage())
 	log := log.WithContext(ctx).WithFields(logrus.Fields{
 		"containername": req.GetConfig().GetMetadata().GetName(),
 		"attempt":       req.GetConfig().GetMetadata().GetAttempt(),
 		"podid":         req.GetPodSandboxId(),
+		"image":         image,
 	})
 	log.Info("create container")
 
-	var err error
+	img, err := s.lxf.GetImage(image)
+	if err != nil {
+		return nil, AnnErr(log, codes.Unknown, err, "failed to find image hash")
+	}
 
 	c := s.lxf.NewContainer(req.GetPodSandboxId(), s.criConfig.LXDProfiles...)
-
+	c.Image = img.Hash
 	c.Labels = req.GetConfig().GetLabels()
 	c.Annotations = req.GetConfig().GetAnnotations()
 	meta := req.GetConfig().GetMetadata()
@@ -551,7 +538,6 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 		Name:    meta.GetName(),
 	}
 	c.LogPath = req.GetConfig().GetLogPath()
-	c.Image = req.GetConfig().GetImage().GetImage()
 
 	for _, mnt := range req.GetConfig().GetMounts() {
 		hostPath := mnt.GetHostPath()
@@ -617,34 +603,34 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 
 	err = c.Apply()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to create container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to create container")
 	}
 
 	sb, err := c.Sandbox()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to find sandbox")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to find sandbox")
 	}
 
 	// create network
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
 		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
 		if err != nil {
-			return nil, AnnErr(log, err, "can't enter pod network context")
+			return nil, AnnErr(log, codes.Unknown, err, "can't enter pod network context")
 		}
 
 		contNet, err := podNet.ContainerNetwork(c.ID, c.Annotations)
 		if err != nil {
-			return nil, AnnErr(log, err, "can't enter container network context")
+			return nil, AnnErr(log, codes.Unknown, err, "can't enter container network context")
 		}
 
 		res, err := contNet.WhenCreated(ctx, &network.Properties{})
 		if err != nil {
-			return nil, AnnErr(log, err, "can't create container network")
+			return nil, AnnErr(log, codes.Unknown, err, "can't create container network")
 		}
 
 		err = s.handleNetworkResult(sb, res)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to save create container network result")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to save create container network result")
 		}
 	}
 
@@ -660,12 +646,12 @@ func (s RuntimeServer) StartContainer(ctx context.Context, req *rtApi.StartConta
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 	}
 
 	err = c.Start()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to start container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to start container")
 	}
 
 	log.Info("start container successful")
@@ -681,16 +667,16 @@ func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContain
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return &rtApi.StopContainerResponse{}, nil
 		}
 
-		return nil, AnnErr(log, err, "unable to get container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 	}
 
 	err = s.stopContainer(c, int(req.Timeout))
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to stop container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to stop container")
 	}
 
 	log.Info("stop container successful")
@@ -706,16 +692,16 @@ func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveCon
 
 	c, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		if shared.IsErrNotFound(err) {
+		if lxf.IsNotFoundError(err) {
 			return &rtApi.RemoveContainerResponse{}, nil
 		}
 
-		return nil, AnnErr(log, err, "unable to get container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 	}
 
 	err = s.deleteContainer(ctx, c)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to remove container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to remove container")
 	}
 
 	log.Info("remove container successful")
@@ -731,7 +717,7 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 
 	cl, err := s.lxf.ListContainers()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get container list")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container list")
 	}
 
 	for _, c := range cl {
@@ -766,7 +752,11 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 
 	ct, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get container")
+		if lxf.IsNotFoundError(err) {
+			return nil, AnnErr(log, codes.NotFound, err, "container not found")
+		}
+
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 	}
 
 	response := toCriStatusResponse(ct)
@@ -776,14 +766,14 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 
 // UpdateContainerResources updates ContainerConfig of the container.
 func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.UpdateContainerResourcesRequest) (*rtApi.UpdateContainerResourcesResponse, error) {
-	return nil, SilErr(log, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }
 
 // ReopenContainerLog asks runtime to reopen the stdout/stderr log file for the container. This is often called after
 // the log file has been rotated. If the container is not running, container runtime can choose to either create a new
 // log file and return nil, or return an error. Once it returns error, new container log file MUST NOT be created.
 func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.ReopenContainerLogRequest) (*rtApi.ReopenContainerLogResponse, error) {
-	return nil, SilErr(log, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }
 
 // ExecSync runs a command in a container synchronously.
@@ -802,7 +792,7 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 
 	code, err := s.lxf.Exec(req.GetContainerId(), req.GetCmd(), stdinR, stdoutW, stderrW, false, false, req.GetTimeout(), nil)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to exec")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to exec")
 	}
 
 	log = log.WithField("exit", code)
@@ -824,7 +814,7 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 
 	resp, err := s.stream.streamServer.GetExec(req)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get exec stream")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get exec stream")
 	}
 
 	return resp, nil
@@ -832,7 +822,7 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 
 // Attach prepares a streaming endpoint to attach to a running container.
 func (s RuntimeServer) Attach(ctx context.Context, req *rtApi.AttachRequest) (*rtApi.AttachResponse, error) {
-	return nil, SilErr(log, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }
 
 // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
@@ -844,7 +834,7 @@ func (s RuntimeServer) PortForward(ctx context.Context, req *rtApi.PortForwardRe
 
 	resp, err = s.stream.streamServer.GetPortForward(req)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to create port forward")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to create port forward")
 	}
 
 	return resp, nil
@@ -856,12 +846,12 @@ func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerS
 
 	cntStat, err := s.lxf.GetContainer(req.GetContainerId())
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get container")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 	}
 
 	stats, err := toCriStats(cntStat)
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to get stats")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to get stats")
 	}
 
 	return &rtApi.ContainerStatsResponse{Stats: stats}, nil
@@ -878,12 +868,12 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 
 		c, err := s.lxf.GetContainer(req.Filter.Id)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to get container")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to get container")
 		}
 
 		st, err := toCriStats(c)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to get stats")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to get stats")
 		}
 
 		response.Stats = append(response.Stats, st)
@@ -893,7 +883,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 
 	cts, err := s.lxf.ListContainers()
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to list containers")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to list containers")
 	}
 
 	for _, c := range cts {
@@ -901,7 +891,7 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 
 		st, err := toCriStats(c)
 		if err != nil {
-			return nil, AnnErr(log, err, "unable to get stats")
+			return nil, AnnErr(log, codes.Unknown, err, "unable to get stats")
 		}
 
 		response.Stats = append(response.Stats, st)
@@ -916,7 +906,7 @@ func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context, req *rtApi.Updat
 
 	err := s.network.UpdateRuntimeConfig(req.GetRuntimeConfig())
 	if err != nil {
-		return nil, AnnErr(log, err, "unable to update runtime config")
+		return nil, AnnErr(log, codes.Unknown, err, "unable to update runtime config")
 	}
 
 	return &rtApi.UpdateRuntimeConfigResponse{}, nil

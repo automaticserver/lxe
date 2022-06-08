@@ -3,8 +3,8 @@ package lxf
 // Some variable shorthands:
 //  c:    *lxf.Container
 //  s:    *lxf.Sandbox
-//  ct:   *lxdApi.Container
-//  p:    *lxdApi.Profile
+//  ct:   *api.Container
+//  p:    *api.Profile
 //  l:    *lxf.Client
 //  <x>l: []*<x> | <x> ∈ lxf
-//  <x>s: []<x> | <x> ∈ lxdApi
+//  <x>s: []<x> | <x> ∈ api

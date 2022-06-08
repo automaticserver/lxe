@@ -9,7 +9,6 @@ import (
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network/cloudinit"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/ghodss/yaml"
 	"github.com/lxc/lxd/shared/api"
 	"k8s.io/apimachinery/pkg/util/uuid"
@@ -222,10 +221,6 @@ func (s *Sandbox) Stop() error {
 func (s *Sandbox) Delete() error {
 	err := s.client.server.DeleteProfile(s.ID)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return nil
-		}
-
 		return err
 	}
 
@@ -254,6 +249,7 @@ func (s *Sandbox) apply() error {
 			ProfilePut: profile,
 		})
 	}
+
 	// else profile has to be updated
 	if s.ETag == "" {
 		return fmt.Errorf("update profile not allowed: %w", ErrMissingETag)
@@ -261,10 +257,6 @@ func (s *Sandbox) apply() error {
 
 	err = s.client.server.UpdateProfile(s.ID, profile, s.ETag)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), s.ID)
-		}
-
 		return err
 	}
 

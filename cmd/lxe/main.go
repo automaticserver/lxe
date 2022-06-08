@@ -43,6 +43,7 @@ func init() {
 	pflags.StringP("cni-bin-dir", "", network.DefaultCNIbinPath, "Dir in which to search for CNI plugin binaries when using --network-plugin 'cni'.")
 	pflags.StringP("cni-output-target", "", "stderr", "Where to forward the cni command output, one of: stdout, stderr, file.")
 	pflags.StringP("cni-output-file-path", "", "stderr", "Path to output file. Only required if --cni-output-target is set to file.")
+	pflags.BoolP("critest", "", false, "Enable critest mode to be used with cri-tools' critest since LXE cannot use OCI images. Automatically creates some images and changes a few image names before handling the request. Read the log for arguments to use cri-tools' critest.")
 
 	rootCmd.RunE = rootCmdRunE
 }
@@ -64,6 +65,7 @@ func rootCmdRunE(cmd *cobra.Command, args []string) error {
 		CNIBinDir:            venom.GetString("cni-bin-dir"),
 		CNIOutputTarget:      venom.GetString("cni-output-target"),
 		CNIOutputFile:        venom.GetString("cni-output-file-path"),
+		CRITest:              venom.GetBool("critest"),
 	}
 
 	criServer := cri.NewServer(conf)

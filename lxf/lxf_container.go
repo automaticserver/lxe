@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
@@ -33,8 +32,8 @@ func (l *client) GetContainer(id string) (*Container, error) {
 		return nil, err
 	}
 
-	if !IsCRI(ct) {
-		return nil, fmt.Errorf("container %w: %s", shared.NewErrNotFound(), id)
+	if !l.IsCRI(ct) {
+		return nil, ErrNotFound
 	}
 
 	return l.toContainer(ct, ETag)
@@ -56,7 +55,8 @@ func (l *client) ListContainers() ([]*Container, error) {
 
 	for _, ct := range cts {
 		ct := ct // pin!
-		if !IsCRI(ct) {
+
+		if !l.IsCRI(ct) {
 			continue
 		}
 
@@ -233,7 +233,7 @@ type EventHandler interface {
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
-func (l *client) lifecycleEventHandler(event api.Event) { // nolint: cyclop
+func (l *client) lifecycleEventHandler(event api.Event) {
 	log := log
 
 	// we should always only get lifecycle events due to the handler setup but just in case ...
@@ -266,10 +266,6 @@ func (l *client) lifecycleEventHandler(event api.Event) { // nolint: cyclop
 
 	c, err := l.GetContainer(containerID)
 	if err != nil {
-		if shared.IsErrNotFound(err) {
-			return
-		}
-
 		log.WithError(err).Error("unable to find container")
 
 		// return immediately since we can't do anything when we get an error here

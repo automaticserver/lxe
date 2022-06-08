@@ -10,7 +10,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
-	lxdApi "github.com/lxc/lxd/shared/api"
+	"github.com/lxc/lxd/shared/api"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 	"k8s.io/client-go/tools/remotecommand"
@@ -54,7 +54,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 		closeResize: make(chan struct{}),
 	}
 
-	req := lxdApi.ContainerExecPost{
+	req := api.ContainerExecPost{
 		Command:      cmd,
 		WaitForWS:    true,
 		Interactive:  interactive,
@@ -177,7 +177,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 		return err
 	}
 
-	msg := lxdApi.ContainerExecControl{}
+	msg := api.ContainerExecControl{}
 	msg.Command = "window-resize"
 	msg.Args = make(map[string]string)
 	msg.Args["width"] = width
@@ -218,7 +218,7 @@ func (s *session) sendCancel() error {
 	}
 	defer w.Close()
 
-	msg := lxdApi.ContainerExecControl{}
+	msg := api.ContainerExecControl{}
 	msg.Command = "signal"
 	msg.Signal = int(sig)
 

@@ -1,13 +1,11 @@
 package lxf
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/device"
-	"github.com/automaticserver/lxe/shared"
 	"github.com/lxc/lxd/shared/api"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -30,8 +28,8 @@ func (l *client) GetSandbox(id string) (*Sandbox, error) {
 		return nil, err
 	}
 
-	if !IsCRI(p) {
-		return nil, fmt.Errorf("sandbox %w: %s", shared.NewErrNotFound(), id)
+	if !l.IsCRI(p) {
+		return nil, ErrNotFound
 	}
 
 	return l.toSandbox(p, ETag)
@@ -50,7 +48,7 @@ func (l *client) ListSandboxes() ([]*Sandbox, error) {
 
 	for _, p := range ps {
 		p := p // pin!
-		if !IsCRI(p) {
+		if !l.IsCRI(p) {
 			continue
 		}
 

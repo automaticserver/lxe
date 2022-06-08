@@ -7,14 +7,12 @@ import (
 	"io"
 	"net"
 	"os"
-	"path"
 
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
-	"k8s.io/utils/exec"
 )
 
 // NetworkPlugin defines how the pod network should be setup.
@@ -60,6 +58,12 @@ func NewServer(criConfig *Config) *Server { // nolint: cyclop
 	}
 
 	log.WithField("lxdsocket", criConfig.LXDSocket).Info("Connected to LXD")
+
+	if criConfig.CRITest {
+		log.Warn("CRITest mode enabled")
+
+		client.SetCRITestMode()
+	}
 
 	// Ensure profile and container schema migration
 	migration := lxf.NewMigrationWorkspace(client)
@@ -166,7 +170,7 @@ func (c *Server) Serve() error {
 	}
 
 	defer c.sock.Close()
-	defer os.Remove(c.criConfig.UnixSocket)
+	defer os.Remove(sock)
 
 	log.Infof("started %s CRI shim", Domain)
 
@@ -190,51 +194,4 @@ func (c *Server) Stop() error {
 	}
 
 	return os.Remove(c.criConfig.UnixSocket)
-}
-
-// callTracing logs requests, responses and error returned by the handler. What gets logged is influenced by what error types the handler returns and the log level. This simplifies error logging in the CRI implementation.
-func callTracing(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	log := log.WithContext(ctx)
-	method := path.Base(info.FullMethod)
-
-	resp, err := handler(ctx, req)
-	if err != nil {
-		// Depending on the error type the logging is influenced
-		switch e := err.(type) { // nolint: errorlint
-		// The AnnotatedError uses the provided logger entry to set fields of the actual logger
-		case AnnotatedError:
-			log.WithError(e.Err).WithFields(e.Log.Data).Error(fmt.Sprintf("%s: %s", method, e.Msg))
-		// SilentErrors are useful for not implemented functions, still return the error to the caller!
-		case SilentError:
-			if e.Msg != "" {
-				err = fmt.Errorf("%s: %w", e.Msg, e.Err)
-			} else {
-				err = e.Err
-			}
-		// CodeExitError is a special wrapping of AnnotatedError and exec.CodeExitError
-		// TODO: this can be made better
-		case *exec.CodeExitError:
-			a, is := e.Err.(AnnotatedError) // nolint: errorlint
-			if is {
-				log.WithError(a.Err).WithFields(a.Log.Data).Error(fmt.Sprintf("%s: %s", method, a.Msg))
-			} else {
-				log.Error(fmt.Sprintf("%s: %s", method, err.Error()))
-			}
-		// In any other case just log the error
-		default:
-			log.Error(fmt.Sprintf("%s: %s", method, err.Error()))
-		}
-	}
-
-	log.WithError(err).WithFields(logrus.Fields{
-		"req":  req,
-		"resp": resp,
-	}).Trace(fmt.Sprintf("grpc %s", method))
-
-	// It seems like CRI clients don't care about the effective grpc code. The way they interact with errors is the effective error type, so not modifying the error further
-	// if err != nil {
-	// 	err = status.Errorf(codes.NotFound, err.Error())
-	// }
-
-	return resp, err
 }

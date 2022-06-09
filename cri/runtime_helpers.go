@@ -199,7 +199,7 @@ func setDefaultLXDSocketPath(cfg *Config) error {
 	return fmt.Errorf("%w lxd socket, provide --lxd-socket", ErrDetectDefault)
 }
 
-// setDefaultLXDSocketPath tries to find and set the lxd remote config if missing
+// setDefaultLXDConfigPath tries to find and set the lxd remote config if missing
 func setDefaultLXDConfigPath(cfg *Config) error {
 	if cfg.LXDRemoteConfig != "" {
 		return nil
@@ -357,13 +357,8 @@ func (s RuntimeServer) deleteSandbox(ctx context.Context, sb *lxf.Sandbox) error
 	if sb.NetworkConfig.Mode != lxf.NetworkHost {
 		// report errors when trying to delete the network. still continue on an error
 		netw, err := s.network.PodNetwork(sb.ID, sb.Annotations)
-		if err != nil {
-			log.WithError(err).Error("unable to delete networking: unable to enter pod network")
-		} else {
-			err := netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
-			if err != nil {
-				log.WithError(err).Error("unable to delete networking: call to network plugin errored")
-			}
+		if err == nil { // force cleanup, we don't care about error, but only enter if there's no error
+			_ = netw.WhenDeleted(ctx, &network.Properties{Data: sb.NetworkConfig.ModeData})
 		}
 	}
 

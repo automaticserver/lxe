@@ -1,8 +1,8 @@
 These packages are copied from <https://github.com/kubernetes/kubernetes>.
 
 The kubernetes main repo does not correctly set the go modules, see bug
-<https://github.com/kubernetes/kubernetes/issues/79384. The workaround we used
-before was setting the there "suggested" replace directives. Since Go 1.18 there
+<https://github.com/kubernetes/kubernetes/issues/79384>. The workaround we used
+before was setting replace directives as there "suggested". Since Go 1.18 there
 is a convenient `install` command, but it does not allow installation from
 repos with replace directives. So we had to copy the used modules and placed
 here. CRI-O and probably the other CRI shims copied/used to copy those modules

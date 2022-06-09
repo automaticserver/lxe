@@ -12,7 +12,7 @@ func TestDetect_UnknownType(t *testing.T) {
 
 	_, err := Detect("foo", map[string]string{"type": "foo"})
 	assert.Error(t, err)
-	assert.Equal(t, true, errors.Is(err, errors.NotSupported))
+	assert.ErrorIs(t, err, errors.NotSupported)
 }
 
 func TestDetect_KnownType(t *testing.T) {

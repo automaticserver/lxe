@@ -3,7 +3,6 @@ package device
 import (
 	"testing"
 
-	"github.com/juju/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +11,7 @@ func TestDetect_UnknownType(t *testing.T) {
 
 	_, err := Detect("foo", map[string]string{"type": "foo"})
 	assert.Error(t, err)
-	assert.ErrorIs(t, err, errors.NotSupported)
+	assert.ErrorIs(t, err, ErrNotSupported)
 }
 
 func TestDetect_KnownType(t *testing.T) {

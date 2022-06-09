@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
+	"github.com/fsnotify/fsnotify"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/fsnotify.v1"
 	"k8s.io/client-go/tools/remotecommand"
 )
 

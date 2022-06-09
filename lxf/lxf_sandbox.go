@@ -7,7 +7,7 @@ import (
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/lxc/lxd/shared/api"
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // NewSandbox creates a local representation of a sandbox

@@ -10,7 +10,7 @@ import (
 	"github.com/automaticserver/lxe/third_party/ioutils"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var (

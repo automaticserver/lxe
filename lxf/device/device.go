@@ -1,7 +1,7 @@
 package device
 
 import (
-	"github.com/juju/errors"
+	"fmt"
 )
 
 var (
@@ -29,7 +29,7 @@ type Device interface {
 func Detect(name string, options map[string]string) (Device, error) {
 	t, is := schema[options["type"]]
 	if !is {
-		return nil, errors.NotSupportedf("unknown device type: %v", options["type"])
+		return nil, fmt.Errorf("device type %w: %v", ErrNotSupported, options["type"])
 	}
 
 	d := t.new()

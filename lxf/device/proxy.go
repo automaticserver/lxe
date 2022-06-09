@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/juju/errors"
 )
 
 const (
@@ -95,7 +93,7 @@ func newProtocol(str string) (Protocol, error) {
 		return i, nil
 	}
 
-	return ProtocolUndefined, errors.NotValidf("unknown protocol: %v", str)
+	return ProtocolUndefined, fmt.Errorf("protocol %w: %v", ErrNotValid, str)
 }
 
 func (p Protocol) String() string {
@@ -117,7 +115,7 @@ type ProxyEndpoint struct {
 func NewProxyEndpoint(str string) (*ProxyEndpoint, error) {
 	parts := strings.Split(str, ":")
 	if len(parts) != 3 { // nolint: gomnd
-		return nil, errors.NotValidf("proxy endpoint must be delimited by two colons (::), we were given: `%v`", str)
+		return nil, fmt.Errorf("proxy endpoint %w, must be delimited by two colons (::) but was given: `%v`", ErrNotValid, str)
 	}
 
 	prot, err := newProtocol(parts[0])
@@ -127,7 +125,7 @@ func NewProxyEndpoint(str string) (*ProxyEndpoint, error) {
 
 	port, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return nil, errors.NotValidf("port must be an int not %v", parts[2])
+		return nil, fmt.Errorf("port %w, must be an int not %v", ErrNotValid, parts[2])
 	}
 
 	return &ProxyEndpoint{

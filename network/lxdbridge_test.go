@@ -3,8 +3,8 @@ package network
 import (
 	"testing"
 
+	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/automaticserver/lxe/lxf"
-	"github.com/automaticserver/lxe/lxf/lxdfakes"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"

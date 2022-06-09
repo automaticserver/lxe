@@ -1,6 +1,6 @@
-// +build tools
+//go:build tools
 
-package network
+package third_party
 
 import (
 	_ "github.com/maxbrunsfeld/counterfeiter/v6"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/automaticserver/lxe/cri/crifakes"
+	crifakes "github.com/automaticserver/lxe/fakes/lxe/lxf"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/stretchr/testify/assert"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"

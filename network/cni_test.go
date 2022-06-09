@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/automaticserver/lxe/network/libcnifake"
+	libcnifake "github.com/automaticserver/lxe/fakes/containernetworking/libcni"
 	"github.com/containernetworking/cni/libcni"
 	types020 "github.com/containernetworking/cni/pkg/types/020"
 	types040 "github.com/containernetworking/cni/pkg/types/040"

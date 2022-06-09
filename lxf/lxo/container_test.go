@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 )

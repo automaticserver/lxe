@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/automaticserver/lxe/lxf/lxdfakes"
+	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/gorilla/websocket"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/shared/api"

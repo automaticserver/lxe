@@ -20,9 +20,9 @@ This project is currently under heavy development, expect incompatible changes.
 
 You need to have LXD installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). Debian is working on a LXD [deb package](https://wiki.debian.org/LXD), other distros might be as well. A LXD built by source is also supported.
 
-## Installing LXE from packages
+## Installing LXE from releases
 
-There are only manual builds right now, see [releases page](https://github.com/automaticserver/lxe/releases) for available builds.
+Head over to the [releases page](https://github.com/automaticserver/lxe/releases) for available builds.
 
 ## Getting started
 

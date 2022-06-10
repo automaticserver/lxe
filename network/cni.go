@@ -15,6 +15,7 @@ import (
 	"github.com/containernetworking/cni/pkg/invoke"
 	"github.com/containernetworking/cni/pkg/types"
 	current "github.com/containernetworking/cni/pkg/types/100"
+	"github.com/containernetworking/cni/pkg/types/create"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -225,7 +226,7 @@ func (s *cniPodNetwork) ips(previousresult []byte) ([]net.IP, error) {
 		previousresult = []byte{}
 	}
 
-	prevResult, err := current.NewResult(previousresult)
+	prevResult, err := create.CreateFromBytes(previousresult)
 	if err != nil {
 		return nil, err
 	}

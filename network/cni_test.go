@@ -281,7 +281,29 @@ func Test_cniPodNetwork_ips_Simple(t *testing.T) {
 	assert.Equal(t, "10.22.0.64", ips[0].String())
 }
 
-// TODO: ips from old result
+func Test_cniPodNetwork_ips_from020(t *testing.T) {
+	t.Parallel()
+
+	podNet, _, tmpDir := testCNIPodNet(t)
+	defer os.RemoveAll(tmpDir)
+
+	ips, err := podNet.ips([]byte(`{"cniVersion":"0.2.0", "ip4": {"ip": "10.22.0.64/16"}}`))
+	assert.NoError(t, err)
+	assert.Len(t, ips, 1)
+	assert.Equal(t, "10.22.0.64", ips[0].String())
+}
+
+func Test_cniPodNetwork_ips_from040(t *testing.T) {
+	t.Parallel()
+
+	podNet, _, tmpDir := testCNIPodNet(t)
+	defer os.RemoveAll(tmpDir)
+
+	ips, err := podNet.ips([]byte(`{"cniVersion":"0.4.0", "ips":[{"address":"10.22.0.64/16"}]}`))
+	assert.NoError(t, err)
+	assert.Len(t, ips, 1)
+	assert.Equal(t, "10.22.0.64", ips[0].String())
+}
 
 func Test_cniPodNetwork_ips_Missing(t *testing.T) {
 	t.Parallel()

@@ -228,7 +228,7 @@ root@node2:~# apt-get install golang
 root@node2:~# go version
 go version go1.18.1 linux/amd64
 
-root@node2:~# go install github.com/automaticserver/lxe/cmd/lxe@v0.4.0-rc2
+root@node2:~# go install github.com/automaticserver/lxe/cmd/lxe@latest
 go: downloading ...
 [...]
 ```

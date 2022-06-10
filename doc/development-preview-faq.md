@@ -49,8 +49,5 @@ Environment variables defined in the ContainerSpec of the PodSpec are passed to 
 
 - only one container per pod (for now)
 - cloud-init user-data instead of `PodSpec`'s `command` and `args`
-- container kind and lifecycle, exited = shutdown
 - Supported networking types and its implications
-- Kubernetes' critest
 - LXE specific `PodSpec` additions
-- Examples / LXC images for kube binaries

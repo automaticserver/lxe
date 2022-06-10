@@ -43,7 +43,7 @@ The most important LXE options are the following:
 ```cmd
       --lxd-remote-config string    Path to the LXD remote config. (guessed by default)
       --lxd-socket string           Path of the socket where LXD provides it's API. (guessed by default)
-      --network-plugin string       The network plugin to use. 'bridge' manages the lxd bridge defined in --bridge-name. 'cni' uses kubernetes cni tools to attach interfaces using configuration defined in --cni-conf-dir (default "bridge")
+      --network-plugin string       The network plugin to use. 'bridge' manages the lxd bridge defined in --bridge-name. 'cni' uses container network interface to attach interfaces using a configuration defined in --cni-conf-dir. (default "bridge")
       --socket string               Path of the socket where it should provide the runtime and image service to kubelet. (default "/run/lxe.sock")
 ```
 
@@ -106,7 +106,7 @@ Aside from command-line parameters, LXE also supports configuration files in var
 - Environment variables are always upper case and the dashes are underscores: E.g. `--lxd-socket` is `LXD_SOCKET`
 - The keys in config files are split on every dash and the remaining part of the key continues as sub-object: E.g. in JSON `--lxd-socket` is `{"lxd": {"socket": ...}}`
 
-You can also print the currently loaded configuration with `lxd config show yaml` (or any other supported extension). _Right now this only shows what configuration would be loaded if you would run lxe like that, it does not retrieve the current running configuration in case you have already an lxe process running_!
+You can also print the currently loaded configuration with `lxd config show yaml` (or any other supported extension). _This only shows what configuration would be loaded if you would run lxe, it does not retrieve the current running configuration in case you have already an lxe process running_!
 
 ```toml
 $ lxe config show toml

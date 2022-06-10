@@ -402,6 +402,11 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	return response, nil
 }
 
+// // PodSandboxStats returns stats of the pod. If the pod sandbox does not exist, the call returns an error.
+// func (s RuntimeServer) PodSandboxStats(ctx context.Context, req *rtApi.PodSandboxStatsRequest) (*rtApi.PodSandboxStatsResponse, error) {
+// 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+// }
+
 // getInetAddress returns the ip address of the sandbox. empty string if nothing was found
 func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string { // nolint: cyclop
 	log := log.WithContext(ctx).WithField("podid", sb.ID)
@@ -511,6 +516,11 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 
 	return response, nil
 }
+
+// // ListPodSandboxStats returns stats of the pods matching a filter.
+// func (s RuntimeServer) ListPodSandboxStats(ctx context.Context, req *rtApi.ListPodSandboxStatsRequest) (*rtApi.ListPodSandboxStatsResponse, error) {
+// 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+// }
 
 // CreateContainer creates a new container in specified PodSandbox
 func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) { // nolint: cyclop

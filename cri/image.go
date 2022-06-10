@@ -14,7 +14,6 @@ import (
 
 // ImageServer is the PoC implementation of the CRI ImageServer
 type ImageServer struct {
-	rtApi.ImageServiceServer
 	lxdConfig     *config.Config
 	criConfig     *Config
 	runtimeRemote string

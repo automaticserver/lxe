@@ -58,3 +58,28 @@ func TestDevices_Upsert_Override(t *testing.T) {
 	assert.Len(t, d, 1)
 	assert.Exactly(t, disk, d[0])
 }
+
+func Test_trimKeyName(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		arg  string
+		want string
+	}{
+		{"disk-/var/lib/short", "disk-/var/lib/short"},
+		{"disk-/var/lib/something/long", "disk-/var/li--mething/long"}, // remove when maxKeyNameLength=64
+		// {"disk-/var/lib/something/so/very/long/it/exceeds/sixtyfour/characters", "disk-/var/lib/something/so/very--it/exceeds/sixtyfour/characters"}, // add when maxKeyNameLength=64
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.arg, func(t *testing.T) {
+			t.Parallel()
+
+			if got := trimKeyName(tt.arg); got != tt.want {
+				t.Errorf("trimKeyName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

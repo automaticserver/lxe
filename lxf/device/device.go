@@ -17,7 +17,7 @@ var (
 
 // Device must support mapping from lxd device map bidirectional
 type Device interface {
-	// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map
+	// ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map. The key name must be passed through trimKeyName function to guarantee length compatibility.
 	ToMap() (name string, options map[string]string)
 	// FromMap loads assigned name (can be empty) and options
 	FromMap(name string, options map[string]string) error
@@ -59,4 +59,25 @@ func (d *Devices) Upsert(a Device) {
 	}
 
 	*d = append(*d, a)
+}
+
+// The maximum character length for device key names. Change to 64 once 5.0.1 is released (see below) as the effort to carry through the exact LXD version is currently not worth.
+const (
+	maxKeyNameLength             = 27
+	middleSeparatorKeyNameLength = "--"
+)
+
+// Trims key name to allowed length by cutting in the middle. There is a bug in LXD 5.0.0 limiting device names to 27 characters (https://github.com/lxc/lxd/issues/10238). A PR now officially describes the allowed length to be 64 characters and the fix will be available in 5.0.1 and is already merged for 5.1 (https://github.com/lxc/lxd/pull/10251).
+func trimKeyName(s string) string {
+	if len(s) <= maxKeyNameLength {
+		return s
+	}
+
+	partLen := maxKeyNameLength/2 - len(middleSeparatorKeyNameLength)/2 // nolint: gomnd
+
+	// we can expect there are no multibyte characters in this string. By dividing two ints the result is still int and thus automatically floored
+	left := s[:partLen]
+	right := s[len(s)-partLen:]
+
+	return fmt.Sprintf("%s%s%s", left, middleSeparatorKeyNameLength, right)
 }

@@ -27,7 +27,7 @@ func (d *Proxy) getName() string {
 		name = fmt.Sprintf("%v-%v", ProxyType, d.Listen.String())
 	}
 
-	return name
+	return trimKeyName(name)
 }
 
 // ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map

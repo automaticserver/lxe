@@ -10,7 +10,7 @@ type None struct {
 }
 
 func (d *None) getName() string {
-	return d.KeyName
+	return trimKeyName(d.KeyName)
 }
 
 // ToMap returns assigned name or if unset the type specific unique name and serializes the options into a lxd device map

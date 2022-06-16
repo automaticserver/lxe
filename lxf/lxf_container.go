@@ -232,12 +232,19 @@ type EventHandler interface {
 	ContainerStopped(c *Container) error
 }
 
+// Wish LXD API would offer those as constants (https://github.com/lxc/lxd/issues/10561)
+const (
+	eventTypeLifecycle         = "lifecycle"
+	eventActionInstanceStarted = "instance-started"
+	eventActionInstanceStopped = "instance-stopped"
+)
+
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
 func (l *client) lifecycleEventHandler(event api.Event) {
 	log := log
 
 	// we should always only get lifecycle events due to the handler setup but just in case ...
-	if event.Type != "lifecycle" {
+	if event.Type != eventTypeLifecycle {
 		// If the started container is not a cri container, we also get "not found", so this container can be ignored
 		return
 	}
@@ -252,7 +259,7 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 	}
 
 	// Early exit. We are only interested in container started and stopped events
-	if eventLifecycle.Action != "container-started" && eventLifecycle.Action != "container-stopped" {
+	if eventLifecycle.Action != eventActionInstanceStarted && eventLifecycle.Action != eventActionInstanceStopped {
 		return
 	}
 
@@ -273,14 +280,14 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 	}
 
 	switch eventLifecycle.Action {
-	case "container-started":
+	case eventActionInstanceStarted:
 		err := l.eventHandler.ContainerStarted(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")
 
 			return
 		}
-	case "container-stopped":
+	case eventActionInstanceStopped:
 		err := l.eventHandler.ContainerStopped(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")

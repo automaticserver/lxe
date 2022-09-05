@@ -183,6 +183,13 @@ root@node1:~# kubectl taint nodes node2 containerruntime=lxd:NoExecute
 node/node2 tainted
 ```
 
+[Label](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes/) node2 so pods can have a constraint to be scheduled to such a node with this label:
+
+```
+root@node1:~# kubectl label nodes node2 containerruntime=lxd
+node/node2 labeled
+```
+
 All current pods should be only running on the first node:
 
 ```
@@ -313,7 +320,7 @@ node2   Ready    <none>   8m10s   v1.23.6+k3s1   10.4.147.106   <none>        Ub
 
 ## Launch the first pod
 
-We are ready to launch the first pod on LXD:
+We are ready to launch the first pod on LXD ([using a scheduling hint](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) to only assign this pod to nodes with matching labels):
 
 ```
 root@node1:~# cat <<EOF | kubectl create -f -
@@ -326,6 +333,8 @@ spec:
   containers:
   - name: ubuntu
     image: ubuntu/jammy
+  nodeSelector:
+    containerruntime: lxd
   tolerations:
   - key: containerruntime
     operator: Exists

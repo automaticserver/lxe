@@ -169,6 +169,7 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 				cfgResourcesCPUQuota:             "300",
 				cfgResourcesCPUPeriod:            "100",
 				cfgResourcesMemoryLimit:          "1234567",
+				"volatile.idmap.current":         `[{"Isuid":true,...}]`,
 			},
 			Devices: map[string]map[string]string{
 				"first": {
@@ -187,7 +188,10 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 	exp.Devices = []device.Device{
 		&device.None{KeyName: "first"},
 	}
-	exp.Config = map[string]string{"something.else": "somethingElse"}
+	exp.Config = map[string]string{
+		"something.else":         "somethingElse",
+		"volatile.idmap.current": `[{"Isuid":true,...}]`,
+	}
 	exp.Profiles = []string{"profile"}
 	exp.Image = "image"
 	exp.Privileged = true

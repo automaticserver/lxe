@@ -304,14 +304,6 @@ func (c *Container) apply() error {
 	config := makeContainerConfig(c)
 	devices := makeContainerDevices(c)
 
-	for key, val := range c.Config {
-		if containerConfigStore.IsReserved(key) {
-			log.Warnf("config key '%v' is reserved and can't be used", key)
-		} else {
-			config[key] = val
-		}
-	}
-
 	contPut := api.ContainerPut{
 		Profiles: c.Profiles,
 		Config:   config,
@@ -388,6 +380,14 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit, 
 	// and annotations
 	for key, val := range c.Annotations {
 		config[cfgAnnotations+"."+key] = val
+	}
+	// and remaining config keys
+	for key, val := range c.Config {
+		if containerConfigStore.IsReserved(key) {
+			log.Warnf("config key '%v' is reserved and can't be used", key)
+		} else {
+			config[key] = val
+		}
 	}
 
 	config[cfgCreatedAt] = strconv.FormatInt(c.CreatedAt.UnixNano(), 10)

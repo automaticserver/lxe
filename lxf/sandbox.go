@@ -302,7 +302,7 @@ func makeSandboxConfig(s *Sandbox) (map[string]string, error) { // nolint: cyclo
 	for key, val := range s.Annotations {
 		config[cfgAnnotations+"."+key] = val
 	}
-	// and config keys
+	// and remaining config keys
 	for key, val := range s.Config {
 		if sandboxConfigStore.IsReserved(key) {
 			log.Warnf("config key '%v' is reserved and can't be used", key)

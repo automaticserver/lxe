@@ -263,11 +263,11 @@ func TestClient_Exec_Parallel(t *testing.T) {
 // 	output := "fjdskfhk d saf sdfrsafrefewfesfsdfdsfsd"
 
 // 	go func() {
-// 		ioutil.ReadAll(errin)
+// 		io.ReadAll(errin)
 // 	}()
 
 // 	go func() {
-// 		stdoutbytes, err := ioutil.ReadAll(outin)
+// 		stdoutbytes, err := io.ReadAll(outin)
 // 		if err != nil {
 // 			t.Errorf("failed to read from exec stdout, %v", err)
 // 		}

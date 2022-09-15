@@ -3,7 +3,7 @@ package cri
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"path"
 	"strconv"
 	"strings"
@@ -794,7 +794,7 @@ func (s RuntimeServer) ExecSync(ctx context.Context, req *rtApi.ExecSyncRequest)
 	})
 
 	stdin := bytes.NewReader(nil)
-	stdinR := ioutil.NopCloser(stdin)
+	stdinR := io.NopCloser(stdin)
 	stdout := bytes.NewBuffer(nil)
 	stdoutW := ioutils.WriteCloserWrapper(stdout)
 	stderr := bytes.NewBuffer(nil)

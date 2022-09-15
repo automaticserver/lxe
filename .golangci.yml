@@ -17,16 +17,21 @@ linters:
     - exhaustivestruct
     - exhaustruct
     - ifshort
+    - interfacebloat
     - ireturn
     - lll
     - nonamedreturns
+    - nosnakecase
     - testpackage
     - varnamelen
     # deprecated
+    - deadcode
     - golint
     - interfacer
     - maligned
     - scopelint
+    - structcheck
+    - varcheck
     # TODO: fix and remove
     - thelper
     - wrapcheck
@@ -73,3 +78,6 @@ issues:
     - text: "Magic number: 64"
       linters:
         - gomnd
+    - text: "should be written without leading space as `//nolint:"
+      linters:
+        - nolintlint

@@ -152,15 +152,15 @@ func (l *client) connect() error {
 			// might by useful some time in the future so i will leave this here commented out
 			// to setup this up in LXD see: https://help.ubuntu.com/lts/serverguide/lxd.html.en#lxd-server-config
 
-			// tlsServerCert, err := ioutil.ReadFile("/root/.config/lxc/servercerts/r1.crt")
+			// tlsServerCert, err := io.ReadFile("/root/.config/lxc/servercerts/r1.crt")
 			// if err != nil {
 			// 	panic(err)
 			// }
-			// tlsClientCert, err := ioutil.ReadFile("/root/.config/lxc/client.crt")
+			// tlsClientCert, err := io.ReadFile("/root/.config/lxc/client.crt")
 			// if err != nil {
 			// 	panic(err)
 			// }
-			// tlsClientKey, err := ioutil.ReadFile("/root/.config/lxc/client.key")
+			// tlsClientKey, err := io.ReadFile("/root/.config/lxc/client.key")
 			// if err != nil {
 			// 	panic(err)
 			// }
@@ -189,7 +189,7 @@ func (l *client) connect() error {
 
 			// online search will lead to some golang issues at github which most of are marked as fixed
 			// as well as the solution to "defer resp.Body.Close()" which is done by the LXD client api.
-			// other measures like "_, err = io.Copy(ioutil.Discard, resp.Body)" were tried as well.
+			// other measures like "_, err = io.Copy(io.Discard, resp.Body)" were tried as well.
 			// (see https://hackernoon.com/avoiding-memory-leak-in-golang-api-1843ef45fca8 e.g.)
 
 			// the chain to track this is:

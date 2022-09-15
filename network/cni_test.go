@@ -2,7 +2,6 @@
 package network
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,7 +22,7 @@ var (
 )
 
 func fakeCNIFiles(t *testing.T) (string, string, string, string) {
-	tmpDir, err := ioutil.TempDir("", "cni")
+	tmpDir, err := os.MkdirTemp("", "cni")
 	assert.NoError(t, err)
 
 	binPath := filepath.Join(tmpDir, DefaultCNIbinPath)
@@ -33,7 +32,7 @@ func fakeCNIFiles(t *testing.T) (string, string, string, string) {
 	err = os.MkdirAll(confPath, 0700)
 	assert.NoError(t, err)
 
-	err = ioutil.WriteFile(filepath.Join(confPath, "99-lo.conf"), []byte(`
+	err = os.WriteFile(filepath.Join(confPath, "99-lo.conf"), []byte(`
 	{
 		"cniVersion": "0.4.0",
 		"name": "lo",

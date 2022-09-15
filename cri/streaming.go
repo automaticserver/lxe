@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/url"
 	"os/exec"
@@ -107,9 +106,9 @@ func (ss streamService) Exec(containerID string, cmd []string, stdinR io.Reader,
 
 	var stdin io.ReadCloser
 	if stdinR == nil {
-		stdin = ioutil.NopCloser(bytes.NewReader(nil))
+		stdin = io.NopCloser(bytes.NewReader(nil))
 	} else {
-		stdin = ioutil.NopCloser(stdinR)
+		stdin = io.NopCloser(stdinR)
 	}
 
 	interactive := (stdinR != nil)

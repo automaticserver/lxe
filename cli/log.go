@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -102,7 +101,7 @@ func setLoggingHook() error { // nolint: cyclop
 	}
 
 	// Send direct logs to nowhere, everything is handled by the hook now
-	logrus.SetOutput(ioutil.Discard)
+	logrus.SetOutput(io.Discard)
 
 	return nil
 }

@@ -3,8 +3,8 @@ package cli
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net"
+	"os"
 	"testing"
 	"time"
 
@@ -61,7 +61,7 @@ func runC(t *testing.T, c *cobra.Command, a []string, w io.Writer) {
 }
 
 func compareGoldenFile(t *testing.T, c *cobra.Command, a []string, g string) {
-	exp, err := ioutil.ReadFile(g)
+	exp, err := os.ReadFile(g)
 	assert.NoError(t, err)
 
 	act := &bytes.Buffer{}

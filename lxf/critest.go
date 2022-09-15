@@ -3,7 +3,7 @@ package lxf
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -170,7 +170,7 @@ runcmd:
 
 		// wait for cloud-init to complete
 		stdin := bytes.NewReader(nil)
-		stdinR := ioutil.NopCloser(stdin)
+		stdinR := io.NopCloser(stdin)
 		stdout := bytes.NewBuffer(nil)
 		stdoutW := ioutils.WriteCloserWrapper(stdout)
 		stderr := bytes.NewBuffer(nil)

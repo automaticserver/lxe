@@ -232,19 +232,12 @@ type EventHandler interface {
 	ContainerStopped(c *Container) error
 }
 
-// Wish LXD API would offer those as constants (https://github.com/lxc/lxd/issues/10561)
-const (
-	eventTypeLifecycle         = "lifecycle"
-	eventActionInstanceStarted = "instance-started"
-	eventActionInstanceStopped = "instance-stopped"
-)
-
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
 func (l *client) lifecycleEventHandler(event api.Event) {
 	log := log
 
 	// we should always only get lifecycle events due to the handler setup but just in case ...
-	if event.Type != eventTypeLifecycle {
+	if event.Type != api.EventTypeLifecycle {
 		// If the started container is not a cri container, we also get "not found", so this container can be ignored
 		return
 	}
@@ -258,8 +251,8 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
-	// Early exit. We are only interested in container started and stopped events
-	if eventLifecycle.Action != eventActionInstanceStarted && eventLifecycle.Action != eventActionInstanceStopped {
+	// Early exit. We are only interested in container started, stopped and restarted events
+	if eventLifecycle.Action != api.EventLifecycleInstanceStarted && eventLifecycle.Action != api.EventLifecycleInstanceStopped && eventLifecycle.Action != api.EventLifecycleInstanceRestarted {
 		return
 	}
 
@@ -279,21 +272,28 @@ func (l *client) lifecycleEventHandler(event api.Event) {
 		return
 	}
 
-	switch eventLifecycle.Action {
-	case eventActionInstanceStarted:
+	startedFn := func() {
 		err := l.eventHandler.ContainerStarted(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")
-
-			return
 		}
-	case eventActionInstanceStopped:
+	}
+
+	stoppedFn := func() {
 		err := l.eventHandler.ContainerStopped(c)
 		if err != nil {
 			log.WithError(err).Error("event handler failed")
-
-			return
 		}
+	}
+
+	switch eventLifecycle.Action {
+	case api.EventLifecycleInstanceStarted:
+		startedFn()
+	case api.EventLifecycleInstanceStopped:
+		stoppedFn()
+	case api.EventLifecycleInstanceRestarted:
+		stoppedFn()
+		startedFn()
 	}
 }
 

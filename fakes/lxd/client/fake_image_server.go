@@ -200,6 +200,19 @@ type FakeImageServer struct {
 		result1 []api.Image
 		result2 error
 	}
+	GetImagesWithFilterStub        func([]string) ([]api.Image, error)
+	getImagesWithFilterMutex       sync.RWMutex
+	getImagesWithFilterArgsForCall []struct {
+		arg1 []string
+	}
+	getImagesWithFilterReturns struct {
+		result1 []api.Image
+		result2 error
+	}
+	getImagesWithFilterReturnsOnCall map[int]struct {
+		result1 []api.Image
+		result2 error
+	}
 	GetPrivateImageStub        func(string, string) (*api.Image, string, error)
 	getPrivateImageMutex       sync.RWMutex
 	getPrivateImageArgsForCall []struct {
@@ -1120,6 +1133,75 @@ func (fake *FakeImageServer) GetImagesReturnsOnCall(i int, result1 []api.Image, 
 	}{result1, result2}
 }
 
+func (fake *FakeImageServer) GetImagesWithFilter(arg1 []string) ([]api.Image, error) {
+	var arg1Copy []string
+	if arg1 != nil {
+		arg1Copy = make([]string, len(arg1))
+		copy(arg1Copy, arg1)
+	}
+	fake.getImagesWithFilterMutex.Lock()
+	ret, specificReturn := fake.getImagesWithFilterReturnsOnCall[len(fake.getImagesWithFilterArgsForCall)]
+	fake.getImagesWithFilterArgsForCall = append(fake.getImagesWithFilterArgsForCall, struct {
+		arg1 []string
+	}{arg1Copy})
+	stub := fake.GetImagesWithFilterStub
+	fakeReturns := fake.getImagesWithFilterReturns
+	fake.recordInvocation("GetImagesWithFilter", []interface{}{arg1Copy})
+	fake.getImagesWithFilterMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeImageServer) GetImagesWithFilterCallCount() int {
+	fake.getImagesWithFilterMutex.RLock()
+	defer fake.getImagesWithFilterMutex.RUnlock()
+	return len(fake.getImagesWithFilterArgsForCall)
+}
+
+func (fake *FakeImageServer) GetImagesWithFilterCalls(stub func([]string) ([]api.Image, error)) {
+	fake.getImagesWithFilterMutex.Lock()
+	defer fake.getImagesWithFilterMutex.Unlock()
+	fake.GetImagesWithFilterStub = stub
+}
+
+func (fake *FakeImageServer) GetImagesWithFilterArgsForCall(i int) []string {
+	fake.getImagesWithFilterMutex.RLock()
+	defer fake.getImagesWithFilterMutex.RUnlock()
+	argsForCall := fake.getImagesWithFilterArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeImageServer) GetImagesWithFilterReturns(result1 []api.Image, result2 error) {
+	fake.getImagesWithFilterMutex.Lock()
+	defer fake.getImagesWithFilterMutex.Unlock()
+	fake.GetImagesWithFilterStub = nil
+	fake.getImagesWithFilterReturns = struct {
+		result1 []api.Image
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImageServer) GetImagesWithFilterReturnsOnCall(i int, result1 []api.Image, result2 error) {
+	fake.getImagesWithFilterMutex.Lock()
+	defer fake.getImagesWithFilterMutex.Unlock()
+	fake.GetImagesWithFilterStub = nil
+	if fake.getImagesWithFilterReturnsOnCall == nil {
+		fake.getImagesWithFilterReturnsOnCall = make(map[int]struct {
+			result1 []api.Image
+			result2 error
+		})
+	}
+	fake.getImagesWithFilterReturnsOnCall[i] = struct {
+		result1 []api.Image
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeImageServer) GetPrivateImage(arg1 string, arg2 string) (*api.Image, string, error) {
 	fake.getPrivateImageMutex.Lock()
 	ret, specificReturn := fake.getPrivateImageReturnsOnCall[len(fake.getPrivateImageArgsForCall)]
@@ -1287,6 +1369,8 @@ func (fake *FakeImageServer) Invocations() map[string][][]interface{} {
 	defer fake.getImageSecretMutex.RUnlock()
 	fake.getImagesMutex.RLock()
 	defer fake.getImagesMutex.RUnlock()
+	fake.getImagesWithFilterMutex.RLock()
+	defer fake.getImagesWithFilterMutex.RUnlock()
 	fake.getPrivateImageMutex.RLock()
 	defer fake.getPrivateImageMutex.RUnlock()
 	fake.getPrivateImageFileMutex.RLock()

@@ -233,7 +233,7 @@ type EventHandler interface {
 }
 
 // lifecycleEventHandler is registered to the lxd event handler for listening to container start events
-func (l *client) lifecycleEventHandler(event api.Event) {
+func (l *client) lifecycleEventHandler(event api.Event) { // nolint: cyclop
 	log := log
 
 	// we should always only get lifecycle events due to the handler setup but just in case ...

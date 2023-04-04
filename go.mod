@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/containernetworking/cni v1.1.1
 	github.com/dionysius/errand v1.1.0
-	github.com/docker/docker v20.10.17+incompatible
+	github.com/docker/docker v20.10.24+incompatible
 	github.com/emicklei/go-restful v2.16.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.4
 	github.com/ghodss/yaml v1.0.0

@@ -22,8 +22,8 @@ var (
 	_ ContainerNetwork = &lxdBridgeContainerNetwork{}
 )
 
-func testLXDClient() (lxd.ContainerServer, *lxdfakes.FakeContainerServer) {
-	fake := &lxdfakes.FakeContainerServer{}
+func testLXDClient() (lxd.InstanceServer, *lxdfakes.FakeInstanceServer) {
+	fake := &lxdfakes.FakeInstanceServer{}
 
 	return fake, fake
 }
@@ -80,7 +80,7 @@ func TestInitPluginLXDBridge_DefinedAndUpdate(t *testing.T) {
 	assert.Equal(t, "port=0", args.Config["raw.dnsmasq"])
 }
 
-func testLXDBridgePlugin() (*lxdBridgePlugin, *lxdfakes.FakeContainerServer) {
+func testLXDBridgePlugin() (*lxdBridgePlugin, *lxdfakes.FakeInstanceServer) {
 	client, fake := testLXDClient()
 
 	return &lxdBridgePlugin{
@@ -248,7 +248,7 @@ func Test_lxdBridgePlugin_findFreeIP_NoRangeSupportYet(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func testLXDBridgePodNetwork() (*lxdBridgePodNetwork, *lxdfakes.FakeContainerServer) {
+func testLXDBridgePodNetwork() (*lxdBridgePodNetwork, *lxdfakes.FakeInstanceServer) {
 	plugin, fake := testLXDBridgePlugin()
 
 	return &lxdBridgePodNetwork{

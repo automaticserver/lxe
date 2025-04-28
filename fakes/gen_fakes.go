@@ -6,7 +6,7 @@ package third_party
 //counterfeiter:generate -o ../fakes/lxd/client/fake_remote_operation.go github.com/canonical/lxd/client.RemoteOperation
 //counterfeiter:generate -o ../fakes/lxd/client/fake_server.go github.com/canonical/lxd/client.Server
 //counterfeiter:generate -o ../fakes/lxd/client/fake_image_server.go github.com/canonical/lxd/client.ImageServer
-//counterfeiter:generate -o ../fakes/lxd/client/fake_container_server.go github.com/canonical/lxd/client.ContainerServer
+//counterfeiter:generate -o ../fakes/lxd/client/fake_instance_server.go github.com/canonical/lxd/client.InstanceServer
 
 //counterfeiter:generate -o ../fakes/lxe/lxf/fake_client.go github.com/automaticserver/lxe/lxf.Client
 

@@ -27,7 +27,7 @@ func (l *client) NewContainer(sandboxID string, additionalProfiles ...string) *C
 
 // GetContainer returns the container identified by id
 func (l *client) GetContainer(id string) (*Container, error) {
-	ct, ETag, err := l.server.GetContainer(id)
+	ct, ETag, err := l.server.GetInstance(id)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (l *client) ListContainers() ([]*Container, error) {
 		etag string
 	)
 
-	cts, err := l.server.GetContainers()
+	cts, err := l.server.GetInstances(api.InstanceTypeAny)
 	if err != nil {
 		return nil, err
 	}
@@ -71,8 +71,8 @@ func (l *client) ListContainers() ([]*Container, error) {
 	return cl, nil
 }
 
-// toContainer will convert an lxd container to lxf format
-func (l *client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit, cyclop
+// toContainer will convert an lxd instance to a lxf container
+func (l *client) toContainer(ct *api.Instance, etag string) (*Container, error) { // nolint: gocognit, cyclop
 	var err error
 
 	var attempt uint64

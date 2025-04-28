@@ -20,7 +20,7 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 	client, fake := testClient()
 	fakeOp := &lxdfakes.FakeOperation{}
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecInstanceCalls(func(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
 		go sendDataDone(arg3, 0)
 
 		return fakeOp, nil
@@ -47,7 +47,7 @@ func TestClient_Exec_Timeout(t *testing.T) {
 
 	var fakeControl *websocket.Conn
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecInstanceCalls(func(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
 		go sendDataDone(arg3, 1200*time.Millisecond)
@@ -80,7 +80,7 @@ func TestClient_Exec_Resize(t *testing.T) {
 
 	var fakeControl *websocket.Conn
 
-	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecInstanceCalls(func(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
 		go sendDataDone(arg3, 0)
@@ -116,7 +116,7 @@ func TestClient_Exec_Parallel(t *testing.T) {
 
 	// take the first command argument as a number and use that to return to ensure the a specific command gets the
 	// matching return
-	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+	fake.ExecInstanceCalls(func(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
 		go sendDataDone(arg3, 0)
 
 		fakeOp := &lxdfakes.FakeOperation{}
@@ -283,7 +283,7 @@ func TestClient_Exec_Parallel(t *testing.T) {
 // }
 
 // An independent routine within fake sends to this channel after ExecContainer, not Wait() related, so we'll send it here
-func sendDataDone(args *lxd.ContainerExecArgs, sleep time.Duration) {
+func sendDataDone(args *lxd.InstanceExecArgs, sleep time.Duration) {
 	if sleep > 0 {
 		time.Sleep(1200 * time.Millisecond)
 	}

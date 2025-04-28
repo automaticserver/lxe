@@ -26,13 +26,11 @@ var (
 
 // Client is a facade to thin the interface to map the cri logic to lxd.
 type Client interface {
-	// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
-	// network plugin) either return it here, or extract creation of the connection outside and pass server into
-	// NewClient(), but that makes the initialisation NewClient() pretty unnecessary
-	GetServer() lxd.ContainerServer
+	// GetServer returns the lxd InstanceServer
+	GetServer() lxd.InstanceServer
 	// GetRuntimeInfo returns informations about the runtime
 	GetRuntimeInfo() (*RuntimeInfo, error)
-	// SetEventHandler for container's starting and stopping events
+	// SetEventHandler for instances starting and stopping events
 	SetEventHandler(eh EventHandler)
 	// SetCRITestMode enables the critest mode
 	SetCRITestMode()
@@ -73,7 +71,7 @@ var (
 )
 
 type client struct {
-	server       lxd.ContainerServer
+	server       lxd.InstanceServer
 	config       *config.Config
 	opwait       *lxo.LXO
 	eventHandler EventHandler
@@ -105,14 +103,14 @@ func NewClient(socket string, configPath string) (Client, error) { // nolint: ir
 	return cl, nil
 }
 
-// GetServer returns the lxd ContainerServer. TODO: since it created it and others want to access lxd too (lxdbridge
+// GetServer returns the lxd InstanceServer. TODO: since it created it and others want to access lxd too (lxdbridge
 // network plugin) either return it here, or extract creation of the connection outside and pass server into
 // NewClient(), but that makes the initialisation NewClient() pretty unnecessary
-func (l *client) GetServer() lxd.ContainerServer {
+func (l *client) GetServer() lxd.InstanceServer {
 	return l.server
 }
 
-// SetEventHandler for container's starting and stopping events
+// SetEventHandler for instances starting and stopping events
 func (l *client) SetEventHandler(eh EventHandler) {
 	l.eventHandler = eh
 }
@@ -234,7 +232,7 @@ func (l *client) connect() error {
 
 // Detect if server needs to be connected again to. Seems to be needed if we get a lxd.RemoteOperation (e.g. in CopyImage), the op.Wait() never succeeds unless we have connected to the lxd socket again. All other lxd.Operations seem to work fine and this wouldn't be needed for them.
 func (l *client) detectNeedReconnect() { // nolint: gocognit, cyclop
-	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.ContainerServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
+	// currently I know no way to find out when a socket is gone as all is encapsulated in lxd.InstanceServer. We can set an fsnotify to the socket file so we get an event when it was created. If we got such event, we try to connect again until it is successful.
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err.Error())

@@ -8,7 +8,7 @@ import (
 
 // As of LXD 5.1+ and 5.0.1+ volatile config entries are not allowed to be changed and thus have to be sent as-is when updating, introduced in https://github.com/canonical/lxd/commit/955c005042ab1baf77a4deb3c3d839da843b7529
 // See also https://discuss.linuxcontainers.org/t/issue-creating-cloud-init-profiles-using-golang-client/13722/9
-func Test_makeContainerConfig_KeepVolatile(t *testing.T) {
+func Test_makeInstanceConfig_KeepVolatile(t *testing.T) {
 	t.Parallel()
 
 	c := &Container{}
@@ -24,7 +24,7 @@ func Test_makeContainerConfig_KeepVolatile(t *testing.T) {
 		"volatile.idmap.current": `[{"Isuid":true,...}]`,
 	}
 
-	config := makeContainerConfig(c)
+	config := makeInstanceConfig(c)
 
 	act := map[string]string{}
 	for k := range exp {

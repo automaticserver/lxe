@@ -54,11 +54,11 @@ func (l *client) IsCRI(i interface{}) bool { // nolint: cyclop
 	)
 
 	switch o := i.(type) {
-	case api.Container:
+	case api.Instance:
 		if val, has = o.Config[cfgIsCRI]; !has {
 			return false
 		}
-	case *api.Container:
+	case *api.Instance:
 		return l.IsCRI(*o)
 	case api.Profile:
 		if val, has = o.Config[cfgIsCRI]; !has {

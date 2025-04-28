@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func basicContainer(name, sandbox string) *api.Container {
-	c := &api.Container{Name: name}
+func basicInstance(name, sandbox string) *api.Instance {
+	c := &api.Instance{Name: name}
 	c.Profiles = []string{sandbox}
 	c.Config = map[string]string{}
-	satisfyContainerSchema(satisfyContainerCri(c))
+	satisfyInstanceSchema(satisfyContainerCri(c))
 
 	return c
 }
@@ -44,13 +44,13 @@ func TestClient_GetContainer_Minimal(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainerReturns(basicContainer("foo", "bar"), "", nil)
+	fake.GetInstanceReturns(basicInstance("foo", "bar"), "", nil)
 
 	s, err := client.GetContainer("foo")
 	assert.NoError(t, err)
 	assert.Equal(t, "foo", s.ID)
-	assert.Equal(t, "foo", fake.GetContainerArgsForCall(0))
-	assert.Equal(t, 1, fake.GetContainerCallCount())
+	assert.Equal(t, "foo", fake.GetInstanceArgsForCall(0))
+	assert.Equal(t, 1, fake.GetInstanceCallCount())
 }
 
 func TestClient_GetContainer_Missing(t *testing.T) {
@@ -58,7 +58,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainerReturns(nil, "", ErrNotFound)
+	fake.GetInstanceReturns(nil, "", ErrNotFound)
 
 	s, err := client.GetContainer("foo")
 
@@ -66,7 +66,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)
-	assert.Equal(t, 1, fake.GetContainerCallCount())
+	assert.Equal(t, 1, fake.GetInstanceCallCount())
 }
 
 func TestClient_GetContainer_NonCri(t *testing.T) {
@@ -74,7 +74,7 @@ func TestClient_GetContainer_NonCri(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainerReturns(&api.Container{}, "", nil)
+	fake.GetInstanceReturns(&api.Instance{}, "", nil)
 
 	s, err := client.GetContainer("foo")
 
@@ -82,7 +82,7 @@ func TestClient_GetContainer_NonCri(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Exactly(t, expected, s)
-	assert.Equal(t, 1, fake.GetContainerCallCount())
+	assert.Equal(t, 1, fake.GetInstanceCallCount())
 }
 
 func TestClient_ListContainers_Minimal(t *testing.T) {
@@ -90,12 +90,12 @@ func TestClient_ListContainers_Minimal(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, nil)
+	fake.GetInstancesReturns([]api.Instance{*basicInstance("foo", "default"), *basicInstance("bar", "default")}, nil)
 
 	sl, err := client.ListContainers()
 	assert.NoError(t, err)
 	assert.Len(t, sl, 2)
-	assert.Equal(t, 1, fake.GetContainersCallCount())
+	assert.Equal(t, 1, fake.GetInstancesCallCount())
 }
 
 func TestClient_ListContainers_Error(t *testing.T) {
@@ -103,12 +103,12 @@ func TestClient_ListContainers_Error(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, ErrNotFound)
+	fake.GetInstancesReturns([]api.Instance{*basicInstance("foo", "default"), *basicInstance("bar", "default")}, ErrNotFound)
 
 	sl, err := client.ListContainers()
 	assert.Error(t, err)
 	assert.Len(t, sl, 0)
-	assert.Equal(t, 1, fake.GetContainersCallCount())
+	assert.Equal(t, 1, fake.GetInstancesCallCount())
 }
 
 func TestClient_ListContainers_Missing(t *testing.T) {
@@ -116,12 +116,12 @@ func TestClient_ListContainers_Missing(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{}, nil)
+	fake.GetInstancesReturns([]api.Instance{}, nil)
 
 	sl, err := client.ListContainers()
 	assert.NoError(t, err)
 	assert.Len(t, sl, 0)
-	assert.Equal(t, 1, fake.GetContainersCallCount())
+	assert.Equal(t, 1, fake.GetInstancesCallCount())
 }
 
 func TestClient_ListContainers_NonCri(t *testing.T) {
@@ -129,12 +129,12 @@ func TestClient_ListContainers_NonCri(t *testing.T) {
 
 	client, fake := testClient()
 
-	fake.GetContainersReturns([]api.Container{{Name: "foo"}, {Name: "bar"}}, nil)
+	fake.GetInstancesReturns([]api.Instance{{Name: "foo"}, {Name: "bar"}}, nil)
 
 	sl, err := client.ListContainers()
 	assert.NoError(t, err)
 	assert.Len(t, sl, 0)
-	assert.Equal(t, 1, fake.GetContainersCallCount())
+	assert.Equal(t, 1, fake.GetInstancesCallCount())
 }
 
 func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
@@ -146,9 +146,9 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 	past := now.Add(-1 * time.Hour)
 	future := now.Add(1 * time.Hour)
 
-	ct := &api.Container{
+	ct := &api.Instance{
 		Name: "containerName",
-		ContainerPut: api.ContainerPut{
+		InstancePut: api.InstancePut{
 			Config: map[string]string{
 				cfgVolatileBaseImage:             "image",
 				cfgMetaName:                      "metaName",

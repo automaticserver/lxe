@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func getSchemaContainer(schema string) api.Container {
-	c := api.Container{}
+func getSchemaInstance(schema string) api.Instance {
+	c := api.Instance{}
 	c.Config = make(map[string]string)
 
 	if schema != "" {
@@ -33,7 +33,7 @@ func getSchemaProfile(schema string) api.Profile {
 func TestIsSchemaEmpty(t *testing.T) {
 	t.Parallel()
 
-	c := IsSchemaCurrent(getSchemaContainer(""))
+	c := IsSchemaCurrent(getSchemaInstance(""))
 	assert.Equal(t, false, c)
 
 	p := IsSchemaCurrent(getSchemaProfile(""))
@@ -46,7 +46,7 @@ func TestIsSchemaEmpty(t *testing.T) {
 func TestIsSchemaWrong(t *testing.T) {
 	t.Parallel()
 
-	c := IsSchemaCurrent(getSchemaContainer("0.0"))
+	c := IsSchemaCurrent(getSchemaInstance("0.0"))
 	assert.Equal(t, false, c)
 
 	p := IsSchemaCurrent(getSchemaProfile("0.0"))
@@ -56,7 +56,7 @@ func TestIsSchemaWrong(t *testing.T) {
 func TestIsSchemaCurrent(t *testing.T) {
 	t.Parallel()
 
-	c := IsSchemaCurrent(getSchemaContainer(SchemaVersionContainer))
+	c := IsSchemaCurrent(getSchemaInstance(SchemaVersionInstance))
 	assert.Equal(t, true, c)
 
 	p := IsSchemaCurrent(getSchemaProfile(SchemaVersionProfile))
@@ -66,7 +66,7 @@ func TestIsSchemaCurrent(t *testing.T) {
 func TestIsSchemaPointer(t *testing.T) {
 	t.Parallel()
 
-	c1 := getSchemaContainer(SchemaVersionContainer)
+	c1 := getSchemaInstance(SchemaVersionInstance)
 	c := IsSchemaCurrent(&c1)
 	assert.Equal(t, true, c)
 
@@ -75,8 +75,8 @@ func TestIsSchemaPointer(t *testing.T) {
 	assert.Equal(t, true, p)
 }
 
-func satisfyContainerSchema(ct *api.Container) *api.Container {
-	ct.Config[cfgSchema] = SchemaVersionContainer
+func satisfyInstanceSchema(ct *api.Instance) *api.Instance {
+	ct.Config[cfgSchema] = SchemaVersionInstance
 
 	return ct
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func getCRIContainer(cri string) api.Container {
-	c := getSchemaContainer(SchemaVersionContainer)
+func getCRIInstance(cri string) api.Instance {
+	c := getSchemaInstance(SchemaVersionInstance)
 	if cri != "" {
 		c.Config[cfgIsCRI] = cri
 	}
@@ -42,7 +42,7 @@ func TestIsCRIEmpty(t *testing.T) {
 
 	l, _ := testClient()
 
-	c := l.IsCRI(getCRIContainer(""))
+	c := l.IsCRI(getCRIInstance(""))
 	assert.Equal(t, false, c)
 
 	p := l.IsCRI(getCRIProfile(""))
@@ -60,7 +60,7 @@ func TestIsCRIFalse(t *testing.T) {
 
 	l, _ := testClient()
 
-	c := l.IsCRI(getCRIContainer("false"))
+	c := l.IsCRI(getCRIInstance("false"))
 	assert.Equal(t, false, c)
 
 	p := l.IsCRI(getCRIProfile("False"))
@@ -75,7 +75,7 @@ func TestIsCRIWrong(t *testing.T) {
 
 	l, _ := testClient()
 
-	c := l.IsCRI(getCRIContainer("no"))
+	c := l.IsCRI(getCRIInstance("no"))
 	assert.Equal(t, false, c)
 
 	p := l.IsCRI(getCRIProfile("yes"))
@@ -90,7 +90,7 @@ func TestIsCRITrue(t *testing.T) {
 
 	l, _ := testClient()
 
-	c := l.IsCRI(getCRIContainer("true"))
+	c := l.IsCRI(getCRIInstance("true"))
 	assert.Equal(t, true, c)
 
 	p := l.IsCRI(getCRIProfile("True"))
@@ -105,7 +105,7 @@ func TestIsCRIPointer(t *testing.T) {
 
 	l, _ := testClient()
 
-	c1 := getCRIContainer("true")
+	c1 := getCRIInstance("true")
 	c := l.IsCRI(&c1)
 	assert.Equal(t, true, c)
 
@@ -118,7 +118,7 @@ func TestIsCRIPointer(t *testing.T) {
 	assert.Equal(t, true, i)
 }
 
-func satisfyContainerCri(ct *api.Container) *api.Container {
+func satisfyContainerCri(ct *api.Instance) *api.Instance {
 	ct.Config[cfgIsCRI] = "true"
 
 	return ct

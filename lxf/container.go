@@ -54,11 +54,11 @@ var (
 	)
 )
 
-// Container represents a LXD container including CRI specific configuration
+// Container represents a LXD instance including CRI specific configuration
 type Container struct {
 	// LXDObject inherits common CRI fields
 	LXDObject
-	// Profiles of the container. First entry is always the sandbox profile
+	// Profiles of the instance. First entry is always the sandbox profile
 	// The default profile is always excluded and managed according to the settings automatically
 	Profiles []string
 	// The image fingerprint to use
@@ -101,9 +101,9 @@ type ContainerState struct {
 	// Stats usage of the current container
 	// +readonly
 	Stats ContainerStats
-	// Network represents the network information section of a LXD container's state
+	// Network represents the network information section of a LXD instances state
 	// +readonly
-	Network map[string]api.ContainerStateNetwork
+	Network map[string]api.InstanceStateNetwork
 }
 
 // ContainerStateName represents the state name of the container
@@ -188,7 +188,7 @@ func (c *Container) State() (*ContainerState, error) {
 func (c *Container) getState() (*ContainerState, error) {
 	cs := &ContainerState{}
 
-	state, _, err := c.client.server.GetContainerState(c.ID)
+	state, _, err := c.client.server.GetInstanceState(c.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func (c *Container) Apply() error {
 
 // Start the container
 func (c *Container) Start() error {
-	err := c.client.opwait.StartContainer(c.ID)
+	err := c.client.opwait.StartInstance(c.ID)
 	if err != nil {
 		return err
 	}
@@ -254,7 +254,7 @@ func (c *Container) Start() error {
 // Stop will try to stop the container, returns nil when container is already stopped or
 // got stopped in the meantime, otherwise it will return an error.
 func (c *Container) Stop(timeout int) error {
-	err := c.client.opwait.StopContainer(c.ID, timeout, 1)
+	err := c.client.opwait.StopInstance(c.ID, timeout, 1)
 	if err != nil {
 		return err
 	}
@@ -273,7 +273,7 @@ func (c *Container) Stop(timeout int) error {
 // Delete the container, returns nil when container is already deleted or
 // got deleted in the meantime, otherwise it will return an error.
 func (c *Container) Delete() error {
-	err := c.client.opwait.DeleteContainer(c.ID)
+	err := c.client.opwait.DeleteInstance(c.ID)
 	if err != nil {
 		return err
 	}
@@ -301,10 +301,10 @@ func (c *Container) validate() error {
 // apply saves the changes to LXD
 // Will not obtain the new ETag!
 func (c *Container) apply() error {
-	config := makeContainerConfig(c)
-	devices := makeContainerDevices(c)
+	config := makeInstanceConfig(c)
+	devices := makeInstanceDevices(c)
 
-	contPut := api.ContainerPut{
+	instPut := api.InstancePut{
 		Profiles: c.Profiles,
 		Config:   config,
 		Devices:  devices,
@@ -314,10 +314,10 @@ func (c *Container) apply() error {
 		// container has to be created
 		c.ID = c.CreateID()
 
-		return c.client.opwait.CreateContainer(api.ContainersPost{
-			Name:         c.ID,
-			ContainerPut: contPut,
-			Source: api.ContainerSource{
+		return c.client.opwait.CreateInstance(api.InstancesPost{
+			Name:        c.ID,
+			InstancePut: instPut,
+			Source: api.InstanceSource{
 				Fingerprint: c.Image,
 				Type:        "image",
 			},
@@ -328,7 +328,7 @@ func (c *Container) apply() error {
 		return fmt.Errorf("update container not allowed: %w", ErrMissingETag)
 	}
 
-	err := c.client.opwait.UpdateContainer(c.ID, contPut, c.ETag)
+	err := c.client.opwait.UpdateInstance(c.ID, instPut, c.ETag)
 	if err != nil {
 		return err
 	}
@@ -364,7 +364,7 @@ func (c *Container) GetInetAddress(ifs []string) string {
 	return ""
 }
 
-func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit, cyclop
+func makeInstanceConfig(c *Container) map[string]string { // nolint: gocognit, cyclop
 	// default values for new containers
 	if c.ID == "" {
 		c.Config[cfgState] = ContainerStateCreated.String()
@@ -448,12 +448,12 @@ func makeContainerConfig(c *Container) map[string]string { // nolint: gocognit, 
 		}
 	}
 
-	config[cfgSchema] = SchemaVersionContainer
+	config[cfgSchema] = SchemaVersionInstance
 
 	return config
 }
 
-func makeContainerDevices(c *Container) map[string]map[string]string {
+func makeInstanceDevices(c *Container) map[string]map[string]string {
 	devices := make(map[string]map[string]string)
 
 	for _, d := range c.Devices {

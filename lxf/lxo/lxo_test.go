@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func newFakeClient() (*LXO, *lxdfakes.FakeContainerServer) {
-	fake := &lxdfakes.FakeContainerServer{}
+func newFakeClient() (*LXO, *lxdfakes.FakeInstanceServer) {
+	fake := &lxdfakes.FakeInstanceServer{}
 
 	return &LXO{
 		server: fake,
@@ -18,7 +18,7 @@ func newFakeClient() (*LXO, *lxdfakes.FakeContainerServer) {
 func TestNewClient(t *testing.T) {
 	t.Parallel()
 
-	fake := &lxdfakes.FakeContainerServer{}
+	fake := &lxdfakes.FakeInstanceServer{}
 
 	lxo := NewClient(fake)
 	assert.NotNil(t, lxo)

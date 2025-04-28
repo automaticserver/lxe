@@ -130,25 +130,25 @@ func (l *client) createCRITestImages() error { // nolint: gocognit, cyclop
 	// create the webserver image based on the default image, install nginx automatically with cloud-init and alias it accordingly
 	if IsNotFoundError(err) { // nolint: nestif
 		// in case of a previous error clean up
-		err = l.opwait.StopContainer(cName, criTestTimeout, 0)
+		err = l.opwait.StopInstance(cName, criTestTimeout, 0)
 		if err != nil && !IsNotFoundError(err) {
 			return err
 		}
 
-		err = l.opwait.DeleteContainer(cName)
+		err = l.opwait.DeleteInstance(cName)
 		if err != nil && !IsNotFoundError(err) {
 			return err
 		}
 
 		log.Infof("creating webserver image")
 
-		err = l.opwait.CreateContainer(api.ContainersPost{
+		err = l.opwait.CreateInstance(api.InstancesPost{
 			Name: cName,
-			Source: api.ContainerSource{
+			Source: api.InstanceSource{
 				Fingerprint: defaultFingerprint,
 				Type:        "image",
 			},
-			ContainerPut: api.ContainerPut{
+			InstancePut: api.InstancePut{
 				Config: map[string]string{
 					"user.user-data": `#cloud-config
 runcmd:
@@ -163,7 +163,7 @@ runcmd:
 			return err
 		}
 
-		err = l.opwait.StartContainer(cName)
+		err = l.opwait.StartInstance(cName)
 		if err != nil {
 			return err
 		}
@@ -192,7 +192,7 @@ runcmd:
 		}
 
 		// create the image based on this container
-		err = l.opwait.StopContainer(cName, criTestTimeout, 0)
+		err = l.opwait.StopInstance(cName, criTestTimeout, 0)
 		if err != nil {
 			return err
 		}
@@ -218,8 +218,8 @@ runcmd:
 	imagesFile := fmt.Sprintf("%s/lxe-critest-images-file.yaml", os.TempDir())
 
 	b, err := yaml.Marshal(TestImageList{
-		DefaultTestContainerImage: fmt.Sprintf("local/%s", critestDefaultAlias),
-		WebServerTestImage:        fmt.Sprintf("local/%s", critestWebserverAlias),
+		DefaultTestInstanceImage: fmt.Sprintf("local/%s", critestDefaultAlias),
+		WebServerTestImage:       fmt.Sprintf("local/%s", critestWebserverAlias),
 	})
 	if err != nil {
 		return err
@@ -232,7 +232,7 @@ runcmd:
 
 	log.Warnf("CRITest ready: Use --test-images-file=%s in your critest command", imagesFile)
 
-	err = l.opwait.DeleteContainer(cName)
+	err = l.opwait.DeleteInstance(cName)
 	if err != nil && !IsNotFoundError(err) {
 		return err
 	}
@@ -243,6 +243,6 @@ runcmd:
 // TestImageList aggregates references to the images used in tests.
 // Borrowed from github.com/kubernetes-sigs/cri-tools/pkg/framework/test_context.go
 type TestImageList struct {
-	DefaultTestContainerImage string `yaml:"defaultTestContainerImage"`
-	WebServerTestImage        string `yaml:"webServerTestImage"`
+	DefaultTestInstanceImage string `yaml:"defaultTestContainerImage"`
+	WebServerTestImage       string `yaml:"webServerTestImage"`
 }

@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func testClient() (*client, *lxdfakes.FakeContainerServer) {
-	fake := &lxdfakes.FakeContainerServer{}
+func testClient() (*client, *lxdfakes.FakeInstanceServer) {
+	fake := &lxdfakes.FakeInstanceServer{}
 
 	return &client{
 		server: fake,

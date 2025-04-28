@@ -40,12 +40,12 @@ func (c *ConfLXDBridge) setDefaults() {
 // lxdBridgePlugin manages the pod networks using LXDBridge
 type lxdBridgePlugin struct {
 	noopPlugin // every method not implemented is noop
-	server     lxd.ContainerServer
+	server     lxd.InstanceServer
 	conf       ConfLXDBridge
 }
 
 // InitPluginLXDBridge instantiates the LXDBridge plugin using the provided config
-func InitPluginLXDBridge(server lxd.ContainerServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint, revive // intended to not export lxdBridgePlugin
+func InitPluginLXDBridge(server lxd.InstanceServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint, revive // intended to not export lxdBridgePlugin
 	conf.setDefaults()
 
 	p := &lxdBridgePlugin{

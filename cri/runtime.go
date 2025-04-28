@@ -31,7 +31,7 @@ var (
 	ErrUnknownNetworkPlugin = errors.New("unknown network plugin")
 )
 
-// RuntimeServer is the PoC implementation of the CRI RuntimeServer
+// RuntimeServer implements the CRI RuntimeServer
 type RuntimeServer struct {
 	rtApi.RuntimeServiceServer
 	lxf       lxf.Client

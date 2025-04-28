@@ -95,15 +95,15 @@ type FakeClient struct {
 		result1 *lxf.Sandbox
 		result2 error
 	}
-	GetServerStub        func() lxd.ContainerServer
+	GetServerStub        func() lxd.InstanceServer
 	getServerMutex       sync.RWMutex
 	getServerArgsForCall []struct {
 	}
 	getServerReturns struct {
-		result1 lxd.ContainerServer
+		result1 lxd.InstanceServer
 	}
 	getServerReturnsOnCall map[int]struct {
-		result1 lxd.ContainerServer
+		result1 lxd.InstanceServer
 	}
 	ListContainersStub        func() ([]*lxf.Container, error)
 	listContainersMutex       sync.RWMutex
@@ -582,7 +582,7 @@ func (fake *FakeClient) GetSandboxReturnsOnCall(i int, result1 *lxf.Sandbox, res
 	}{result1, result2}
 }
 
-func (fake *FakeClient) GetServer() lxd.ContainerServer {
+func (fake *FakeClient) GetServer() lxd.InstanceServer {
 	fake.getServerMutex.Lock()
 	ret, specificReturn := fake.getServerReturnsOnCall[len(fake.getServerArgsForCall)]
 	fake.getServerArgsForCall = append(fake.getServerArgsForCall, struct {
@@ -606,32 +606,32 @@ func (fake *FakeClient) GetServerCallCount() int {
 	return len(fake.getServerArgsForCall)
 }
 
-func (fake *FakeClient) GetServerCalls(stub func() lxd.ContainerServer) {
+func (fake *FakeClient) GetServerCalls(stub func() lxd.InstanceServer) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = stub
 }
 
-func (fake *FakeClient) GetServerReturns(result1 lxd.ContainerServer) {
+func (fake *FakeClient) GetServerReturns(result1 lxd.InstanceServer) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = nil
 	fake.getServerReturns = struct {
-		result1 lxd.ContainerServer
+		result1 lxd.InstanceServer
 	}{result1}
 }
 
-func (fake *FakeClient) GetServerReturnsOnCall(i int, result1 lxd.ContainerServer) {
+func (fake *FakeClient) GetServerReturnsOnCall(i int, result1 lxd.InstanceServer) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = nil
 	if fake.getServerReturnsOnCall == nil {
 		fake.getServerReturnsOnCall = make(map[int]struct {
-			result1 lxd.ContainerServer
+			result1 lxd.InstanceServer
 		})
 	}
 	fake.getServerReturnsOnCall[i] = struct {
-		result1 lxd.ContainerServer
+		result1 lxd.InstanceServer
 	}{result1}
 }
 

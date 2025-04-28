@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/sftp"
 )
 
-type FakeContainerServer struct {
+type FakeInstanceServer struct {
 	ConsoleContainerStub        func(string, api.ContainerConsolePost, *lxd.ContainerConsoleArgs) (lxd.Operation, error)
 	consoleContainerMutex       sync.RWMutex
 	consoleContainerArgsForCall []struct {
@@ -4084,7 +4084,7 @@ type FakeContainerServer struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeContainerServer) ConsoleContainer(arg1 string, arg2 api.ContainerConsolePost, arg3 *lxd.ContainerConsoleArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) ConsoleContainer(arg1 string, arg2 api.ContainerConsolePost, arg3 *lxd.ContainerConsoleArgs) (lxd.Operation, error) {
 	fake.consoleContainerMutex.Lock()
 	ret, specificReturn := fake.consoleContainerReturnsOnCall[len(fake.consoleContainerArgsForCall)]
 	fake.consoleContainerArgsForCall = append(fake.consoleContainerArgsForCall, struct {
@@ -4105,26 +4105,26 @@ func (fake *FakeContainerServer) ConsoleContainer(arg1 string, arg2 api.Containe
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) ConsoleContainerCallCount() int {
+func (fake *FakeInstanceServer) ConsoleContainerCallCount() int {
 	fake.consoleContainerMutex.RLock()
 	defer fake.consoleContainerMutex.RUnlock()
 	return len(fake.consoleContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) ConsoleContainerCalls(stub func(string, api.ContainerConsolePost, *lxd.ContainerConsoleArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) ConsoleContainerCalls(stub func(string, api.ContainerConsolePost, *lxd.ContainerConsoleArgs) (lxd.Operation, error)) {
 	fake.consoleContainerMutex.Lock()
 	defer fake.consoleContainerMutex.Unlock()
 	fake.ConsoleContainerStub = stub
 }
 
-func (fake *FakeContainerServer) ConsoleContainerArgsForCall(i int) (string, api.ContainerConsolePost, *lxd.ContainerConsoleArgs) {
+func (fake *FakeInstanceServer) ConsoleContainerArgsForCall(i int) (string, api.ContainerConsolePost, *lxd.ContainerConsoleArgs) {
 	fake.consoleContainerMutex.RLock()
 	defer fake.consoleContainerMutex.RUnlock()
 	argsForCall := fake.consoleContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) ConsoleContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ConsoleContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.consoleContainerMutex.Lock()
 	defer fake.consoleContainerMutex.Unlock()
 	fake.ConsoleContainerStub = nil
@@ -4134,7 +4134,7 @@ func (fake *FakeContainerServer) ConsoleContainerReturns(result1 lxd.Operation, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ConsoleContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ConsoleContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.consoleContainerMutex.Lock()
 	defer fake.consoleContainerMutex.Unlock()
 	fake.ConsoleContainerStub = nil
@@ -4150,7 +4150,7 @@ func (fake *FakeContainerServer) ConsoleContainerReturnsOnCall(i int, result1 lx
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ConsoleInstance(arg1 string, arg2 api.InstanceConsolePost, arg3 *lxd.InstanceConsoleArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) ConsoleInstance(arg1 string, arg2 api.InstanceConsolePost, arg3 *lxd.InstanceConsoleArgs) (lxd.Operation, error) {
 	fake.consoleInstanceMutex.Lock()
 	ret, specificReturn := fake.consoleInstanceReturnsOnCall[len(fake.consoleInstanceArgsForCall)]
 	fake.consoleInstanceArgsForCall = append(fake.consoleInstanceArgsForCall, struct {
@@ -4171,26 +4171,26 @@ func (fake *FakeContainerServer) ConsoleInstance(arg1 string, arg2 api.InstanceC
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceCallCount() int {
+func (fake *FakeInstanceServer) ConsoleInstanceCallCount() int {
 	fake.consoleInstanceMutex.RLock()
 	defer fake.consoleInstanceMutex.RUnlock()
 	return len(fake.consoleInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceCalls(stub func(string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) ConsoleInstanceCalls(stub func(string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) (lxd.Operation, error)) {
 	fake.consoleInstanceMutex.Lock()
 	defer fake.consoleInstanceMutex.Unlock()
 	fake.ConsoleInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceArgsForCall(i int) (string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) {
+func (fake *FakeInstanceServer) ConsoleInstanceArgsForCall(i int) (string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) {
 	fake.consoleInstanceMutex.RLock()
 	defer fake.consoleInstanceMutex.RUnlock()
 	argsForCall := fake.consoleInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ConsoleInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.consoleInstanceMutex.Lock()
 	defer fake.consoleInstanceMutex.Unlock()
 	fake.ConsoleInstanceStub = nil
@@ -4200,7 +4200,7 @@ func (fake *FakeContainerServer) ConsoleInstanceReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ConsoleInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.consoleInstanceMutex.Lock()
 	defer fake.consoleInstanceMutex.Unlock()
 	fake.ConsoleInstanceStub = nil
@@ -4216,7 +4216,7 @@ func (fake *FakeContainerServer) ConsoleInstanceReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamic(arg1 string, arg2 api.InstanceConsolePost, arg3 *lxd.InstanceConsoleArgs) (lxd.Operation, func(io.ReadWriteCloser) error, error) {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamic(arg1 string, arg2 api.InstanceConsolePost, arg3 *lxd.InstanceConsoleArgs) (lxd.Operation, func(io.ReadWriteCloser) error, error) {
 	fake.consoleInstanceDynamicMutex.Lock()
 	ret, specificReturn := fake.consoleInstanceDynamicReturnsOnCall[len(fake.consoleInstanceDynamicArgsForCall)]
 	fake.consoleInstanceDynamicArgsForCall = append(fake.consoleInstanceDynamicArgsForCall, struct {
@@ -4237,26 +4237,26 @@ func (fake *FakeContainerServer) ConsoleInstanceDynamic(arg1 string, arg2 api.In
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamicCallCount() int {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamicCallCount() int {
 	fake.consoleInstanceDynamicMutex.RLock()
 	defer fake.consoleInstanceDynamicMutex.RUnlock()
 	return len(fake.consoleInstanceDynamicArgsForCall)
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamicCalls(stub func(string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) (lxd.Operation, func(io.ReadWriteCloser) error, error)) {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamicCalls(stub func(string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) (lxd.Operation, func(io.ReadWriteCloser) error, error)) {
 	fake.consoleInstanceDynamicMutex.Lock()
 	defer fake.consoleInstanceDynamicMutex.Unlock()
 	fake.ConsoleInstanceDynamicStub = stub
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamicArgsForCall(i int) (string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamicArgsForCall(i int) (string, api.InstanceConsolePost, *lxd.InstanceConsoleArgs) {
 	fake.consoleInstanceDynamicMutex.RLock()
 	defer fake.consoleInstanceDynamicMutex.RUnlock()
 	argsForCall := fake.consoleInstanceDynamicArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamicReturns(result1 lxd.Operation, result2 func(io.ReadWriteCloser) error, result3 error) {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamicReturns(result1 lxd.Operation, result2 func(io.ReadWriteCloser) error, result3 error) {
 	fake.consoleInstanceDynamicMutex.Lock()
 	defer fake.consoleInstanceDynamicMutex.Unlock()
 	fake.ConsoleInstanceDynamicStub = nil
@@ -4267,7 +4267,7 @@ func (fake *FakeContainerServer) ConsoleInstanceDynamicReturns(result1 lxd.Opera
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) ConsoleInstanceDynamicReturnsOnCall(i int, result1 lxd.Operation, result2 func(io.ReadWriteCloser) error, result3 error) {
+func (fake *FakeInstanceServer) ConsoleInstanceDynamicReturnsOnCall(i int, result1 lxd.Operation, result2 func(io.ReadWriteCloser) error, result3 error) {
 	fake.consoleInstanceDynamicMutex.Lock()
 	defer fake.consoleInstanceDynamicMutex.Unlock()
 	fake.ConsoleInstanceDynamicStub = nil
@@ -4285,7 +4285,7 @@ func (fake *FakeContainerServer) ConsoleInstanceDynamicReturnsOnCall(i int, resu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) CopyContainer(arg1 lxd.InstanceServer, arg2 api.Container, arg3 *lxd.ContainerCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyContainer(arg1 lxd.InstanceServer, arg2 api.Container, arg3 *lxd.ContainerCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyContainerMutex.Lock()
 	ret, specificReturn := fake.copyContainerReturnsOnCall[len(fake.copyContainerArgsForCall)]
 	fake.copyContainerArgsForCall = append(fake.copyContainerArgsForCall, struct {
@@ -4306,26 +4306,26 @@ func (fake *FakeContainerServer) CopyContainer(arg1 lxd.InstanceServer, arg2 api
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyContainerCallCount() int {
+func (fake *FakeInstanceServer) CopyContainerCallCount() int {
 	fake.copyContainerMutex.RLock()
 	defer fake.copyContainerMutex.RUnlock()
 	return len(fake.copyContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyContainerCalls(stub func(lxd.InstanceServer, api.Container, *lxd.ContainerCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyContainerCalls(stub func(lxd.InstanceServer, api.Container, *lxd.ContainerCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyContainerMutex.Lock()
 	defer fake.copyContainerMutex.Unlock()
 	fake.CopyContainerStub = stub
 }
 
-func (fake *FakeContainerServer) CopyContainerArgsForCall(i int) (lxd.InstanceServer, api.Container, *lxd.ContainerCopyArgs) {
+func (fake *FakeInstanceServer) CopyContainerArgsForCall(i int) (lxd.InstanceServer, api.Container, *lxd.ContainerCopyArgs) {
 	fake.copyContainerMutex.RLock()
 	defer fake.copyContainerMutex.RUnlock()
 	argsForCall := fake.copyContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CopyContainerReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyContainerReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyContainerMutex.Lock()
 	defer fake.copyContainerMutex.Unlock()
 	fake.CopyContainerStub = nil
@@ -4335,7 +4335,7 @@ func (fake *FakeContainerServer) CopyContainerReturns(result1 lxd.RemoteOperatio
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyContainerReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyContainerReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyContainerMutex.Lock()
 	defer fake.copyContainerMutex.Unlock()
 	fake.CopyContainerStub = nil
@@ -4351,7 +4351,7 @@ func (fake *FakeContainerServer) CopyContainerReturnsOnCall(i int, result1 lxd.R
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshot(arg1 lxd.InstanceServer, arg2 string, arg3 api.ContainerSnapshot, arg4 *lxd.ContainerSnapshotCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyContainerSnapshot(arg1 lxd.InstanceServer, arg2 string, arg3 api.ContainerSnapshot, arg4 *lxd.ContainerSnapshotCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.copyContainerSnapshotReturnsOnCall[len(fake.copyContainerSnapshotArgsForCall)]
 	fake.copyContainerSnapshotArgsForCall = append(fake.copyContainerSnapshotArgsForCall, struct {
@@ -4373,26 +4373,26 @@ func (fake *FakeContainerServer) CopyContainerSnapshot(arg1 lxd.InstanceServer, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) CopyContainerSnapshotCallCount() int {
 	fake.copyContainerSnapshotMutex.RLock()
 	defer fake.copyContainerSnapshotMutex.RUnlock()
 	return len(fake.copyContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshotCalls(stub func(lxd.InstanceServer, string, api.ContainerSnapshot, *lxd.ContainerSnapshotCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyContainerSnapshotCalls(stub func(lxd.InstanceServer, string, api.ContainerSnapshot, *lxd.ContainerSnapshotCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyContainerSnapshotMutex.Lock()
 	defer fake.copyContainerSnapshotMutex.Unlock()
 	fake.CopyContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshotArgsForCall(i int) (lxd.InstanceServer, string, api.ContainerSnapshot, *lxd.ContainerSnapshotCopyArgs) {
+func (fake *FakeInstanceServer) CopyContainerSnapshotArgsForCall(i int) (lxd.InstanceServer, string, api.ContainerSnapshot, *lxd.ContainerSnapshotCopyArgs) {
 	fake.copyContainerSnapshotMutex.RLock()
 	defer fake.copyContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.copyContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshotReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyContainerSnapshotReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyContainerSnapshotMutex.Lock()
 	defer fake.copyContainerSnapshotMutex.Unlock()
 	fake.CopyContainerSnapshotStub = nil
@@ -4402,7 +4402,7 @@ func (fake *FakeContainerServer) CopyContainerSnapshotReturns(result1 lxd.Remote
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyContainerSnapshotReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyContainerSnapshotReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyContainerSnapshotMutex.Lock()
 	defer fake.copyContainerSnapshotMutex.Unlock()
 	fake.CopyContainerSnapshotStub = nil
@@ -4418,7 +4418,7 @@ func (fake *FakeContainerServer) CopyContainerSnapshotReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 *lxd.ImageCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 *lxd.ImageCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyImageMutex.Lock()
 	ret, specificReturn := fake.copyImageReturnsOnCall[len(fake.copyImageArgsForCall)]
 	fake.copyImageArgsForCall = append(fake.copyImageArgsForCall, struct {
@@ -4439,26 +4439,26 @@ func (fake *FakeContainerServer) CopyImage(arg1 lxd.ImageServer, arg2 api.Image,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyImageCallCount() int {
+func (fake *FakeInstanceServer) CopyImageCallCount() int {
 	fake.copyImageMutex.RLock()
 	defer fake.copyImageMutex.RUnlock()
 	return len(fake.copyImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyImageCalls(stub func(lxd.ImageServer, api.Image, *lxd.ImageCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyImageCalls(stub func(lxd.ImageServer, api.Image, *lxd.ImageCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyImageMutex.Lock()
 	defer fake.copyImageMutex.Unlock()
 	fake.CopyImageStub = stub
 }
 
-func (fake *FakeContainerServer) CopyImageArgsForCall(i int) (lxd.ImageServer, api.Image, *lxd.ImageCopyArgs) {
+func (fake *FakeInstanceServer) CopyImageArgsForCall(i int) (lxd.ImageServer, api.Image, *lxd.ImageCopyArgs) {
 	fake.copyImageMutex.RLock()
 	defer fake.copyImageMutex.RUnlock()
 	argsForCall := fake.copyImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CopyImageReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyImageReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyImageMutex.Lock()
 	defer fake.copyImageMutex.Unlock()
 	fake.CopyImageStub = nil
@@ -4468,7 +4468,7 @@ func (fake *FakeContainerServer) CopyImageReturns(result1 lxd.RemoteOperation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyImageMutex.Lock()
 	defer fake.copyImageMutex.Unlock()
 	fake.CopyImageStub = nil
@@ -4484,7 +4484,7 @@ func (fake *FakeContainerServer) CopyImageReturnsOnCall(i int, result1 lxd.Remot
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyInstance(arg1 lxd.InstanceServer, arg2 api.Instance, arg3 *lxd.InstanceCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyInstance(arg1 lxd.InstanceServer, arg2 api.Instance, arg3 *lxd.InstanceCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyInstanceMutex.Lock()
 	ret, specificReturn := fake.copyInstanceReturnsOnCall[len(fake.copyInstanceArgsForCall)]
 	fake.copyInstanceArgsForCall = append(fake.copyInstanceArgsForCall, struct {
@@ -4505,26 +4505,26 @@ func (fake *FakeContainerServer) CopyInstance(arg1 lxd.InstanceServer, arg2 api.
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyInstanceCallCount() int {
+func (fake *FakeInstanceServer) CopyInstanceCallCount() int {
 	fake.copyInstanceMutex.RLock()
 	defer fake.copyInstanceMutex.RUnlock()
 	return len(fake.copyInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyInstanceCalls(stub func(lxd.InstanceServer, api.Instance, *lxd.InstanceCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyInstanceCalls(stub func(lxd.InstanceServer, api.Instance, *lxd.InstanceCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyInstanceMutex.Lock()
 	defer fake.copyInstanceMutex.Unlock()
 	fake.CopyInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) CopyInstanceArgsForCall(i int) (lxd.InstanceServer, api.Instance, *lxd.InstanceCopyArgs) {
+func (fake *FakeInstanceServer) CopyInstanceArgsForCall(i int) (lxd.InstanceServer, api.Instance, *lxd.InstanceCopyArgs) {
 	fake.copyInstanceMutex.RLock()
 	defer fake.copyInstanceMutex.RUnlock()
 	argsForCall := fake.copyInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CopyInstanceReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyInstanceReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyInstanceMutex.Lock()
 	defer fake.copyInstanceMutex.Unlock()
 	fake.CopyInstanceStub = nil
@@ -4534,7 +4534,7 @@ func (fake *FakeContainerServer) CopyInstanceReturns(result1 lxd.RemoteOperation
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyInstanceReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyInstanceReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyInstanceMutex.Lock()
 	defer fake.copyInstanceMutex.Unlock()
 	fake.CopyInstanceStub = nil
@@ -4550,7 +4550,7 @@ func (fake *FakeContainerServer) CopyInstanceReturnsOnCall(i int, result1 lxd.Re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshot(arg1 lxd.InstanceServer, arg2 string, arg3 api.InstanceSnapshot, arg4 *lxd.InstanceSnapshotCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyInstanceSnapshot(arg1 lxd.InstanceServer, arg2 string, arg3 api.InstanceSnapshot, arg4 *lxd.InstanceSnapshotCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.copyInstanceSnapshotReturnsOnCall[len(fake.copyInstanceSnapshotArgsForCall)]
 	fake.copyInstanceSnapshotArgsForCall = append(fake.copyInstanceSnapshotArgsForCall, struct {
@@ -4572,26 +4572,26 @@ func (fake *FakeContainerServer) CopyInstanceSnapshot(arg1 lxd.InstanceServer, a
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) CopyInstanceSnapshotCallCount() int {
 	fake.copyInstanceSnapshotMutex.RLock()
 	defer fake.copyInstanceSnapshotMutex.RUnlock()
 	return len(fake.copyInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshotCalls(stub func(lxd.InstanceServer, string, api.InstanceSnapshot, *lxd.InstanceSnapshotCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyInstanceSnapshotCalls(stub func(lxd.InstanceServer, string, api.InstanceSnapshot, *lxd.InstanceSnapshotCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyInstanceSnapshotMutex.Lock()
 	defer fake.copyInstanceSnapshotMutex.Unlock()
 	fake.CopyInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshotArgsForCall(i int) (lxd.InstanceServer, string, api.InstanceSnapshot, *lxd.InstanceSnapshotCopyArgs) {
+func (fake *FakeInstanceServer) CopyInstanceSnapshotArgsForCall(i int) (lxd.InstanceServer, string, api.InstanceSnapshot, *lxd.InstanceSnapshotCopyArgs) {
 	fake.copyInstanceSnapshotMutex.RLock()
 	defer fake.copyInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.copyInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshotReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyInstanceSnapshotReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyInstanceSnapshotMutex.Lock()
 	defer fake.copyInstanceSnapshotMutex.Unlock()
 	fake.CopyInstanceSnapshotStub = nil
@@ -4601,7 +4601,7 @@ func (fake *FakeContainerServer) CopyInstanceSnapshotReturns(result1 lxd.RemoteO
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyInstanceSnapshotReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyInstanceSnapshotReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyInstanceSnapshotMutex.Lock()
 	defer fake.copyInstanceSnapshotMutex.Unlock()
 	fake.CopyInstanceSnapshotStub = nil
@@ -4617,7 +4617,7 @@ func (fake *FakeContainerServer) CopyInstanceSnapshotReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolume(arg1 string, arg2 lxd.InstanceServer, arg3 string, arg4 api.StorageVolume, arg5 *lxd.StoragePoolVolumeCopyArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CopyStoragePoolVolume(arg1 string, arg2 lxd.InstanceServer, arg3 string, arg4 api.StorageVolume, arg5 *lxd.StoragePoolVolumeCopyArgs) (lxd.RemoteOperation, error) {
 	fake.copyStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.copyStoragePoolVolumeReturnsOnCall[len(fake.copyStoragePoolVolumeArgsForCall)]
 	fake.copyStoragePoolVolumeArgsForCall = append(fake.copyStoragePoolVolumeArgsForCall, struct {
@@ -4640,26 +4640,26 @@ func (fake *FakeContainerServer) CopyStoragePoolVolume(arg1 string, arg2 lxd.Ins
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) CopyStoragePoolVolumeCallCount() int {
 	fake.copyStoragePoolVolumeMutex.RLock()
 	defer fake.copyStoragePoolVolumeMutex.RUnlock()
 	return len(fake.copyStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolumeCalls(stub func(string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeCopyArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CopyStoragePoolVolumeCalls(stub func(string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeCopyArgs) (lxd.RemoteOperation, error)) {
 	fake.copyStoragePoolVolumeMutex.Lock()
 	defer fake.copyStoragePoolVolumeMutex.Unlock()
 	fake.CopyStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolumeArgsForCall(i int) (string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeCopyArgs) {
+func (fake *FakeInstanceServer) CopyStoragePoolVolumeArgsForCall(i int) (string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeCopyArgs) {
 	fake.copyStoragePoolVolumeMutex.RLock()
 	defer fake.copyStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.copyStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolumeReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyStoragePoolVolumeReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.copyStoragePoolVolumeMutex.Lock()
 	defer fake.copyStoragePoolVolumeMutex.Unlock()
 	fake.CopyStoragePoolVolumeStub = nil
@@ -4669,7 +4669,7 @@ func (fake *FakeContainerServer) CopyStoragePoolVolumeReturns(result1 lxd.Remote
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CopyStoragePoolVolumeReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CopyStoragePoolVolumeReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.copyStoragePoolVolumeMutex.Lock()
 	defer fake.copyStoragePoolVolumeMutex.Unlock()
 	fake.CopyStoragePoolVolumeStub = nil
@@ -4685,7 +4685,7 @@ func (fake *FakeContainerServer) CopyStoragePoolVolumeReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateCertificate(arg1 api.CertificatesPost) error {
+func (fake *FakeInstanceServer) CreateCertificate(arg1 api.CertificatesPost) error {
 	fake.createCertificateMutex.Lock()
 	ret, specificReturn := fake.createCertificateReturnsOnCall[len(fake.createCertificateArgsForCall)]
 	fake.createCertificateArgsForCall = append(fake.createCertificateArgsForCall, struct {
@@ -4704,26 +4704,26 @@ func (fake *FakeContainerServer) CreateCertificate(arg1 api.CertificatesPost) er
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateCertificateCallCount() int {
+func (fake *FakeInstanceServer) CreateCertificateCallCount() int {
 	fake.createCertificateMutex.RLock()
 	defer fake.createCertificateMutex.RUnlock()
 	return len(fake.createCertificateArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateCertificateCalls(stub func(api.CertificatesPost) error) {
+func (fake *FakeInstanceServer) CreateCertificateCalls(stub func(api.CertificatesPost) error) {
 	fake.createCertificateMutex.Lock()
 	defer fake.createCertificateMutex.Unlock()
 	fake.CreateCertificateStub = stub
 }
 
-func (fake *FakeContainerServer) CreateCertificateArgsForCall(i int) api.CertificatesPost {
+func (fake *FakeInstanceServer) CreateCertificateArgsForCall(i int) api.CertificatesPost {
 	fake.createCertificateMutex.RLock()
 	defer fake.createCertificateMutex.RUnlock()
 	argsForCall := fake.createCertificateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateCertificateReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateCertificateReturns(result1 error) {
 	fake.createCertificateMutex.Lock()
 	defer fake.createCertificateMutex.Unlock()
 	fake.CreateCertificateStub = nil
@@ -4732,7 +4732,7 @@ func (fake *FakeContainerServer) CreateCertificateReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateCertificateReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateCertificateReturnsOnCall(i int, result1 error) {
 	fake.createCertificateMutex.Lock()
 	defer fake.createCertificateMutex.Unlock()
 	fake.CreateCertificateStub = nil
@@ -4746,7 +4746,7 @@ func (fake *FakeContainerServer) CreateCertificateReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateCertificateToken(arg1 api.CertificatesPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateCertificateToken(arg1 api.CertificatesPost) (lxd.Operation, error) {
 	fake.createCertificateTokenMutex.Lock()
 	ret, specificReturn := fake.createCertificateTokenReturnsOnCall[len(fake.createCertificateTokenArgsForCall)]
 	fake.createCertificateTokenArgsForCall = append(fake.createCertificateTokenArgsForCall, struct {
@@ -4765,26 +4765,26 @@ func (fake *FakeContainerServer) CreateCertificateToken(arg1 api.CertificatesPos
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateCertificateTokenCallCount() int {
+func (fake *FakeInstanceServer) CreateCertificateTokenCallCount() int {
 	fake.createCertificateTokenMutex.RLock()
 	defer fake.createCertificateTokenMutex.RUnlock()
 	return len(fake.createCertificateTokenArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateCertificateTokenCalls(stub func(api.CertificatesPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateCertificateTokenCalls(stub func(api.CertificatesPost) (lxd.Operation, error)) {
 	fake.createCertificateTokenMutex.Lock()
 	defer fake.createCertificateTokenMutex.Unlock()
 	fake.CreateCertificateTokenStub = stub
 }
 
-func (fake *FakeContainerServer) CreateCertificateTokenArgsForCall(i int) api.CertificatesPost {
+func (fake *FakeInstanceServer) CreateCertificateTokenArgsForCall(i int) api.CertificatesPost {
 	fake.createCertificateTokenMutex.RLock()
 	defer fake.createCertificateTokenMutex.RUnlock()
 	argsForCall := fake.createCertificateTokenArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateCertificateTokenReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateCertificateTokenReturns(result1 lxd.Operation, result2 error) {
 	fake.createCertificateTokenMutex.Lock()
 	defer fake.createCertificateTokenMutex.Unlock()
 	fake.CreateCertificateTokenStub = nil
@@ -4794,7 +4794,7 @@ func (fake *FakeContainerServer) CreateCertificateTokenReturns(result1 lxd.Opera
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateCertificateTokenReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateCertificateTokenReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createCertificateTokenMutex.Lock()
 	defer fake.createCertificateTokenMutex.Unlock()
 	fake.CreateCertificateTokenStub = nil
@@ -4810,7 +4810,7 @@ func (fake *FakeContainerServer) CreateCertificateTokenReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateClusterGroup(arg1 api.ClusterGroupsPost) error {
+func (fake *FakeInstanceServer) CreateClusterGroup(arg1 api.ClusterGroupsPost) error {
 	fake.createClusterGroupMutex.Lock()
 	ret, specificReturn := fake.createClusterGroupReturnsOnCall[len(fake.createClusterGroupArgsForCall)]
 	fake.createClusterGroupArgsForCall = append(fake.createClusterGroupArgsForCall, struct {
@@ -4829,26 +4829,26 @@ func (fake *FakeContainerServer) CreateClusterGroup(arg1 api.ClusterGroupsPost) 
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateClusterGroupCallCount() int {
+func (fake *FakeInstanceServer) CreateClusterGroupCallCount() int {
 	fake.createClusterGroupMutex.RLock()
 	defer fake.createClusterGroupMutex.RUnlock()
 	return len(fake.createClusterGroupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateClusterGroupCalls(stub func(api.ClusterGroupsPost) error) {
+func (fake *FakeInstanceServer) CreateClusterGroupCalls(stub func(api.ClusterGroupsPost) error) {
 	fake.createClusterGroupMutex.Lock()
 	defer fake.createClusterGroupMutex.Unlock()
 	fake.CreateClusterGroupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateClusterGroupArgsForCall(i int) api.ClusterGroupsPost {
+func (fake *FakeInstanceServer) CreateClusterGroupArgsForCall(i int) api.ClusterGroupsPost {
 	fake.createClusterGroupMutex.RLock()
 	defer fake.createClusterGroupMutex.RUnlock()
 	argsForCall := fake.createClusterGroupArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateClusterGroupReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateClusterGroupReturns(result1 error) {
 	fake.createClusterGroupMutex.Lock()
 	defer fake.createClusterGroupMutex.Unlock()
 	fake.CreateClusterGroupStub = nil
@@ -4857,7 +4857,7 @@ func (fake *FakeContainerServer) CreateClusterGroupReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateClusterGroupReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateClusterGroupReturnsOnCall(i int, result1 error) {
 	fake.createClusterGroupMutex.Lock()
 	defer fake.createClusterGroupMutex.Unlock()
 	fake.CreateClusterGroupStub = nil
@@ -4871,7 +4871,7 @@ func (fake *FakeContainerServer) CreateClusterGroupReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateClusterMember(arg1 api.ClusterMembersPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateClusterMember(arg1 api.ClusterMembersPost) (lxd.Operation, error) {
 	fake.createClusterMemberMutex.Lock()
 	ret, specificReturn := fake.createClusterMemberReturnsOnCall[len(fake.createClusterMemberArgsForCall)]
 	fake.createClusterMemberArgsForCall = append(fake.createClusterMemberArgsForCall, struct {
@@ -4890,26 +4890,26 @@ func (fake *FakeContainerServer) CreateClusterMember(arg1 api.ClusterMembersPost
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateClusterMemberCallCount() int {
+func (fake *FakeInstanceServer) CreateClusterMemberCallCount() int {
 	fake.createClusterMemberMutex.RLock()
 	defer fake.createClusterMemberMutex.RUnlock()
 	return len(fake.createClusterMemberArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateClusterMemberCalls(stub func(api.ClusterMembersPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateClusterMemberCalls(stub func(api.ClusterMembersPost) (lxd.Operation, error)) {
 	fake.createClusterMemberMutex.Lock()
 	defer fake.createClusterMemberMutex.Unlock()
 	fake.CreateClusterMemberStub = stub
 }
 
-func (fake *FakeContainerServer) CreateClusterMemberArgsForCall(i int) api.ClusterMembersPost {
+func (fake *FakeInstanceServer) CreateClusterMemberArgsForCall(i int) api.ClusterMembersPost {
 	fake.createClusterMemberMutex.RLock()
 	defer fake.createClusterMemberMutex.RUnlock()
 	argsForCall := fake.createClusterMemberArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateClusterMemberReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateClusterMemberReturns(result1 lxd.Operation, result2 error) {
 	fake.createClusterMemberMutex.Lock()
 	defer fake.createClusterMemberMutex.Unlock()
 	fake.CreateClusterMemberStub = nil
@@ -4919,7 +4919,7 @@ func (fake *FakeContainerServer) CreateClusterMemberReturns(result1 lxd.Operatio
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateClusterMemberReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateClusterMemberReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createClusterMemberMutex.Lock()
 	defer fake.createClusterMemberMutex.Unlock()
 	fake.CreateClusterMemberStub = nil
@@ -4935,7 +4935,7 @@ func (fake *FakeContainerServer) CreateClusterMemberReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainer(arg1 api.ContainersPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateContainer(arg1 api.ContainersPost) (lxd.Operation, error) {
 	fake.createContainerMutex.Lock()
 	ret, specificReturn := fake.createContainerReturnsOnCall[len(fake.createContainerArgsForCall)]
 	fake.createContainerArgsForCall = append(fake.createContainerArgsForCall, struct {
@@ -4954,26 +4954,26 @@ func (fake *FakeContainerServer) CreateContainer(arg1 api.ContainersPost) (lxd.O
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateContainerCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerCallCount() int {
 	fake.createContainerMutex.RLock()
 	defer fake.createContainerMutex.RUnlock()
 	return len(fake.createContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerCalls(stub func(api.ContainersPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateContainerCalls(stub func(api.ContainersPost) (lxd.Operation, error)) {
 	fake.createContainerMutex.Lock()
 	defer fake.createContainerMutex.Unlock()
 	fake.CreateContainerStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerArgsForCall(i int) api.ContainersPost {
+func (fake *FakeInstanceServer) CreateContainerArgsForCall(i int) api.ContainersPost {
 	fake.createContainerMutex.RLock()
 	defer fake.createContainerMutex.RUnlock()
 	argsForCall := fake.createContainerArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.createContainerMutex.Lock()
 	defer fake.createContainerMutex.Unlock()
 	fake.CreateContainerStub = nil
@@ -4983,7 +4983,7 @@ func (fake *FakeContainerServer) CreateContainerReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createContainerMutex.Lock()
 	defer fake.createContainerMutex.Unlock()
 	fake.CreateContainerStub = nil
@@ -4999,7 +4999,7 @@ func (fake *FakeContainerServer) CreateContainerReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerBackup(arg1 string, arg2 api.ContainerBackupsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateContainerBackup(arg1 string, arg2 api.ContainerBackupsPost) (lxd.Operation, error) {
 	fake.createContainerBackupMutex.Lock()
 	ret, specificReturn := fake.createContainerBackupReturnsOnCall[len(fake.createContainerBackupArgsForCall)]
 	fake.createContainerBackupArgsForCall = append(fake.createContainerBackupArgsForCall, struct {
@@ -5019,26 +5019,26 @@ func (fake *FakeContainerServer) CreateContainerBackup(arg1 string, arg2 api.Con
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateContainerBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerBackupCallCount() int {
 	fake.createContainerBackupMutex.RLock()
 	defer fake.createContainerBackupMutex.RUnlock()
 	return len(fake.createContainerBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerBackupCalls(stub func(string, api.ContainerBackupsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateContainerBackupCalls(stub func(string, api.ContainerBackupsPost) (lxd.Operation, error)) {
 	fake.createContainerBackupMutex.Lock()
 	defer fake.createContainerBackupMutex.Unlock()
 	fake.CreateContainerBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerBackupArgsForCall(i int) (string, api.ContainerBackupsPost) {
+func (fake *FakeInstanceServer) CreateContainerBackupArgsForCall(i int) (string, api.ContainerBackupsPost) {
 	fake.createContainerBackupMutex.RLock()
 	defer fake.createContainerBackupMutex.RUnlock()
 	argsForCall := fake.createContainerBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateContainerBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createContainerBackupMutex.Lock()
 	defer fake.createContainerBackupMutex.Unlock()
 	fake.CreateContainerBackupStub = nil
@@ -5048,7 +5048,7 @@ func (fake *FakeContainerServer) CreateContainerBackupReturns(result1 lxd.Operat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createContainerBackupMutex.Lock()
 	defer fake.createContainerBackupMutex.Unlock()
 	fake.CreateContainerBackupStub = nil
@@ -5064,7 +5064,7 @@ func (fake *FakeContainerServer) CreateContainerBackupReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerFile(arg1 string, arg2 string, arg3 lxd.ContainerFileArgs) error {
+func (fake *FakeInstanceServer) CreateContainerFile(arg1 string, arg2 string, arg3 lxd.ContainerFileArgs) error {
 	fake.createContainerFileMutex.Lock()
 	ret, specificReturn := fake.createContainerFileReturnsOnCall[len(fake.createContainerFileArgsForCall)]
 	fake.createContainerFileArgsForCall = append(fake.createContainerFileArgsForCall, struct {
@@ -5085,26 +5085,26 @@ func (fake *FakeContainerServer) CreateContainerFile(arg1 string, arg2 string, a
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateContainerFileCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerFileCallCount() int {
 	fake.createContainerFileMutex.RLock()
 	defer fake.createContainerFileMutex.RUnlock()
 	return len(fake.createContainerFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerFileCalls(stub func(string, string, lxd.ContainerFileArgs) error) {
+func (fake *FakeInstanceServer) CreateContainerFileCalls(stub func(string, string, lxd.ContainerFileArgs) error) {
 	fake.createContainerFileMutex.Lock()
 	defer fake.createContainerFileMutex.Unlock()
 	fake.CreateContainerFileStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerFileArgsForCall(i int) (string, string, lxd.ContainerFileArgs) {
+func (fake *FakeInstanceServer) CreateContainerFileArgsForCall(i int) (string, string, lxd.ContainerFileArgs) {
 	fake.createContainerFileMutex.RLock()
 	defer fake.createContainerFileMutex.RUnlock()
 	argsForCall := fake.createContainerFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateContainerFileReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateContainerFileReturns(result1 error) {
 	fake.createContainerFileMutex.Lock()
 	defer fake.createContainerFileMutex.Unlock()
 	fake.CreateContainerFileStub = nil
@@ -5113,7 +5113,7 @@ func (fake *FakeContainerServer) CreateContainerFileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateContainerFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateContainerFileReturnsOnCall(i int, result1 error) {
 	fake.createContainerFileMutex.Lock()
 	defer fake.createContainerFileMutex.Unlock()
 	fake.CreateContainerFileStub = nil
@@ -5127,7 +5127,7 @@ func (fake *FakeContainerServer) CreateContainerFileReturnsOnCall(i int, result1
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackup(arg1 lxd.ContainerBackupArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateContainerFromBackup(arg1 lxd.ContainerBackupArgs) (lxd.Operation, error) {
 	fake.createContainerFromBackupMutex.Lock()
 	ret, specificReturn := fake.createContainerFromBackupReturnsOnCall[len(fake.createContainerFromBackupArgsForCall)]
 	fake.createContainerFromBackupArgsForCall = append(fake.createContainerFromBackupArgsForCall, struct {
@@ -5146,26 +5146,26 @@ func (fake *FakeContainerServer) CreateContainerFromBackup(arg1 lxd.ContainerBac
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerFromBackupCallCount() int {
 	fake.createContainerFromBackupMutex.RLock()
 	defer fake.createContainerFromBackupMutex.RUnlock()
 	return len(fake.createContainerFromBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackupCalls(stub func(lxd.ContainerBackupArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateContainerFromBackupCalls(stub func(lxd.ContainerBackupArgs) (lxd.Operation, error)) {
 	fake.createContainerFromBackupMutex.Lock()
 	defer fake.createContainerFromBackupMutex.Unlock()
 	fake.CreateContainerFromBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackupArgsForCall(i int) lxd.ContainerBackupArgs {
+func (fake *FakeInstanceServer) CreateContainerFromBackupArgsForCall(i int) lxd.ContainerBackupArgs {
 	fake.createContainerFromBackupMutex.RLock()
 	defer fake.createContainerFromBackupMutex.RUnlock()
 	argsForCall := fake.createContainerFromBackupArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerFromBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createContainerFromBackupMutex.Lock()
 	defer fake.createContainerFromBackupMutex.Unlock()
 	fake.CreateContainerFromBackupStub = nil
@@ -5175,7 +5175,7 @@ func (fake *FakeContainerServer) CreateContainerFromBackupReturns(result1 lxd.Op
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createContainerFromBackupMutex.Lock()
 	defer fake.createContainerFromBackupMutex.Unlock()
 	fake.CreateContainerFromBackupStub = nil
@@ -5191,7 +5191,7 @@ func (fake *FakeContainerServer) CreateContainerFromBackupReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 api.ContainersPost) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CreateContainerFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 api.ContainersPost) (lxd.RemoteOperation, error) {
 	fake.createContainerFromImageMutex.Lock()
 	ret, specificReturn := fake.createContainerFromImageReturnsOnCall[len(fake.createContainerFromImageArgsForCall)]
 	fake.createContainerFromImageArgsForCall = append(fake.createContainerFromImageArgsForCall, struct {
@@ -5212,26 +5212,26 @@ func (fake *FakeContainerServer) CreateContainerFromImage(arg1 lxd.ImageServer, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImageCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerFromImageCallCount() int {
 	fake.createContainerFromImageMutex.RLock()
 	defer fake.createContainerFromImageMutex.RUnlock()
 	return len(fake.createContainerFromImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImageCalls(stub func(lxd.ImageServer, api.Image, api.ContainersPost) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CreateContainerFromImageCalls(stub func(lxd.ImageServer, api.Image, api.ContainersPost) (lxd.RemoteOperation, error)) {
 	fake.createContainerFromImageMutex.Lock()
 	defer fake.createContainerFromImageMutex.Unlock()
 	fake.CreateContainerFromImageStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, api.ContainersPost) {
+func (fake *FakeInstanceServer) CreateContainerFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, api.ContainersPost) {
 	fake.createContainerFromImageMutex.RLock()
 	defer fake.createContainerFromImageMutex.RUnlock()
 	argsForCall := fake.createContainerFromImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.createContainerFromImageMutex.Lock()
 	defer fake.createContainerFromImageMutex.Unlock()
 	fake.CreateContainerFromImageStub = nil
@@ -5241,7 +5241,7 @@ func (fake *FakeContainerServer) CreateContainerFromImageReturns(result1 lxd.Rem
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.createContainerFromImageMutex.Lock()
 	defer fake.createContainerFromImageMutex.Unlock()
 	fake.CreateContainerFromImageStub = nil
@@ -5257,7 +5257,7 @@ func (fake *FakeContainerServer) CreateContainerFromImageReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshot(arg1 string, arg2 api.ContainerSnapshotsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateContainerSnapshot(arg1 string, arg2 api.ContainerSnapshotsPost) (lxd.Operation, error) {
 	fake.createContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.createContainerSnapshotReturnsOnCall[len(fake.createContainerSnapshotArgsForCall)]
 	fake.createContainerSnapshotArgsForCall = append(fake.createContainerSnapshotArgsForCall, struct {
@@ -5277,26 +5277,26 @@ func (fake *FakeContainerServer) CreateContainerSnapshot(arg1 string, arg2 api.C
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerSnapshotCallCount() int {
 	fake.createContainerSnapshotMutex.RLock()
 	defer fake.createContainerSnapshotMutex.RUnlock()
 	return len(fake.createContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshotCalls(stub func(string, api.ContainerSnapshotsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateContainerSnapshotCalls(stub func(string, api.ContainerSnapshotsPost) (lxd.Operation, error)) {
 	fake.createContainerSnapshotMutex.Lock()
 	defer fake.createContainerSnapshotMutex.Unlock()
 	fake.CreateContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshotArgsForCall(i int) (string, api.ContainerSnapshotsPost) {
+func (fake *FakeInstanceServer) CreateContainerSnapshotArgsForCall(i int) (string, api.ContainerSnapshotsPost) {
 	fake.createContainerSnapshotMutex.RLock()
 	defer fake.createContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.createContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.createContainerSnapshotMutex.Lock()
 	defer fake.createContainerSnapshotMutex.Unlock()
 	fake.CreateContainerSnapshotStub = nil
@@ -5306,7 +5306,7 @@ func (fake *FakeContainerServer) CreateContainerSnapshotReturns(result1 lxd.Oper
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createContainerSnapshotMutex.Lock()
 	defer fake.createContainerSnapshotMutex.Unlock()
 	fake.CreateContainerSnapshotStub = nil
@@ -5322,7 +5322,7 @@ func (fake *FakeContainerServer) CreateContainerSnapshotReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
+func (fake *FakeInstanceServer) CreateContainerTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
 	fake.createContainerTemplateFileMutex.Lock()
 	ret, specificReturn := fake.createContainerTemplateFileReturnsOnCall[len(fake.createContainerTemplateFileArgsForCall)]
 	fake.createContainerTemplateFileArgsForCall = append(fake.createContainerTemplateFileArgsForCall, struct {
@@ -5343,26 +5343,26 @@ func (fake *FakeContainerServer) CreateContainerTemplateFile(arg1 string, arg2 s
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) CreateContainerTemplateFileCallCount() int {
 	fake.createContainerTemplateFileMutex.RLock()
 	defer fake.createContainerTemplateFileMutex.RUnlock()
 	return len(fake.createContainerTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
+func (fake *FakeInstanceServer) CreateContainerTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
 	fake.createContainerTemplateFileMutex.Lock()
 	defer fake.createContainerTemplateFileMutex.Unlock()
 	fake.CreateContainerTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
+func (fake *FakeInstanceServer) CreateContainerTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
 	fake.createContainerTemplateFileMutex.RLock()
 	defer fake.createContainerTemplateFileMutex.RUnlock()
 	argsForCall := fake.createContainerTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFileReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateContainerTemplateFileReturns(result1 error) {
 	fake.createContainerTemplateFileMutex.Lock()
 	defer fake.createContainerTemplateFileMutex.Unlock()
 	fake.CreateContainerTemplateFileStub = nil
@@ -5371,7 +5371,7 @@ func (fake *FakeContainerServer) CreateContainerTemplateFileReturns(result1 erro
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateContainerTemplateFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateContainerTemplateFileReturnsOnCall(i int, result1 error) {
 	fake.createContainerTemplateFileMutex.Lock()
 	defer fake.createContainerTemplateFileMutex.Unlock()
 	fake.CreateContainerTemplateFileStub = nil
@@ -5385,7 +5385,7 @@ func (fake *FakeContainerServer) CreateContainerTemplateFileReturnsOnCall(i int,
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateImage(arg1 api.ImagesPost, arg2 *lxd.ImageCreateArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateImage(arg1 api.ImagesPost, arg2 *lxd.ImageCreateArgs) (lxd.Operation, error) {
 	fake.createImageMutex.Lock()
 	ret, specificReturn := fake.createImageReturnsOnCall[len(fake.createImageArgsForCall)]
 	fake.createImageArgsForCall = append(fake.createImageArgsForCall, struct {
@@ -5405,26 +5405,26 @@ func (fake *FakeContainerServer) CreateImage(arg1 api.ImagesPost, arg2 *lxd.Imag
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateImageCallCount() int {
+func (fake *FakeInstanceServer) CreateImageCallCount() int {
 	fake.createImageMutex.RLock()
 	defer fake.createImageMutex.RUnlock()
 	return len(fake.createImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateImageCalls(stub func(api.ImagesPost, *lxd.ImageCreateArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateImageCalls(stub func(api.ImagesPost, *lxd.ImageCreateArgs) (lxd.Operation, error)) {
 	fake.createImageMutex.Lock()
 	defer fake.createImageMutex.Unlock()
 	fake.CreateImageStub = stub
 }
 
-func (fake *FakeContainerServer) CreateImageArgsForCall(i int) (api.ImagesPost, *lxd.ImageCreateArgs) {
+func (fake *FakeInstanceServer) CreateImageArgsForCall(i int) (api.ImagesPost, *lxd.ImageCreateArgs) {
 	fake.createImageMutex.RLock()
 	defer fake.createImageMutex.RUnlock()
 	argsForCall := fake.createImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateImageReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateImageReturns(result1 lxd.Operation, result2 error) {
 	fake.createImageMutex.Lock()
 	defer fake.createImageMutex.Unlock()
 	fake.CreateImageStub = nil
@@ -5434,7 +5434,7 @@ func (fake *FakeContainerServer) CreateImageReturns(result1 lxd.Operation, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createImageMutex.Lock()
 	defer fake.createImageMutex.Unlock()
 	fake.CreateImageStub = nil
@@ -5450,7 +5450,7 @@ func (fake *FakeContainerServer) CreateImageReturnsOnCall(i int, result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateImageAlias(arg1 api.ImageAliasesPost) error {
+func (fake *FakeInstanceServer) CreateImageAlias(arg1 api.ImageAliasesPost) error {
 	fake.createImageAliasMutex.Lock()
 	ret, specificReturn := fake.createImageAliasReturnsOnCall[len(fake.createImageAliasArgsForCall)]
 	fake.createImageAliasArgsForCall = append(fake.createImageAliasArgsForCall, struct {
@@ -5469,26 +5469,26 @@ func (fake *FakeContainerServer) CreateImageAlias(arg1 api.ImageAliasesPost) err
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateImageAliasCallCount() int {
+func (fake *FakeInstanceServer) CreateImageAliasCallCount() int {
 	fake.createImageAliasMutex.RLock()
 	defer fake.createImageAliasMutex.RUnlock()
 	return len(fake.createImageAliasArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateImageAliasCalls(stub func(api.ImageAliasesPost) error) {
+func (fake *FakeInstanceServer) CreateImageAliasCalls(stub func(api.ImageAliasesPost) error) {
 	fake.createImageAliasMutex.Lock()
 	defer fake.createImageAliasMutex.Unlock()
 	fake.CreateImageAliasStub = stub
 }
 
-func (fake *FakeContainerServer) CreateImageAliasArgsForCall(i int) api.ImageAliasesPost {
+func (fake *FakeInstanceServer) CreateImageAliasArgsForCall(i int) api.ImageAliasesPost {
 	fake.createImageAliasMutex.RLock()
 	defer fake.createImageAliasMutex.RUnlock()
 	argsForCall := fake.createImageAliasArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateImageAliasReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateImageAliasReturns(result1 error) {
 	fake.createImageAliasMutex.Lock()
 	defer fake.createImageAliasMutex.Unlock()
 	fake.CreateImageAliasStub = nil
@@ -5497,7 +5497,7 @@ func (fake *FakeContainerServer) CreateImageAliasReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateImageAliasReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateImageAliasReturnsOnCall(i int, result1 error) {
 	fake.createImageAliasMutex.Lock()
 	defer fake.createImageAliasMutex.Unlock()
 	fake.CreateImageAliasStub = nil
@@ -5511,7 +5511,7 @@ func (fake *FakeContainerServer) CreateImageAliasReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateImageSecret(arg1 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateImageSecret(arg1 string) (lxd.Operation, error) {
 	fake.createImageSecretMutex.Lock()
 	ret, specificReturn := fake.createImageSecretReturnsOnCall[len(fake.createImageSecretArgsForCall)]
 	fake.createImageSecretArgsForCall = append(fake.createImageSecretArgsForCall, struct {
@@ -5530,26 +5530,26 @@ func (fake *FakeContainerServer) CreateImageSecret(arg1 string) (lxd.Operation, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateImageSecretCallCount() int {
+func (fake *FakeInstanceServer) CreateImageSecretCallCount() int {
 	fake.createImageSecretMutex.RLock()
 	defer fake.createImageSecretMutex.RUnlock()
 	return len(fake.createImageSecretArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateImageSecretCalls(stub func(string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateImageSecretCalls(stub func(string) (lxd.Operation, error)) {
 	fake.createImageSecretMutex.Lock()
 	defer fake.createImageSecretMutex.Unlock()
 	fake.CreateImageSecretStub = stub
 }
 
-func (fake *FakeContainerServer) CreateImageSecretArgsForCall(i int) string {
+func (fake *FakeInstanceServer) CreateImageSecretArgsForCall(i int) string {
 	fake.createImageSecretMutex.RLock()
 	defer fake.createImageSecretMutex.RUnlock()
 	argsForCall := fake.createImageSecretArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateImageSecretReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateImageSecretReturns(result1 lxd.Operation, result2 error) {
 	fake.createImageSecretMutex.Lock()
 	defer fake.createImageSecretMutex.Unlock()
 	fake.CreateImageSecretStub = nil
@@ -5559,7 +5559,7 @@ func (fake *FakeContainerServer) CreateImageSecretReturns(result1 lxd.Operation,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateImageSecretReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateImageSecretReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createImageSecretMutex.Lock()
 	defer fake.createImageSecretMutex.Unlock()
 	fake.CreateImageSecretStub = nil
@@ -5575,7 +5575,7 @@ func (fake *FakeContainerServer) CreateImageSecretReturnsOnCall(i int, result1 l
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstance(arg1 api.InstancesPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateInstance(arg1 api.InstancesPost) (lxd.Operation, error) {
 	fake.createInstanceMutex.Lock()
 	ret, specificReturn := fake.createInstanceReturnsOnCall[len(fake.createInstanceArgsForCall)]
 	fake.createInstanceArgsForCall = append(fake.createInstanceArgsForCall, struct {
@@ -5594,26 +5594,26 @@ func (fake *FakeContainerServer) CreateInstance(arg1 api.InstancesPost) (lxd.Ope
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateInstanceCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceCallCount() int {
 	fake.createInstanceMutex.RLock()
 	defer fake.createInstanceMutex.RUnlock()
 	return len(fake.createInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceCalls(stub func(api.InstancesPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateInstanceCalls(stub func(api.InstancesPost) (lxd.Operation, error)) {
 	fake.createInstanceMutex.Lock()
 	defer fake.createInstanceMutex.Unlock()
 	fake.CreateInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceArgsForCall(i int) api.InstancesPost {
+func (fake *FakeInstanceServer) CreateInstanceArgsForCall(i int) api.InstancesPost {
 	fake.createInstanceMutex.RLock()
 	defer fake.createInstanceMutex.RUnlock()
 	argsForCall := fake.createInstanceArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.createInstanceMutex.Lock()
 	defer fake.createInstanceMutex.Unlock()
 	fake.CreateInstanceStub = nil
@@ -5623,7 +5623,7 @@ func (fake *FakeContainerServer) CreateInstanceReturns(result1 lxd.Operation, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createInstanceMutex.Lock()
 	defer fake.createInstanceMutex.Unlock()
 	fake.CreateInstanceStub = nil
@@ -5639,7 +5639,7 @@ func (fake *FakeContainerServer) CreateInstanceReturnsOnCall(i int, result1 lxd.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackup(arg1 string, arg2 api.InstanceBackupsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateInstanceBackup(arg1 string, arg2 api.InstanceBackupsPost) (lxd.Operation, error) {
 	fake.createInstanceBackupMutex.Lock()
 	ret, specificReturn := fake.createInstanceBackupReturnsOnCall[len(fake.createInstanceBackupArgsForCall)]
 	fake.createInstanceBackupArgsForCall = append(fake.createInstanceBackupArgsForCall, struct {
@@ -5659,26 +5659,26 @@ func (fake *FakeContainerServer) CreateInstanceBackup(arg1 string, arg2 api.Inst
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceBackupCallCount() int {
 	fake.createInstanceBackupMutex.RLock()
 	defer fake.createInstanceBackupMutex.RUnlock()
 	return len(fake.createInstanceBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackupCalls(stub func(string, api.InstanceBackupsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateInstanceBackupCalls(stub func(string, api.InstanceBackupsPost) (lxd.Operation, error)) {
 	fake.createInstanceBackupMutex.Lock()
 	defer fake.createInstanceBackupMutex.Unlock()
 	fake.CreateInstanceBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackupArgsForCall(i int) (string, api.InstanceBackupsPost) {
+func (fake *FakeInstanceServer) CreateInstanceBackupArgsForCall(i int) (string, api.InstanceBackupsPost) {
 	fake.createInstanceBackupMutex.RLock()
 	defer fake.createInstanceBackupMutex.RUnlock()
 	argsForCall := fake.createInstanceBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createInstanceBackupMutex.Lock()
 	defer fake.createInstanceBackupMutex.Unlock()
 	fake.CreateInstanceBackupStub = nil
@@ -5688,7 +5688,7 @@ func (fake *FakeContainerServer) CreateInstanceBackupReturns(result1 lxd.Operati
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createInstanceBackupMutex.Lock()
 	defer fake.createInstanceBackupMutex.Unlock()
 	fake.CreateInstanceBackupStub = nil
@@ -5704,7 +5704,7 @@ func (fake *FakeContainerServer) CreateInstanceBackupReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFile(arg1 string, arg2 string, arg3 lxd.InstanceFileArgs) error {
+func (fake *FakeInstanceServer) CreateInstanceFile(arg1 string, arg2 string, arg3 lxd.InstanceFileArgs) error {
 	fake.createInstanceFileMutex.Lock()
 	ret, specificReturn := fake.createInstanceFileReturnsOnCall[len(fake.createInstanceFileArgsForCall)]
 	fake.createInstanceFileArgsForCall = append(fake.createInstanceFileArgsForCall, struct {
@@ -5725,26 +5725,26 @@ func (fake *FakeContainerServer) CreateInstanceFile(arg1 string, arg2 string, ar
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateInstanceFileCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceFileCallCount() int {
 	fake.createInstanceFileMutex.RLock()
 	defer fake.createInstanceFileMutex.RUnlock()
 	return len(fake.createInstanceFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceFileCalls(stub func(string, string, lxd.InstanceFileArgs) error) {
+func (fake *FakeInstanceServer) CreateInstanceFileCalls(stub func(string, string, lxd.InstanceFileArgs) error) {
 	fake.createInstanceFileMutex.Lock()
 	defer fake.createInstanceFileMutex.Unlock()
 	fake.CreateInstanceFileStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceFileArgsForCall(i int) (string, string, lxd.InstanceFileArgs) {
+func (fake *FakeInstanceServer) CreateInstanceFileArgsForCall(i int) (string, string, lxd.InstanceFileArgs) {
 	fake.createInstanceFileMutex.RLock()
 	defer fake.createInstanceFileMutex.RUnlock()
 	argsForCall := fake.createInstanceFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateInstanceFileReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateInstanceFileReturns(result1 error) {
 	fake.createInstanceFileMutex.Lock()
 	defer fake.createInstanceFileMutex.Unlock()
 	fake.CreateInstanceFileStub = nil
@@ -5753,7 +5753,7 @@ func (fake *FakeContainerServer) CreateInstanceFileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateInstanceFileReturnsOnCall(i int, result1 error) {
 	fake.createInstanceFileMutex.Lock()
 	defer fake.createInstanceFileMutex.Unlock()
 	fake.CreateInstanceFileStub = nil
@@ -5767,7 +5767,7 @@ func (fake *FakeContainerServer) CreateInstanceFileReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackup(arg1 lxd.InstanceBackupArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateInstanceFromBackup(arg1 lxd.InstanceBackupArgs) (lxd.Operation, error) {
 	fake.createInstanceFromBackupMutex.Lock()
 	ret, specificReturn := fake.createInstanceFromBackupReturnsOnCall[len(fake.createInstanceFromBackupArgsForCall)]
 	fake.createInstanceFromBackupArgsForCall = append(fake.createInstanceFromBackupArgsForCall, struct {
@@ -5786,26 +5786,26 @@ func (fake *FakeContainerServer) CreateInstanceFromBackup(arg1 lxd.InstanceBacku
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceFromBackupCallCount() int {
 	fake.createInstanceFromBackupMutex.RLock()
 	defer fake.createInstanceFromBackupMutex.RUnlock()
 	return len(fake.createInstanceFromBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackupCalls(stub func(lxd.InstanceBackupArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateInstanceFromBackupCalls(stub func(lxd.InstanceBackupArgs) (lxd.Operation, error)) {
 	fake.createInstanceFromBackupMutex.Lock()
 	defer fake.createInstanceFromBackupMutex.Unlock()
 	fake.CreateInstanceFromBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackupArgsForCall(i int) lxd.InstanceBackupArgs {
+func (fake *FakeInstanceServer) CreateInstanceFromBackupArgsForCall(i int) lxd.InstanceBackupArgs {
 	fake.createInstanceFromBackupMutex.RLock()
 	defer fake.createInstanceFromBackupMutex.RUnlock()
 	argsForCall := fake.createInstanceFromBackupArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceFromBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createInstanceFromBackupMutex.Lock()
 	defer fake.createInstanceFromBackupMutex.Unlock()
 	fake.CreateInstanceFromBackupStub = nil
@@ -5815,7 +5815,7 @@ func (fake *FakeContainerServer) CreateInstanceFromBackupReturns(result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createInstanceFromBackupMutex.Lock()
 	defer fake.createInstanceFromBackupMutex.Unlock()
 	fake.CreateInstanceFromBackupStub = nil
@@ -5831,7 +5831,7 @@ func (fake *FakeContainerServer) CreateInstanceFromBackupReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 api.InstancesPost) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) CreateInstanceFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 api.InstancesPost) (lxd.RemoteOperation, error) {
 	fake.createInstanceFromImageMutex.Lock()
 	ret, specificReturn := fake.createInstanceFromImageReturnsOnCall[len(fake.createInstanceFromImageArgsForCall)]
 	fake.createInstanceFromImageArgsForCall = append(fake.createInstanceFromImageArgsForCall, struct {
@@ -5852,26 +5852,26 @@ func (fake *FakeContainerServer) CreateInstanceFromImage(arg1 lxd.ImageServer, a
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImageCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceFromImageCallCount() int {
 	fake.createInstanceFromImageMutex.RLock()
 	defer fake.createInstanceFromImageMutex.RUnlock()
 	return len(fake.createInstanceFromImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImageCalls(stub func(lxd.ImageServer, api.Image, api.InstancesPost) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) CreateInstanceFromImageCalls(stub func(lxd.ImageServer, api.Image, api.InstancesPost) (lxd.RemoteOperation, error)) {
 	fake.createInstanceFromImageMutex.Lock()
 	defer fake.createInstanceFromImageMutex.Unlock()
 	fake.CreateInstanceFromImageStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, api.InstancesPost) {
+func (fake *FakeInstanceServer) CreateInstanceFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, api.InstancesPost) {
 	fake.createInstanceFromImageMutex.RLock()
 	defer fake.createInstanceFromImageMutex.RUnlock()
 	argsForCall := fake.createInstanceFromImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.createInstanceFromImageMutex.Lock()
 	defer fake.createInstanceFromImageMutex.Unlock()
 	fake.CreateInstanceFromImageStub = nil
@@ -5881,7 +5881,7 @@ func (fake *FakeContainerServer) CreateInstanceFromImageReturns(result1 lxd.Remo
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.createInstanceFromImageMutex.Lock()
 	defer fake.createInstanceFromImageMutex.Unlock()
 	fake.CreateInstanceFromImageStub = nil
@@ -5897,7 +5897,7 @@ func (fake *FakeContainerServer) CreateInstanceFromImageReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshot(arg1 string, arg2 api.InstanceSnapshotsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateInstanceSnapshot(arg1 string, arg2 api.InstanceSnapshotsPost) (lxd.Operation, error) {
 	fake.createInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.createInstanceSnapshotReturnsOnCall[len(fake.createInstanceSnapshotArgsForCall)]
 	fake.createInstanceSnapshotArgsForCall = append(fake.createInstanceSnapshotArgsForCall, struct {
@@ -5917,26 +5917,26 @@ func (fake *FakeContainerServer) CreateInstanceSnapshot(arg1 string, arg2 api.In
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceSnapshotCallCount() int {
 	fake.createInstanceSnapshotMutex.RLock()
 	defer fake.createInstanceSnapshotMutex.RUnlock()
 	return len(fake.createInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshotCalls(stub func(string, api.InstanceSnapshotsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateInstanceSnapshotCalls(stub func(string, api.InstanceSnapshotsPost) (lxd.Operation, error)) {
 	fake.createInstanceSnapshotMutex.Lock()
 	defer fake.createInstanceSnapshotMutex.Unlock()
 	fake.CreateInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshotArgsForCall(i int) (string, api.InstanceSnapshotsPost) {
+func (fake *FakeInstanceServer) CreateInstanceSnapshotArgsForCall(i int) (string, api.InstanceSnapshotsPost) {
 	fake.createInstanceSnapshotMutex.RLock()
 	defer fake.createInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.createInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.createInstanceSnapshotMutex.Lock()
 	defer fake.createInstanceSnapshotMutex.Unlock()
 	fake.CreateInstanceSnapshotStub = nil
@@ -5946,7 +5946,7 @@ func (fake *FakeContainerServer) CreateInstanceSnapshotReturns(result1 lxd.Opera
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createInstanceSnapshotMutex.Lock()
 	defer fake.createInstanceSnapshotMutex.Unlock()
 	fake.CreateInstanceSnapshotStub = nil
@@ -5962,7 +5962,7 @@ func (fake *FakeContainerServer) CreateInstanceSnapshotReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
 	fake.createInstanceTemplateFileMutex.Lock()
 	ret, specificReturn := fake.createInstanceTemplateFileReturnsOnCall[len(fake.createInstanceTemplateFileArgsForCall)]
 	fake.createInstanceTemplateFileArgsForCall = append(fake.createInstanceTemplateFileArgsForCall, struct {
@@ -5983,26 +5983,26 @@ func (fake *FakeContainerServer) CreateInstanceTemplateFile(arg1 string, arg2 st
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFileCallCount() int {
 	fake.createInstanceTemplateFileMutex.RLock()
 	defer fake.createInstanceTemplateFileMutex.RUnlock()
 	return len(fake.createInstanceTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
 	fake.createInstanceTemplateFileMutex.Lock()
 	defer fake.createInstanceTemplateFileMutex.Unlock()
 	fake.CreateInstanceTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
 	fake.createInstanceTemplateFileMutex.RLock()
 	defer fake.createInstanceTemplateFileMutex.RUnlock()
 	argsForCall := fake.createInstanceTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFileReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFileReturns(result1 error) {
 	fake.createInstanceTemplateFileMutex.Lock()
 	defer fake.createInstanceTemplateFileMutex.Unlock()
 	fake.CreateInstanceTemplateFileStub = nil
@@ -6011,7 +6011,7 @@ func (fake *FakeContainerServer) CreateInstanceTemplateFileReturns(result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateInstanceTemplateFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateInstanceTemplateFileReturnsOnCall(i int, result1 error) {
 	fake.createInstanceTemplateFileMutex.Lock()
 	defer fake.createInstanceTemplateFileMutex.Unlock()
 	fake.CreateInstanceTemplateFileStub = nil
@@ -6025,7 +6025,7 @@ func (fake *FakeContainerServer) CreateInstanceTemplateFileReturnsOnCall(i int, 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetwork(arg1 api.NetworksPost) error {
+func (fake *FakeInstanceServer) CreateNetwork(arg1 api.NetworksPost) error {
 	fake.createNetworkMutex.Lock()
 	ret, specificReturn := fake.createNetworkReturnsOnCall[len(fake.createNetworkArgsForCall)]
 	fake.createNetworkArgsForCall = append(fake.createNetworkArgsForCall, struct {
@@ -6044,26 +6044,26 @@ func (fake *FakeContainerServer) CreateNetwork(arg1 api.NetworksPost) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkCallCount() int {
 	fake.createNetworkMutex.RLock()
 	defer fake.createNetworkMutex.RUnlock()
 	return len(fake.createNetworkArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkCalls(stub func(api.NetworksPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkCalls(stub func(api.NetworksPost) error) {
 	fake.createNetworkMutex.Lock()
 	defer fake.createNetworkMutex.Unlock()
 	fake.CreateNetworkStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkArgsForCall(i int) api.NetworksPost {
+func (fake *FakeInstanceServer) CreateNetworkArgsForCall(i int) api.NetworksPost {
 	fake.createNetworkMutex.RLock()
 	defer fake.createNetworkMutex.RUnlock()
 	argsForCall := fake.createNetworkArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateNetworkReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkReturns(result1 error) {
 	fake.createNetworkMutex.Lock()
 	defer fake.createNetworkMutex.Unlock()
 	fake.CreateNetworkStub = nil
@@ -6072,7 +6072,7 @@ func (fake *FakeContainerServer) CreateNetworkReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkReturnsOnCall(i int, result1 error) {
 	fake.createNetworkMutex.Lock()
 	defer fake.createNetworkMutex.Unlock()
 	fake.CreateNetworkStub = nil
@@ -6086,7 +6086,7 @@ func (fake *FakeContainerServer) CreateNetworkReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkACL(arg1 api.NetworkACLsPost) error {
+func (fake *FakeInstanceServer) CreateNetworkACL(arg1 api.NetworkACLsPost) error {
 	fake.createNetworkACLMutex.Lock()
 	ret, specificReturn := fake.createNetworkACLReturnsOnCall[len(fake.createNetworkACLArgsForCall)]
 	fake.createNetworkACLArgsForCall = append(fake.createNetworkACLArgsForCall, struct {
@@ -6105,26 +6105,26 @@ func (fake *FakeContainerServer) CreateNetworkACL(arg1 api.NetworkACLsPost) erro
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkACLCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkACLCallCount() int {
 	fake.createNetworkACLMutex.RLock()
 	defer fake.createNetworkACLMutex.RUnlock()
 	return len(fake.createNetworkACLArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkACLCalls(stub func(api.NetworkACLsPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkACLCalls(stub func(api.NetworkACLsPost) error) {
 	fake.createNetworkACLMutex.Lock()
 	defer fake.createNetworkACLMutex.Unlock()
 	fake.CreateNetworkACLStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkACLArgsForCall(i int) api.NetworkACLsPost {
+func (fake *FakeInstanceServer) CreateNetworkACLArgsForCall(i int) api.NetworkACLsPost {
 	fake.createNetworkACLMutex.RLock()
 	defer fake.createNetworkACLMutex.RUnlock()
 	argsForCall := fake.createNetworkACLArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateNetworkACLReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkACLReturns(result1 error) {
 	fake.createNetworkACLMutex.Lock()
 	defer fake.createNetworkACLMutex.Unlock()
 	fake.CreateNetworkACLStub = nil
@@ -6133,7 +6133,7 @@ func (fake *FakeContainerServer) CreateNetworkACLReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkACLReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkACLReturnsOnCall(i int, result1 error) {
 	fake.createNetworkACLMutex.Lock()
 	defer fake.createNetworkACLMutex.Unlock()
 	fake.CreateNetworkACLStub = nil
@@ -6147,7 +6147,7 @@ func (fake *FakeContainerServer) CreateNetworkACLReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkForward(arg1 string, arg2 api.NetworkForwardsPost) error {
+func (fake *FakeInstanceServer) CreateNetworkForward(arg1 string, arg2 api.NetworkForwardsPost) error {
 	fake.createNetworkForwardMutex.Lock()
 	ret, specificReturn := fake.createNetworkForwardReturnsOnCall[len(fake.createNetworkForwardArgsForCall)]
 	fake.createNetworkForwardArgsForCall = append(fake.createNetworkForwardArgsForCall, struct {
@@ -6167,26 +6167,26 @@ func (fake *FakeContainerServer) CreateNetworkForward(arg1 string, arg2 api.Netw
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkForwardCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkForwardCallCount() int {
 	fake.createNetworkForwardMutex.RLock()
 	defer fake.createNetworkForwardMutex.RUnlock()
 	return len(fake.createNetworkForwardArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkForwardCalls(stub func(string, api.NetworkForwardsPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkForwardCalls(stub func(string, api.NetworkForwardsPost) error) {
 	fake.createNetworkForwardMutex.Lock()
 	defer fake.createNetworkForwardMutex.Unlock()
 	fake.CreateNetworkForwardStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkForwardArgsForCall(i int) (string, api.NetworkForwardsPost) {
+func (fake *FakeInstanceServer) CreateNetworkForwardArgsForCall(i int) (string, api.NetworkForwardsPost) {
 	fake.createNetworkForwardMutex.RLock()
 	defer fake.createNetworkForwardMutex.RUnlock()
 	argsForCall := fake.createNetworkForwardArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateNetworkForwardReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkForwardReturns(result1 error) {
 	fake.createNetworkForwardMutex.Lock()
 	defer fake.createNetworkForwardMutex.Unlock()
 	fake.CreateNetworkForwardStub = nil
@@ -6195,7 +6195,7 @@ func (fake *FakeContainerServer) CreateNetworkForwardReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkForwardReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkForwardReturnsOnCall(i int, result1 error) {
 	fake.createNetworkForwardMutex.Lock()
 	defer fake.createNetworkForwardMutex.Unlock()
 	fake.CreateNetworkForwardStub = nil
@@ -6209,7 +6209,7 @@ func (fake *FakeContainerServer) CreateNetworkForwardReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancer(arg1 string, arg2 api.NetworkLoadBalancersPost) error {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancer(arg1 string, arg2 api.NetworkLoadBalancersPost) error {
 	fake.createNetworkLoadBalancerMutex.Lock()
 	ret, specificReturn := fake.createNetworkLoadBalancerReturnsOnCall[len(fake.createNetworkLoadBalancerArgsForCall)]
 	fake.createNetworkLoadBalancerArgsForCall = append(fake.createNetworkLoadBalancerArgsForCall, struct {
@@ -6229,26 +6229,26 @@ func (fake *FakeContainerServer) CreateNetworkLoadBalancer(arg1 string, arg2 api
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancerCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancerCallCount() int {
 	fake.createNetworkLoadBalancerMutex.RLock()
 	defer fake.createNetworkLoadBalancerMutex.RUnlock()
 	return len(fake.createNetworkLoadBalancerArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancerCalls(stub func(string, api.NetworkLoadBalancersPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancerCalls(stub func(string, api.NetworkLoadBalancersPost) error) {
 	fake.createNetworkLoadBalancerMutex.Lock()
 	defer fake.createNetworkLoadBalancerMutex.Unlock()
 	fake.CreateNetworkLoadBalancerStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancerArgsForCall(i int) (string, api.NetworkLoadBalancersPost) {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancerArgsForCall(i int) (string, api.NetworkLoadBalancersPost) {
 	fake.createNetworkLoadBalancerMutex.RLock()
 	defer fake.createNetworkLoadBalancerMutex.RUnlock()
 	argsForCall := fake.createNetworkLoadBalancerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancerReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancerReturns(result1 error) {
 	fake.createNetworkLoadBalancerMutex.Lock()
 	defer fake.createNetworkLoadBalancerMutex.Unlock()
 	fake.CreateNetworkLoadBalancerStub = nil
@@ -6257,7 +6257,7 @@ func (fake *FakeContainerServer) CreateNetworkLoadBalancerReturns(result1 error)
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
 	fake.createNetworkLoadBalancerMutex.Lock()
 	defer fake.createNetworkLoadBalancerMutex.Unlock()
 	fake.CreateNetworkLoadBalancerStub = nil
@@ -6271,7 +6271,7 @@ func (fake *FakeContainerServer) CreateNetworkLoadBalancerReturnsOnCall(i int, r
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeer(arg1 string, arg2 api.NetworkPeersPost) error {
+func (fake *FakeInstanceServer) CreateNetworkPeer(arg1 string, arg2 api.NetworkPeersPost) error {
 	fake.createNetworkPeerMutex.Lock()
 	ret, specificReturn := fake.createNetworkPeerReturnsOnCall[len(fake.createNetworkPeerArgsForCall)]
 	fake.createNetworkPeerArgsForCall = append(fake.createNetworkPeerArgsForCall, struct {
@@ -6291,26 +6291,26 @@ func (fake *FakeContainerServer) CreateNetworkPeer(arg1 string, arg2 api.Network
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeerCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkPeerCallCount() int {
 	fake.createNetworkPeerMutex.RLock()
 	defer fake.createNetworkPeerMutex.RUnlock()
 	return len(fake.createNetworkPeerArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeerCalls(stub func(string, api.NetworkPeersPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkPeerCalls(stub func(string, api.NetworkPeersPost) error) {
 	fake.createNetworkPeerMutex.Lock()
 	defer fake.createNetworkPeerMutex.Unlock()
 	fake.CreateNetworkPeerStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeerArgsForCall(i int) (string, api.NetworkPeersPost) {
+func (fake *FakeInstanceServer) CreateNetworkPeerArgsForCall(i int) (string, api.NetworkPeersPost) {
 	fake.createNetworkPeerMutex.RLock()
 	defer fake.createNetworkPeerMutex.RUnlock()
 	argsForCall := fake.createNetworkPeerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeerReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkPeerReturns(result1 error) {
 	fake.createNetworkPeerMutex.Lock()
 	defer fake.createNetworkPeerMutex.Unlock()
 	fake.CreateNetworkPeerStub = nil
@@ -6319,7 +6319,7 @@ func (fake *FakeContainerServer) CreateNetworkPeerReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkPeerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkPeerReturnsOnCall(i int, result1 error) {
 	fake.createNetworkPeerMutex.Lock()
 	defer fake.createNetworkPeerMutex.Unlock()
 	fake.CreateNetworkPeerStub = nil
@@ -6333,7 +6333,7 @@ func (fake *FakeContainerServer) CreateNetworkPeerReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkZone(arg1 api.NetworkZonesPost) error {
+func (fake *FakeInstanceServer) CreateNetworkZone(arg1 api.NetworkZonesPost) error {
 	fake.createNetworkZoneMutex.Lock()
 	ret, specificReturn := fake.createNetworkZoneReturnsOnCall[len(fake.createNetworkZoneArgsForCall)]
 	fake.createNetworkZoneArgsForCall = append(fake.createNetworkZoneArgsForCall, struct {
@@ -6352,26 +6352,26 @@ func (fake *FakeContainerServer) CreateNetworkZone(arg1 api.NetworkZonesPost) er
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkZoneCallCount() int {
 	fake.createNetworkZoneMutex.RLock()
 	defer fake.createNetworkZoneMutex.RUnlock()
 	return len(fake.createNetworkZoneArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneCalls(stub func(api.NetworkZonesPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneCalls(stub func(api.NetworkZonesPost) error) {
 	fake.createNetworkZoneMutex.Lock()
 	defer fake.createNetworkZoneMutex.Unlock()
 	fake.CreateNetworkZoneStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneArgsForCall(i int) api.NetworkZonesPost {
+func (fake *FakeInstanceServer) CreateNetworkZoneArgsForCall(i int) api.NetworkZonesPost {
 	fake.createNetworkZoneMutex.RLock()
 	defer fake.createNetworkZoneMutex.RUnlock()
 	argsForCall := fake.createNetworkZoneArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneReturns(result1 error) {
 	fake.createNetworkZoneMutex.Lock()
 	defer fake.createNetworkZoneMutex.Unlock()
 	fake.CreateNetworkZoneStub = nil
@@ -6380,7 +6380,7 @@ func (fake *FakeContainerServer) CreateNetworkZoneReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneReturnsOnCall(i int, result1 error) {
 	fake.createNetworkZoneMutex.Lock()
 	defer fake.createNetworkZoneMutex.Unlock()
 	fake.CreateNetworkZoneStub = nil
@@ -6394,7 +6394,7 @@ func (fake *FakeContainerServer) CreateNetworkZoneReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecord(arg1 string, arg2 api.NetworkZoneRecordsPost) error {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecord(arg1 string, arg2 api.NetworkZoneRecordsPost) error {
 	fake.createNetworkZoneRecordMutex.Lock()
 	ret, specificReturn := fake.createNetworkZoneRecordReturnsOnCall[len(fake.createNetworkZoneRecordArgsForCall)]
 	fake.createNetworkZoneRecordArgsForCall = append(fake.createNetworkZoneRecordArgsForCall, struct {
@@ -6414,26 +6414,26 @@ func (fake *FakeContainerServer) CreateNetworkZoneRecord(arg1 string, arg2 api.N
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecordCallCount() int {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecordCallCount() int {
 	fake.createNetworkZoneRecordMutex.RLock()
 	defer fake.createNetworkZoneRecordMutex.RUnlock()
 	return len(fake.createNetworkZoneRecordArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecordCalls(stub func(string, api.NetworkZoneRecordsPost) error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecordCalls(stub func(string, api.NetworkZoneRecordsPost) error) {
 	fake.createNetworkZoneRecordMutex.Lock()
 	defer fake.createNetworkZoneRecordMutex.Unlock()
 	fake.CreateNetworkZoneRecordStub = stub
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecordArgsForCall(i int) (string, api.NetworkZoneRecordsPost) {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecordArgsForCall(i int) (string, api.NetworkZoneRecordsPost) {
 	fake.createNetworkZoneRecordMutex.RLock()
 	defer fake.createNetworkZoneRecordMutex.RUnlock()
 	argsForCall := fake.createNetworkZoneRecordArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecordReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecordReturns(result1 error) {
 	fake.createNetworkZoneRecordMutex.Lock()
 	defer fake.createNetworkZoneRecordMutex.Unlock()
 	fake.CreateNetworkZoneRecordStub = nil
@@ -6442,7 +6442,7 @@ func (fake *FakeContainerServer) CreateNetworkZoneRecordReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateNetworkZoneRecordReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateNetworkZoneRecordReturnsOnCall(i int, result1 error) {
 	fake.createNetworkZoneRecordMutex.Lock()
 	defer fake.createNetworkZoneRecordMutex.Unlock()
 	fake.CreateNetworkZoneRecordStub = nil
@@ -6456,7 +6456,7 @@ func (fake *FakeContainerServer) CreateNetworkZoneRecordReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateProfile(arg1 api.ProfilesPost) error {
+func (fake *FakeInstanceServer) CreateProfile(arg1 api.ProfilesPost) error {
 	fake.createProfileMutex.Lock()
 	ret, specificReturn := fake.createProfileReturnsOnCall[len(fake.createProfileArgsForCall)]
 	fake.createProfileArgsForCall = append(fake.createProfileArgsForCall, struct {
@@ -6475,26 +6475,26 @@ func (fake *FakeContainerServer) CreateProfile(arg1 api.ProfilesPost) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateProfileCallCount() int {
+func (fake *FakeInstanceServer) CreateProfileCallCount() int {
 	fake.createProfileMutex.RLock()
 	defer fake.createProfileMutex.RUnlock()
 	return len(fake.createProfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateProfileCalls(stub func(api.ProfilesPost) error) {
+func (fake *FakeInstanceServer) CreateProfileCalls(stub func(api.ProfilesPost) error) {
 	fake.createProfileMutex.Lock()
 	defer fake.createProfileMutex.Unlock()
 	fake.CreateProfileStub = stub
 }
 
-func (fake *FakeContainerServer) CreateProfileArgsForCall(i int) api.ProfilesPost {
+func (fake *FakeInstanceServer) CreateProfileArgsForCall(i int) api.ProfilesPost {
 	fake.createProfileMutex.RLock()
 	defer fake.createProfileMutex.RUnlock()
 	argsForCall := fake.createProfileArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateProfileReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateProfileReturns(result1 error) {
 	fake.createProfileMutex.Lock()
 	defer fake.createProfileMutex.Unlock()
 	fake.CreateProfileStub = nil
@@ -6503,7 +6503,7 @@ func (fake *FakeContainerServer) CreateProfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateProfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateProfileReturnsOnCall(i int, result1 error) {
 	fake.createProfileMutex.Lock()
 	defer fake.createProfileMutex.Unlock()
 	fake.CreateProfileStub = nil
@@ -6517,7 +6517,7 @@ func (fake *FakeContainerServer) CreateProfileReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateProject(arg1 api.ProjectsPost) error {
+func (fake *FakeInstanceServer) CreateProject(arg1 api.ProjectsPost) error {
 	fake.createProjectMutex.Lock()
 	ret, specificReturn := fake.createProjectReturnsOnCall[len(fake.createProjectArgsForCall)]
 	fake.createProjectArgsForCall = append(fake.createProjectArgsForCall, struct {
@@ -6536,26 +6536,26 @@ func (fake *FakeContainerServer) CreateProject(arg1 api.ProjectsPost) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateProjectCallCount() int {
+func (fake *FakeInstanceServer) CreateProjectCallCount() int {
 	fake.createProjectMutex.RLock()
 	defer fake.createProjectMutex.RUnlock()
 	return len(fake.createProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateProjectCalls(stub func(api.ProjectsPost) error) {
+func (fake *FakeInstanceServer) CreateProjectCalls(stub func(api.ProjectsPost) error) {
 	fake.createProjectMutex.Lock()
 	defer fake.createProjectMutex.Unlock()
 	fake.CreateProjectStub = stub
 }
 
-func (fake *FakeContainerServer) CreateProjectArgsForCall(i int) api.ProjectsPost {
+func (fake *FakeInstanceServer) CreateProjectArgsForCall(i int) api.ProjectsPost {
 	fake.createProjectMutex.RLock()
 	defer fake.createProjectMutex.RUnlock()
 	argsForCall := fake.createProjectArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateProjectReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateProjectReturns(result1 error) {
 	fake.createProjectMutex.Lock()
 	defer fake.createProjectMutex.Unlock()
 	fake.CreateProjectStub = nil
@@ -6564,7 +6564,7 @@ func (fake *FakeContainerServer) CreateProjectReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateProjectReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateProjectReturnsOnCall(i int, result1 error) {
 	fake.createProjectMutex.Lock()
 	defer fake.createProjectMutex.Unlock()
 	fake.CreateProjectStub = nil
@@ -6578,7 +6578,7 @@ func (fake *FakeContainerServer) CreateProjectReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateStoragePool(arg1 api.StoragePoolsPost) error {
+func (fake *FakeInstanceServer) CreateStoragePool(arg1 api.StoragePoolsPost) error {
 	fake.createStoragePoolMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolReturnsOnCall[len(fake.createStoragePoolArgsForCall)]
 	fake.createStoragePoolArgsForCall = append(fake.createStoragePoolArgsForCall, struct {
@@ -6597,26 +6597,26 @@ func (fake *FakeContainerServer) CreateStoragePool(arg1 api.StoragePoolsPost) er
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolCallCount() int {
 	fake.createStoragePoolMutex.RLock()
 	defer fake.createStoragePoolMutex.RUnlock()
 	return len(fake.createStoragePoolArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolCalls(stub func(api.StoragePoolsPost) error) {
+func (fake *FakeInstanceServer) CreateStoragePoolCalls(stub func(api.StoragePoolsPost) error) {
 	fake.createStoragePoolMutex.Lock()
 	defer fake.createStoragePoolMutex.Unlock()
 	fake.CreateStoragePoolStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolArgsForCall(i int) api.StoragePoolsPost {
+func (fake *FakeInstanceServer) CreateStoragePoolArgsForCall(i int) api.StoragePoolsPost {
 	fake.createStoragePoolMutex.RLock()
 	defer fake.createStoragePoolMutex.RUnlock()
 	argsForCall := fake.createStoragePoolArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolReturns(result1 error) {
 	fake.createStoragePoolMutex.Lock()
 	defer fake.createStoragePoolMutex.Unlock()
 	fake.CreateStoragePoolStub = nil
@@ -6625,7 +6625,7 @@ func (fake *FakeContainerServer) CreateStoragePoolReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolReturnsOnCall(i int, result1 error) {
 	fake.createStoragePoolMutex.Lock()
 	defer fake.createStoragePoolMutex.Unlock()
 	fake.CreateStoragePoolStub = nil
@@ -6639,7 +6639,7 @@ func (fake *FakeContainerServer) CreateStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucket(arg1 string, arg2 api.StorageBucketsPost) (*api.StorageBucketKey, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucket(arg1 string, arg2 api.StorageBucketsPost) (*api.StorageBucketKey, error) {
 	fake.createStoragePoolBucketMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolBucketReturnsOnCall[len(fake.createStoragePoolBucketArgsForCall)]
 	fake.createStoragePoolBucketArgsForCall = append(fake.createStoragePoolBucketArgsForCall, struct {
@@ -6659,26 +6659,26 @@ func (fake *FakeContainerServer) CreateStoragePoolBucket(arg1 string, arg2 api.S
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketCallCount() int {
 	fake.createStoragePoolBucketMutex.RLock()
 	defer fake.createStoragePoolBucketMutex.RUnlock()
 	return len(fake.createStoragePoolBucketArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketCalls(stub func(string, api.StorageBucketsPost) (*api.StorageBucketKey, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketCalls(stub func(string, api.StorageBucketsPost) (*api.StorageBucketKey, error)) {
 	fake.createStoragePoolBucketMutex.Lock()
 	defer fake.createStoragePoolBucketMutex.Unlock()
 	fake.CreateStoragePoolBucketStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketArgsForCall(i int) (string, api.StorageBucketsPost) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketArgsForCall(i int) (string, api.StorageBucketsPost) {
 	fake.createStoragePoolBucketMutex.RLock()
 	defer fake.createStoragePoolBucketMutex.RUnlock()
 	argsForCall := fake.createStoragePoolBucketArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketReturns(result1 *api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketReturns(result1 *api.StorageBucketKey, result2 error) {
 	fake.createStoragePoolBucketMutex.Lock()
 	defer fake.createStoragePoolBucketMutex.Unlock()
 	fake.CreateStoragePoolBucketStub = nil
@@ -6688,7 +6688,7 @@ func (fake *FakeContainerServer) CreateStoragePoolBucketReturns(result1 *api.Sto
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
 	fake.createStoragePoolBucketMutex.Lock()
 	defer fake.createStoragePoolBucketMutex.Unlock()
 	fake.CreateStoragePoolBucketStub = nil
@@ -6704,7 +6704,7 @@ func (fake *FakeContainerServer) CreateStoragePoolBucketReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKey(arg1 string, arg2 string, arg3 api.StorageBucketKeysPost) (*api.StorageBucketKey, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKey(arg1 string, arg2 string, arg3 api.StorageBucketKeysPost) (*api.StorageBucketKey, error) {
 	fake.createStoragePoolBucketKeyMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolBucketKeyReturnsOnCall[len(fake.createStoragePoolBucketKeyArgsForCall)]
 	fake.createStoragePoolBucketKeyArgsForCall = append(fake.createStoragePoolBucketKeyArgsForCall, struct {
@@ -6725,26 +6725,26 @@ func (fake *FakeContainerServer) CreateStoragePoolBucketKey(arg1 string, arg2 st
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKeyCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKeyCallCount() int {
 	fake.createStoragePoolBucketKeyMutex.RLock()
 	defer fake.createStoragePoolBucketKeyMutex.RUnlock()
 	return len(fake.createStoragePoolBucketKeyArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKeyCalls(stub func(string, string, api.StorageBucketKeysPost) (*api.StorageBucketKey, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKeyCalls(stub func(string, string, api.StorageBucketKeysPost) (*api.StorageBucketKey, error)) {
 	fake.createStoragePoolBucketKeyMutex.Lock()
 	defer fake.createStoragePoolBucketKeyMutex.Unlock()
 	fake.CreateStoragePoolBucketKeyStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKeyArgsForCall(i int) (string, string, api.StorageBucketKeysPost) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKeyArgsForCall(i int) (string, string, api.StorageBucketKeysPost) {
 	fake.createStoragePoolBucketKeyMutex.RLock()
 	defer fake.createStoragePoolBucketKeyMutex.RUnlock()
 	argsForCall := fake.createStoragePoolBucketKeyArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 error) {
 	fake.createStoragePoolBucketKeyMutex.Lock()
 	defer fake.createStoragePoolBucketKeyMutex.Unlock()
 	fake.CreateStoragePoolBucketKeyStub = nil
@@ -6754,7 +6754,7 @@ func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturns(result1 *api.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
 	fake.createStoragePoolBucketKeyMutex.Lock()
 	defer fake.createStoragePoolBucketKeyMutex.Unlock()
 	fake.CreateStoragePoolBucketKeyStub = nil
@@ -6770,7 +6770,7 @@ func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturnsOnCall(i int, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolume(arg1 string, arg2 api.StorageVolumesPost) error {
+func (fake *FakeInstanceServer) CreateStoragePoolVolume(arg1 string, arg2 api.StorageVolumesPost) error {
 	fake.createStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeReturnsOnCall[len(fake.createStoragePoolVolumeArgsForCall)]
 	fake.createStoragePoolVolumeArgsForCall = append(fake.createStoragePoolVolumeArgsForCall, struct {
@@ -6790,26 +6790,26 @@ func (fake *FakeContainerServer) CreateStoragePoolVolume(arg1 string, arg2 api.S
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeCallCount() int {
 	fake.createStoragePoolVolumeMutex.RLock()
 	defer fake.createStoragePoolVolumeMutex.RUnlock()
 	return len(fake.createStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeCalls(stub func(string, api.StorageVolumesPost) error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeCalls(stub func(string, api.StorageVolumesPost) error) {
 	fake.createStoragePoolVolumeMutex.Lock()
 	defer fake.createStoragePoolVolumeMutex.Unlock()
 	fake.CreateStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeArgsForCall(i int) (string, api.StorageVolumesPost) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeArgsForCall(i int) (string, api.StorageVolumesPost) {
 	fake.createStoragePoolVolumeMutex.RLock()
 	defer fake.createStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.createStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeReturns(result1 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeReturns(result1 error) {
 	fake.createStoragePoolVolumeMutex.Lock()
 	defer fake.createStoragePoolVolumeMutex.Unlock()
 	fake.CreateStoragePoolVolumeStub = nil
@@ -6818,7 +6818,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeReturnsOnCall(i int, result1 error) {
 	fake.createStoragePoolVolumeMutex.Lock()
 	defer fake.createStoragePoolVolumeMutex.Unlock()
 	fake.CreateStoragePoolVolumeStub = nil
@@ -6832,7 +6832,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 api.StoragePoolVolumeBackupsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 api.StoragePoolVolumeBackupsPost) (lxd.Operation, error) {
 	fake.createStoragePoolVolumeBackupMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeBackupReturnsOnCall[len(fake.createStoragePoolVolumeBackupArgsForCall)]
 	fake.createStoragePoolVolumeBackupArgsForCall = append(fake.createStoragePoolVolumeBackupArgsForCall, struct {
@@ -6853,26 +6853,26 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeBackup(arg1 string, arg2
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackupCallCount() int {
 	fake.createStoragePoolVolumeBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeBackupMutex.RUnlock()
 	return len(fake.createStoragePoolVolumeBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupCalls(stub func(string, string, api.StoragePoolVolumeBackupsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackupCalls(stub func(string, string, api.StoragePoolVolumeBackupsPost) (lxd.Operation, error)) {
 	fake.createStoragePoolVolumeBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupArgsForCall(i int) (string, string, api.StoragePoolVolumeBackupsPost) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackupArgsForCall(i int) (string, string, api.StoragePoolVolumeBackupsPost) {
 	fake.createStoragePoolVolumeBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeBackupMutex.RUnlock()
 	argsForCall := fake.createStoragePoolVolumeBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeBackupStub = nil
@@ -6882,7 +6882,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupReturns(result1 lx
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeBackupStub = nil
@@ -6898,7 +6898,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeBackupReturnsOnCall(i in
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackup(arg1 string, arg2 lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackup(arg1 string, arg2 lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error) {
 	fake.createStoragePoolVolumeFromBackupMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeFromBackupReturnsOnCall[len(fake.createStoragePoolVolumeFromBackupArgsForCall)]
 	fake.createStoragePoolVolumeFromBackupArgsForCall = append(fake.createStoragePoolVolumeFromBackupArgsForCall, struct {
@@ -6918,26 +6918,26 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackup(arg1 string, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackupCallCount() int {
 	fake.createStoragePoolVolumeFromBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.RUnlock()
 	return len(fake.createStoragePoolVolumeFromBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupCalls(stub func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackupCalls(stub func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)) {
 	fake.createStoragePoolVolumeFromBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromBackupStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupArgsForCall(i int) (string, lxd.StoragePoolVolumeBackupArgs) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackupArgsForCall(i int) (string, lxd.StoragePoolVolumeBackupArgs) {
 	fake.createStoragePoolVolumeFromBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.RUnlock()
 	argsForCall := fake.createStoragePoolVolumeFromBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeFromBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromBackupStub = nil
@@ -6947,7 +6947,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupReturns(result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeFromBackupMutex.Lock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromBackupStub = nil
@@ -6963,7 +6963,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupReturnsOnCall(
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISO(arg1 string, arg2 lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISO(arg1 string, arg2 lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error) {
 	fake.createStoragePoolVolumeFromISOMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeFromISOReturnsOnCall[len(fake.createStoragePoolVolumeFromISOArgsForCall)]
 	fake.createStoragePoolVolumeFromISOArgsForCall = append(fake.createStoragePoolVolumeFromISOArgsForCall, struct {
@@ -6983,26 +6983,26 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISO(arg1 string, arg
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISOCallCount() int {
 	fake.createStoragePoolVolumeFromISOMutex.RLock()
 	defer fake.createStoragePoolVolumeFromISOMutex.RUnlock()
 	return len(fake.createStoragePoolVolumeFromISOArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOCalls(stub func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISOCalls(stub func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)) {
 	fake.createStoragePoolVolumeFromISOMutex.Lock()
 	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromISOStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOArgsForCall(i int) (string, lxd.StoragePoolVolumeBackupArgs) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISOArgsForCall(i int) (string, lxd.StoragePoolVolumeBackupArgs) {
 	fake.createStoragePoolVolumeFromISOMutex.RLock()
 	defer fake.createStoragePoolVolumeFromISOMutex.RUnlock()
 	argsForCall := fake.createStoragePoolVolumeFromISOArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISOReturns(result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeFromISOMutex.Lock()
 	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromISOStub = nil
@@ -7012,7 +7012,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturns(result1 l
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeFromISOReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeFromISOMutex.Lock()
 	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
 	fake.CreateStoragePoolVolumeFromISOStub = nil
@@ -7028,7 +7028,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturnsOnCall(i i
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumeSnapshotsPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumeSnapshotsPost) (lxd.Operation, error) {
 	fake.createStoragePoolVolumeSnapshotMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeSnapshotReturnsOnCall[len(fake.createStoragePoolVolumeSnapshotArgsForCall)]
 	fake.createStoragePoolVolumeSnapshotArgsForCall = append(fake.createStoragePoolVolumeSnapshotArgsForCall, struct {
@@ -7050,26 +7050,26 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshot(arg1 string, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotCallCount() int {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshotCallCount() int {
 	fake.createStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.RUnlock()
 	return len(fake.createStoragePoolVolumeSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotCalls(stub func(string, string, string, api.StorageVolumeSnapshotsPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshotCalls(stub func(string, string, string, api.StorageVolumeSnapshotsPost) (lxd.Operation, error)) {
 	fake.createStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.CreateStoragePoolVolumeSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, api.StorageVolumeSnapshotsPost) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, api.StorageVolumeSnapshotsPost) {
 	fake.createStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.RUnlock()
 	argsForCall := fake.createStoragePoolVolumeSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.CreateStoragePoolVolumeSnapshotStub = nil
@@ -7079,7 +7079,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) CreateStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.createStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.CreateStoragePoolVolumeSnapshotStub = nil
@@ -7095,7 +7095,7 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeSnapshotReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteCertificate(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteCertificate(arg1 string) error {
 	fake.deleteCertificateMutex.Lock()
 	ret, specificReturn := fake.deleteCertificateReturnsOnCall[len(fake.deleteCertificateArgsForCall)]
 	fake.deleteCertificateArgsForCall = append(fake.deleteCertificateArgsForCall, struct {
@@ -7114,26 +7114,26 @@ func (fake *FakeContainerServer) DeleteCertificate(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteCertificateCallCount() int {
+func (fake *FakeInstanceServer) DeleteCertificateCallCount() int {
 	fake.deleteCertificateMutex.RLock()
 	defer fake.deleteCertificateMutex.RUnlock()
 	return len(fake.deleteCertificateArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteCertificateCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteCertificateCalls(stub func(string) error) {
 	fake.deleteCertificateMutex.Lock()
 	defer fake.deleteCertificateMutex.Unlock()
 	fake.DeleteCertificateStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteCertificateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteCertificateArgsForCall(i int) string {
 	fake.deleteCertificateMutex.RLock()
 	defer fake.deleteCertificateMutex.RUnlock()
 	argsForCall := fake.deleteCertificateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteCertificateReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteCertificateReturns(result1 error) {
 	fake.deleteCertificateMutex.Lock()
 	defer fake.deleteCertificateMutex.Unlock()
 	fake.DeleteCertificateStub = nil
@@ -7142,7 +7142,7 @@ func (fake *FakeContainerServer) DeleteCertificateReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteCertificateReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteCertificateReturnsOnCall(i int, result1 error) {
 	fake.deleteCertificateMutex.Lock()
 	defer fake.deleteCertificateMutex.Unlock()
 	fake.DeleteCertificateStub = nil
@@ -7156,7 +7156,7 @@ func (fake *FakeContainerServer) DeleteCertificateReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroup(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteClusterGroup(arg1 string) error {
 	fake.deleteClusterGroupMutex.Lock()
 	ret, specificReturn := fake.deleteClusterGroupReturnsOnCall[len(fake.deleteClusterGroupArgsForCall)]
 	fake.deleteClusterGroupArgsForCall = append(fake.deleteClusterGroupArgsForCall, struct {
@@ -7175,26 +7175,26 @@ func (fake *FakeContainerServer) DeleteClusterGroup(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroupCallCount() int {
+func (fake *FakeInstanceServer) DeleteClusterGroupCallCount() int {
 	fake.deleteClusterGroupMutex.RLock()
 	defer fake.deleteClusterGroupMutex.RUnlock()
 	return len(fake.deleteClusterGroupArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroupCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteClusterGroupCalls(stub func(string) error) {
 	fake.deleteClusterGroupMutex.Lock()
 	defer fake.deleteClusterGroupMutex.Unlock()
 	fake.DeleteClusterGroupStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroupArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteClusterGroupArgsForCall(i int) string {
 	fake.deleteClusterGroupMutex.RLock()
 	defer fake.deleteClusterGroupMutex.RUnlock()
 	argsForCall := fake.deleteClusterGroupArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroupReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteClusterGroupReturns(result1 error) {
 	fake.deleteClusterGroupMutex.Lock()
 	defer fake.deleteClusterGroupMutex.Unlock()
 	fake.DeleteClusterGroupStub = nil
@@ -7203,7 +7203,7 @@ func (fake *FakeContainerServer) DeleteClusterGroupReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteClusterGroupReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteClusterGroupReturnsOnCall(i int, result1 error) {
 	fake.deleteClusterGroupMutex.Lock()
 	defer fake.deleteClusterGroupMutex.Unlock()
 	fake.DeleteClusterGroupStub = nil
@@ -7217,7 +7217,7 @@ func (fake *FakeContainerServer) DeleteClusterGroupReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteClusterMember(arg1 string, arg2 bool) error {
+func (fake *FakeInstanceServer) DeleteClusterMember(arg1 string, arg2 bool) error {
 	fake.deleteClusterMemberMutex.Lock()
 	ret, specificReturn := fake.deleteClusterMemberReturnsOnCall[len(fake.deleteClusterMemberArgsForCall)]
 	fake.deleteClusterMemberArgsForCall = append(fake.deleteClusterMemberArgsForCall, struct {
@@ -7237,26 +7237,26 @@ func (fake *FakeContainerServer) DeleteClusterMember(arg1 string, arg2 bool) err
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteClusterMemberCallCount() int {
+func (fake *FakeInstanceServer) DeleteClusterMemberCallCount() int {
 	fake.deleteClusterMemberMutex.RLock()
 	defer fake.deleteClusterMemberMutex.RUnlock()
 	return len(fake.deleteClusterMemberArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteClusterMemberCalls(stub func(string, bool) error) {
+func (fake *FakeInstanceServer) DeleteClusterMemberCalls(stub func(string, bool) error) {
 	fake.deleteClusterMemberMutex.Lock()
 	defer fake.deleteClusterMemberMutex.Unlock()
 	fake.DeleteClusterMemberStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteClusterMemberArgsForCall(i int) (string, bool) {
+func (fake *FakeInstanceServer) DeleteClusterMemberArgsForCall(i int) (string, bool) {
 	fake.deleteClusterMemberMutex.RLock()
 	defer fake.deleteClusterMemberMutex.RUnlock()
 	argsForCall := fake.deleteClusterMemberArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteClusterMemberReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteClusterMemberReturns(result1 error) {
 	fake.deleteClusterMemberMutex.Lock()
 	defer fake.deleteClusterMemberMutex.Unlock()
 	fake.DeleteClusterMemberStub = nil
@@ -7265,7 +7265,7 @@ func (fake *FakeContainerServer) DeleteClusterMemberReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteClusterMemberReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteClusterMemberReturnsOnCall(i int, result1 error) {
 	fake.deleteClusterMemberMutex.Lock()
 	defer fake.deleteClusterMemberMutex.Unlock()
 	fake.DeleteClusterMemberStub = nil
@@ -7279,7 +7279,7 @@ func (fake *FakeContainerServer) DeleteClusterMemberReturnsOnCall(i int, result1
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainer(arg1 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteContainer(arg1 string) (lxd.Operation, error) {
 	fake.deleteContainerMutex.Lock()
 	ret, specificReturn := fake.deleteContainerReturnsOnCall[len(fake.deleteContainerArgsForCall)]
 	fake.deleteContainerArgsForCall = append(fake.deleteContainerArgsForCall, struct {
@@ -7298,26 +7298,26 @@ func (fake *FakeContainerServer) DeleteContainer(arg1 string) (lxd.Operation, er
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteContainerCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerCallCount() int {
 	fake.deleteContainerMutex.RLock()
 	defer fake.deleteContainerMutex.RUnlock()
 	return len(fake.deleteContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerCalls(stub func(string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteContainerCalls(stub func(string) (lxd.Operation, error)) {
 	fake.deleteContainerMutex.Lock()
 	defer fake.deleteContainerMutex.Unlock()
 	fake.DeleteContainerStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteContainerArgsForCall(i int) string {
 	fake.deleteContainerMutex.RLock()
 	defer fake.deleteContainerMutex.RUnlock()
 	argsForCall := fake.deleteContainerArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteContainerMutex.Lock()
 	defer fake.deleteContainerMutex.Unlock()
 	fake.DeleteContainerStub = nil
@@ -7327,7 +7327,7 @@ func (fake *FakeContainerServer) DeleteContainerReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteContainerMutex.Lock()
 	defer fake.deleteContainerMutex.Unlock()
 	fake.DeleteContainerStub = nil
@@ -7343,7 +7343,7 @@ func (fake *FakeContainerServer) DeleteContainerReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackup(arg1 string, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteContainerBackup(arg1 string, arg2 string) (lxd.Operation, error) {
 	fake.deleteContainerBackupMutex.Lock()
 	ret, specificReturn := fake.deleteContainerBackupReturnsOnCall[len(fake.deleteContainerBackupArgsForCall)]
 	fake.deleteContainerBackupArgsForCall = append(fake.deleteContainerBackupArgsForCall, struct {
@@ -7363,26 +7363,26 @@ func (fake *FakeContainerServer) DeleteContainerBackup(arg1 string, arg2 string)
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackupCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerBackupCallCount() int {
 	fake.deleteContainerBackupMutex.RLock()
 	defer fake.deleteContainerBackupMutex.RUnlock()
 	return len(fake.deleteContainerBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackupCalls(stub func(string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteContainerBackupCalls(stub func(string, string) (lxd.Operation, error)) {
 	fake.deleteContainerBackupMutex.Lock()
 	defer fake.deleteContainerBackupMutex.Unlock()
 	fake.DeleteContainerBackupStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackupArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteContainerBackupArgsForCall(i int) (string, string) {
 	fake.deleteContainerBackupMutex.RLock()
 	defer fake.deleteContainerBackupMutex.RUnlock()
 	argsForCall := fake.deleteContainerBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteContainerBackupMutex.Lock()
 	defer fake.deleteContainerBackupMutex.Unlock()
 	fake.DeleteContainerBackupStub = nil
@@ -7392,7 +7392,7 @@ func (fake *FakeContainerServer) DeleteContainerBackupReturns(result1 lxd.Operat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteContainerBackupMutex.Lock()
 	defer fake.deleteContainerBackupMutex.Unlock()
 	fake.DeleteContainerBackupStub = nil
@@ -7408,7 +7408,7 @@ func (fake *FakeContainerServer) DeleteContainerBackupReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLog(arg1 string, arg2 *lxd.ContainerConsoleLogArgs) error {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLog(arg1 string, arg2 *lxd.ContainerConsoleLogArgs) error {
 	fake.deleteContainerConsoleLogMutex.Lock()
 	ret, specificReturn := fake.deleteContainerConsoleLogReturnsOnCall[len(fake.deleteContainerConsoleLogArgsForCall)]
 	fake.deleteContainerConsoleLogArgsForCall = append(fake.deleteContainerConsoleLogArgsForCall, struct {
@@ -7428,26 +7428,26 @@ func (fake *FakeContainerServer) DeleteContainerConsoleLog(arg1 string, arg2 *lx
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLogCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLogCallCount() int {
 	fake.deleteContainerConsoleLogMutex.RLock()
 	defer fake.deleteContainerConsoleLogMutex.RUnlock()
 	return len(fake.deleteContainerConsoleLogArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLogCalls(stub func(string, *lxd.ContainerConsoleLogArgs) error) {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLogCalls(stub func(string, *lxd.ContainerConsoleLogArgs) error) {
 	fake.deleteContainerConsoleLogMutex.Lock()
 	defer fake.deleteContainerConsoleLogMutex.Unlock()
 	fake.DeleteContainerConsoleLogStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLogArgsForCall(i int) (string, *lxd.ContainerConsoleLogArgs) {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLogArgsForCall(i int) (string, *lxd.ContainerConsoleLogArgs) {
 	fake.deleteContainerConsoleLogMutex.RLock()
 	defer fake.deleteContainerConsoleLogMutex.RUnlock()
 	argsForCall := fake.deleteContainerConsoleLogArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLogReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLogReturns(result1 error) {
 	fake.deleteContainerConsoleLogMutex.Lock()
 	defer fake.deleteContainerConsoleLogMutex.Unlock()
 	fake.DeleteContainerConsoleLogStub = nil
@@ -7456,7 +7456,7 @@ func (fake *FakeContainerServer) DeleteContainerConsoleLogReturns(result1 error)
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerConsoleLogReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerConsoleLogReturnsOnCall(i int, result1 error) {
 	fake.deleteContainerConsoleLogMutex.Lock()
 	defer fake.deleteContainerConsoleLogMutex.Unlock()
 	fake.DeleteContainerConsoleLogStub = nil
@@ -7470,7 +7470,7 @@ func (fake *FakeContainerServer) DeleteContainerConsoleLogReturnsOnCall(i int, r
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerFile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteContainerFile(arg1 string, arg2 string) error {
 	fake.deleteContainerFileMutex.Lock()
 	ret, specificReturn := fake.deleteContainerFileReturnsOnCall[len(fake.deleteContainerFileArgsForCall)]
 	fake.deleteContainerFileArgsForCall = append(fake.deleteContainerFileArgsForCall, struct {
@@ -7490,26 +7490,26 @@ func (fake *FakeContainerServer) DeleteContainerFile(arg1 string, arg2 string) e
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteContainerFileCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerFileCallCount() int {
 	fake.deleteContainerFileMutex.RLock()
 	defer fake.deleteContainerFileMutex.RUnlock()
 	return len(fake.deleteContainerFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerFileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteContainerFileCalls(stub func(string, string) error) {
 	fake.deleteContainerFileMutex.Lock()
 	defer fake.deleteContainerFileMutex.Unlock()
 	fake.DeleteContainerFileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteContainerFileArgsForCall(i int) (string, string) {
 	fake.deleteContainerFileMutex.RLock()
 	defer fake.deleteContainerFileMutex.RUnlock()
 	argsForCall := fake.deleteContainerFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerFileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerFileReturns(result1 error) {
 	fake.deleteContainerFileMutex.Lock()
 	defer fake.deleteContainerFileMutex.Unlock()
 	fake.DeleteContainerFileStub = nil
@@ -7518,7 +7518,7 @@ func (fake *FakeContainerServer) DeleteContainerFileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerFileReturnsOnCall(i int, result1 error) {
 	fake.deleteContainerFileMutex.Lock()
 	defer fake.deleteContainerFileMutex.Unlock()
 	fake.DeleteContainerFileStub = nil
@@ -7532,7 +7532,7 @@ func (fake *FakeContainerServer) DeleteContainerFileReturnsOnCall(i int, result1
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteContainerLogfile(arg1 string, arg2 string) error {
 	fake.deleteContainerLogfileMutex.Lock()
 	ret, specificReturn := fake.deleteContainerLogfileReturnsOnCall[len(fake.deleteContainerLogfileArgsForCall)]
 	fake.deleteContainerLogfileArgsForCall = append(fake.deleteContainerLogfileArgsForCall, struct {
@@ -7552,26 +7552,26 @@ func (fake *FakeContainerServer) DeleteContainerLogfile(arg1 string, arg2 string
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfileCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerLogfileCallCount() int {
 	fake.deleteContainerLogfileMutex.RLock()
 	defer fake.deleteContainerLogfileMutex.RUnlock()
 	return len(fake.deleteContainerLogfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteContainerLogfileCalls(stub func(string, string) error) {
 	fake.deleteContainerLogfileMutex.Lock()
 	defer fake.deleteContainerLogfileMutex.Unlock()
 	fake.DeleteContainerLogfileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteContainerLogfileArgsForCall(i int) (string, string) {
 	fake.deleteContainerLogfileMutex.RLock()
 	defer fake.deleteContainerLogfileMutex.RUnlock()
 	argsForCall := fake.deleteContainerLogfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerLogfileReturns(result1 error) {
 	fake.deleteContainerLogfileMutex.Lock()
 	defer fake.deleteContainerLogfileMutex.Unlock()
 	fake.DeleteContainerLogfileStub = nil
@@ -7580,7 +7580,7 @@ func (fake *FakeContainerServer) DeleteContainerLogfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerLogfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerLogfileReturnsOnCall(i int, result1 error) {
 	fake.deleteContainerLogfileMutex.Lock()
 	defer fake.deleteContainerLogfileMutex.Unlock()
 	fake.DeleteContainerLogfileStub = nil
@@ -7594,7 +7594,7 @@ func (fake *FakeContainerServer) DeleteContainerLogfileReturnsOnCall(i int, resu
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshot(arg1 string, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteContainerSnapshot(arg1 string, arg2 string) (lxd.Operation, error) {
 	fake.deleteContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.deleteContainerSnapshotReturnsOnCall[len(fake.deleteContainerSnapshotArgsForCall)]
 	fake.deleteContainerSnapshotArgsForCall = append(fake.deleteContainerSnapshotArgsForCall, struct {
@@ -7614,26 +7614,26 @@ func (fake *FakeContainerServer) DeleteContainerSnapshot(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerSnapshotCallCount() int {
 	fake.deleteContainerSnapshotMutex.RLock()
 	defer fake.deleteContainerSnapshotMutex.RUnlock()
 	return len(fake.deleteContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshotCalls(stub func(string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteContainerSnapshotCalls(stub func(string, string) (lxd.Operation, error)) {
 	fake.deleteContainerSnapshotMutex.Lock()
 	defer fake.deleteContainerSnapshotMutex.Unlock()
 	fake.DeleteContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshotArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteContainerSnapshotArgsForCall(i int) (string, string) {
 	fake.deleteContainerSnapshotMutex.RLock()
 	defer fake.deleteContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.deleteContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteContainerSnapshotMutex.Lock()
 	defer fake.deleteContainerSnapshotMutex.Unlock()
 	fake.DeleteContainerSnapshotStub = nil
@@ -7643,7 +7643,7 @@ func (fake *FakeContainerServer) DeleteContainerSnapshotReturns(result1 lxd.Oper
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteContainerSnapshotMutex.Lock()
 	defer fake.deleteContainerSnapshotMutex.Unlock()
 	fake.DeleteContainerSnapshotStub = nil
@@ -7659,7 +7659,7 @@ func (fake *FakeContainerServer) DeleteContainerSnapshotReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFile(arg1 string, arg2 string) error {
 	fake.deleteContainerTemplateFileMutex.Lock()
 	ret, specificReturn := fake.deleteContainerTemplateFileReturnsOnCall[len(fake.deleteContainerTemplateFileArgsForCall)]
 	fake.deleteContainerTemplateFileArgsForCall = append(fake.deleteContainerTemplateFileArgsForCall, struct {
@@ -7679,26 +7679,26 @@ func (fake *FakeContainerServer) DeleteContainerTemplateFile(arg1 string, arg2 s
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFileCallCount() int {
 	fake.deleteContainerTemplateFileMutex.RLock()
 	defer fake.deleteContainerTemplateFileMutex.RUnlock()
 	return len(fake.deleteContainerTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFileCalls(stub func(string, string) error) {
 	fake.deleteContainerTemplateFileMutex.Lock()
 	defer fake.deleteContainerTemplateFileMutex.Unlock()
 	fake.DeleteContainerTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFileArgsForCall(i int) (string, string) {
 	fake.deleteContainerTemplateFileMutex.RLock()
 	defer fake.deleteContainerTemplateFileMutex.RUnlock()
 	argsForCall := fake.deleteContainerTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFileReturns(result1 error) {
 	fake.deleteContainerTemplateFileMutex.Lock()
 	defer fake.deleteContainerTemplateFileMutex.Unlock()
 	fake.DeleteContainerTemplateFileStub = nil
@@ -7707,7 +7707,7 @@ func (fake *FakeContainerServer) DeleteContainerTemplateFileReturns(result1 erro
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteContainerTemplateFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteContainerTemplateFileReturnsOnCall(i int, result1 error) {
 	fake.deleteContainerTemplateFileMutex.Lock()
 	defer fake.deleteContainerTemplateFileMutex.Unlock()
 	fake.DeleteContainerTemplateFileStub = nil
@@ -7721,7 +7721,7 @@ func (fake *FakeContainerServer) DeleteContainerTemplateFileReturnsOnCall(i int,
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteImage(arg1 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteImage(arg1 string) (lxd.Operation, error) {
 	fake.deleteImageMutex.Lock()
 	ret, specificReturn := fake.deleteImageReturnsOnCall[len(fake.deleteImageArgsForCall)]
 	fake.deleteImageArgsForCall = append(fake.deleteImageArgsForCall, struct {
@@ -7740,26 +7740,26 @@ func (fake *FakeContainerServer) DeleteImage(arg1 string) (lxd.Operation, error)
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteImageCallCount() int {
+func (fake *FakeInstanceServer) DeleteImageCallCount() int {
 	fake.deleteImageMutex.RLock()
 	defer fake.deleteImageMutex.RUnlock()
 	return len(fake.deleteImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteImageCalls(stub func(string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteImageCalls(stub func(string) (lxd.Operation, error)) {
 	fake.deleteImageMutex.Lock()
 	defer fake.deleteImageMutex.Unlock()
 	fake.DeleteImageStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteImageArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteImageArgsForCall(i int) string {
 	fake.deleteImageMutex.RLock()
 	defer fake.deleteImageMutex.RUnlock()
 	argsForCall := fake.deleteImageArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteImageReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteImageReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteImageMutex.Lock()
 	defer fake.deleteImageMutex.Unlock()
 	fake.DeleteImageStub = nil
@@ -7769,7 +7769,7 @@ func (fake *FakeContainerServer) DeleteImageReturns(result1 lxd.Operation, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteImageMutex.Lock()
 	defer fake.deleteImageMutex.Unlock()
 	fake.DeleteImageStub = nil
@@ -7785,7 +7785,7 @@ func (fake *FakeContainerServer) DeleteImageReturnsOnCall(i int, result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteImageAlias(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteImageAlias(arg1 string) error {
 	fake.deleteImageAliasMutex.Lock()
 	ret, specificReturn := fake.deleteImageAliasReturnsOnCall[len(fake.deleteImageAliasArgsForCall)]
 	fake.deleteImageAliasArgsForCall = append(fake.deleteImageAliasArgsForCall, struct {
@@ -7804,26 +7804,26 @@ func (fake *FakeContainerServer) DeleteImageAlias(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteImageAliasCallCount() int {
+func (fake *FakeInstanceServer) DeleteImageAliasCallCount() int {
 	fake.deleteImageAliasMutex.RLock()
 	defer fake.deleteImageAliasMutex.RUnlock()
 	return len(fake.deleteImageAliasArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteImageAliasCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteImageAliasCalls(stub func(string) error) {
 	fake.deleteImageAliasMutex.Lock()
 	defer fake.deleteImageAliasMutex.Unlock()
 	fake.DeleteImageAliasStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteImageAliasArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteImageAliasArgsForCall(i int) string {
 	fake.deleteImageAliasMutex.RLock()
 	defer fake.deleteImageAliasMutex.RUnlock()
 	argsForCall := fake.deleteImageAliasArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteImageAliasReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteImageAliasReturns(result1 error) {
 	fake.deleteImageAliasMutex.Lock()
 	defer fake.deleteImageAliasMutex.Unlock()
 	fake.DeleteImageAliasStub = nil
@@ -7832,7 +7832,7 @@ func (fake *FakeContainerServer) DeleteImageAliasReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteImageAliasReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteImageAliasReturnsOnCall(i int, result1 error) {
 	fake.deleteImageAliasMutex.Lock()
 	defer fake.deleteImageAliasMutex.Unlock()
 	fake.DeleteImageAliasStub = nil
@@ -7846,7 +7846,7 @@ func (fake *FakeContainerServer) DeleteImageAliasReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstance(arg1 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteInstance(arg1 string) (lxd.Operation, error) {
 	fake.deleteInstanceMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceReturnsOnCall[len(fake.deleteInstanceArgsForCall)]
 	fake.deleteInstanceArgsForCall = append(fake.deleteInstanceArgsForCall, struct {
@@ -7865,26 +7865,26 @@ func (fake *FakeContainerServer) DeleteInstance(arg1 string) (lxd.Operation, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceCallCount() int {
 	fake.deleteInstanceMutex.RLock()
 	defer fake.deleteInstanceMutex.RUnlock()
 	return len(fake.deleteInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceCalls(stub func(string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteInstanceCalls(stub func(string) (lxd.Operation, error)) {
 	fake.deleteInstanceMutex.Lock()
 	defer fake.deleteInstanceMutex.Unlock()
 	fake.DeleteInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteInstanceArgsForCall(i int) string {
 	fake.deleteInstanceMutex.RLock()
 	defer fake.deleteInstanceMutex.RUnlock()
 	argsForCall := fake.deleteInstanceArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceMutex.Lock()
 	defer fake.deleteInstanceMutex.Unlock()
 	fake.DeleteInstanceStub = nil
@@ -7894,7 +7894,7 @@ func (fake *FakeContainerServer) DeleteInstanceReturns(result1 lxd.Operation, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceMutex.Lock()
 	defer fake.deleteInstanceMutex.Unlock()
 	fake.DeleteInstanceStub = nil
@@ -7910,7 +7910,7 @@ func (fake *FakeContainerServer) DeleteInstanceReturnsOnCall(i int, result1 lxd.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackup(arg1 string, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteInstanceBackup(arg1 string, arg2 string) (lxd.Operation, error) {
 	fake.deleteInstanceBackupMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceBackupReturnsOnCall[len(fake.deleteInstanceBackupArgsForCall)]
 	fake.deleteInstanceBackupArgsForCall = append(fake.deleteInstanceBackupArgsForCall, struct {
@@ -7930,26 +7930,26 @@ func (fake *FakeContainerServer) DeleteInstanceBackup(arg1 string, arg2 string) 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackupCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceBackupCallCount() int {
 	fake.deleteInstanceBackupMutex.RLock()
 	defer fake.deleteInstanceBackupMutex.RUnlock()
 	return len(fake.deleteInstanceBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackupCalls(stub func(string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteInstanceBackupCalls(stub func(string, string) (lxd.Operation, error)) {
 	fake.deleteInstanceBackupMutex.Lock()
 	defer fake.deleteInstanceBackupMutex.Unlock()
 	fake.DeleteInstanceBackupStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackupArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteInstanceBackupArgsForCall(i int) (string, string) {
 	fake.deleteInstanceBackupMutex.RLock()
 	defer fake.deleteInstanceBackupMutex.RUnlock()
 	argsForCall := fake.deleteInstanceBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceBackupMutex.Lock()
 	defer fake.deleteInstanceBackupMutex.Unlock()
 	fake.DeleteInstanceBackupStub = nil
@@ -7959,7 +7959,7 @@ func (fake *FakeContainerServer) DeleteInstanceBackupReturns(result1 lxd.Operati
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceBackupMutex.Lock()
 	defer fake.deleteInstanceBackupMutex.Unlock()
 	fake.DeleteInstanceBackupStub = nil
@@ -7975,7 +7975,7 @@ func (fake *FakeContainerServer) DeleteInstanceBackupReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLog(arg1 string, arg2 *lxd.InstanceConsoleLogArgs) error {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLog(arg1 string, arg2 *lxd.InstanceConsoleLogArgs) error {
 	fake.deleteInstanceConsoleLogMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceConsoleLogReturnsOnCall[len(fake.deleteInstanceConsoleLogArgsForCall)]
 	fake.deleteInstanceConsoleLogArgsForCall = append(fake.deleteInstanceConsoleLogArgsForCall, struct {
@@ -7995,26 +7995,26 @@ func (fake *FakeContainerServer) DeleteInstanceConsoleLog(arg1 string, arg2 *lxd
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLogCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLogCallCount() int {
 	fake.deleteInstanceConsoleLogMutex.RLock()
 	defer fake.deleteInstanceConsoleLogMutex.RUnlock()
 	return len(fake.deleteInstanceConsoleLogArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLogCalls(stub func(string, *lxd.InstanceConsoleLogArgs) error) {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLogCalls(stub func(string, *lxd.InstanceConsoleLogArgs) error) {
 	fake.deleteInstanceConsoleLogMutex.Lock()
 	defer fake.deleteInstanceConsoleLogMutex.Unlock()
 	fake.DeleteInstanceConsoleLogStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLogArgsForCall(i int) (string, *lxd.InstanceConsoleLogArgs) {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLogArgsForCall(i int) (string, *lxd.InstanceConsoleLogArgs) {
 	fake.deleteInstanceConsoleLogMutex.RLock()
 	defer fake.deleteInstanceConsoleLogMutex.RUnlock()
 	argsForCall := fake.deleteInstanceConsoleLogArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLogReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLogReturns(result1 error) {
 	fake.deleteInstanceConsoleLogMutex.Lock()
 	defer fake.deleteInstanceConsoleLogMutex.Unlock()
 	fake.DeleteInstanceConsoleLogStub = nil
@@ -8023,7 +8023,7 @@ func (fake *FakeContainerServer) DeleteInstanceConsoleLogReturns(result1 error) 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceConsoleLogReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceConsoleLogReturnsOnCall(i int, result1 error) {
 	fake.deleteInstanceConsoleLogMutex.Lock()
 	defer fake.deleteInstanceConsoleLogMutex.Unlock()
 	fake.DeleteInstanceConsoleLogStub = nil
@@ -8037,7 +8037,7 @@ func (fake *FakeContainerServer) DeleteInstanceConsoleLogReturnsOnCall(i int, re
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteInstanceFile(arg1 string, arg2 string) error {
 	fake.deleteInstanceFileMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceFileReturnsOnCall[len(fake.deleteInstanceFileArgsForCall)]
 	fake.deleteInstanceFileArgsForCall = append(fake.deleteInstanceFileArgsForCall, struct {
@@ -8057,26 +8057,26 @@ func (fake *FakeContainerServer) DeleteInstanceFile(arg1 string, arg2 string) er
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFileCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceFileCallCount() int {
 	fake.deleteInstanceFileMutex.RLock()
 	defer fake.deleteInstanceFileMutex.RUnlock()
 	return len(fake.deleteInstanceFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteInstanceFileCalls(stub func(string, string) error) {
 	fake.deleteInstanceFileMutex.Lock()
 	defer fake.deleteInstanceFileMutex.Unlock()
 	fake.DeleteInstanceFileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteInstanceFileArgsForCall(i int) (string, string) {
 	fake.deleteInstanceFileMutex.RLock()
 	defer fake.deleteInstanceFileMutex.RUnlock()
 	argsForCall := fake.deleteInstanceFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceFileReturns(result1 error) {
 	fake.deleteInstanceFileMutex.Lock()
 	defer fake.deleteInstanceFileMutex.Unlock()
 	fake.DeleteInstanceFileStub = nil
@@ -8085,7 +8085,7 @@ func (fake *FakeContainerServer) DeleteInstanceFileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceFileReturnsOnCall(i int, result1 error) {
 	fake.deleteInstanceFileMutex.Lock()
 	defer fake.deleteInstanceFileMutex.Unlock()
 	fake.DeleteInstanceFileStub = nil
@@ -8099,7 +8099,7 @@ func (fake *FakeContainerServer) DeleteInstanceFileReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteInstanceLogfile(arg1 string, arg2 string) error {
 	fake.deleteInstanceLogfileMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceLogfileReturnsOnCall[len(fake.deleteInstanceLogfileArgsForCall)]
 	fake.deleteInstanceLogfileArgsForCall = append(fake.deleteInstanceLogfileArgsForCall, struct {
@@ -8119,26 +8119,26 @@ func (fake *FakeContainerServer) DeleteInstanceLogfile(arg1 string, arg2 string)
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfileCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceLogfileCallCount() int {
 	fake.deleteInstanceLogfileMutex.RLock()
 	defer fake.deleteInstanceLogfileMutex.RUnlock()
 	return len(fake.deleteInstanceLogfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteInstanceLogfileCalls(stub func(string, string) error) {
 	fake.deleteInstanceLogfileMutex.Lock()
 	defer fake.deleteInstanceLogfileMutex.Unlock()
 	fake.DeleteInstanceLogfileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteInstanceLogfileArgsForCall(i int) (string, string) {
 	fake.deleteInstanceLogfileMutex.RLock()
 	defer fake.deleteInstanceLogfileMutex.RUnlock()
 	argsForCall := fake.deleteInstanceLogfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceLogfileReturns(result1 error) {
 	fake.deleteInstanceLogfileMutex.Lock()
 	defer fake.deleteInstanceLogfileMutex.Unlock()
 	fake.DeleteInstanceLogfileStub = nil
@@ -8147,7 +8147,7 @@ func (fake *FakeContainerServer) DeleteInstanceLogfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceLogfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceLogfileReturnsOnCall(i int, result1 error) {
 	fake.deleteInstanceLogfileMutex.Lock()
 	defer fake.deleteInstanceLogfileMutex.Unlock()
 	fake.DeleteInstanceLogfileStub = nil
@@ -8161,7 +8161,7 @@ func (fake *FakeContainerServer) DeleteInstanceLogfileReturnsOnCall(i int, resul
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshot(arg1 string, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshot(arg1 string, arg2 string) (lxd.Operation, error) {
 	fake.deleteInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceSnapshotReturnsOnCall[len(fake.deleteInstanceSnapshotArgsForCall)]
 	fake.deleteInstanceSnapshotArgsForCall = append(fake.deleteInstanceSnapshotArgsForCall, struct {
@@ -8181,26 +8181,26 @@ func (fake *FakeContainerServer) DeleteInstanceSnapshot(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshotCallCount() int {
 	fake.deleteInstanceSnapshotMutex.RLock()
 	defer fake.deleteInstanceSnapshotMutex.RUnlock()
 	return len(fake.deleteInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshotCalls(stub func(string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshotCalls(stub func(string, string) (lxd.Operation, error)) {
 	fake.deleteInstanceSnapshotMutex.Lock()
 	defer fake.deleteInstanceSnapshotMutex.Unlock()
 	fake.DeleteInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshotArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshotArgsForCall(i int) (string, string) {
 	fake.deleteInstanceSnapshotMutex.RLock()
 	defer fake.deleteInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.deleteInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceSnapshotMutex.Lock()
 	defer fake.deleteInstanceSnapshotMutex.Unlock()
 	fake.DeleteInstanceSnapshotStub = nil
@@ -8210,7 +8210,7 @@ func (fake *FakeContainerServer) DeleteInstanceSnapshotReturns(result1 lxd.Opera
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteInstanceSnapshotMutex.Lock()
 	defer fake.deleteInstanceSnapshotMutex.Unlock()
 	fake.DeleteInstanceSnapshotStub = nil
@@ -8226,7 +8226,7 @@ func (fake *FakeContainerServer) DeleteInstanceSnapshotReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFile(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFile(arg1 string, arg2 string) error {
 	fake.deleteInstanceTemplateFileMutex.Lock()
 	ret, specificReturn := fake.deleteInstanceTemplateFileReturnsOnCall[len(fake.deleteInstanceTemplateFileArgsForCall)]
 	fake.deleteInstanceTemplateFileArgsForCall = append(fake.deleteInstanceTemplateFileArgsForCall, struct {
@@ -8246,26 +8246,26 @@ func (fake *FakeContainerServer) DeleteInstanceTemplateFile(arg1 string, arg2 st
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFileCallCount() int {
 	fake.deleteInstanceTemplateFileMutex.RLock()
 	defer fake.deleteInstanceTemplateFileMutex.RUnlock()
 	return len(fake.deleteInstanceTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFileCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFileCalls(stub func(string, string) error) {
 	fake.deleteInstanceTemplateFileMutex.Lock()
 	defer fake.deleteInstanceTemplateFileMutex.Unlock()
 	fake.DeleteInstanceTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFileArgsForCall(i int) (string, string) {
 	fake.deleteInstanceTemplateFileMutex.RLock()
 	defer fake.deleteInstanceTemplateFileMutex.RUnlock()
 	argsForCall := fake.deleteInstanceTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFileReturns(result1 error) {
 	fake.deleteInstanceTemplateFileMutex.Lock()
 	defer fake.deleteInstanceTemplateFileMutex.Unlock()
 	fake.DeleteInstanceTemplateFileStub = nil
@@ -8274,7 +8274,7 @@ func (fake *FakeContainerServer) DeleteInstanceTemplateFileReturns(result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteInstanceTemplateFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteInstanceTemplateFileReturnsOnCall(i int, result1 error) {
 	fake.deleteInstanceTemplateFileMutex.Lock()
 	defer fake.deleteInstanceTemplateFileMutex.Unlock()
 	fake.DeleteInstanceTemplateFileStub = nil
@@ -8288,7 +8288,7 @@ func (fake *FakeContainerServer) DeleteInstanceTemplateFileReturnsOnCall(i int, 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetwork(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteNetwork(arg1 string) error {
 	fake.deleteNetworkMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkReturnsOnCall[len(fake.deleteNetworkArgsForCall)]
 	fake.deleteNetworkArgsForCall = append(fake.deleteNetworkArgsForCall, struct {
@@ -8307,26 +8307,26 @@ func (fake *FakeContainerServer) DeleteNetwork(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkCallCount() int {
 	fake.deleteNetworkMutex.RLock()
 	defer fake.deleteNetworkMutex.RUnlock()
 	return len(fake.deleteNetworkArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkCalls(stub func(string) error) {
 	fake.deleteNetworkMutex.Lock()
 	defer fake.deleteNetworkMutex.Unlock()
 	fake.DeleteNetworkStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteNetworkArgsForCall(i int) string {
 	fake.deleteNetworkMutex.RLock()
 	defer fake.deleteNetworkMutex.RUnlock()
 	argsForCall := fake.deleteNetworkArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkReturns(result1 error) {
 	fake.deleteNetworkMutex.Lock()
 	defer fake.deleteNetworkMutex.Unlock()
 	fake.DeleteNetworkStub = nil
@@ -8335,7 +8335,7 @@ func (fake *FakeContainerServer) DeleteNetworkReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkMutex.Lock()
 	defer fake.deleteNetworkMutex.Unlock()
 	fake.DeleteNetworkStub = nil
@@ -8349,7 +8349,7 @@ func (fake *FakeContainerServer) DeleteNetworkReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACL(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkACL(arg1 string) error {
 	fake.deleteNetworkACLMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkACLReturnsOnCall[len(fake.deleteNetworkACLArgsForCall)]
 	fake.deleteNetworkACLArgsForCall = append(fake.deleteNetworkACLArgsForCall, struct {
@@ -8368,26 +8368,26 @@ func (fake *FakeContainerServer) DeleteNetworkACL(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACLCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkACLCallCount() int {
 	fake.deleteNetworkACLMutex.RLock()
 	defer fake.deleteNetworkACLMutex.RUnlock()
 	return len(fake.deleteNetworkACLArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACLCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkACLCalls(stub func(string) error) {
 	fake.deleteNetworkACLMutex.Lock()
 	defer fake.deleteNetworkACLMutex.Unlock()
 	fake.DeleteNetworkACLStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACLArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteNetworkACLArgsForCall(i int) string {
 	fake.deleteNetworkACLMutex.RLock()
 	defer fake.deleteNetworkACLMutex.RUnlock()
 	argsForCall := fake.deleteNetworkACLArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACLReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkACLReturns(result1 error) {
 	fake.deleteNetworkACLMutex.Lock()
 	defer fake.deleteNetworkACLMutex.Unlock()
 	fake.DeleteNetworkACLStub = nil
@@ -8396,7 +8396,7 @@ func (fake *FakeContainerServer) DeleteNetworkACLReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkACLReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkACLReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkACLMutex.Lock()
 	defer fake.deleteNetworkACLMutex.Unlock()
 	fake.DeleteNetworkACLStub = nil
@@ -8410,7 +8410,7 @@ func (fake *FakeContainerServer) DeleteNetworkACLReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForward(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkForward(arg1 string, arg2 string) error {
 	fake.deleteNetworkForwardMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkForwardReturnsOnCall[len(fake.deleteNetworkForwardArgsForCall)]
 	fake.deleteNetworkForwardArgsForCall = append(fake.deleteNetworkForwardArgsForCall, struct {
@@ -8430,26 +8430,26 @@ func (fake *FakeContainerServer) DeleteNetworkForward(arg1 string, arg2 string) 
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForwardCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkForwardCallCount() int {
 	fake.deleteNetworkForwardMutex.RLock()
 	defer fake.deleteNetworkForwardMutex.RUnlock()
 	return len(fake.deleteNetworkForwardArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForwardCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkForwardCalls(stub func(string, string) error) {
 	fake.deleteNetworkForwardMutex.Lock()
 	defer fake.deleteNetworkForwardMutex.Unlock()
 	fake.DeleteNetworkForwardStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForwardArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteNetworkForwardArgsForCall(i int) (string, string) {
 	fake.deleteNetworkForwardMutex.RLock()
 	defer fake.deleteNetworkForwardMutex.RUnlock()
 	argsForCall := fake.deleteNetworkForwardArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForwardReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkForwardReturns(result1 error) {
 	fake.deleteNetworkForwardMutex.Lock()
 	defer fake.deleteNetworkForwardMutex.Unlock()
 	fake.DeleteNetworkForwardStub = nil
@@ -8458,7 +8458,7 @@ func (fake *FakeContainerServer) DeleteNetworkForwardReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkForwardReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkForwardReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkForwardMutex.Lock()
 	defer fake.deleteNetworkForwardMutex.Unlock()
 	fake.DeleteNetworkForwardStub = nil
@@ -8472,7 +8472,7 @@ func (fake *FakeContainerServer) DeleteNetworkForwardReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancer(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancer(arg1 string, arg2 string) error {
 	fake.deleteNetworkLoadBalancerMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkLoadBalancerReturnsOnCall[len(fake.deleteNetworkLoadBalancerArgsForCall)]
 	fake.deleteNetworkLoadBalancerArgsForCall = append(fake.deleteNetworkLoadBalancerArgsForCall, struct {
@@ -8492,26 +8492,26 @@ func (fake *FakeContainerServer) DeleteNetworkLoadBalancer(arg1 string, arg2 str
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancerCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancerCallCount() int {
 	fake.deleteNetworkLoadBalancerMutex.RLock()
 	defer fake.deleteNetworkLoadBalancerMutex.RUnlock()
 	return len(fake.deleteNetworkLoadBalancerArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancerCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancerCalls(stub func(string, string) error) {
 	fake.deleteNetworkLoadBalancerMutex.Lock()
 	defer fake.deleteNetworkLoadBalancerMutex.Unlock()
 	fake.DeleteNetworkLoadBalancerStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancerArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancerArgsForCall(i int) (string, string) {
 	fake.deleteNetworkLoadBalancerMutex.RLock()
 	defer fake.deleteNetworkLoadBalancerMutex.RUnlock()
 	argsForCall := fake.deleteNetworkLoadBalancerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancerReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancerReturns(result1 error) {
 	fake.deleteNetworkLoadBalancerMutex.Lock()
 	defer fake.deleteNetworkLoadBalancerMutex.Unlock()
 	fake.DeleteNetworkLoadBalancerStub = nil
@@ -8520,7 +8520,7 @@ func (fake *FakeContainerServer) DeleteNetworkLoadBalancerReturns(result1 error)
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkLoadBalancerMutex.Lock()
 	defer fake.deleteNetworkLoadBalancerMutex.Unlock()
 	fake.DeleteNetworkLoadBalancerStub = nil
@@ -8534,7 +8534,7 @@ func (fake *FakeContainerServer) DeleteNetworkLoadBalancerReturnsOnCall(i int, r
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeer(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkPeer(arg1 string, arg2 string) error {
 	fake.deleteNetworkPeerMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkPeerReturnsOnCall[len(fake.deleteNetworkPeerArgsForCall)]
 	fake.deleteNetworkPeerArgsForCall = append(fake.deleteNetworkPeerArgsForCall, struct {
@@ -8554,26 +8554,26 @@ func (fake *FakeContainerServer) DeleteNetworkPeer(arg1 string, arg2 string) err
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeerCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkPeerCallCount() int {
 	fake.deleteNetworkPeerMutex.RLock()
 	defer fake.deleteNetworkPeerMutex.RUnlock()
 	return len(fake.deleteNetworkPeerArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeerCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkPeerCalls(stub func(string, string) error) {
 	fake.deleteNetworkPeerMutex.Lock()
 	defer fake.deleteNetworkPeerMutex.Unlock()
 	fake.DeleteNetworkPeerStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeerArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteNetworkPeerArgsForCall(i int) (string, string) {
 	fake.deleteNetworkPeerMutex.RLock()
 	defer fake.deleteNetworkPeerMutex.RUnlock()
 	argsForCall := fake.deleteNetworkPeerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeerReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkPeerReturns(result1 error) {
 	fake.deleteNetworkPeerMutex.Lock()
 	defer fake.deleteNetworkPeerMutex.Unlock()
 	fake.DeleteNetworkPeerStub = nil
@@ -8582,7 +8582,7 @@ func (fake *FakeContainerServer) DeleteNetworkPeerReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkPeerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkPeerReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkPeerMutex.Lock()
 	defer fake.deleteNetworkPeerMutex.Unlock()
 	fake.DeleteNetworkPeerStub = nil
@@ -8596,7 +8596,7 @@ func (fake *FakeContainerServer) DeleteNetworkPeerReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZone(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkZone(arg1 string) error {
 	fake.deleteNetworkZoneMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkZoneReturnsOnCall[len(fake.deleteNetworkZoneArgsForCall)]
 	fake.deleteNetworkZoneArgsForCall = append(fake.deleteNetworkZoneArgsForCall, struct {
@@ -8615,26 +8615,26 @@ func (fake *FakeContainerServer) DeleteNetworkZone(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkZoneCallCount() int {
 	fake.deleteNetworkZoneMutex.RLock()
 	defer fake.deleteNetworkZoneMutex.RUnlock()
 	return len(fake.deleteNetworkZoneArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneCalls(stub func(string) error) {
 	fake.deleteNetworkZoneMutex.Lock()
 	defer fake.deleteNetworkZoneMutex.Unlock()
 	fake.DeleteNetworkZoneStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteNetworkZoneArgsForCall(i int) string {
 	fake.deleteNetworkZoneMutex.RLock()
 	defer fake.deleteNetworkZoneMutex.RUnlock()
 	argsForCall := fake.deleteNetworkZoneArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneReturns(result1 error) {
 	fake.deleteNetworkZoneMutex.Lock()
 	defer fake.deleteNetworkZoneMutex.Unlock()
 	fake.DeleteNetworkZoneStub = nil
@@ -8643,7 +8643,7 @@ func (fake *FakeContainerServer) DeleteNetworkZoneReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkZoneMutex.Lock()
 	defer fake.deleteNetworkZoneMutex.Unlock()
 	fake.DeleteNetworkZoneStub = nil
@@ -8657,7 +8657,7 @@ func (fake *FakeContainerServer) DeleteNetworkZoneReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecord(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecord(arg1 string, arg2 string) error {
 	fake.deleteNetworkZoneRecordMutex.Lock()
 	ret, specificReturn := fake.deleteNetworkZoneRecordReturnsOnCall[len(fake.deleteNetworkZoneRecordArgsForCall)]
 	fake.deleteNetworkZoneRecordArgsForCall = append(fake.deleteNetworkZoneRecordArgsForCall, struct {
@@ -8677,26 +8677,26 @@ func (fake *FakeContainerServer) DeleteNetworkZoneRecord(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecordCallCount() int {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecordCallCount() int {
 	fake.deleteNetworkZoneRecordMutex.RLock()
 	defer fake.deleteNetworkZoneRecordMutex.RUnlock()
 	return len(fake.deleteNetworkZoneRecordArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecordCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecordCalls(stub func(string, string) error) {
 	fake.deleteNetworkZoneRecordMutex.Lock()
 	defer fake.deleteNetworkZoneRecordMutex.Unlock()
 	fake.DeleteNetworkZoneRecordStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecordArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecordArgsForCall(i int) (string, string) {
 	fake.deleteNetworkZoneRecordMutex.RLock()
 	defer fake.deleteNetworkZoneRecordMutex.RUnlock()
 	argsForCall := fake.deleteNetworkZoneRecordArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecordReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecordReturns(result1 error) {
 	fake.deleteNetworkZoneRecordMutex.Lock()
 	defer fake.deleteNetworkZoneRecordMutex.Unlock()
 	fake.DeleteNetworkZoneRecordStub = nil
@@ -8705,7 +8705,7 @@ func (fake *FakeContainerServer) DeleteNetworkZoneRecordReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteNetworkZoneRecordReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteNetworkZoneRecordReturnsOnCall(i int, result1 error) {
 	fake.deleteNetworkZoneRecordMutex.Lock()
 	defer fake.deleteNetworkZoneRecordMutex.Unlock()
 	fake.DeleteNetworkZoneRecordStub = nil
@@ -8719,7 +8719,7 @@ func (fake *FakeContainerServer) DeleteNetworkZoneRecordReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteOperation(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteOperation(arg1 string) error {
 	fake.deleteOperationMutex.Lock()
 	ret, specificReturn := fake.deleteOperationReturnsOnCall[len(fake.deleteOperationArgsForCall)]
 	fake.deleteOperationArgsForCall = append(fake.deleteOperationArgsForCall, struct {
@@ -8738,26 +8738,26 @@ func (fake *FakeContainerServer) DeleteOperation(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteOperationCallCount() int {
+func (fake *FakeInstanceServer) DeleteOperationCallCount() int {
 	fake.deleteOperationMutex.RLock()
 	defer fake.deleteOperationMutex.RUnlock()
 	return len(fake.deleteOperationArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteOperationCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteOperationCalls(stub func(string) error) {
 	fake.deleteOperationMutex.Lock()
 	defer fake.deleteOperationMutex.Unlock()
 	fake.DeleteOperationStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteOperationArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteOperationArgsForCall(i int) string {
 	fake.deleteOperationMutex.RLock()
 	defer fake.deleteOperationMutex.RUnlock()
 	argsForCall := fake.deleteOperationArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteOperationReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteOperationReturns(result1 error) {
 	fake.deleteOperationMutex.Lock()
 	defer fake.deleteOperationMutex.Unlock()
 	fake.DeleteOperationStub = nil
@@ -8766,7 +8766,7 @@ func (fake *FakeContainerServer) DeleteOperationReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteOperationReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteOperationReturnsOnCall(i int, result1 error) {
 	fake.deleteOperationMutex.Lock()
 	defer fake.deleteOperationMutex.Unlock()
 	fake.DeleteOperationStub = nil
@@ -8780,7 +8780,7 @@ func (fake *FakeContainerServer) DeleteOperationReturnsOnCall(i int, result1 err
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteProfile(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteProfile(arg1 string) error {
 	fake.deleteProfileMutex.Lock()
 	ret, specificReturn := fake.deleteProfileReturnsOnCall[len(fake.deleteProfileArgsForCall)]
 	fake.deleteProfileArgsForCall = append(fake.deleteProfileArgsForCall, struct {
@@ -8799,26 +8799,26 @@ func (fake *FakeContainerServer) DeleteProfile(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteProfileCallCount() int {
+func (fake *FakeInstanceServer) DeleteProfileCallCount() int {
 	fake.deleteProfileMutex.RLock()
 	defer fake.deleteProfileMutex.RUnlock()
 	return len(fake.deleteProfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteProfileCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteProfileCalls(stub func(string) error) {
 	fake.deleteProfileMutex.Lock()
 	defer fake.deleteProfileMutex.Unlock()
 	fake.DeleteProfileStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteProfileArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteProfileArgsForCall(i int) string {
 	fake.deleteProfileMutex.RLock()
 	defer fake.deleteProfileMutex.RUnlock()
 	argsForCall := fake.deleteProfileArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteProfileReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteProfileReturns(result1 error) {
 	fake.deleteProfileMutex.Lock()
 	defer fake.deleteProfileMutex.Unlock()
 	fake.DeleteProfileStub = nil
@@ -8827,7 +8827,7 @@ func (fake *FakeContainerServer) DeleteProfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteProfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteProfileReturnsOnCall(i int, result1 error) {
 	fake.deleteProfileMutex.Lock()
 	defer fake.deleteProfileMutex.Unlock()
 	fake.DeleteProfileStub = nil
@@ -8841,7 +8841,7 @@ func (fake *FakeContainerServer) DeleteProfileReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteProject(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteProject(arg1 string) error {
 	fake.deleteProjectMutex.Lock()
 	ret, specificReturn := fake.deleteProjectReturnsOnCall[len(fake.deleteProjectArgsForCall)]
 	fake.deleteProjectArgsForCall = append(fake.deleteProjectArgsForCall, struct {
@@ -8860,26 +8860,26 @@ func (fake *FakeContainerServer) DeleteProject(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteProjectCallCount() int {
+func (fake *FakeInstanceServer) DeleteProjectCallCount() int {
 	fake.deleteProjectMutex.RLock()
 	defer fake.deleteProjectMutex.RUnlock()
 	return len(fake.deleteProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteProjectCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteProjectCalls(stub func(string) error) {
 	fake.deleteProjectMutex.Lock()
 	defer fake.deleteProjectMutex.Unlock()
 	fake.DeleteProjectStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteProjectArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteProjectArgsForCall(i int) string {
 	fake.deleteProjectMutex.RLock()
 	defer fake.deleteProjectMutex.RUnlock()
 	argsForCall := fake.deleteProjectArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteProjectReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteProjectReturns(result1 error) {
 	fake.deleteProjectMutex.Lock()
 	defer fake.deleteProjectMutex.Unlock()
 	fake.DeleteProjectStub = nil
@@ -8888,7 +8888,7 @@ func (fake *FakeContainerServer) DeleteProjectReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteProjectReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteProjectReturnsOnCall(i int, result1 error) {
 	fake.deleteProjectMutex.Lock()
 	defer fake.deleteProjectMutex.Unlock()
 	fake.DeleteProjectStub = nil
@@ -8902,7 +8902,7 @@ func (fake *FakeContainerServer) DeleteProjectReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePool(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteStoragePool(arg1 string) error {
 	fake.deleteStoragePoolMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolReturnsOnCall[len(fake.deleteStoragePoolArgsForCall)]
 	fake.deleteStoragePoolArgsForCall = append(fake.deleteStoragePoolArgsForCall, struct {
@@ -8921,26 +8921,26 @@ func (fake *FakeContainerServer) DeleteStoragePool(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolCallCount() int {
 	fake.deleteStoragePoolMutex.RLock()
 	defer fake.deleteStoragePoolMutex.RUnlock()
 	return len(fake.deleteStoragePoolArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolCalls(stub func(string) error) {
 	fake.deleteStoragePoolMutex.Lock()
 	defer fake.deleteStoragePoolMutex.Unlock()
 	fake.DeleteStoragePoolStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteStoragePoolArgsForCall(i int) string {
 	fake.deleteStoragePoolMutex.RLock()
 	defer fake.deleteStoragePoolMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolReturns(result1 error) {
 	fake.deleteStoragePoolMutex.Lock()
 	defer fake.deleteStoragePoolMutex.Unlock()
 	fake.DeleteStoragePoolStub = nil
@@ -8949,7 +8949,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolReturnsOnCall(i int, result1 error) {
 	fake.deleteStoragePoolMutex.Lock()
 	defer fake.deleteStoragePoolMutex.Unlock()
 	fake.DeleteStoragePoolStub = nil
@@ -8963,7 +8963,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucket(arg1 string, arg2 string) error {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucket(arg1 string, arg2 string) error {
 	fake.deleteStoragePoolBucketMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolBucketReturnsOnCall[len(fake.deleteStoragePoolBucketArgsForCall)]
 	fake.deleteStoragePoolBucketArgsForCall = append(fake.deleteStoragePoolBucketArgsForCall, struct {
@@ -8983,26 +8983,26 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucket(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketCallCount() int {
 	fake.deleteStoragePoolBucketMutex.RLock()
 	defer fake.deleteStoragePoolBucketMutex.RUnlock()
 	return len(fake.deleteStoragePoolBucketArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketCalls(stub func(string, string) error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketCalls(stub func(string, string) error) {
 	fake.deleteStoragePoolBucketMutex.Lock()
 	defer fake.deleteStoragePoolBucketMutex.Unlock()
 	fake.DeleteStoragePoolBucketStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketArgsForCall(i int) (string, string) {
 	fake.deleteStoragePoolBucketMutex.RLock()
 	defer fake.deleteStoragePoolBucketMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolBucketArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketReturns(result1 error) {
 	fake.deleteStoragePoolBucketMutex.Lock()
 	defer fake.deleteStoragePoolBucketMutex.Unlock()
 	fake.DeleteStoragePoolBucketStub = nil
@@ -9011,7 +9011,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucketReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketReturnsOnCall(i int, result1 error) {
 	fake.deleteStoragePoolBucketMutex.Lock()
 	defer fake.deleteStoragePoolBucketMutex.Unlock()
 	fake.DeleteStoragePoolBucketStub = nil
@@ -9025,7 +9025,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucketReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) error {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) error {
 	fake.deleteStoragePoolBucketKeyMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolBucketKeyReturnsOnCall[len(fake.deleteStoragePoolBucketKeyArgsForCall)]
 	fake.deleteStoragePoolBucketKeyArgsForCall = append(fake.deleteStoragePoolBucketKeyArgsForCall, struct {
@@ -9046,26 +9046,26 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucketKey(arg1 string, arg2 st
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKeyCallCount() int {
 	fake.deleteStoragePoolBucketKeyMutex.RLock()
 	defer fake.deleteStoragePoolBucketKeyMutex.RUnlock()
 	return len(fake.deleteStoragePoolBucketKeyArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyCalls(stub func(string, string, string) error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKeyCalls(stub func(string, string, string) error) {
 	fake.deleteStoragePoolBucketKeyMutex.Lock()
 	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
 	fake.DeleteStoragePoolBucketKeyStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
 	fake.deleteStoragePoolBucketKeyMutex.RLock()
 	defer fake.deleteStoragePoolBucketKeyMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolBucketKeyArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKeyReturns(result1 error) {
 	fake.deleteStoragePoolBucketKeyMutex.Lock()
 	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
 	fake.DeleteStoragePoolBucketKeyStub = nil
@@ -9074,7 +9074,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturns(result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
 	fake.deleteStoragePoolBucketKeyMutex.Lock()
 	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
 	fake.DeleteStoragePoolBucketKeyStub = nil
@@ -9088,7 +9088,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturnsOnCall(i int, 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolume(arg1 string, arg2 string, arg3 string) error {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolume(arg1 string, arg2 string, arg3 string) error {
 	fake.deleteStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolVolumeReturnsOnCall[len(fake.deleteStoragePoolVolumeArgsForCall)]
 	fake.deleteStoragePoolVolumeArgsForCall = append(fake.deleteStoragePoolVolumeArgsForCall, struct {
@@ -9109,26 +9109,26 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolume(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeCallCount() int {
 	fake.deleteStoragePoolVolumeMutex.RLock()
 	defer fake.deleteStoragePoolVolumeMutex.RUnlock()
 	return len(fake.deleteStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeCalls(stub func(string, string, string) error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeCalls(stub func(string, string, string) error) {
 	fake.deleteStoragePoolVolumeMutex.Lock()
 	defer fake.deleteStoragePoolVolumeMutex.Unlock()
 	fake.DeleteStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeArgsForCall(i int) (string, string, string) {
 	fake.deleteStoragePoolVolumeMutex.RLock()
 	defer fake.deleteStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeReturns(result1 error) {
 	fake.deleteStoragePoolVolumeMutex.Lock()
 	defer fake.deleteStoragePoolVolumeMutex.Unlock()
 	fake.DeleteStoragePoolVolumeStub = nil
@@ -9137,7 +9137,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeReturnsOnCall(i int, result1 error) {
 	fake.deleteStoragePoolVolumeMutex.Lock()
 	defer fake.deleteStoragePoolVolumeMutex.Unlock()
 	fake.DeleteStoragePoolVolumeStub = nil
@@ -9151,7 +9151,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string) (lxd.Operation, error) {
 	fake.deleteStoragePoolVolumeBackupMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolVolumeBackupReturnsOnCall[len(fake.deleteStoragePoolVolumeBackupArgsForCall)]
 	fake.deleteStoragePoolVolumeBackupArgsForCall = append(fake.deleteStoragePoolVolumeBackupArgsForCall, struct {
@@ -9172,26 +9172,26 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackup(arg1 string, arg2
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackupCallCount() int {
 	fake.deleteStoragePoolVolumeBackupMutex.RLock()
 	defer fake.deleteStoragePoolVolumeBackupMutex.RUnlock()
 	return len(fake.deleteStoragePoolVolumeBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupCalls(stub func(string, string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackupCalls(stub func(string, string, string) (lxd.Operation, error)) {
 	fake.deleteStoragePoolVolumeBackupMutex.Lock()
 	defer fake.deleteStoragePoolVolumeBackupMutex.Unlock()
 	fake.DeleteStoragePoolVolumeBackupStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackupArgsForCall(i int) (string, string, string) {
 	fake.deleteStoragePoolVolumeBackupMutex.RLock()
 	defer fake.deleteStoragePoolVolumeBackupMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolVolumeBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteStoragePoolVolumeBackupMutex.Lock()
 	defer fake.deleteStoragePoolVolumeBackupMutex.Unlock()
 	fake.DeleteStoragePoolVolumeBackupStub = nil
@@ -9201,7 +9201,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupReturns(result1 lx
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteStoragePoolVolumeBackupMutex.Lock()
 	defer fake.deleteStoragePoolVolumeBackupMutex.Unlock()
 	fake.DeleteStoragePoolVolumeBackupStub = nil
@@ -9217,7 +9217,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeBackupReturnsOnCall(i in
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string) (lxd.Operation, error) {
 	fake.deleteStoragePoolVolumeSnapshotMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolVolumeSnapshotReturnsOnCall[len(fake.deleteStoragePoolVolumeSnapshotArgsForCall)]
 	fake.deleteStoragePoolVolumeSnapshotArgsForCall = append(fake.deleteStoragePoolVolumeSnapshotArgsForCall, struct {
@@ -9239,26 +9239,26 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshot(arg1 string, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotCallCount() int {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshotCallCount() int {
 	fake.deleteStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.deleteStoragePoolVolumeSnapshotMutex.RUnlock()
 	return len(fake.deleteStoragePoolVolumeSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string) (lxd.Operation, error)) {
 	fake.deleteStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.deleteStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.DeleteStoragePoolVolumeSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string) {
 	fake.deleteStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.deleteStoragePoolVolumeSnapshotMutex.RUnlock()
 	argsForCall := fake.deleteStoragePoolVolumeSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.deleteStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.deleteStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.DeleteStoragePoolVolumeSnapshotStub = nil
@@ -9268,7 +9268,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) DeleteStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.deleteStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.deleteStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.DeleteStoragePoolVolumeSnapshotStub = nil
@@ -9284,7 +9284,7 @@ func (fake *FakeContainerServer) DeleteStoragePoolVolumeSnapshotReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DeleteWarning(arg1 string) error {
+func (fake *FakeInstanceServer) DeleteWarning(arg1 string) error {
 	fake.deleteWarningMutex.Lock()
 	ret, specificReturn := fake.deleteWarningReturnsOnCall[len(fake.deleteWarningArgsForCall)]
 	fake.deleteWarningArgsForCall = append(fake.deleteWarningArgsForCall, struct {
@@ -9303,26 +9303,26 @@ func (fake *FakeContainerServer) DeleteWarning(arg1 string) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) DeleteWarningCallCount() int {
+func (fake *FakeInstanceServer) DeleteWarningCallCount() int {
 	fake.deleteWarningMutex.RLock()
 	defer fake.deleteWarningMutex.RUnlock()
 	return len(fake.deleteWarningArgsForCall)
 }
 
-func (fake *FakeContainerServer) DeleteWarningCalls(stub func(string) error) {
+func (fake *FakeInstanceServer) DeleteWarningCalls(stub func(string) error) {
 	fake.deleteWarningMutex.Lock()
 	defer fake.deleteWarningMutex.Unlock()
 	fake.DeleteWarningStub = stub
 }
 
-func (fake *FakeContainerServer) DeleteWarningArgsForCall(i int) string {
+func (fake *FakeInstanceServer) DeleteWarningArgsForCall(i int) string {
 	fake.deleteWarningMutex.RLock()
 	defer fake.deleteWarningMutex.RUnlock()
 	argsForCall := fake.deleteWarningArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DeleteWarningReturns(result1 error) {
+func (fake *FakeInstanceServer) DeleteWarningReturns(result1 error) {
 	fake.deleteWarningMutex.Lock()
 	defer fake.deleteWarningMutex.Unlock()
 	fake.DeleteWarningStub = nil
@@ -9331,7 +9331,7 @@ func (fake *FakeContainerServer) DeleteWarningReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) DeleteWarningReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) DeleteWarningReturnsOnCall(i int, result1 error) {
 	fake.deleteWarningMutex.Lock()
 	defer fake.deleteWarningMutex.Unlock()
 	fake.DeleteWarningStub = nil
@@ -9345,7 +9345,7 @@ func (fake *FakeContainerServer) DeleteWarningReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) Disconnect() {
+func (fake *FakeInstanceServer) Disconnect() {
 	fake.disconnectMutex.Lock()
 	fake.disconnectArgsForCall = append(fake.disconnectArgsForCall, struct {
 	}{})
@@ -9357,19 +9357,19 @@ func (fake *FakeContainerServer) Disconnect() {
 	}
 }
 
-func (fake *FakeContainerServer) DisconnectCallCount() int {
+func (fake *FakeInstanceServer) DisconnectCallCount() int {
 	fake.disconnectMutex.RLock()
 	defer fake.disconnectMutex.RUnlock()
 	return len(fake.disconnectArgsForCall)
 }
 
-func (fake *FakeContainerServer) DisconnectCalls(stub func()) {
+func (fake *FakeInstanceServer) DisconnectCalls(stub func()) {
 	fake.disconnectMutex.Lock()
 	defer fake.disconnectMutex.Unlock()
 	fake.DisconnectStub = stub
 }
 
-func (fake *FakeContainerServer) DoHTTP(arg1 *http.Request) (*http.Response, error) {
+func (fake *FakeInstanceServer) DoHTTP(arg1 *http.Request) (*http.Response, error) {
 	fake.doHTTPMutex.Lock()
 	ret, specificReturn := fake.doHTTPReturnsOnCall[len(fake.doHTTPArgsForCall)]
 	fake.doHTTPArgsForCall = append(fake.doHTTPArgsForCall, struct {
@@ -9388,26 +9388,26 @@ func (fake *FakeContainerServer) DoHTTP(arg1 *http.Request) (*http.Response, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) DoHTTPCallCount() int {
+func (fake *FakeInstanceServer) DoHTTPCallCount() int {
 	fake.doHTTPMutex.RLock()
 	defer fake.doHTTPMutex.RUnlock()
 	return len(fake.doHTTPArgsForCall)
 }
 
-func (fake *FakeContainerServer) DoHTTPCalls(stub func(*http.Request) (*http.Response, error)) {
+func (fake *FakeInstanceServer) DoHTTPCalls(stub func(*http.Request) (*http.Response, error)) {
 	fake.doHTTPMutex.Lock()
 	defer fake.doHTTPMutex.Unlock()
 	fake.DoHTTPStub = stub
 }
 
-func (fake *FakeContainerServer) DoHTTPArgsForCall(i int) *http.Request {
+func (fake *FakeInstanceServer) DoHTTPArgsForCall(i int) *http.Request {
 	fake.doHTTPMutex.RLock()
 	defer fake.doHTTPMutex.RUnlock()
 	argsForCall := fake.doHTTPArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) DoHTTPReturns(result1 *http.Response, result2 error) {
+func (fake *FakeInstanceServer) DoHTTPReturns(result1 *http.Response, result2 error) {
 	fake.doHTTPMutex.Lock()
 	defer fake.doHTTPMutex.Unlock()
 	fake.DoHTTPStub = nil
@@ -9417,7 +9417,7 @@ func (fake *FakeContainerServer) DoHTTPReturns(result1 *http.Response, result2 e
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) DoHTTPReturnsOnCall(i int, result1 *http.Response, result2 error) {
+func (fake *FakeInstanceServer) DoHTTPReturnsOnCall(i int, result1 *http.Response, result2 error) {
 	fake.doHTTPMutex.Lock()
 	defer fake.doHTTPMutex.Unlock()
 	fake.DoHTTPStub = nil
@@ -9433,7 +9433,7 @@ func (fake *FakeContainerServer) DoHTTPReturnsOnCall(i int, result1 *http.Respon
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExecContainer(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) ExecContainer(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 	fake.execContainerMutex.Lock()
 	ret, specificReturn := fake.execContainerReturnsOnCall[len(fake.execContainerArgsForCall)]
 	fake.execContainerArgsForCall = append(fake.execContainerArgsForCall, struct {
@@ -9454,26 +9454,26 @@ func (fake *FakeContainerServer) ExecContainer(arg1 string, arg2 api.ContainerEx
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) ExecContainerCallCount() int {
+func (fake *FakeInstanceServer) ExecContainerCallCount() int {
 	fake.execContainerMutex.RLock()
 	defer fake.execContainerMutex.RUnlock()
 	return len(fake.execContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) ExecContainerCalls(stub func(string, api.ContainerExecPost, *lxd.ContainerExecArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) ExecContainerCalls(stub func(string, api.ContainerExecPost, *lxd.ContainerExecArgs) (lxd.Operation, error)) {
 	fake.execContainerMutex.Lock()
 	defer fake.execContainerMutex.Unlock()
 	fake.ExecContainerStub = stub
 }
 
-func (fake *FakeContainerServer) ExecContainerArgsForCall(i int) (string, api.ContainerExecPost, *lxd.ContainerExecArgs) {
+func (fake *FakeInstanceServer) ExecContainerArgsForCall(i int) (string, api.ContainerExecPost, *lxd.ContainerExecArgs) {
 	fake.execContainerMutex.RLock()
 	defer fake.execContainerMutex.RUnlock()
 	argsForCall := fake.execContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) ExecContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExecContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.execContainerMutex.Lock()
 	defer fake.execContainerMutex.Unlock()
 	fake.ExecContainerStub = nil
@@ -9483,7 +9483,7 @@ func (fake *FakeContainerServer) ExecContainerReturns(result1 lxd.Operation, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExecContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExecContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.execContainerMutex.Lock()
 	defer fake.execContainerMutex.Unlock()
 	fake.ExecContainerStub = nil
@@ -9499,7 +9499,7 @@ func (fake *FakeContainerServer) ExecContainerReturnsOnCall(i int, result1 lxd.O
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExecInstance(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) ExecInstance(arg1 string, arg2 api.InstanceExecPost, arg3 *lxd.InstanceExecArgs) (lxd.Operation, error) {
 	fake.execInstanceMutex.Lock()
 	ret, specificReturn := fake.execInstanceReturnsOnCall[len(fake.execInstanceArgsForCall)]
 	fake.execInstanceArgsForCall = append(fake.execInstanceArgsForCall, struct {
@@ -9520,26 +9520,26 @@ func (fake *FakeContainerServer) ExecInstance(arg1 string, arg2 api.InstanceExec
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) ExecInstanceCallCount() int {
+func (fake *FakeInstanceServer) ExecInstanceCallCount() int {
 	fake.execInstanceMutex.RLock()
 	defer fake.execInstanceMutex.RUnlock()
 	return len(fake.execInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) ExecInstanceCalls(stub func(string, api.InstanceExecPost, *lxd.InstanceExecArgs) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) ExecInstanceCalls(stub func(string, api.InstanceExecPost, *lxd.InstanceExecArgs) (lxd.Operation, error)) {
 	fake.execInstanceMutex.Lock()
 	defer fake.execInstanceMutex.Unlock()
 	fake.ExecInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) ExecInstanceArgsForCall(i int) (string, api.InstanceExecPost, *lxd.InstanceExecArgs) {
+func (fake *FakeInstanceServer) ExecInstanceArgsForCall(i int) (string, api.InstanceExecPost, *lxd.InstanceExecArgs) {
 	fake.execInstanceMutex.RLock()
 	defer fake.execInstanceMutex.RUnlock()
 	argsForCall := fake.execInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) ExecInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExecInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.execInstanceMutex.Lock()
 	defer fake.execInstanceMutex.Unlock()
 	fake.ExecInstanceStub = nil
@@ -9549,7 +9549,7 @@ func (fake *FakeContainerServer) ExecInstanceReturns(result1 lxd.Operation, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExecInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExecInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.execInstanceMutex.Lock()
 	defer fake.execInstanceMutex.Unlock()
 	fake.ExecInstanceStub = nil
@@ -9565,7 +9565,7 @@ func (fake *FakeContainerServer) ExecInstanceReturnsOnCall(i int, result1 lxd.Op
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExportImage(arg1 string, arg2 api.ImageExportPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) ExportImage(arg1 string, arg2 api.ImageExportPost) (lxd.Operation, error) {
 	fake.exportImageMutex.Lock()
 	ret, specificReturn := fake.exportImageReturnsOnCall[len(fake.exportImageArgsForCall)]
 	fake.exportImageArgsForCall = append(fake.exportImageArgsForCall, struct {
@@ -9585,26 +9585,26 @@ func (fake *FakeContainerServer) ExportImage(arg1 string, arg2 api.ImageExportPo
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) ExportImageCallCount() int {
+func (fake *FakeInstanceServer) ExportImageCallCount() int {
 	fake.exportImageMutex.RLock()
 	defer fake.exportImageMutex.RUnlock()
 	return len(fake.exportImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) ExportImageCalls(stub func(string, api.ImageExportPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) ExportImageCalls(stub func(string, api.ImageExportPost) (lxd.Operation, error)) {
 	fake.exportImageMutex.Lock()
 	defer fake.exportImageMutex.Unlock()
 	fake.ExportImageStub = stub
 }
 
-func (fake *FakeContainerServer) ExportImageArgsForCall(i int) (string, api.ImageExportPost) {
+func (fake *FakeInstanceServer) ExportImageArgsForCall(i int) (string, api.ImageExportPost) {
 	fake.exportImageMutex.RLock()
 	defer fake.exportImageMutex.RUnlock()
 	argsForCall := fake.exportImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) ExportImageReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExportImageReturns(result1 lxd.Operation, result2 error) {
 	fake.exportImageMutex.Lock()
 	defer fake.exportImageMutex.Unlock()
 	fake.ExportImageStub = nil
@@ -9614,7 +9614,7 @@ func (fake *FakeContainerServer) ExportImageReturns(result1 lxd.Operation, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) ExportImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) ExportImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.exportImageMutex.Lock()
 	defer fake.exportImageMutex.Unlock()
 	fake.ExportImageStub = nil
@@ -9630,7 +9630,7 @@ func (fake *FakeContainerServer) ExportImageReturnsOnCall(i int, result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetCertificate(arg1 string) (*api.Certificate, string, error) {
+func (fake *FakeInstanceServer) GetCertificate(arg1 string) (*api.Certificate, string, error) {
 	fake.getCertificateMutex.Lock()
 	ret, specificReturn := fake.getCertificateReturnsOnCall[len(fake.getCertificateArgsForCall)]
 	fake.getCertificateArgsForCall = append(fake.getCertificateArgsForCall, struct {
@@ -9649,26 +9649,26 @@ func (fake *FakeContainerServer) GetCertificate(arg1 string) (*api.Certificate, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetCertificateCallCount() int {
+func (fake *FakeInstanceServer) GetCertificateCallCount() int {
 	fake.getCertificateMutex.RLock()
 	defer fake.getCertificateMutex.RUnlock()
 	return len(fake.getCertificateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetCertificateCalls(stub func(string) (*api.Certificate, string, error)) {
+func (fake *FakeInstanceServer) GetCertificateCalls(stub func(string) (*api.Certificate, string, error)) {
 	fake.getCertificateMutex.Lock()
 	defer fake.getCertificateMutex.Unlock()
 	fake.GetCertificateStub = stub
 }
 
-func (fake *FakeContainerServer) GetCertificateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetCertificateArgsForCall(i int) string {
 	fake.getCertificateMutex.RLock()
 	defer fake.getCertificateMutex.RUnlock()
 	argsForCall := fake.getCertificateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetCertificateReturns(result1 *api.Certificate, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetCertificateReturns(result1 *api.Certificate, result2 string, result3 error) {
 	fake.getCertificateMutex.Lock()
 	defer fake.getCertificateMutex.Unlock()
 	fake.GetCertificateStub = nil
@@ -9679,7 +9679,7 @@ func (fake *FakeContainerServer) GetCertificateReturns(result1 *api.Certificate,
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetCertificateReturnsOnCall(i int, result1 *api.Certificate, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetCertificateReturnsOnCall(i int, result1 *api.Certificate, result2 string, result3 error) {
 	fake.getCertificateMutex.Lock()
 	defer fake.getCertificateMutex.Unlock()
 	fake.GetCertificateStub = nil
@@ -9697,7 +9697,7 @@ func (fake *FakeContainerServer) GetCertificateReturnsOnCall(i int, result1 *api
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetCertificateFingerprints() ([]string, error) {
+func (fake *FakeInstanceServer) GetCertificateFingerprints() ([]string, error) {
 	fake.getCertificateFingerprintsMutex.Lock()
 	ret, specificReturn := fake.getCertificateFingerprintsReturnsOnCall[len(fake.getCertificateFingerprintsArgsForCall)]
 	fake.getCertificateFingerprintsArgsForCall = append(fake.getCertificateFingerprintsArgsForCall, struct {
@@ -9715,19 +9715,19 @@ func (fake *FakeContainerServer) GetCertificateFingerprints() ([]string, error) 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetCertificateFingerprintsCallCount() int {
+func (fake *FakeInstanceServer) GetCertificateFingerprintsCallCount() int {
 	fake.getCertificateFingerprintsMutex.RLock()
 	defer fake.getCertificateFingerprintsMutex.RUnlock()
 	return len(fake.getCertificateFingerprintsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetCertificateFingerprintsCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetCertificateFingerprintsCalls(stub func() ([]string, error)) {
 	fake.getCertificateFingerprintsMutex.Lock()
 	defer fake.getCertificateFingerprintsMutex.Unlock()
 	fake.GetCertificateFingerprintsStub = stub
 }
 
-func (fake *FakeContainerServer) GetCertificateFingerprintsReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetCertificateFingerprintsReturns(result1 []string, result2 error) {
 	fake.getCertificateFingerprintsMutex.Lock()
 	defer fake.getCertificateFingerprintsMutex.Unlock()
 	fake.GetCertificateFingerprintsStub = nil
@@ -9737,7 +9737,7 @@ func (fake *FakeContainerServer) GetCertificateFingerprintsReturns(result1 []str
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetCertificateFingerprintsReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetCertificateFingerprintsReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getCertificateFingerprintsMutex.Lock()
 	defer fake.getCertificateFingerprintsMutex.Unlock()
 	fake.GetCertificateFingerprintsStub = nil
@@ -9753,7 +9753,7 @@ func (fake *FakeContainerServer) GetCertificateFingerprintsReturnsOnCall(i int, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetCertificates() ([]api.Certificate, error) {
+func (fake *FakeInstanceServer) GetCertificates() ([]api.Certificate, error) {
 	fake.getCertificatesMutex.Lock()
 	ret, specificReturn := fake.getCertificatesReturnsOnCall[len(fake.getCertificatesArgsForCall)]
 	fake.getCertificatesArgsForCall = append(fake.getCertificatesArgsForCall, struct {
@@ -9771,19 +9771,19 @@ func (fake *FakeContainerServer) GetCertificates() ([]api.Certificate, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetCertificatesCallCount() int {
+func (fake *FakeInstanceServer) GetCertificatesCallCount() int {
 	fake.getCertificatesMutex.RLock()
 	defer fake.getCertificatesMutex.RUnlock()
 	return len(fake.getCertificatesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetCertificatesCalls(stub func() ([]api.Certificate, error)) {
+func (fake *FakeInstanceServer) GetCertificatesCalls(stub func() ([]api.Certificate, error)) {
 	fake.getCertificatesMutex.Lock()
 	defer fake.getCertificatesMutex.Unlock()
 	fake.GetCertificatesStub = stub
 }
 
-func (fake *FakeContainerServer) GetCertificatesReturns(result1 []api.Certificate, result2 error) {
+func (fake *FakeInstanceServer) GetCertificatesReturns(result1 []api.Certificate, result2 error) {
 	fake.getCertificatesMutex.Lock()
 	defer fake.getCertificatesMutex.Unlock()
 	fake.GetCertificatesStub = nil
@@ -9793,7 +9793,7 @@ func (fake *FakeContainerServer) GetCertificatesReturns(result1 []api.Certificat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetCertificatesReturnsOnCall(i int, result1 []api.Certificate, result2 error) {
+func (fake *FakeInstanceServer) GetCertificatesReturnsOnCall(i int, result1 []api.Certificate, result2 error) {
 	fake.getCertificatesMutex.Lock()
 	defer fake.getCertificatesMutex.Unlock()
 	fake.GetCertificatesStub = nil
@@ -9809,7 +9809,7 @@ func (fake *FakeContainerServer) GetCertificatesReturnsOnCall(i int, result1 []a
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetCluster() (*api.Cluster, string, error) {
+func (fake *FakeInstanceServer) GetCluster() (*api.Cluster, string, error) {
 	fake.getClusterMutex.Lock()
 	ret, specificReturn := fake.getClusterReturnsOnCall[len(fake.getClusterArgsForCall)]
 	fake.getClusterArgsForCall = append(fake.getClusterArgsForCall, struct {
@@ -9827,19 +9827,19 @@ func (fake *FakeContainerServer) GetCluster() (*api.Cluster, string, error) {
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetClusterCallCount() int {
+func (fake *FakeInstanceServer) GetClusterCallCount() int {
 	fake.getClusterMutex.RLock()
 	defer fake.getClusterMutex.RUnlock()
 	return len(fake.getClusterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterCalls(stub func() (*api.Cluster, string, error)) {
+func (fake *FakeInstanceServer) GetClusterCalls(stub func() (*api.Cluster, string, error)) {
 	fake.getClusterMutex.Lock()
 	defer fake.getClusterMutex.Unlock()
 	fake.GetClusterStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterReturns(result1 *api.Cluster, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterReturns(result1 *api.Cluster, result2 string, result3 error) {
 	fake.getClusterMutex.Lock()
 	defer fake.getClusterMutex.Unlock()
 	fake.GetClusterStub = nil
@@ -9850,7 +9850,7 @@ func (fake *FakeContainerServer) GetClusterReturns(result1 *api.Cluster, result2
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterReturnsOnCall(i int, result1 *api.Cluster, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterReturnsOnCall(i int, result1 *api.Cluster, result2 string, result3 error) {
 	fake.getClusterMutex.Lock()
 	defer fake.getClusterMutex.Unlock()
 	fake.GetClusterStub = nil
@@ -9868,7 +9868,7 @@ func (fake *FakeContainerServer) GetClusterReturnsOnCall(i int, result1 *api.Clu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterGroup(arg1 string) (*api.ClusterGroup, string, error) {
+func (fake *FakeInstanceServer) GetClusterGroup(arg1 string) (*api.ClusterGroup, string, error) {
 	fake.getClusterGroupMutex.Lock()
 	ret, specificReturn := fake.getClusterGroupReturnsOnCall[len(fake.getClusterGroupArgsForCall)]
 	fake.getClusterGroupArgsForCall = append(fake.getClusterGroupArgsForCall, struct {
@@ -9887,26 +9887,26 @@ func (fake *FakeContainerServer) GetClusterGroup(arg1 string) (*api.ClusterGroup
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetClusterGroupCallCount() int {
+func (fake *FakeInstanceServer) GetClusterGroupCallCount() int {
 	fake.getClusterGroupMutex.RLock()
 	defer fake.getClusterGroupMutex.RUnlock()
 	return len(fake.getClusterGroupArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterGroupCalls(stub func(string) (*api.ClusterGroup, string, error)) {
+func (fake *FakeInstanceServer) GetClusterGroupCalls(stub func(string) (*api.ClusterGroup, string, error)) {
 	fake.getClusterGroupMutex.Lock()
 	defer fake.getClusterGroupMutex.Unlock()
 	fake.GetClusterGroupStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterGroupArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetClusterGroupArgsForCall(i int) string {
 	fake.getClusterGroupMutex.RLock()
 	defer fake.getClusterGroupMutex.RUnlock()
 	argsForCall := fake.getClusterGroupArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetClusterGroupReturns(result1 *api.ClusterGroup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterGroupReturns(result1 *api.ClusterGroup, result2 string, result3 error) {
 	fake.getClusterGroupMutex.Lock()
 	defer fake.getClusterGroupMutex.Unlock()
 	fake.GetClusterGroupStub = nil
@@ -9917,7 +9917,7 @@ func (fake *FakeContainerServer) GetClusterGroupReturns(result1 *api.ClusterGrou
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterGroupReturnsOnCall(i int, result1 *api.ClusterGroup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterGroupReturnsOnCall(i int, result1 *api.ClusterGroup, result2 string, result3 error) {
 	fake.getClusterGroupMutex.Lock()
 	defer fake.getClusterGroupMutex.Unlock()
 	fake.GetClusterGroupStub = nil
@@ -9935,7 +9935,7 @@ func (fake *FakeContainerServer) GetClusterGroupReturnsOnCall(i int, result1 *ap
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterGroupNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetClusterGroupNames() ([]string, error) {
 	fake.getClusterGroupNamesMutex.Lock()
 	ret, specificReturn := fake.getClusterGroupNamesReturnsOnCall[len(fake.getClusterGroupNamesArgsForCall)]
 	fake.getClusterGroupNamesArgsForCall = append(fake.getClusterGroupNamesArgsForCall, struct {
@@ -9953,19 +9953,19 @@ func (fake *FakeContainerServer) GetClusterGroupNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetClusterGroupNamesCallCount() int {
+func (fake *FakeInstanceServer) GetClusterGroupNamesCallCount() int {
 	fake.getClusterGroupNamesMutex.RLock()
 	defer fake.getClusterGroupNamesMutex.RUnlock()
 	return len(fake.getClusterGroupNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterGroupNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetClusterGroupNamesCalls(stub func() ([]string, error)) {
 	fake.getClusterGroupNamesMutex.Lock()
 	defer fake.getClusterGroupNamesMutex.Unlock()
 	fake.GetClusterGroupNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterGroupNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetClusterGroupNamesReturns(result1 []string, result2 error) {
 	fake.getClusterGroupNamesMutex.Lock()
 	defer fake.getClusterGroupNamesMutex.Unlock()
 	fake.GetClusterGroupNamesStub = nil
@@ -9975,7 +9975,7 @@ func (fake *FakeContainerServer) GetClusterGroupNamesReturns(result1 []string, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterGroupNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetClusterGroupNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getClusterGroupNamesMutex.Lock()
 	defer fake.getClusterGroupNamesMutex.Unlock()
 	fake.GetClusterGroupNamesStub = nil
@@ -9991,7 +9991,7 @@ func (fake *FakeContainerServer) GetClusterGroupNamesReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterGroups() ([]api.ClusterGroup, error) {
+func (fake *FakeInstanceServer) GetClusterGroups() ([]api.ClusterGroup, error) {
 	fake.getClusterGroupsMutex.Lock()
 	ret, specificReturn := fake.getClusterGroupsReturnsOnCall[len(fake.getClusterGroupsArgsForCall)]
 	fake.getClusterGroupsArgsForCall = append(fake.getClusterGroupsArgsForCall, struct {
@@ -10009,19 +10009,19 @@ func (fake *FakeContainerServer) GetClusterGroups() ([]api.ClusterGroup, error) 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetClusterGroupsCallCount() int {
+func (fake *FakeInstanceServer) GetClusterGroupsCallCount() int {
 	fake.getClusterGroupsMutex.RLock()
 	defer fake.getClusterGroupsMutex.RUnlock()
 	return len(fake.getClusterGroupsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterGroupsCalls(stub func() ([]api.ClusterGroup, error)) {
+func (fake *FakeInstanceServer) GetClusterGroupsCalls(stub func() ([]api.ClusterGroup, error)) {
 	fake.getClusterGroupsMutex.Lock()
 	defer fake.getClusterGroupsMutex.Unlock()
 	fake.GetClusterGroupsStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterGroupsReturns(result1 []api.ClusterGroup, result2 error) {
+func (fake *FakeInstanceServer) GetClusterGroupsReturns(result1 []api.ClusterGroup, result2 error) {
 	fake.getClusterGroupsMutex.Lock()
 	defer fake.getClusterGroupsMutex.Unlock()
 	fake.GetClusterGroupsStub = nil
@@ -10031,7 +10031,7 @@ func (fake *FakeContainerServer) GetClusterGroupsReturns(result1 []api.ClusterGr
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterGroupsReturnsOnCall(i int, result1 []api.ClusterGroup, result2 error) {
+func (fake *FakeInstanceServer) GetClusterGroupsReturnsOnCall(i int, result1 []api.ClusterGroup, result2 error) {
 	fake.getClusterGroupsMutex.Lock()
 	defer fake.getClusterGroupsMutex.Unlock()
 	fake.GetClusterGroupsStub = nil
@@ -10047,7 +10047,7 @@ func (fake *FakeContainerServer) GetClusterGroupsReturnsOnCall(i int, result1 []
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterMember(arg1 string) (*api.ClusterMember, string, error) {
+func (fake *FakeInstanceServer) GetClusterMember(arg1 string) (*api.ClusterMember, string, error) {
 	fake.getClusterMemberMutex.Lock()
 	ret, specificReturn := fake.getClusterMemberReturnsOnCall[len(fake.getClusterMemberArgsForCall)]
 	fake.getClusterMemberArgsForCall = append(fake.getClusterMemberArgsForCall, struct {
@@ -10066,26 +10066,26 @@ func (fake *FakeContainerServer) GetClusterMember(arg1 string) (*api.ClusterMemb
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetClusterMemberCallCount() int {
+func (fake *FakeInstanceServer) GetClusterMemberCallCount() int {
 	fake.getClusterMemberMutex.RLock()
 	defer fake.getClusterMemberMutex.RUnlock()
 	return len(fake.getClusterMemberArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterMemberCalls(stub func(string) (*api.ClusterMember, string, error)) {
+func (fake *FakeInstanceServer) GetClusterMemberCalls(stub func(string) (*api.ClusterMember, string, error)) {
 	fake.getClusterMemberMutex.Lock()
 	defer fake.getClusterMemberMutex.Unlock()
 	fake.GetClusterMemberStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterMemberArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetClusterMemberArgsForCall(i int) string {
 	fake.getClusterMemberMutex.RLock()
 	defer fake.getClusterMemberMutex.RUnlock()
 	argsForCall := fake.getClusterMemberArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetClusterMemberReturns(result1 *api.ClusterMember, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterMemberReturns(result1 *api.ClusterMember, result2 string, result3 error) {
 	fake.getClusterMemberMutex.Lock()
 	defer fake.getClusterMemberMutex.Unlock()
 	fake.GetClusterMemberStub = nil
@@ -10096,7 +10096,7 @@ func (fake *FakeContainerServer) GetClusterMemberReturns(result1 *api.ClusterMem
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterMemberReturnsOnCall(i int, result1 *api.ClusterMember, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterMemberReturnsOnCall(i int, result1 *api.ClusterMember, result2 string, result3 error) {
 	fake.getClusterMemberMutex.Lock()
 	defer fake.getClusterMemberMutex.Unlock()
 	fake.GetClusterMemberStub = nil
@@ -10114,7 +10114,7 @@ func (fake *FakeContainerServer) GetClusterMemberReturnsOnCall(i int, result1 *a
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterMemberNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetClusterMemberNames() ([]string, error) {
 	fake.getClusterMemberNamesMutex.Lock()
 	ret, specificReturn := fake.getClusterMemberNamesReturnsOnCall[len(fake.getClusterMemberNamesArgsForCall)]
 	fake.getClusterMemberNamesArgsForCall = append(fake.getClusterMemberNamesArgsForCall, struct {
@@ -10132,19 +10132,19 @@ func (fake *FakeContainerServer) GetClusterMemberNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetClusterMemberNamesCallCount() int {
+func (fake *FakeInstanceServer) GetClusterMemberNamesCallCount() int {
 	fake.getClusterMemberNamesMutex.RLock()
 	defer fake.getClusterMemberNamesMutex.RUnlock()
 	return len(fake.getClusterMemberNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterMemberNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetClusterMemberNamesCalls(stub func() ([]string, error)) {
 	fake.getClusterMemberNamesMutex.Lock()
 	defer fake.getClusterMemberNamesMutex.Unlock()
 	fake.GetClusterMemberNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterMemberNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetClusterMemberNamesReturns(result1 []string, result2 error) {
 	fake.getClusterMemberNamesMutex.Lock()
 	defer fake.getClusterMemberNamesMutex.Unlock()
 	fake.GetClusterMemberNamesStub = nil
@@ -10154,7 +10154,7 @@ func (fake *FakeContainerServer) GetClusterMemberNamesReturns(result1 []string, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterMemberNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetClusterMemberNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getClusterMemberNamesMutex.Lock()
 	defer fake.getClusterMemberNamesMutex.Unlock()
 	fake.GetClusterMemberNamesStub = nil
@@ -10170,7 +10170,7 @@ func (fake *FakeContainerServer) GetClusterMemberNamesReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterMemberState(arg1 string) (*api.ClusterMemberState, string, error) {
+func (fake *FakeInstanceServer) GetClusterMemberState(arg1 string) (*api.ClusterMemberState, string, error) {
 	fake.getClusterMemberStateMutex.Lock()
 	ret, specificReturn := fake.getClusterMemberStateReturnsOnCall[len(fake.getClusterMemberStateArgsForCall)]
 	fake.getClusterMemberStateArgsForCall = append(fake.getClusterMemberStateArgsForCall, struct {
@@ -10189,26 +10189,26 @@ func (fake *FakeContainerServer) GetClusterMemberState(arg1 string) (*api.Cluste
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetClusterMemberStateCallCount() int {
+func (fake *FakeInstanceServer) GetClusterMemberStateCallCount() int {
 	fake.getClusterMemberStateMutex.RLock()
 	defer fake.getClusterMemberStateMutex.RUnlock()
 	return len(fake.getClusterMemberStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterMemberStateCalls(stub func(string) (*api.ClusterMemberState, string, error)) {
+func (fake *FakeInstanceServer) GetClusterMemberStateCalls(stub func(string) (*api.ClusterMemberState, string, error)) {
 	fake.getClusterMemberStateMutex.Lock()
 	defer fake.getClusterMemberStateMutex.Unlock()
 	fake.GetClusterMemberStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterMemberStateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetClusterMemberStateArgsForCall(i int) string {
 	fake.getClusterMemberStateMutex.RLock()
 	defer fake.getClusterMemberStateMutex.RUnlock()
 	argsForCall := fake.getClusterMemberStateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetClusterMemberStateReturns(result1 *api.ClusterMemberState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterMemberStateReturns(result1 *api.ClusterMemberState, result2 string, result3 error) {
 	fake.getClusterMemberStateMutex.Lock()
 	defer fake.getClusterMemberStateMutex.Unlock()
 	fake.GetClusterMemberStateStub = nil
@@ -10219,7 +10219,7 @@ func (fake *FakeContainerServer) GetClusterMemberStateReturns(result1 *api.Clust
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterMemberStateReturnsOnCall(i int, result1 *api.ClusterMemberState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetClusterMemberStateReturnsOnCall(i int, result1 *api.ClusterMemberState, result2 string, result3 error) {
 	fake.getClusterMemberStateMutex.Lock()
 	defer fake.getClusterMemberStateMutex.Unlock()
 	fake.GetClusterMemberStateStub = nil
@@ -10237,7 +10237,7 @@ func (fake *FakeContainerServer) GetClusterMemberStateReturnsOnCall(i int, resul
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetClusterMembers() ([]api.ClusterMember, error) {
+func (fake *FakeInstanceServer) GetClusterMembers() ([]api.ClusterMember, error) {
 	fake.getClusterMembersMutex.Lock()
 	ret, specificReturn := fake.getClusterMembersReturnsOnCall[len(fake.getClusterMembersArgsForCall)]
 	fake.getClusterMembersArgsForCall = append(fake.getClusterMembersArgsForCall, struct {
@@ -10255,19 +10255,19 @@ func (fake *FakeContainerServer) GetClusterMembers() ([]api.ClusterMember, error
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetClusterMembersCallCount() int {
+func (fake *FakeInstanceServer) GetClusterMembersCallCount() int {
 	fake.getClusterMembersMutex.RLock()
 	defer fake.getClusterMembersMutex.RUnlock()
 	return len(fake.getClusterMembersArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetClusterMembersCalls(stub func() ([]api.ClusterMember, error)) {
+func (fake *FakeInstanceServer) GetClusterMembersCalls(stub func() ([]api.ClusterMember, error)) {
 	fake.getClusterMembersMutex.Lock()
 	defer fake.getClusterMembersMutex.Unlock()
 	fake.GetClusterMembersStub = stub
 }
 
-func (fake *FakeContainerServer) GetClusterMembersReturns(result1 []api.ClusterMember, result2 error) {
+func (fake *FakeInstanceServer) GetClusterMembersReturns(result1 []api.ClusterMember, result2 error) {
 	fake.getClusterMembersMutex.Lock()
 	defer fake.getClusterMembersMutex.Unlock()
 	fake.GetClusterMembersStub = nil
@@ -10277,7 +10277,7 @@ func (fake *FakeContainerServer) GetClusterMembersReturns(result1 []api.ClusterM
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetClusterMembersReturnsOnCall(i int, result1 []api.ClusterMember, result2 error) {
+func (fake *FakeInstanceServer) GetClusterMembersReturnsOnCall(i int, result1 []api.ClusterMember, result2 error) {
 	fake.getClusterMembersMutex.Lock()
 	defer fake.getClusterMembersMutex.Unlock()
 	fake.GetClusterMembersStub = nil
@@ -10293,7 +10293,7 @@ func (fake *FakeContainerServer) GetClusterMembersReturnsOnCall(i int, result1 [
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
+func (fake *FakeInstanceServer) GetConnectionInfo() (*lxd.ConnectionInfo, error) {
 	fake.getConnectionInfoMutex.Lock()
 	ret, specificReturn := fake.getConnectionInfoReturnsOnCall[len(fake.getConnectionInfoArgsForCall)]
 	fake.getConnectionInfoArgsForCall = append(fake.getConnectionInfoArgsForCall, struct {
@@ -10311,19 +10311,19 @@ func (fake *FakeContainerServer) GetConnectionInfo() (*lxd.ConnectionInfo, error
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetConnectionInfoCallCount() int {
+func (fake *FakeInstanceServer) GetConnectionInfoCallCount() int {
 	fake.getConnectionInfoMutex.RLock()
 	defer fake.getConnectionInfoMutex.RUnlock()
 	return len(fake.getConnectionInfoArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetConnectionInfoCalls(stub func() (*lxd.ConnectionInfo, error)) {
+func (fake *FakeInstanceServer) GetConnectionInfoCalls(stub func() (*lxd.ConnectionInfo, error)) {
 	fake.getConnectionInfoMutex.Lock()
 	defer fake.getConnectionInfoMutex.Unlock()
 	fake.GetConnectionInfoStub = stub
 }
 
-func (fake *FakeContainerServer) GetConnectionInfoReturns(result1 *lxd.ConnectionInfo, result2 error) {
+func (fake *FakeInstanceServer) GetConnectionInfoReturns(result1 *lxd.ConnectionInfo, result2 error) {
 	fake.getConnectionInfoMutex.Lock()
 	defer fake.getConnectionInfoMutex.Unlock()
 	fake.GetConnectionInfoStub = nil
@@ -10333,7 +10333,7 @@ func (fake *FakeContainerServer) GetConnectionInfoReturns(result1 *lxd.Connectio
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetConnectionInfoReturnsOnCall(i int, result1 *lxd.ConnectionInfo, result2 error) {
+func (fake *FakeInstanceServer) GetConnectionInfoReturnsOnCall(i int, result1 *lxd.ConnectionInfo, result2 error) {
 	fake.getConnectionInfoMutex.Lock()
 	defer fake.getConnectionInfoMutex.Unlock()
 	fake.GetConnectionInfoStub = nil
@@ -10349,7 +10349,7 @@ func (fake *FakeContainerServer) GetConnectionInfoReturnsOnCall(i int, result1 *
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainer(arg1 string) (*api.Container, string, error) {
+func (fake *FakeInstanceServer) GetContainer(arg1 string) (*api.Container, string, error) {
 	fake.getContainerMutex.Lock()
 	ret, specificReturn := fake.getContainerReturnsOnCall[len(fake.getContainerArgsForCall)]
 	fake.getContainerArgsForCall = append(fake.getContainerArgsForCall, struct {
@@ -10368,26 +10368,26 @@ func (fake *FakeContainerServer) GetContainer(arg1 string) (*api.Container, stri
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerCallCount() int {
+func (fake *FakeInstanceServer) GetContainerCallCount() int {
 	fake.getContainerMutex.RLock()
 	defer fake.getContainerMutex.RUnlock()
 	return len(fake.getContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerCalls(stub func(string) (*api.Container, string, error)) {
+func (fake *FakeInstanceServer) GetContainerCalls(stub func(string) (*api.Container, string, error)) {
 	fake.getContainerMutex.Lock()
 	defer fake.getContainerMutex.Unlock()
 	fake.GetContainerStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerArgsForCall(i int) string {
 	fake.getContainerMutex.RLock()
 	defer fake.getContainerMutex.RUnlock()
 	argsForCall := fake.getContainerArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerReturns(result1 *api.Container, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerReturns(result1 *api.Container, result2 string, result3 error) {
 	fake.getContainerMutex.Lock()
 	defer fake.getContainerMutex.Unlock()
 	fake.GetContainerStub = nil
@@ -10398,7 +10398,7 @@ func (fake *FakeContainerServer) GetContainerReturns(result1 *api.Container, res
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerReturnsOnCall(i int, result1 *api.Container, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerReturnsOnCall(i int, result1 *api.Container, result2 string, result3 error) {
 	fake.getContainerMutex.Lock()
 	defer fake.getContainerMutex.Unlock()
 	fake.GetContainerStub = nil
@@ -10416,7 +10416,7 @@ func (fake *FakeContainerServer) GetContainerReturnsOnCall(i int, result1 *api.C
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerBackup(arg1 string, arg2 string) (*api.ContainerBackup, string, error) {
+func (fake *FakeInstanceServer) GetContainerBackup(arg1 string, arg2 string) (*api.ContainerBackup, string, error) {
 	fake.getContainerBackupMutex.Lock()
 	ret, specificReturn := fake.getContainerBackupReturnsOnCall[len(fake.getContainerBackupArgsForCall)]
 	fake.getContainerBackupArgsForCall = append(fake.getContainerBackupArgsForCall, struct {
@@ -10436,26 +10436,26 @@ func (fake *FakeContainerServer) GetContainerBackup(arg1 string, arg2 string) (*
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerBackupCallCount() int {
+func (fake *FakeInstanceServer) GetContainerBackupCallCount() int {
 	fake.getContainerBackupMutex.RLock()
 	defer fake.getContainerBackupMutex.RUnlock()
 	return len(fake.getContainerBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerBackupCalls(stub func(string, string) (*api.ContainerBackup, string, error)) {
+func (fake *FakeInstanceServer) GetContainerBackupCalls(stub func(string, string) (*api.ContainerBackup, string, error)) {
 	fake.getContainerBackupMutex.Lock()
 	defer fake.getContainerBackupMutex.Unlock()
 	fake.GetContainerBackupStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerBackupArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetContainerBackupArgsForCall(i int) (string, string) {
 	fake.getContainerBackupMutex.RLock()
 	defer fake.getContainerBackupMutex.RUnlock()
 	argsForCall := fake.getContainerBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerBackupReturns(result1 *api.ContainerBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerBackupReturns(result1 *api.ContainerBackup, result2 string, result3 error) {
 	fake.getContainerBackupMutex.Lock()
 	defer fake.getContainerBackupMutex.Unlock()
 	fake.GetContainerBackupStub = nil
@@ -10466,7 +10466,7 @@ func (fake *FakeContainerServer) GetContainerBackupReturns(result1 *api.Containe
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupReturnsOnCall(i int, result1 *api.ContainerBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerBackupReturnsOnCall(i int, result1 *api.ContainerBackup, result2 string, result3 error) {
 	fake.getContainerBackupMutex.Lock()
 	defer fake.getContainerBackupMutex.Unlock()
 	fake.GetContainerBackupStub = nil
@@ -10484,7 +10484,7 @@ func (fake *FakeContainerServer) GetContainerBackupReturnsOnCall(i int, result1 
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFile(arg1 string, arg2 string, arg3 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
+func (fake *FakeInstanceServer) GetContainerBackupFile(arg1 string, arg2 string, arg3 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
 	fake.getContainerBackupFileMutex.Lock()
 	ret, specificReturn := fake.getContainerBackupFileReturnsOnCall[len(fake.getContainerBackupFileArgsForCall)]
 	fake.getContainerBackupFileArgsForCall = append(fake.getContainerBackupFileArgsForCall, struct {
@@ -10505,26 +10505,26 @@ func (fake *FakeContainerServer) GetContainerBackupFile(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFileCallCount() int {
+func (fake *FakeInstanceServer) GetContainerBackupFileCallCount() int {
 	fake.getContainerBackupFileMutex.RLock()
 	defer fake.getContainerBackupFileMutex.RUnlock()
 	return len(fake.getContainerBackupFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFileCalls(stub func(string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
+func (fake *FakeInstanceServer) GetContainerBackupFileCalls(stub func(string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
 	fake.getContainerBackupFileMutex.Lock()
 	defer fake.getContainerBackupFileMutex.Unlock()
 	fake.GetContainerBackupFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFileArgsForCall(i int) (string, string, *lxd.BackupFileRequest) {
+func (fake *FakeInstanceServer) GetContainerBackupFileArgsForCall(i int) (string, string, *lxd.BackupFileRequest) {
 	fake.getContainerBackupFileMutex.RLock()
 	defer fake.getContainerBackupFileMutex.RUnlock()
 	argsForCall := fake.getContainerBackupFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getContainerBackupFileMutex.Lock()
 	defer fake.getContainerBackupFileMutex.Unlock()
 	fake.GetContainerBackupFileStub = nil
@@ -10534,7 +10534,7 @@ func (fake *FakeContainerServer) GetContainerBackupFileReturns(result1 *lxd.Back
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getContainerBackupFileMutex.Lock()
 	defer fake.getContainerBackupFileMutex.Unlock()
 	fake.GetContainerBackupFileStub = nil
@@ -10550,7 +10550,7 @@ func (fake *FakeContainerServer) GetContainerBackupFileReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetContainerBackupNames(arg1 string) ([]string, error) {
 	fake.getContainerBackupNamesMutex.Lock()
 	ret, specificReturn := fake.getContainerBackupNamesReturnsOnCall[len(fake.getContainerBackupNamesArgsForCall)]
 	fake.getContainerBackupNamesArgsForCall = append(fake.getContainerBackupNamesArgsForCall, struct {
@@ -10569,26 +10569,26 @@ func (fake *FakeContainerServer) GetContainerBackupNames(arg1 string) ([]string,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNamesCallCount() int {
+func (fake *FakeInstanceServer) GetContainerBackupNamesCallCount() int {
 	fake.getContainerBackupNamesMutex.RLock()
 	defer fake.getContainerBackupNamesMutex.RUnlock()
 	return len(fake.getContainerBackupNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetContainerBackupNamesCalls(stub func(string) ([]string, error)) {
 	fake.getContainerBackupNamesMutex.Lock()
 	defer fake.getContainerBackupNamesMutex.Unlock()
 	fake.GetContainerBackupNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerBackupNamesArgsForCall(i int) string {
 	fake.getContainerBackupNamesMutex.RLock()
 	defer fake.getContainerBackupNamesMutex.RUnlock()
 	argsForCall := fake.getContainerBackupNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupNamesReturns(result1 []string, result2 error) {
 	fake.getContainerBackupNamesMutex.Lock()
 	defer fake.getContainerBackupNamesMutex.Unlock()
 	fake.GetContainerBackupNamesStub = nil
@@ -10598,7 +10598,7 @@ func (fake *FakeContainerServer) GetContainerBackupNamesReturns(result1 []string
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getContainerBackupNamesMutex.Lock()
 	defer fake.getContainerBackupNamesMutex.Unlock()
 	fake.GetContainerBackupNamesStub = nil
@@ -10614,7 +10614,7 @@ func (fake *FakeContainerServer) GetContainerBackupNamesReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerBackups(arg1 string) ([]api.ContainerBackup, error) {
+func (fake *FakeInstanceServer) GetContainerBackups(arg1 string) ([]api.ContainerBackup, error) {
 	fake.getContainerBackupsMutex.Lock()
 	ret, specificReturn := fake.getContainerBackupsReturnsOnCall[len(fake.getContainerBackupsArgsForCall)]
 	fake.getContainerBackupsArgsForCall = append(fake.getContainerBackupsArgsForCall, struct {
@@ -10633,26 +10633,26 @@ func (fake *FakeContainerServer) GetContainerBackups(arg1 string) ([]api.Contain
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerBackupsCallCount() int {
+func (fake *FakeInstanceServer) GetContainerBackupsCallCount() int {
 	fake.getContainerBackupsMutex.RLock()
 	defer fake.getContainerBackupsMutex.RUnlock()
 	return len(fake.getContainerBackupsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerBackupsCalls(stub func(string) ([]api.ContainerBackup, error)) {
+func (fake *FakeInstanceServer) GetContainerBackupsCalls(stub func(string) ([]api.ContainerBackup, error)) {
 	fake.getContainerBackupsMutex.Lock()
 	defer fake.getContainerBackupsMutex.Unlock()
 	fake.GetContainerBackupsStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerBackupsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerBackupsArgsForCall(i int) string {
 	fake.getContainerBackupsMutex.RLock()
 	defer fake.getContainerBackupsMutex.RUnlock()
 	argsForCall := fake.getContainerBackupsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerBackupsReturns(result1 []api.ContainerBackup, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupsReturns(result1 []api.ContainerBackup, result2 error) {
 	fake.getContainerBackupsMutex.Lock()
 	defer fake.getContainerBackupsMutex.Unlock()
 	fake.GetContainerBackupsStub = nil
@@ -10662,7 +10662,7 @@ func (fake *FakeContainerServer) GetContainerBackupsReturns(result1 []api.Contai
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerBackupsReturnsOnCall(i int, result1 []api.ContainerBackup, result2 error) {
+func (fake *FakeInstanceServer) GetContainerBackupsReturnsOnCall(i int, result1 []api.ContainerBackup, result2 error) {
 	fake.getContainerBackupsMutex.Lock()
 	defer fake.getContainerBackupsMutex.Unlock()
 	fake.GetContainerBackupsStub = nil
@@ -10678,7 +10678,7 @@ func (fake *FakeContainerServer) GetContainerBackupsReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLog(arg1 string, arg2 *lxd.ContainerConsoleLogArgs) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetContainerConsoleLog(arg1 string, arg2 *lxd.ContainerConsoleLogArgs) (io.ReadCloser, error) {
 	fake.getContainerConsoleLogMutex.Lock()
 	ret, specificReturn := fake.getContainerConsoleLogReturnsOnCall[len(fake.getContainerConsoleLogArgsForCall)]
 	fake.getContainerConsoleLogArgsForCall = append(fake.getContainerConsoleLogArgsForCall, struct {
@@ -10698,26 +10698,26 @@ func (fake *FakeContainerServer) GetContainerConsoleLog(arg1 string, arg2 *lxd.C
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLogCallCount() int {
+func (fake *FakeInstanceServer) GetContainerConsoleLogCallCount() int {
 	fake.getContainerConsoleLogMutex.RLock()
 	defer fake.getContainerConsoleLogMutex.RUnlock()
 	return len(fake.getContainerConsoleLogArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLogCalls(stub func(string, *lxd.ContainerConsoleLogArgs) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetContainerConsoleLogCalls(stub func(string, *lxd.ContainerConsoleLogArgs) (io.ReadCloser, error)) {
 	fake.getContainerConsoleLogMutex.Lock()
 	defer fake.getContainerConsoleLogMutex.Unlock()
 	fake.GetContainerConsoleLogStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLogArgsForCall(i int) (string, *lxd.ContainerConsoleLogArgs) {
+func (fake *FakeInstanceServer) GetContainerConsoleLogArgsForCall(i int) (string, *lxd.ContainerConsoleLogArgs) {
 	fake.getContainerConsoleLogMutex.RLock()
 	defer fake.getContainerConsoleLogMutex.RUnlock()
 	argsForCall := fake.getContainerConsoleLogArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLogReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerConsoleLogReturns(result1 io.ReadCloser, result2 error) {
 	fake.getContainerConsoleLogMutex.Lock()
 	defer fake.getContainerConsoleLogMutex.Unlock()
 	fake.GetContainerConsoleLogStub = nil
@@ -10727,7 +10727,7 @@ func (fake *FakeContainerServer) GetContainerConsoleLogReturns(result1 io.ReadCl
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerConsoleLogReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerConsoleLogReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getContainerConsoleLogMutex.Lock()
 	defer fake.getContainerConsoleLogMutex.Unlock()
 	fake.GetContainerConsoleLogStub = nil
@@ -10743,7 +10743,7 @@ func (fake *FakeContainerServer) GetContainerConsoleLogReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerFile(arg1 string, arg2 string) (io.ReadCloser, *lxd.ContainerFileResponse, error) {
+func (fake *FakeInstanceServer) GetContainerFile(arg1 string, arg2 string) (io.ReadCloser, *lxd.ContainerFileResponse, error) {
 	fake.getContainerFileMutex.Lock()
 	ret, specificReturn := fake.getContainerFileReturnsOnCall[len(fake.getContainerFileArgsForCall)]
 	fake.getContainerFileArgsForCall = append(fake.getContainerFileArgsForCall, struct {
@@ -10763,26 +10763,26 @@ func (fake *FakeContainerServer) GetContainerFile(arg1 string, arg2 string) (io.
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerFileCallCount() int {
+func (fake *FakeInstanceServer) GetContainerFileCallCount() int {
 	fake.getContainerFileMutex.RLock()
 	defer fake.getContainerFileMutex.RUnlock()
 	return len(fake.getContainerFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerFileCalls(stub func(string, string) (io.ReadCloser, *lxd.ContainerFileResponse, error)) {
+func (fake *FakeInstanceServer) GetContainerFileCalls(stub func(string, string) (io.ReadCloser, *lxd.ContainerFileResponse, error)) {
 	fake.getContainerFileMutex.Lock()
 	defer fake.getContainerFileMutex.Unlock()
 	fake.GetContainerFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetContainerFileArgsForCall(i int) (string, string) {
 	fake.getContainerFileMutex.RLock()
 	defer fake.getContainerFileMutex.RUnlock()
 	argsForCall := fake.getContainerFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerFileReturns(result1 io.ReadCloser, result2 *lxd.ContainerFileResponse, result3 error) {
+func (fake *FakeInstanceServer) GetContainerFileReturns(result1 io.ReadCloser, result2 *lxd.ContainerFileResponse, result3 error) {
 	fake.getContainerFileMutex.Lock()
 	defer fake.getContainerFileMutex.Unlock()
 	fake.GetContainerFileStub = nil
@@ -10793,7 +10793,7 @@ func (fake *FakeContainerServer) GetContainerFileReturns(result1 io.ReadCloser, 
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerFileReturnsOnCall(i int, result1 io.ReadCloser, result2 *lxd.ContainerFileResponse, result3 error) {
+func (fake *FakeInstanceServer) GetContainerFileReturnsOnCall(i int, result1 io.ReadCloser, result2 *lxd.ContainerFileResponse, result3 error) {
 	fake.getContainerFileMutex.Lock()
 	defer fake.getContainerFileMutex.Unlock()
 	fake.GetContainerFileStub = nil
@@ -10811,7 +10811,7 @@ func (fake *FakeContainerServer) GetContainerFileReturnsOnCall(i int, result1 io
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerLogfile(arg1 string, arg2 string) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetContainerLogfile(arg1 string, arg2 string) (io.ReadCloser, error) {
 	fake.getContainerLogfileMutex.Lock()
 	ret, specificReturn := fake.getContainerLogfileReturnsOnCall[len(fake.getContainerLogfileArgsForCall)]
 	fake.getContainerLogfileArgsForCall = append(fake.getContainerLogfileArgsForCall, struct {
@@ -10831,26 +10831,26 @@ func (fake *FakeContainerServer) GetContainerLogfile(arg1 string, arg2 string) (
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerLogfileCallCount() int {
+func (fake *FakeInstanceServer) GetContainerLogfileCallCount() int {
 	fake.getContainerLogfileMutex.RLock()
 	defer fake.getContainerLogfileMutex.RUnlock()
 	return len(fake.getContainerLogfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerLogfileCalls(stub func(string, string) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetContainerLogfileCalls(stub func(string, string) (io.ReadCloser, error)) {
 	fake.getContainerLogfileMutex.Lock()
 	defer fake.getContainerLogfileMutex.Unlock()
 	fake.GetContainerLogfileStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerLogfileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetContainerLogfileArgsForCall(i int) (string, string) {
 	fake.getContainerLogfileMutex.RLock()
 	defer fake.getContainerLogfileMutex.RUnlock()
 	argsForCall := fake.getContainerLogfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerLogfileReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerLogfileReturns(result1 io.ReadCloser, result2 error) {
 	fake.getContainerLogfileMutex.Lock()
 	defer fake.getContainerLogfileMutex.Unlock()
 	fake.GetContainerLogfileStub = nil
@@ -10860,7 +10860,7 @@ func (fake *FakeContainerServer) GetContainerLogfileReturns(result1 io.ReadClose
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getContainerLogfileMutex.Lock()
 	defer fake.getContainerLogfileMutex.Unlock()
 	fake.GetContainerLogfileStub = nil
@@ -10876,7 +10876,7 @@ func (fake *FakeContainerServer) GetContainerLogfileReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerLogfiles(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetContainerLogfiles(arg1 string) ([]string, error) {
 	fake.getContainerLogfilesMutex.Lock()
 	ret, specificReturn := fake.getContainerLogfilesReturnsOnCall[len(fake.getContainerLogfilesArgsForCall)]
 	fake.getContainerLogfilesArgsForCall = append(fake.getContainerLogfilesArgsForCall, struct {
@@ -10895,26 +10895,26 @@ func (fake *FakeContainerServer) GetContainerLogfiles(arg1 string) ([]string, er
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerLogfilesCallCount() int {
+func (fake *FakeInstanceServer) GetContainerLogfilesCallCount() int {
 	fake.getContainerLogfilesMutex.RLock()
 	defer fake.getContainerLogfilesMutex.RUnlock()
 	return len(fake.getContainerLogfilesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerLogfilesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetContainerLogfilesCalls(stub func(string) ([]string, error)) {
 	fake.getContainerLogfilesMutex.Lock()
 	defer fake.getContainerLogfilesMutex.Unlock()
 	fake.GetContainerLogfilesStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerLogfilesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerLogfilesArgsForCall(i int) string {
 	fake.getContainerLogfilesMutex.RLock()
 	defer fake.getContainerLogfilesMutex.RUnlock()
 	argsForCall := fake.getContainerLogfilesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerLogfilesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerLogfilesReturns(result1 []string, result2 error) {
 	fake.getContainerLogfilesMutex.Lock()
 	defer fake.getContainerLogfilesMutex.Unlock()
 	fake.GetContainerLogfilesStub = nil
@@ -10924,7 +10924,7 @@ func (fake *FakeContainerServer) GetContainerLogfilesReturns(result1 []string, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerLogfilesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerLogfilesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getContainerLogfilesMutex.Lock()
 	defer fake.getContainerLogfilesMutex.Unlock()
 	fake.GetContainerLogfilesStub = nil
@@ -10940,7 +10940,7 @@ func (fake *FakeContainerServer) GetContainerLogfilesReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerMetadata(arg1 string) (*api.ImageMetadata, string, error) {
+func (fake *FakeInstanceServer) GetContainerMetadata(arg1 string) (*api.ImageMetadata, string, error) {
 	fake.getContainerMetadataMutex.Lock()
 	ret, specificReturn := fake.getContainerMetadataReturnsOnCall[len(fake.getContainerMetadataArgsForCall)]
 	fake.getContainerMetadataArgsForCall = append(fake.getContainerMetadataArgsForCall, struct {
@@ -10959,26 +10959,26 @@ func (fake *FakeContainerServer) GetContainerMetadata(arg1 string) (*api.ImageMe
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerMetadataCallCount() int {
+func (fake *FakeInstanceServer) GetContainerMetadataCallCount() int {
 	fake.getContainerMetadataMutex.RLock()
 	defer fake.getContainerMetadataMutex.RUnlock()
 	return len(fake.getContainerMetadataArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerMetadataCalls(stub func(string) (*api.ImageMetadata, string, error)) {
+func (fake *FakeInstanceServer) GetContainerMetadataCalls(stub func(string) (*api.ImageMetadata, string, error)) {
 	fake.getContainerMetadataMutex.Lock()
 	defer fake.getContainerMetadataMutex.Unlock()
 	fake.GetContainerMetadataStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerMetadataArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerMetadataArgsForCall(i int) string {
 	fake.getContainerMetadataMutex.RLock()
 	defer fake.getContainerMetadataMutex.RUnlock()
 	argsForCall := fake.getContainerMetadataArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerMetadataReturns(result1 *api.ImageMetadata, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerMetadataReturns(result1 *api.ImageMetadata, result2 string, result3 error) {
 	fake.getContainerMetadataMutex.Lock()
 	defer fake.getContainerMetadataMutex.Unlock()
 	fake.GetContainerMetadataStub = nil
@@ -10989,7 +10989,7 @@ func (fake *FakeContainerServer) GetContainerMetadataReturns(result1 *api.ImageM
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerMetadataReturnsOnCall(i int, result1 *api.ImageMetadata, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerMetadataReturnsOnCall(i int, result1 *api.ImageMetadata, result2 string, result3 error) {
 	fake.getContainerMetadataMutex.Lock()
 	defer fake.getContainerMetadataMutex.Unlock()
 	fake.GetContainerMetadataStub = nil
@@ -11007,7 +11007,7 @@ func (fake *FakeContainerServer) GetContainerMetadataReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetContainerNames() ([]string, error) {
 	fake.getContainerNamesMutex.Lock()
 	ret, specificReturn := fake.getContainerNamesReturnsOnCall[len(fake.getContainerNamesArgsForCall)]
 	fake.getContainerNamesArgsForCall = append(fake.getContainerNamesArgsForCall, struct {
@@ -11025,19 +11025,19 @@ func (fake *FakeContainerServer) GetContainerNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerNamesCallCount() int {
+func (fake *FakeInstanceServer) GetContainerNamesCallCount() int {
 	fake.getContainerNamesMutex.RLock()
 	defer fake.getContainerNamesMutex.RUnlock()
 	return len(fake.getContainerNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetContainerNamesCalls(stub func() ([]string, error)) {
 	fake.getContainerNamesMutex.Lock()
 	defer fake.getContainerNamesMutex.Unlock()
 	fake.GetContainerNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerNamesReturns(result1 []string, result2 error) {
 	fake.getContainerNamesMutex.Lock()
 	defer fake.getContainerNamesMutex.Unlock()
 	fake.GetContainerNamesStub = nil
@@ -11047,7 +11047,7 @@ func (fake *FakeContainerServer) GetContainerNamesReturns(result1 []string, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getContainerNamesMutex.Lock()
 	defer fake.getContainerNamesMutex.Unlock()
 	fake.GetContainerNamesStub = nil
@@ -11063,7 +11063,7 @@ func (fake *FakeContainerServer) GetContainerNamesReturnsOnCall(i int, result1 [
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshot(arg1 string, arg2 string) (*api.ContainerSnapshot, string, error) {
+func (fake *FakeInstanceServer) GetContainerSnapshot(arg1 string, arg2 string) (*api.ContainerSnapshot, string, error) {
 	fake.getContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.getContainerSnapshotReturnsOnCall[len(fake.getContainerSnapshotArgsForCall)]
 	fake.getContainerSnapshotArgsForCall = append(fake.getContainerSnapshotArgsForCall, struct {
@@ -11083,26 +11083,26 @@ func (fake *FakeContainerServer) GetContainerSnapshot(arg1 string, arg2 string) 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) GetContainerSnapshotCallCount() int {
 	fake.getContainerSnapshotMutex.RLock()
 	defer fake.getContainerSnapshotMutex.RUnlock()
 	return len(fake.getContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotCalls(stub func(string, string) (*api.ContainerSnapshot, string, error)) {
+func (fake *FakeInstanceServer) GetContainerSnapshotCalls(stub func(string, string) (*api.ContainerSnapshot, string, error)) {
 	fake.getContainerSnapshotMutex.Lock()
 	defer fake.getContainerSnapshotMutex.Unlock()
 	fake.GetContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetContainerSnapshotArgsForCall(i int) (string, string) {
 	fake.getContainerSnapshotMutex.RLock()
 	defer fake.getContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.getContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotReturns(result1 *api.ContainerSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotReturns(result1 *api.ContainerSnapshot, result2 string, result3 error) {
 	fake.getContainerSnapshotMutex.Lock()
 	defer fake.getContainerSnapshotMutex.Unlock()
 	fake.GetContainerSnapshotStub = nil
@@ -11113,7 +11113,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotReturns(result1 *api.Contai
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotReturnsOnCall(i int, result1 *api.ContainerSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotReturnsOnCall(i int, result1 *api.ContainerSnapshot, result2 string, result3 error) {
 	fake.getContainerSnapshotMutex.Lock()
 	defer fake.getContainerSnapshotMutex.Unlock()
 	fake.GetContainerSnapshotStub = nil
@@ -11131,7 +11131,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotNames(arg1 string) ([]string, error) {
 	fake.getContainerSnapshotNamesMutex.Lock()
 	ret, specificReturn := fake.getContainerSnapshotNamesReturnsOnCall[len(fake.getContainerSnapshotNamesArgsForCall)]
 	fake.getContainerSnapshotNamesArgsForCall = append(fake.getContainerSnapshotNamesArgsForCall, struct {
@@ -11150,26 +11150,26 @@ func (fake *FakeContainerServer) GetContainerSnapshotNames(arg1 string) ([]strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNamesCallCount() int {
+func (fake *FakeInstanceServer) GetContainerSnapshotNamesCallCount() int {
 	fake.getContainerSnapshotNamesMutex.RLock()
 	defer fake.getContainerSnapshotNamesMutex.RUnlock()
 	return len(fake.getContainerSnapshotNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetContainerSnapshotNamesCalls(stub func(string) ([]string, error)) {
 	fake.getContainerSnapshotNamesMutex.Lock()
 	defer fake.getContainerSnapshotNamesMutex.Unlock()
 	fake.GetContainerSnapshotNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerSnapshotNamesArgsForCall(i int) string {
 	fake.getContainerSnapshotNamesMutex.RLock()
 	defer fake.getContainerSnapshotNamesMutex.RUnlock()
 	argsForCall := fake.getContainerSnapshotNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotNamesReturns(result1 []string, result2 error) {
 	fake.getContainerSnapshotNamesMutex.Lock()
 	defer fake.getContainerSnapshotNamesMutex.Unlock()
 	fake.GetContainerSnapshotNamesStub = nil
@@ -11179,7 +11179,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotNamesReturns(result1 []stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getContainerSnapshotNamesMutex.Lock()
 	defer fake.getContainerSnapshotNamesMutex.Unlock()
 	fake.GetContainerSnapshotNamesStub = nil
@@ -11195,7 +11195,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotNamesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshots(arg1 string) ([]api.ContainerSnapshot, error) {
+func (fake *FakeInstanceServer) GetContainerSnapshots(arg1 string) ([]api.ContainerSnapshot, error) {
 	fake.getContainerSnapshotsMutex.Lock()
 	ret, specificReturn := fake.getContainerSnapshotsReturnsOnCall[len(fake.getContainerSnapshotsArgsForCall)]
 	fake.getContainerSnapshotsArgsForCall = append(fake.getContainerSnapshotsArgsForCall, struct {
@@ -11214,26 +11214,26 @@ func (fake *FakeContainerServer) GetContainerSnapshots(arg1 string) ([]api.Conta
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotsCallCount() int {
+func (fake *FakeInstanceServer) GetContainerSnapshotsCallCount() int {
 	fake.getContainerSnapshotsMutex.RLock()
 	defer fake.getContainerSnapshotsMutex.RUnlock()
 	return len(fake.getContainerSnapshotsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotsCalls(stub func(string) ([]api.ContainerSnapshot, error)) {
+func (fake *FakeInstanceServer) GetContainerSnapshotsCalls(stub func(string) ([]api.ContainerSnapshot, error)) {
 	fake.getContainerSnapshotsMutex.Lock()
 	defer fake.getContainerSnapshotsMutex.Unlock()
 	fake.GetContainerSnapshotsStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerSnapshotsArgsForCall(i int) string {
 	fake.getContainerSnapshotsMutex.RLock()
 	defer fake.getContainerSnapshotsMutex.RUnlock()
 	argsForCall := fake.getContainerSnapshotsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotsReturns(result1 []api.ContainerSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotsReturns(result1 []api.ContainerSnapshot, result2 error) {
 	fake.getContainerSnapshotsMutex.Lock()
 	defer fake.getContainerSnapshotsMutex.Unlock()
 	fake.GetContainerSnapshotsStub = nil
@@ -11243,7 +11243,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotsReturns(result1 []api.Cont
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerSnapshotsReturnsOnCall(i int, result1 []api.ContainerSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetContainerSnapshotsReturnsOnCall(i int, result1 []api.ContainerSnapshot, result2 error) {
 	fake.getContainerSnapshotsMutex.Lock()
 	defer fake.getContainerSnapshotsMutex.Unlock()
 	fake.GetContainerSnapshotsStub = nil
@@ -11259,7 +11259,7 @@ func (fake *FakeContainerServer) GetContainerSnapshotsReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerState(arg1 string) (*api.ContainerState, string, error) {
+func (fake *FakeInstanceServer) GetContainerState(arg1 string) (*api.ContainerState, string, error) {
 	fake.getContainerStateMutex.Lock()
 	ret, specificReturn := fake.getContainerStateReturnsOnCall[len(fake.getContainerStateArgsForCall)]
 	fake.getContainerStateArgsForCall = append(fake.getContainerStateArgsForCall, struct {
@@ -11278,26 +11278,26 @@ func (fake *FakeContainerServer) GetContainerState(arg1 string) (*api.ContainerS
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetContainerStateCallCount() int {
+func (fake *FakeInstanceServer) GetContainerStateCallCount() int {
 	fake.getContainerStateMutex.RLock()
 	defer fake.getContainerStateMutex.RUnlock()
 	return len(fake.getContainerStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerStateCalls(stub func(string) (*api.ContainerState, string, error)) {
+func (fake *FakeInstanceServer) GetContainerStateCalls(stub func(string) (*api.ContainerState, string, error)) {
 	fake.getContainerStateMutex.Lock()
 	defer fake.getContainerStateMutex.Unlock()
 	fake.GetContainerStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerStateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerStateArgsForCall(i int) string {
 	fake.getContainerStateMutex.RLock()
 	defer fake.getContainerStateMutex.RUnlock()
 	argsForCall := fake.getContainerStateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerStateReturns(result1 *api.ContainerState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerStateReturns(result1 *api.ContainerState, result2 string, result3 error) {
 	fake.getContainerStateMutex.Lock()
 	defer fake.getContainerStateMutex.Unlock()
 	fake.GetContainerStateStub = nil
@@ -11308,7 +11308,7 @@ func (fake *FakeContainerServer) GetContainerStateReturns(result1 *api.Container
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerStateReturnsOnCall(i int, result1 *api.ContainerState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetContainerStateReturnsOnCall(i int, result1 *api.ContainerState, result2 string, result3 error) {
 	fake.getContainerStateMutex.Lock()
 	defer fake.getContainerStateMutex.Unlock()
 	fake.GetContainerStateStub = nil
@@ -11326,7 +11326,7 @@ func (fake *FakeContainerServer) GetContainerStateReturnsOnCall(i int, result1 *
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFile(arg1 string, arg2 string) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFile(arg1 string, arg2 string) (io.ReadCloser, error) {
 	fake.getContainerTemplateFileMutex.Lock()
 	ret, specificReturn := fake.getContainerTemplateFileReturnsOnCall[len(fake.getContainerTemplateFileArgsForCall)]
 	fake.getContainerTemplateFileArgsForCall = append(fake.getContainerTemplateFileArgsForCall, struct {
@@ -11346,26 +11346,26 @@ func (fake *FakeContainerServer) GetContainerTemplateFile(arg1 string, arg2 stri
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) GetContainerTemplateFileCallCount() int {
 	fake.getContainerTemplateFileMutex.RLock()
 	defer fake.getContainerTemplateFileMutex.RUnlock()
 	return len(fake.getContainerTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFileCalls(stub func(string, string) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetContainerTemplateFileCalls(stub func(string, string) (io.ReadCloser, error)) {
 	fake.getContainerTemplateFileMutex.Lock()
 	defer fake.getContainerTemplateFileMutex.Unlock()
 	fake.GetContainerTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetContainerTemplateFileArgsForCall(i int) (string, string) {
 	fake.getContainerTemplateFileMutex.RLock()
 	defer fake.getContainerTemplateFileMutex.RUnlock()
 	argsForCall := fake.getContainerTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFileReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFileReturns(result1 io.ReadCloser, result2 error) {
 	fake.getContainerTemplateFileMutex.Lock()
 	defer fake.getContainerTemplateFileMutex.Unlock()
 	fake.GetContainerTemplateFileStub = nil
@@ -11375,7 +11375,7 @@ func (fake *FakeContainerServer) GetContainerTemplateFileReturns(result1 io.Read
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getContainerTemplateFileMutex.Lock()
 	defer fake.getContainerTemplateFileMutex.Unlock()
 	fake.GetContainerTemplateFileStub = nil
@@ -11391,7 +11391,7 @@ func (fake *FakeContainerServer) GetContainerTemplateFileReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFiles(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFiles(arg1 string) ([]string, error) {
 	fake.getContainerTemplateFilesMutex.Lock()
 	ret, specificReturn := fake.getContainerTemplateFilesReturnsOnCall[len(fake.getContainerTemplateFilesArgsForCall)]
 	fake.getContainerTemplateFilesArgsForCall = append(fake.getContainerTemplateFilesArgsForCall, struct {
@@ -11410,26 +11410,26 @@ func (fake *FakeContainerServer) GetContainerTemplateFiles(arg1 string) ([]strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFilesCallCount() int {
+func (fake *FakeInstanceServer) GetContainerTemplateFilesCallCount() int {
 	fake.getContainerTemplateFilesMutex.RLock()
 	defer fake.getContainerTemplateFilesMutex.RUnlock()
 	return len(fake.getContainerTemplateFilesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFilesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetContainerTemplateFilesCalls(stub func(string) ([]string, error)) {
 	fake.getContainerTemplateFilesMutex.Lock()
 	defer fake.getContainerTemplateFilesMutex.Unlock()
 	fake.GetContainerTemplateFilesStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFilesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetContainerTemplateFilesArgsForCall(i int) string {
 	fake.getContainerTemplateFilesMutex.RLock()
 	defer fake.getContainerTemplateFilesMutex.RUnlock()
 	argsForCall := fake.getContainerTemplateFilesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFilesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFilesReturns(result1 []string, result2 error) {
 	fake.getContainerTemplateFilesMutex.Lock()
 	defer fake.getContainerTemplateFilesMutex.Unlock()
 	fake.GetContainerTemplateFilesStub = nil
@@ -11439,7 +11439,7 @@ func (fake *FakeContainerServer) GetContainerTemplateFilesReturns(result1 []stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainerTemplateFilesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetContainerTemplateFilesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getContainerTemplateFilesMutex.Lock()
 	defer fake.getContainerTemplateFilesMutex.Unlock()
 	fake.GetContainerTemplateFilesStub = nil
@@ -11455,7 +11455,7 @@ func (fake *FakeContainerServer) GetContainerTemplateFilesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainers() ([]api.Container, error) {
+func (fake *FakeInstanceServer) GetContainers() ([]api.Container, error) {
 	fake.getContainersMutex.Lock()
 	ret, specificReturn := fake.getContainersReturnsOnCall[len(fake.getContainersArgsForCall)]
 	fake.getContainersArgsForCall = append(fake.getContainersArgsForCall, struct {
@@ -11473,19 +11473,19 @@ func (fake *FakeContainerServer) GetContainers() ([]api.Container, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainersCallCount() int {
+func (fake *FakeInstanceServer) GetContainersCallCount() int {
 	fake.getContainersMutex.RLock()
 	defer fake.getContainersMutex.RUnlock()
 	return len(fake.getContainersArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainersCalls(stub func() ([]api.Container, error)) {
+func (fake *FakeInstanceServer) GetContainersCalls(stub func() ([]api.Container, error)) {
 	fake.getContainersMutex.Lock()
 	defer fake.getContainersMutex.Unlock()
 	fake.GetContainersStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainersReturns(result1 []api.Container, result2 error) {
+func (fake *FakeInstanceServer) GetContainersReturns(result1 []api.Container, result2 error) {
 	fake.getContainersMutex.Lock()
 	defer fake.getContainersMutex.Unlock()
 	fake.GetContainersStub = nil
@@ -11495,7 +11495,7 @@ func (fake *FakeContainerServer) GetContainersReturns(result1 []api.Container, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainersReturnsOnCall(i int, result1 []api.Container, result2 error) {
+func (fake *FakeInstanceServer) GetContainersReturnsOnCall(i int, result1 []api.Container, result2 error) {
 	fake.getContainersMutex.Lock()
 	defer fake.getContainersMutex.Unlock()
 	fake.GetContainersStub = nil
@@ -11511,7 +11511,7 @@ func (fake *FakeContainerServer) GetContainersReturnsOnCall(i int, result1 []api
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainersFull() ([]api.ContainerFull, error) {
+func (fake *FakeInstanceServer) GetContainersFull() ([]api.ContainerFull, error) {
 	fake.getContainersFullMutex.Lock()
 	ret, specificReturn := fake.getContainersFullReturnsOnCall[len(fake.getContainersFullArgsForCall)]
 	fake.getContainersFullArgsForCall = append(fake.getContainersFullArgsForCall, struct {
@@ -11529,19 +11529,19 @@ func (fake *FakeContainerServer) GetContainersFull() ([]api.ContainerFull, error
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetContainersFullCallCount() int {
+func (fake *FakeInstanceServer) GetContainersFullCallCount() int {
 	fake.getContainersFullMutex.RLock()
 	defer fake.getContainersFullMutex.RUnlock()
 	return len(fake.getContainersFullArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetContainersFullCalls(stub func() ([]api.ContainerFull, error)) {
+func (fake *FakeInstanceServer) GetContainersFullCalls(stub func() ([]api.ContainerFull, error)) {
 	fake.getContainersFullMutex.Lock()
 	defer fake.getContainersFullMutex.Unlock()
 	fake.GetContainersFullStub = stub
 }
 
-func (fake *FakeContainerServer) GetContainersFullReturns(result1 []api.ContainerFull, result2 error) {
+func (fake *FakeInstanceServer) GetContainersFullReturns(result1 []api.ContainerFull, result2 error) {
 	fake.getContainersFullMutex.Lock()
 	defer fake.getContainersFullMutex.Unlock()
 	fake.GetContainersFullStub = nil
@@ -11551,7 +11551,7 @@ func (fake *FakeContainerServer) GetContainersFullReturns(result1 []api.Containe
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetContainersFullReturnsOnCall(i int, result1 []api.ContainerFull, result2 error) {
+func (fake *FakeInstanceServer) GetContainersFullReturnsOnCall(i int, result1 []api.ContainerFull, result2 error) {
 	fake.getContainersFullMutex.Lock()
 	defer fake.getContainersFullMutex.Unlock()
 	fake.GetContainersFullStub = nil
@@ -11567,7 +11567,7 @@ func (fake *FakeContainerServer) GetContainersFullReturnsOnCall(i int, result1 [
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetEvents() (*lxd.EventListener, error) {
+func (fake *FakeInstanceServer) GetEvents() (*lxd.EventListener, error) {
 	fake.getEventsMutex.Lock()
 	ret, specificReturn := fake.getEventsReturnsOnCall[len(fake.getEventsArgsForCall)]
 	fake.getEventsArgsForCall = append(fake.getEventsArgsForCall, struct {
@@ -11585,19 +11585,19 @@ func (fake *FakeContainerServer) GetEvents() (*lxd.EventListener, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetEventsCallCount() int {
+func (fake *FakeInstanceServer) GetEventsCallCount() int {
 	fake.getEventsMutex.RLock()
 	defer fake.getEventsMutex.RUnlock()
 	return len(fake.getEventsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetEventsCalls(stub func() (*lxd.EventListener, error)) {
+func (fake *FakeInstanceServer) GetEventsCalls(stub func() (*lxd.EventListener, error)) {
 	fake.getEventsMutex.Lock()
 	defer fake.getEventsMutex.Unlock()
 	fake.GetEventsStub = stub
 }
 
-func (fake *FakeContainerServer) GetEventsReturns(result1 *lxd.EventListener, result2 error) {
+func (fake *FakeInstanceServer) GetEventsReturns(result1 *lxd.EventListener, result2 error) {
 	fake.getEventsMutex.Lock()
 	defer fake.getEventsMutex.Unlock()
 	fake.GetEventsStub = nil
@@ -11607,7 +11607,7 @@ func (fake *FakeContainerServer) GetEventsReturns(result1 *lxd.EventListener, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetEventsReturnsOnCall(i int, result1 *lxd.EventListener, result2 error) {
+func (fake *FakeInstanceServer) GetEventsReturnsOnCall(i int, result1 *lxd.EventListener, result2 error) {
 	fake.getEventsMutex.Lock()
 	defer fake.getEventsMutex.Unlock()
 	fake.GetEventsStub = nil
@@ -11623,7 +11623,7 @@ func (fake *FakeContainerServer) GetEventsReturnsOnCall(i int, result1 *lxd.Even
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetEventsAllProjects() (*lxd.EventListener, error) {
+func (fake *FakeInstanceServer) GetEventsAllProjects() (*lxd.EventListener, error) {
 	fake.getEventsAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getEventsAllProjectsReturnsOnCall[len(fake.getEventsAllProjectsArgsForCall)]
 	fake.getEventsAllProjectsArgsForCall = append(fake.getEventsAllProjectsArgsForCall, struct {
@@ -11641,19 +11641,19 @@ func (fake *FakeContainerServer) GetEventsAllProjects() (*lxd.EventListener, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetEventsAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetEventsAllProjectsCallCount() int {
 	fake.getEventsAllProjectsMutex.RLock()
 	defer fake.getEventsAllProjectsMutex.RUnlock()
 	return len(fake.getEventsAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetEventsAllProjectsCalls(stub func() (*lxd.EventListener, error)) {
+func (fake *FakeInstanceServer) GetEventsAllProjectsCalls(stub func() (*lxd.EventListener, error)) {
 	fake.getEventsAllProjectsMutex.Lock()
 	defer fake.getEventsAllProjectsMutex.Unlock()
 	fake.GetEventsAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetEventsAllProjectsReturns(result1 *lxd.EventListener, result2 error) {
+func (fake *FakeInstanceServer) GetEventsAllProjectsReturns(result1 *lxd.EventListener, result2 error) {
 	fake.getEventsAllProjectsMutex.Lock()
 	defer fake.getEventsAllProjectsMutex.Unlock()
 	fake.GetEventsAllProjectsStub = nil
@@ -11663,7 +11663,7 @@ func (fake *FakeContainerServer) GetEventsAllProjectsReturns(result1 *lxd.EventL
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetEventsAllProjectsReturnsOnCall(i int, result1 *lxd.EventListener, result2 error) {
+func (fake *FakeInstanceServer) GetEventsAllProjectsReturnsOnCall(i int, result1 *lxd.EventListener, result2 error) {
 	fake.getEventsAllProjectsMutex.Lock()
 	defer fake.getEventsAllProjectsMutex.Unlock()
 	fake.GetEventsAllProjectsStub = nil
@@ -11679,7 +11679,7 @@ func (fake *FakeContainerServer) GetEventsAllProjectsReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetHTTPClient() (*http.Client, error) {
+func (fake *FakeInstanceServer) GetHTTPClient() (*http.Client, error) {
 	fake.getHTTPClientMutex.Lock()
 	ret, specificReturn := fake.getHTTPClientReturnsOnCall[len(fake.getHTTPClientArgsForCall)]
 	fake.getHTTPClientArgsForCall = append(fake.getHTTPClientArgsForCall, struct {
@@ -11697,19 +11697,19 @@ func (fake *FakeContainerServer) GetHTTPClient() (*http.Client, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetHTTPClientCallCount() int {
+func (fake *FakeInstanceServer) GetHTTPClientCallCount() int {
 	fake.getHTTPClientMutex.RLock()
 	defer fake.getHTTPClientMutex.RUnlock()
 	return len(fake.getHTTPClientArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetHTTPClientCalls(stub func() (*http.Client, error)) {
+func (fake *FakeInstanceServer) GetHTTPClientCalls(stub func() (*http.Client, error)) {
 	fake.getHTTPClientMutex.Lock()
 	defer fake.getHTTPClientMutex.Unlock()
 	fake.GetHTTPClientStub = stub
 }
 
-func (fake *FakeContainerServer) GetHTTPClientReturns(result1 *http.Client, result2 error) {
+func (fake *FakeInstanceServer) GetHTTPClientReturns(result1 *http.Client, result2 error) {
 	fake.getHTTPClientMutex.Lock()
 	defer fake.getHTTPClientMutex.Unlock()
 	fake.GetHTTPClientStub = nil
@@ -11719,7 +11719,7 @@ func (fake *FakeContainerServer) GetHTTPClientReturns(result1 *http.Client, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetHTTPClientReturnsOnCall(i int, result1 *http.Client, result2 error) {
+func (fake *FakeInstanceServer) GetHTTPClientReturnsOnCall(i int, result1 *http.Client, result2 error) {
 	fake.getHTTPClientMutex.Lock()
 	defer fake.getHTTPClientMutex.Unlock()
 	fake.GetHTTPClientStub = nil
@@ -11735,7 +11735,7 @@ func (fake *FakeContainerServer) GetHTTPClientReturnsOnCall(i int, result1 *http
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImage(arg1 string) (*api.Image, string, error) {
+func (fake *FakeInstanceServer) GetImage(arg1 string) (*api.Image, string, error) {
 	fake.getImageMutex.Lock()
 	ret, specificReturn := fake.getImageReturnsOnCall[len(fake.getImageArgsForCall)]
 	fake.getImageArgsForCall = append(fake.getImageArgsForCall, struct {
@@ -11754,26 +11754,26 @@ func (fake *FakeContainerServer) GetImage(arg1 string) (*api.Image, string, erro
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetImageCallCount() int {
+func (fake *FakeInstanceServer) GetImageCallCount() int {
 	fake.getImageMutex.RLock()
 	defer fake.getImageMutex.RUnlock()
 	return len(fake.getImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageCalls(stub func(string) (*api.Image, string, error)) {
+func (fake *FakeInstanceServer) GetImageCalls(stub func(string) (*api.Image, string, error)) {
 	fake.getImageMutex.Lock()
 	defer fake.getImageMutex.Unlock()
 	fake.GetImageStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetImageArgsForCall(i int) string {
 	fake.getImageMutex.RLock()
 	defer fake.getImageMutex.RUnlock()
 	argsForCall := fake.getImageArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetImageReturns(result1 *api.Image, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageReturns(result1 *api.Image, result2 string, result3 error) {
 	fake.getImageMutex.Lock()
 	defer fake.getImageMutex.Unlock()
 	fake.GetImageStub = nil
@@ -11784,7 +11784,7 @@ func (fake *FakeContainerServer) GetImageReturns(result1 *api.Image, result2 str
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageReturnsOnCall(i int, result1 *api.Image, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageReturnsOnCall(i int, result1 *api.Image, result2 string, result3 error) {
 	fake.getImageMutex.Lock()
 	defer fake.getImageMutex.Unlock()
 	fake.GetImageStub = nil
@@ -11802,7 +11802,7 @@ func (fake *FakeContainerServer) GetImageReturnsOnCall(i int, result1 *api.Image
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageAlias(arg1 string) (*api.ImageAliasesEntry, string, error) {
+func (fake *FakeInstanceServer) GetImageAlias(arg1 string) (*api.ImageAliasesEntry, string, error) {
 	fake.getImageAliasMutex.Lock()
 	ret, specificReturn := fake.getImageAliasReturnsOnCall[len(fake.getImageAliasArgsForCall)]
 	fake.getImageAliasArgsForCall = append(fake.getImageAliasArgsForCall, struct {
@@ -11821,26 +11821,26 @@ func (fake *FakeContainerServer) GetImageAlias(arg1 string) (*api.ImageAliasesEn
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetImageAliasCallCount() int {
+func (fake *FakeInstanceServer) GetImageAliasCallCount() int {
 	fake.getImageAliasMutex.RLock()
 	defer fake.getImageAliasMutex.RUnlock()
 	return len(fake.getImageAliasArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageAliasCalls(stub func(string) (*api.ImageAliasesEntry, string, error)) {
+func (fake *FakeInstanceServer) GetImageAliasCalls(stub func(string) (*api.ImageAliasesEntry, string, error)) {
 	fake.getImageAliasMutex.Lock()
 	defer fake.getImageAliasMutex.Unlock()
 	fake.GetImageAliasStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageAliasArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetImageAliasArgsForCall(i int) string {
 	fake.getImageAliasMutex.RLock()
 	defer fake.getImageAliasMutex.RUnlock()
 	argsForCall := fake.getImageAliasArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetImageAliasReturns(result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageAliasReturns(result1 *api.ImageAliasesEntry, result2 string, result3 error) {
 	fake.getImageAliasMutex.Lock()
 	defer fake.getImageAliasMutex.Unlock()
 	fake.GetImageAliasStub = nil
@@ -11851,7 +11851,7 @@ func (fake *FakeContainerServer) GetImageAliasReturns(result1 *api.ImageAliasesE
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageAliasReturnsOnCall(i int, result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageAliasReturnsOnCall(i int, result1 *api.ImageAliasesEntry, result2 string, result3 error) {
 	fake.getImageAliasMutex.Lock()
 	defer fake.getImageAliasMutex.Unlock()
 	fake.GetImageAliasStub = nil
@@ -11869,7 +11869,7 @@ func (fake *FakeContainerServer) GetImageAliasReturnsOnCall(i int, result1 *api.
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitectures(arg1 string, arg2 string) (map[string]*api.ImageAliasesEntry, error) {
+func (fake *FakeInstanceServer) GetImageAliasArchitectures(arg1 string, arg2 string) (map[string]*api.ImageAliasesEntry, error) {
 	fake.getImageAliasArchitecturesMutex.Lock()
 	ret, specificReturn := fake.getImageAliasArchitecturesReturnsOnCall[len(fake.getImageAliasArchitecturesArgsForCall)]
 	fake.getImageAliasArchitecturesArgsForCall = append(fake.getImageAliasArchitecturesArgsForCall, struct {
@@ -11889,26 +11889,26 @@ func (fake *FakeContainerServer) GetImageAliasArchitectures(arg1 string, arg2 st
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitecturesCallCount() int {
+func (fake *FakeInstanceServer) GetImageAliasArchitecturesCallCount() int {
 	fake.getImageAliasArchitecturesMutex.RLock()
 	defer fake.getImageAliasArchitecturesMutex.RUnlock()
 	return len(fake.getImageAliasArchitecturesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitecturesCalls(stub func(string, string) (map[string]*api.ImageAliasesEntry, error)) {
+func (fake *FakeInstanceServer) GetImageAliasArchitecturesCalls(stub func(string, string) (map[string]*api.ImageAliasesEntry, error)) {
 	fake.getImageAliasArchitecturesMutex.Lock()
 	defer fake.getImageAliasArchitecturesMutex.Unlock()
 	fake.GetImageAliasArchitecturesStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitecturesArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetImageAliasArchitecturesArgsForCall(i int) (string, string) {
 	fake.getImageAliasArchitecturesMutex.RLock()
 	defer fake.getImageAliasArchitecturesMutex.RUnlock()
 	argsForCall := fake.getImageAliasArchitecturesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitecturesReturns(result1 map[string]*api.ImageAliasesEntry, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasArchitecturesReturns(result1 map[string]*api.ImageAliasesEntry, result2 error) {
 	fake.getImageAliasArchitecturesMutex.Lock()
 	defer fake.getImageAliasArchitecturesMutex.Unlock()
 	fake.GetImageAliasArchitecturesStub = nil
@@ -11918,7 +11918,7 @@ func (fake *FakeContainerServer) GetImageAliasArchitecturesReturns(result1 map[s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageAliasArchitecturesReturnsOnCall(i int, result1 map[string]*api.ImageAliasesEntry, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasArchitecturesReturnsOnCall(i int, result1 map[string]*api.ImageAliasesEntry, result2 error) {
 	fake.getImageAliasArchitecturesMutex.Lock()
 	defer fake.getImageAliasArchitecturesMutex.Unlock()
 	fake.GetImageAliasArchitecturesStub = nil
@@ -11934,7 +11934,7 @@ func (fake *FakeContainerServer) GetImageAliasArchitecturesReturnsOnCall(i int, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageAliasNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetImageAliasNames() ([]string, error) {
 	fake.getImageAliasNamesMutex.Lock()
 	ret, specificReturn := fake.getImageAliasNamesReturnsOnCall[len(fake.getImageAliasNamesArgsForCall)]
 	fake.getImageAliasNamesArgsForCall = append(fake.getImageAliasNamesArgsForCall, struct {
@@ -11952,19 +11952,19 @@ func (fake *FakeContainerServer) GetImageAliasNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageAliasNamesCallCount() int {
+func (fake *FakeInstanceServer) GetImageAliasNamesCallCount() int {
 	fake.getImageAliasNamesMutex.RLock()
 	defer fake.getImageAliasNamesMutex.RUnlock()
 	return len(fake.getImageAliasNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageAliasNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetImageAliasNamesCalls(stub func() ([]string, error)) {
 	fake.getImageAliasNamesMutex.Lock()
 	defer fake.getImageAliasNamesMutex.Unlock()
 	fake.GetImageAliasNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageAliasNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasNamesReturns(result1 []string, result2 error) {
 	fake.getImageAliasNamesMutex.Lock()
 	defer fake.getImageAliasNamesMutex.Unlock()
 	fake.GetImageAliasNamesStub = nil
@@ -11974,7 +11974,7 @@ func (fake *FakeContainerServer) GetImageAliasNamesReturns(result1 []string, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageAliasNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getImageAliasNamesMutex.Lock()
 	defer fake.getImageAliasNamesMutex.Unlock()
 	fake.GetImageAliasNamesStub = nil
@@ -11990,7 +11990,7 @@ func (fake *FakeContainerServer) GetImageAliasNamesReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageAliasType(arg1 string, arg2 string) (*api.ImageAliasesEntry, string, error) {
+func (fake *FakeInstanceServer) GetImageAliasType(arg1 string, arg2 string) (*api.ImageAliasesEntry, string, error) {
 	fake.getImageAliasTypeMutex.Lock()
 	ret, specificReturn := fake.getImageAliasTypeReturnsOnCall[len(fake.getImageAliasTypeArgsForCall)]
 	fake.getImageAliasTypeArgsForCall = append(fake.getImageAliasTypeArgsForCall, struct {
@@ -12010,26 +12010,26 @@ func (fake *FakeContainerServer) GetImageAliasType(arg1 string, arg2 string) (*a
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetImageAliasTypeCallCount() int {
+func (fake *FakeInstanceServer) GetImageAliasTypeCallCount() int {
 	fake.getImageAliasTypeMutex.RLock()
 	defer fake.getImageAliasTypeMutex.RUnlock()
 	return len(fake.getImageAliasTypeArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageAliasTypeCalls(stub func(string, string) (*api.ImageAliasesEntry, string, error)) {
+func (fake *FakeInstanceServer) GetImageAliasTypeCalls(stub func(string, string) (*api.ImageAliasesEntry, string, error)) {
 	fake.getImageAliasTypeMutex.Lock()
 	defer fake.getImageAliasTypeMutex.Unlock()
 	fake.GetImageAliasTypeStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageAliasTypeArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetImageAliasTypeArgsForCall(i int) (string, string) {
 	fake.getImageAliasTypeMutex.RLock()
 	defer fake.getImageAliasTypeMutex.RUnlock()
 	argsForCall := fake.getImageAliasTypeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetImageAliasTypeReturns(result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageAliasTypeReturns(result1 *api.ImageAliasesEntry, result2 string, result3 error) {
 	fake.getImageAliasTypeMutex.Lock()
 	defer fake.getImageAliasTypeMutex.Unlock()
 	fake.GetImageAliasTypeStub = nil
@@ -12040,7 +12040,7 @@ func (fake *FakeContainerServer) GetImageAliasTypeReturns(result1 *api.ImageAlia
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageAliasTypeReturnsOnCall(i int, result1 *api.ImageAliasesEntry, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetImageAliasTypeReturnsOnCall(i int, result1 *api.ImageAliasesEntry, result2 string, result3 error) {
 	fake.getImageAliasTypeMutex.Lock()
 	defer fake.getImageAliasTypeMutex.Unlock()
 	fake.GetImageAliasTypeStub = nil
@@ -12058,7 +12058,7 @@ func (fake *FakeContainerServer) GetImageAliasTypeReturnsOnCall(i int, result1 *
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetImageAliases() ([]api.ImageAliasesEntry, error) {
+func (fake *FakeInstanceServer) GetImageAliases() ([]api.ImageAliasesEntry, error) {
 	fake.getImageAliasesMutex.Lock()
 	ret, specificReturn := fake.getImageAliasesReturnsOnCall[len(fake.getImageAliasesArgsForCall)]
 	fake.getImageAliasesArgsForCall = append(fake.getImageAliasesArgsForCall, struct {
@@ -12076,19 +12076,19 @@ func (fake *FakeContainerServer) GetImageAliases() ([]api.ImageAliasesEntry, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageAliasesCallCount() int {
+func (fake *FakeInstanceServer) GetImageAliasesCallCount() int {
 	fake.getImageAliasesMutex.RLock()
 	defer fake.getImageAliasesMutex.RUnlock()
 	return len(fake.getImageAliasesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageAliasesCalls(stub func() ([]api.ImageAliasesEntry, error)) {
+func (fake *FakeInstanceServer) GetImageAliasesCalls(stub func() ([]api.ImageAliasesEntry, error)) {
 	fake.getImageAliasesMutex.Lock()
 	defer fake.getImageAliasesMutex.Unlock()
 	fake.GetImageAliasesStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageAliasesReturns(result1 []api.ImageAliasesEntry, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasesReturns(result1 []api.ImageAliasesEntry, result2 error) {
 	fake.getImageAliasesMutex.Lock()
 	defer fake.getImageAliasesMutex.Unlock()
 	fake.GetImageAliasesStub = nil
@@ -12098,7 +12098,7 @@ func (fake *FakeContainerServer) GetImageAliasesReturns(result1 []api.ImageAlias
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageAliasesReturnsOnCall(i int, result1 []api.ImageAliasesEntry, result2 error) {
+func (fake *FakeInstanceServer) GetImageAliasesReturnsOnCall(i int, result1 []api.ImageAliasesEntry, result2 error) {
 	fake.getImageAliasesMutex.Lock()
 	defer fake.getImageAliasesMutex.Unlock()
 	fake.GetImageAliasesStub = nil
@@ -12114,7 +12114,7 @@ func (fake *FakeContainerServer) GetImageAliasesReturnsOnCall(i int, result1 []a
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageFile(arg1 string, arg2 lxd.ImageFileRequest) (*lxd.ImageFileResponse, error) {
+func (fake *FakeInstanceServer) GetImageFile(arg1 string, arg2 lxd.ImageFileRequest) (*lxd.ImageFileResponse, error) {
 	fake.getImageFileMutex.Lock()
 	ret, specificReturn := fake.getImageFileReturnsOnCall[len(fake.getImageFileArgsForCall)]
 	fake.getImageFileArgsForCall = append(fake.getImageFileArgsForCall, struct {
@@ -12134,26 +12134,26 @@ func (fake *FakeContainerServer) GetImageFile(arg1 string, arg2 lxd.ImageFileReq
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageFileCallCount() int {
+func (fake *FakeInstanceServer) GetImageFileCallCount() int {
 	fake.getImageFileMutex.RLock()
 	defer fake.getImageFileMutex.RUnlock()
 	return len(fake.getImageFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageFileCalls(stub func(string, lxd.ImageFileRequest) (*lxd.ImageFileResponse, error)) {
+func (fake *FakeInstanceServer) GetImageFileCalls(stub func(string, lxd.ImageFileRequest) (*lxd.ImageFileResponse, error)) {
 	fake.getImageFileMutex.Lock()
 	defer fake.getImageFileMutex.Unlock()
 	fake.GetImageFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageFileArgsForCall(i int) (string, lxd.ImageFileRequest) {
+func (fake *FakeInstanceServer) GetImageFileArgsForCall(i int) (string, lxd.ImageFileRequest) {
 	fake.getImageFileMutex.RLock()
 	defer fake.getImageFileMutex.RUnlock()
 	argsForCall := fake.getImageFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetImageFileReturns(result1 *lxd.ImageFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetImageFileReturns(result1 *lxd.ImageFileResponse, result2 error) {
 	fake.getImageFileMutex.Lock()
 	defer fake.getImageFileMutex.Unlock()
 	fake.GetImageFileStub = nil
@@ -12163,7 +12163,7 @@ func (fake *FakeContainerServer) GetImageFileReturns(result1 *lxd.ImageFileRespo
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageFileReturnsOnCall(i int, result1 *lxd.ImageFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetImageFileReturnsOnCall(i int, result1 *lxd.ImageFileResponse, result2 error) {
 	fake.getImageFileMutex.Lock()
 	defer fake.getImageFileMutex.Unlock()
 	fake.GetImageFileStub = nil
@@ -12179,7 +12179,7 @@ func (fake *FakeContainerServer) GetImageFileReturnsOnCall(i int, result1 *lxd.I
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageFingerprints() ([]string, error) {
+func (fake *FakeInstanceServer) GetImageFingerprints() ([]string, error) {
 	fake.getImageFingerprintsMutex.Lock()
 	ret, specificReturn := fake.getImageFingerprintsReturnsOnCall[len(fake.getImageFingerprintsArgsForCall)]
 	fake.getImageFingerprintsArgsForCall = append(fake.getImageFingerprintsArgsForCall, struct {
@@ -12197,19 +12197,19 @@ func (fake *FakeContainerServer) GetImageFingerprints() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageFingerprintsCallCount() int {
+func (fake *FakeInstanceServer) GetImageFingerprintsCallCount() int {
 	fake.getImageFingerprintsMutex.RLock()
 	defer fake.getImageFingerprintsMutex.RUnlock()
 	return len(fake.getImageFingerprintsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageFingerprintsCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetImageFingerprintsCalls(stub func() ([]string, error)) {
 	fake.getImageFingerprintsMutex.Lock()
 	defer fake.getImageFingerprintsMutex.Unlock()
 	fake.GetImageFingerprintsStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageFingerprintsReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetImageFingerprintsReturns(result1 []string, result2 error) {
 	fake.getImageFingerprintsMutex.Lock()
 	defer fake.getImageFingerprintsMutex.Unlock()
 	fake.GetImageFingerprintsStub = nil
@@ -12219,7 +12219,7 @@ func (fake *FakeContainerServer) GetImageFingerprintsReturns(result1 []string, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageFingerprintsReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetImageFingerprintsReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getImageFingerprintsMutex.Lock()
 	defer fake.getImageFingerprintsMutex.Unlock()
 	fake.GetImageFingerprintsStub = nil
@@ -12235,7 +12235,7 @@ func (fake *FakeContainerServer) GetImageFingerprintsReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageSecret(arg1 string) (string, error) {
+func (fake *FakeInstanceServer) GetImageSecret(arg1 string) (string, error) {
 	fake.getImageSecretMutex.Lock()
 	ret, specificReturn := fake.getImageSecretReturnsOnCall[len(fake.getImageSecretArgsForCall)]
 	fake.getImageSecretArgsForCall = append(fake.getImageSecretArgsForCall, struct {
@@ -12254,26 +12254,26 @@ func (fake *FakeContainerServer) GetImageSecret(arg1 string) (string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImageSecretCallCount() int {
+func (fake *FakeInstanceServer) GetImageSecretCallCount() int {
 	fake.getImageSecretMutex.RLock()
 	defer fake.getImageSecretMutex.RUnlock()
 	return len(fake.getImageSecretArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImageSecretCalls(stub func(string) (string, error)) {
+func (fake *FakeInstanceServer) GetImageSecretCalls(stub func(string) (string, error)) {
 	fake.getImageSecretMutex.Lock()
 	defer fake.getImageSecretMutex.Unlock()
 	fake.GetImageSecretStub = stub
 }
 
-func (fake *FakeContainerServer) GetImageSecretArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetImageSecretArgsForCall(i int) string {
 	fake.getImageSecretMutex.RLock()
 	defer fake.getImageSecretMutex.RUnlock()
 	argsForCall := fake.getImageSecretArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetImageSecretReturns(result1 string, result2 error) {
+func (fake *FakeInstanceServer) GetImageSecretReturns(result1 string, result2 error) {
 	fake.getImageSecretMutex.Lock()
 	defer fake.getImageSecretMutex.Unlock()
 	fake.GetImageSecretStub = nil
@@ -12283,7 +12283,7 @@ func (fake *FakeContainerServer) GetImageSecretReturns(result1 string, result2 e
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImageSecretReturnsOnCall(i int, result1 string, result2 error) {
+func (fake *FakeInstanceServer) GetImageSecretReturnsOnCall(i int, result1 string, result2 error) {
 	fake.getImageSecretMutex.Lock()
 	defer fake.getImageSecretMutex.Unlock()
 	fake.GetImageSecretStub = nil
@@ -12299,7 +12299,7 @@ func (fake *FakeContainerServer) GetImageSecretReturnsOnCall(i int, result1 stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImages() ([]api.Image, error) {
+func (fake *FakeInstanceServer) GetImages() ([]api.Image, error) {
 	fake.getImagesMutex.Lock()
 	ret, specificReturn := fake.getImagesReturnsOnCall[len(fake.getImagesArgsForCall)]
 	fake.getImagesArgsForCall = append(fake.getImagesArgsForCall, struct {
@@ -12317,19 +12317,19 @@ func (fake *FakeContainerServer) GetImages() ([]api.Image, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImagesCallCount() int {
+func (fake *FakeInstanceServer) GetImagesCallCount() int {
 	fake.getImagesMutex.RLock()
 	defer fake.getImagesMutex.RUnlock()
 	return len(fake.getImagesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImagesCalls(stub func() ([]api.Image, error)) {
+func (fake *FakeInstanceServer) GetImagesCalls(stub func() ([]api.Image, error)) {
 	fake.getImagesMutex.Lock()
 	defer fake.getImagesMutex.Unlock()
 	fake.GetImagesStub = stub
 }
 
-func (fake *FakeContainerServer) GetImagesReturns(result1 []api.Image, result2 error) {
+func (fake *FakeInstanceServer) GetImagesReturns(result1 []api.Image, result2 error) {
 	fake.getImagesMutex.Lock()
 	defer fake.getImagesMutex.Unlock()
 	fake.GetImagesStub = nil
@@ -12339,7 +12339,7 @@ func (fake *FakeContainerServer) GetImagesReturns(result1 []api.Image, result2 e
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImagesReturnsOnCall(i int, result1 []api.Image, result2 error) {
+func (fake *FakeInstanceServer) GetImagesReturnsOnCall(i int, result1 []api.Image, result2 error) {
 	fake.getImagesMutex.Lock()
 	defer fake.getImagesMutex.Unlock()
 	fake.GetImagesStub = nil
@@ -12355,7 +12355,7 @@ func (fake *FakeContainerServer) GetImagesReturnsOnCall(i int, result1 []api.Ima
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilter(arg1 []string) ([]api.Image, error) {
+func (fake *FakeInstanceServer) GetImagesWithFilter(arg1 []string) ([]api.Image, error) {
 	var arg1Copy []string
 	if arg1 != nil {
 		arg1Copy = make([]string, len(arg1))
@@ -12379,26 +12379,26 @@ func (fake *FakeContainerServer) GetImagesWithFilter(arg1 []string) ([]api.Image
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetImagesWithFilterCallCount() int {
 	fake.getImagesWithFilterMutex.RLock()
 	defer fake.getImagesWithFilterMutex.RUnlock()
 	return len(fake.getImagesWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilterCalls(stub func([]string) ([]api.Image, error)) {
+func (fake *FakeInstanceServer) GetImagesWithFilterCalls(stub func([]string) ([]api.Image, error)) {
 	fake.getImagesWithFilterMutex.Lock()
 	defer fake.getImagesWithFilterMutex.Unlock()
 	fake.GetImagesWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilterArgsForCall(i int) []string {
+func (fake *FakeInstanceServer) GetImagesWithFilterArgsForCall(i int) []string {
 	fake.getImagesWithFilterMutex.RLock()
 	defer fake.getImagesWithFilterMutex.RUnlock()
 	argsForCall := fake.getImagesWithFilterArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilterReturns(result1 []api.Image, result2 error) {
+func (fake *FakeInstanceServer) GetImagesWithFilterReturns(result1 []api.Image, result2 error) {
 	fake.getImagesWithFilterMutex.Lock()
 	defer fake.getImagesWithFilterMutex.Unlock()
 	fake.GetImagesWithFilterStub = nil
@@ -12408,7 +12408,7 @@ func (fake *FakeContainerServer) GetImagesWithFilterReturns(result1 []api.Image,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetImagesWithFilterReturnsOnCall(i int, result1 []api.Image, result2 error) {
+func (fake *FakeInstanceServer) GetImagesWithFilterReturnsOnCall(i int, result1 []api.Image, result2 error) {
 	fake.getImagesWithFilterMutex.Lock()
 	defer fake.getImagesWithFilterMutex.Unlock()
 	fake.GetImagesWithFilterStub = nil
@@ -12424,7 +12424,7 @@ func (fake *FakeContainerServer) GetImagesWithFilterReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstance(arg1 string) (*api.Instance, string, error) {
+func (fake *FakeInstanceServer) GetInstance(arg1 string) (*api.Instance, string, error) {
 	fake.getInstanceMutex.Lock()
 	ret, specificReturn := fake.getInstanceReturnsOnCall[len(fake.getInstanceArgsForCall)]
 	fake.getInstanceArgsForCall = append(fake.getInstanceArgsForCall, struct {
@@ -12443,26 +12443,26 @@ func (fake *FakeContainerServer) GetInstance(arg1 string) (*api.Instance, string
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceCallCount() int {
 	fake.getInstanceMutex.RLock()
 	defer fake.getInstanceMutex.RUnlock()
 	return len(fake.getInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceCalls(stub func(string) (*api.Instance, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceCalls(stub func(string) (*api.Instance, string, error)) {
 	fake.getInstanceMutex.Lock()
 	defer fake.getInstanceMutex.Unlock()
 	fake.GetInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceArgsForCall(i int) string {
 	fake.getInstanceMutex.RLock()
 	defer fake.getInstanceMutex.RUnlock()
 	argsForCall := fake.getInstanceArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceReturns(result1 *api.Instance, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceReturns(result1 *api.Instance, result2 string, result3 error) {
 	fake.getInstanceMutex.Lock()
 	defer fake.getInstanceMutex.Unlock()
 	fake.GetInstanceStub = nil
@@ -12473,7 +12473,7 @@ func (fake *FakeContainerServer) GetInstanceReturns(result1 *api.Instance, resul
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceReturnsOnCall(i int, result1 *api.Instance, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceReturnsOnCall(i int, result1 *api.Instance, result2 string, result3 error) {
 	fake.getInstanceMutex.Lock()
 	defer fake.getInstanceMutex.Unlock()
 	fake.GetInstanceStub = nil
@@ -12491,7 +12491,7 @@ func (fake *FakeContainerServer) GetInstanceReturnsOnCall(i int, result1 *api.In
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackup(arg1 string, arg2 string) (*api.InstanceBackup, string, error) {
+func (fake *FakeInstanceServer) GetInstanceBackup(arg1 string, arg2 string) (*api.InstanceBackup, string, error) {
 	fake.getInstanceBackupMutex.Lock()
 	ret, specificReturn := fake.getInstanceBackupReturnsOnCall[len(fake.getInstanceBackupArgsForCall)]
 	fake.getInstanceBackupArgsForCall = append(fake.getInstanceBackupArgsForCall, struct {
@@ -12511,26 +12511,26 @@ func (fake *FakeContainerServer) GetInstanceBackup(arg1 string, arg2 string) (*a
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceBackupCallCount() int {
 	fake.getInstanceBackupMutex.RLock()
 	defer fake.getInstanceBackupMutex.RUnlock()
 	return len(fake.getInstanceBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupCalls(stub func(string, string) (*api.InstanceBackup, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceBackupCalls(stub func(string, string) (*api.InstanceBackup, string, error)) {
 	fake.getInstanceBackupMutex.Lock()
 	defer fake.getInstanceBackupMutex.Unlock()
 	fake.GetInstanceBackupStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetInstanceBackupArgsForCall(i int) (string, string) {
 	fake.getInstanceBackupMutex.RLock()
 	defer fake.getInstanceBackupMutex.RUnlock()
 	argsForCall := fake.getInstanceBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupReturns(result1 *api.InstanceBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupReturns(result1 *api.InstanceBackup, result2 string, result3 error) {
 	fake.getInstanceBackupMutex.Lock()
 	defer fake.getInstanceBackupMutex.Unlock()
 	fake.GetInstanceBackupStub = nil
@@ -12541,7 +12541,7 @@ func (fake *FakeContainerServer) GetInstanceBackupReturns(result1 *api.InstanceB
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupReturnsOnCall(i int, result1 *api.InstanceBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupReturnsOnCall(i int, result1 *api.InstanceBackup, result2 string, result3 error) {
 	fake.getInstanceBackupMutex.Lock()
 	defer fake.getInstanceBackupMutex.Unlock()
 	fake.GetInstanceBackupStub = nil
@@ -12559,7 +12559,7 @@ func (fake *FakeContainerServer) GetInstanceBackupReturnsOnCall(i int, result1 *
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFile(arg1 string, arg2 string, arg3 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
+func (fake *FakeInstanceServer) GetInstanceBackupFile(arg1 string, arg2 string, arg3 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
 	fake.getInstanceBackupFileMutex.Lock()
 	ret, specificReturn := fake.getInstanceBackupFileReturnsOnCall[len(fake.getInstanceBackupFileArgsForCall)]
 	fake.getInstanceBackupFileArgsForCall = append(fake.getInstanceBackupFileArgsForCall, struct {
@@ -12580,26 +12580,26 @@ func (fake *FakeContainerServer) GetInstanceBackupFile(arg1 string, arg2 string,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFileCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceBackupFileCallCount() int {
 	fake.getInstanceBackupFileMutex.RLock()
 	defer fake.getInstanceBackupFileMutex.RUnlock()
 	return len(fake.getInstanceBackupFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFileCalls(stub func(string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
+func (fake *FakeInstanceServer) GetInstanceBackupFileCalls(stub func(string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
 	fake.getInstanceBackupFileMutex.Lock()
 	defer fake.getInstanceBackupFileMutex.Unlock()
 	fake.GetInstanceBackupFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFileArgsForCall(i int) (string, string, *lxd.BackupFileRequest) {
+func (fake *FakeInstanceServer) GetInstanceBackupFileArgsForCall(i int) (string, string, *lxd.BackupFileRequest) {
 	fake.getInstanceBackupFileMutex.RLock()
 	defer fake.getInstanceBackupFileMutex.RUnlock()
 	argsForCall := fake.getInstanceBackupFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getInstanceBackupFileMutex.Lock()
 	defer fake.getInstanceBackupFileMutex.Unlock()
 	fake.GetInstanceBackupFileStub = nil
@@ -12609,7 +12609,7 @@ func (fake *FakeContainerServer) GetInstanceBackupFileReturns(result1 *lxd.Backu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getInstanceBackupFileMutex.Lock()
 	defer fake.getInstanceBackupFileMutex.Unlock()
 	fake.GetInstanceBackupFileStub = nil
@@ -12625,7 +12625,7 @@ func (fake *FakeContainerServer) GetInstanceBackupFileReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetInstanceBackupNames(arg1 string) ([]string, error) {
 	fake.getInstanceBackupNamesMutex.Lock()
 	ret, specificReturn := fake.getInstanceBackupNamesReturnsOnCall[len(fake.getInstanceBackupNamesArgsForCall)]
 	fake.getInstanceBackupNamesArgsForCall = append(fake.getInstanceBackupNamesArgsForCall, struct {
@@ -12644,26 +12644,26 @@ func (fake *FakeContainerServer) GetInstanceBackupNames(arg1 string) ([]string, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNamesCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceBackupNamesCallCount() int {
 	fake.getInstanceBackupNamesMutex.RLock()
 	defer fake.getInstanceBackupNamesMutex.RUnlock()
 	return len(fake.getInstanceBackupNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceBackupNamesCalls(stub func(string) ([]string, error)) {
 	fake.getInstanceBackupNamesMutex.Lock()
 	defer fake.getInstanceBackupNamesMutex.Unlock()
 	fake.GetInstanceBackupNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceBackupNamesArgsForCall(i int) string {
 	fake.getInstanceBackupNamesMutex.RLock()
 	defer fake.getInstanceBackupNamesMutex.RUnlock()
 	argsForCall := fake.getInstanceBackupNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupNamesReturns(result1 []string, result2 error) {
 	fake.getInstanceBackupNamesMutex.Lock()
 	defer fake.getInstanceBackupNamesMutex.Unlock()
 	fake.GetInstanceBackupNamesStub = nil
@@ -12673,7 +12673,7 @@ func (fake *FakeContainerServer) GetInstanceBackupNamesReturns(result1 []string,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getInstanceBackupNamesMutex.Lock()
 	defer fake.getInstanceBackupNamesMutex.Unlock()
 	fake.GetInstanceBackupNamesStub = nil
@@ -12689,7 +12689,7 @@ func (fake *FakeContainerServer) GetInstanceBackupNamesReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackups(arg1 string) ([]api.InstanceBackup, error) {
+func (fake *FakeInstanceServer) GetInstanceBackups(arg1 string) ([]api.InstanceBackup, error) {
 	fake.getInstanceBackupsMutex.Lock()
 	ret, specificReturn := fake.getInstanceBackupsReturnsOnCall[len(fake.getInstanceBackupsArgsForCall)]
 	fake.getInstanceBackupsArgsForCall = append(fake.getInstanceBackupsArgsForCall, struct {
@@ -12708,26 +12708,26 @@ func (fake *FakeContainerServer) GetInstanceBackups(arg1 string) ([]api.Instance
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupsCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceBackupsCallCount() int {
 	fake.getInstanceBackupsMutex.RLock()
 	defer fake.getInstanceBackupsMutex.RUnlock()
 	return len(fake.getInstanceBackupsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupsCalls(stub func(string) ([]api.InstanceBackup, error)) {
+func (fake *FakeInstanceServer) GetInstanceBackupsCalls(stub func(string) ([]api.InstanceBackup, error)) {
 	fake.getInstanceBackupsMutex.Lock()
 	defer fake.getInstanceBackupsMutex.Unlock()
 	fake.GetInstanceBackupsStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceBackupsArgsForCall(i int) string {
 	fake.getInstanceBackupsMutex.RLock()
 	defer fake.getInstanceBackupsMutex.RUnlock()
 	argsForCall := fake.getInstanceBackupsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupsReturns(result1 []api.InstanceBackup, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupsReturns(result1 []api.InstanceBackup, result2 error) {
 	fake.getInstanceBackupsMutex.Lock()
 	defer fake.getInstanceBackupsMutex.Unlock()
 	fake.GetInstanceBackupsStub = nil
@@ -12737,7 +12737,7 @@ func (fake *FakeContainerServer) GetInstanceBackupsReturns(result1 []api.Instanc
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceBackupsReturnsOnCall(i int, result1 []api.InstanceBackup, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceBackupsReturnsOnCall(i int, result1 []api.InstanceBackup, result2 error) {
 	fake.getInstanceBackupsMutex.Lock()
 	defer fake.getInstanceBackupsMutex.Unlock()
 	fake.GetInstanceBackupsStub = nil
@@ -12753,7 +12753,7 @@ func (fake *FakeContainerServer) GetInstanceBackupsReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLog(arg1 string, arg2 *lxd.InstanceConsoleLogArgs) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetInstanceConsoleLog(arg1 string, arg2 *lxd.InstanceConsoleLogArgs) (io.ReadCloser, error) {
 	fake.getInstanceConsoleLogMutex.Lock()
 	ret, specificReturn := fake.getInstanceConsoleLogReturnsOnCall[len(fake.getInstanceConsoleLogArgsForCall)]
 	fake.getInstanceConsoleLogArgsForCall = append(fake.getInstanceConsoleLogArgsForCall, struct {
@@ -12773,26 +12773,26 @@ func (fake *FakeContainerServer) GetInstanceConsoleLog(arg1 string, arg2 *lxd.In
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLogCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceConsoleLogCallCount() int {
 	fake.getInstanceConsoleLogMutex.RLock()
 	defer fake.getInstanceConsoleLogMutex.RUnlock()
 	return len(fake.getInstanceConsoleLogArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLogCalls(stub func(string, *lxd.InstanceConsoleLogArgs) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetInstanceConsoleLogCalls(stub func(string, *lxd.InstanceConsoleLogArgs) (io.ReadCloser, error)) {
 	fake.getInstanceConsoleLogMutex.Lock()
 	defer fake.getInstanceConsoleLogMutex.Unlock()
 	fake.GetInstanceConsoleLogStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLogArgsForCall(i int) (string, *lxd.InstanceConsoleLogArgs) {
+func (fake *FakeInstanceServer) GetInstanceConsoleLogArgsForCall(i int) (string, *lxd.InstanceConsoleLogArgs) {
 	fake.getInstanceConsoleLogMutex.RLock()
 	defer fake.getInstanceConsoleLogMutex.RUnlock()
 	argsForCall := fake.getInstanceConsoleLogArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLogReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceConsoleLogReturns(result1 io.ReadCloser, result2 error) {
 	fake.getInstanceConsoleLogMutex.Lock()
 	defer fake.getInstanceConsoleLogMutex.Unlock()
 	fake.GetInstanceConsoleLogStub = nil
@@ -12802,7 +12802,7 @@ func (fake *FakeContainerServer) GetInstanceConsoleLogReturns(result1 io.ReadClo
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceConsoleLogReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceConsoleLogReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getInstanceConsoleLogMutex.Lock()
 	defer fake.getInstanceConsoleLogMutex.Unlock()
 	fake.GetInstanceConsoleLogStub = nil
@@ -12818,7 +12818,7 @@ func (fake *FakeContainerServer) GetInstanceConsoleLogReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceFile(arg1 string, arg2 string) (io.ReadCloser, *lxd.InstanceFileResponse, error) {
+func (fake *FakeInstanceServer) GetInstanceFile(arg1 string, arg2 string) (io.ReadCloser, *lxd.InstanceFileResponse, error) {
 	fake.getInstanceFileMutex.Lock()
 	ret, specificReturn := fake.getInstanceFileReturnsOnCall[len(fake.getInstanceFileArgsForCall)]
 	fake.getInstanceFileArgsForCall = append(fake.getInstanceFileArgsForCall, struct {
@@ -12838,26 +12838,26 @@ func (fake *FakeContainerServer) GetInstanceFile(arg1 string, arg2 string) (io.R
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceFileCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceFileCallCount() int {
 	fake.getInstanceFileMutex.RLock()
 	defer fake.getInstanceFileMutex.RUnlock()
 	return len(fake.getInstanceFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceFileCalls(stub func(string, string) (io.ReadCloser, *lxd.InstanceFileResponse, error)) {
+func (fake *FakeInstanceServer) GetInstanceFileCalls(stub func(string, string) (io.ReadCloser, *lxd.InstanceFileResponse, error)) {
 	fake.getInstanceFileMutex.Lock()
 	defer fake.getInstanceFileMutex.Unlock()
 	fake.GetInstanceFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetInstanceFileArgsForCall(i int) (string, string) {
 	fake.getInstanceFileMutex.RLock()
 	defer fake.getInstanceFileMutex.RUnlock()
 	argsForCall := fake.getInstanceFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceFileReturns(result1 io.ReadCloser, result2 *lxd.InstanceFileResponse, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceFileReturns(result1 io.ReadCloser, result2 *lxd.InstanceFileResponse, result3 error) {
 	fake.getInstanceFileMutex.Lock()
 	defer fake.getInstanceFileMutex.Unlock()
 	fake.GetInstanceFileStub = nil
@@ -12868,7 +12868,7 @@ func (fake *FakeContainerServer) GetInstanceFileReturns(result1 io.ReadCloser, r
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceFileReturnsOnCall(i int, result1 io.ReadCloser, result2 *lxd.InstanceFileResponse, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceFileReturnsOnCall(i int, result1 io.ReadCloser, result2 *lxd.InstanceFileResponse, result3 error) {
 	fake.getInstanceFileMutex.Lock()
 	defer fake.getInstanceFileMutex.Unlock()
 	fake.GetInstanceFileStub = nil
@@ -12886,7 +12886,7 @@ func (fake *FakeContainerServer) GetInstanceFileReturnsOnCall(i int, result1 io.
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTP(arg1 string) (*sftp.Client, error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTP(arg1 string) (*sftp.Client, error) {
 	fake.getInstanceFileSFTPMutex.Lock()
 	ret, specificReturn := fake.getInstanceFileSFTPReturnsOnCall[len(fake.getInstanceFileSFTPArgsForCall)]
 	fake.getInstanceFileSFTPArgsForCall = append(fake.getInstanceFileSFTPArgsForCall, struct {
@@ -12905,26 +12905,26 @@ func (fake *FakeContainerServer) GetInstanceFileSFTP(arg1 string) (*sftp.Client,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPCallCount() int {
 	fake.getInstanceFileSFTPMutex.RLock()
 	defer fake.getInstanceFileSFTPMutex.RUnlock()
 	return len(fake.getInstanceFileSFTPArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPCalls(stub func(string) (*sftp.Client, error)) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPCalls(stub func(string) (*sftp.Client, error)) {
 	fake.getInstanceFileSFTPMutex.Lock()
 	defer fake.getInstanceFileSFTPMutex.Unlock()
 	fake.GetInstanceFileSFTPStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPArgsForCall(i int) string {
 	fake.getInstanceFileSFTPMutex.RLock()
 	defer fake.getInstanceFileSFTPMutex.RUnlock()
 	argsForCall := fake.getInstanceFileSFTPArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPReturns(result1 *sftp.Client, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPReturns(result1 *sftp.Client, result2 error) {
 	fake.getInstanceFileSFTPMutex.Lock()
 	defer fake.getInstanceFileSFTPMutex.Unlock()
 	fake.GetInstanceFileSFTPStub = nil
@@ -12934,7 +12934,7 @@ func (fake *FakeContainerServer) GetInstanceFileSFTPReturns(result1 *sftp.Client
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPReturnsOnCall(i int, result1 *sftp.Client, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPReturnsOnCall(i int, result1 *sftp.Client, result2 error) {
 	fake.getInstanceFileSFTPMutex.Lock()
 	defer fake.getInstanceFileSFTPMutex.Unlock()
 	fake.GetInstanceFileSFTPStub = nil
@@ -12950,7 +12950,7 @@ func (fake *FakeContainerServer) GetInstanceFileSFTPReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConn(arg1 string) (net.Conn, error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConn(arg1 string) (net.Conn, error) {
 	fake.getInstanceFileSFTPConnMutex.Lock()
 	ret, specificReturn := fake.getInstanceFileSFTPConnReturnsOnCall[len(fake.getInstanceFileSFTPConnArgsForCall)]
 	fake.getInstanceFileSFTPConnArgsForCall = append(fake.getInstanceFileSFTPConnArgsForCall, struct {
@@ -12969,26 +12969,26 @@ func (fake *FakeContainerServer) GetInstanceFileSFTPConn(arg1 string) (net.Conn,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConnCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConnCallCount() int {
 	fake.getInstanceFileSFTPConnMutex.RLock()
 	defer fake.getInstanceFileSFTPConnMutex.RUnlock()
 	return len(fake.getInstanceFileSFTPConnArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConnCalls(stub func(string) (net.Conn, error)) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConnCalls(stub func(string) (net.Conn, error)) {
 	fake.getInstanceFileSFTPConnMutex.Lock()
 	defer fake.getInstanceFileSFTPConnMutex.Unlock()
 	fake.GetInstanceFileSFTPConnStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConnArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConnArgsForCall(i int) string {
 	fake.getInstanceFileSFTPConnMutex.RLock()
 	defer fake.getInstanceFileSFTPConnMutex.RUnlock()
 	argsForCall := fake.getInstanceFileSFTPConnArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConnReturns(result1 net.Conn, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConnReturns(result1 net.Conn, result2 error) {
 	fake.getInstanceFileSFTPConnMutex.Lock()
 	defer fake.getInstanceFileSFTPConnMutex.Unlock()
 	fake.GetInstanceFileSFTPConnStub = nil
@@ -12998,7 +12998,7 @@ func (fake *FakeContainerServer) GetInstanceFileSFTPConnReturns(result1 net.Conn
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceFileSFTPConnReturnsOnCall(i int, result1 net.Conn, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceFileSFTPConnReturnsOnCall(i int, result1 net.Conn, result2 error) {
 	fake.getInstanceFileSFTPConnMutex.Lock()
 	defer fake.getInstanceFileSFTPConnMutex.Unlock()
 	fake.GetInstanceFileSFTPConnStub = nil
@@ -13014,7 +13014,7 @@ func (fake *FakeContainerServer) GetInstanceFileSFTPConnReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceFull(arg1 string) (*api.InstanceFull, string, error) {
+func (fake *FakeInstanceServer) GetInstanceFull(arg1 string) (*api.InstanceFull, string, error) {
 	fake.getInstanceFullMutex.Lock()
 	ret, specificReturn := fake.getInstanceFullReturnsOnCall[len(fake.getInstanceFullArgsForCall)]
 	fake.getInstanceFullArgsForCall = append(fake.getInstanceFullArgsForCall, struct {
@@ -13033,26 +13033,26 @@ func (fake *FakeContainerServer) GetInstanceFull(arg1 string) (*api.InstanceFull
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceFullCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceFullCallCount() int {
 	fake.getInstanceFullMutex.RLock()
 	defer fake.getInstanceFullMutex.RUnlock()
 	return len(fake.getInstanceFullArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceFullCalls(stub func(string) (*api.InstanceFull, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceFullCalls(stub func(string) (*api.InstanceFull, string, error)) {
 	fake.getInstanceFullMutex.Lock()
 	defer fake.getInstanceFullMutex.Unlock()
 	fake.GetInstanceFullStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceFullArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceFullArgsForCall(i int) string {
 	fake.getInstanceFullMutex.RLock()
 	defer fake.getInstanceFullMutex.RUnlock()
 	argsForCall := fake.getInstanceFullArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceFullReturns(result1 *api.InstanceFull, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceFullReturns(result1 *api.InstanceFull, result2 string, result3 error) {
 	fake.getInstanceFullMutex.Lock()
 	defer fake.getInstanceFullMutex.Unlock()
 	fake.GetInstanceFullStub = nil
@@ -13063,7 +13063,7 @@ func (fake *FakeContainerServer) GetInstanceFullReturns(result1 *api.InstanceFul
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceFullReturnsOnCall(i int, result1 *api.InstanceFull, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceFullReturnsOnCall(i int, result1 *api.InstanceFull, result2 string, result3 error) {
 	fake.getInstanceFullMutex.Lock()
 	defer fake.getInstanceFullMutex.Unlock()
 	fake.GetInstanceFullStub = nil
@@ -13081,7 +13081,7 @@ func (fake *FakeContainerServer) GetInstanceFullReturnsOnCall(i int, result1 *ap
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfile(arg1 string, arg2 string) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetInstanceLogfile(arg1 string, arg2 string) (io.ReadCloser, error) {
 	fake.getInstanceLogfileMutex.Lock()
 	ret, specificReturn := fake.getInstanceLogfileReturnsOnCall[len(fake.getInstanceLogfileArgsForCall)]
 	fake.getInstanceLogfileArgsForCall = append(fake.getInstanceLogfileArgsForCall, struct {
@@ -13101,26 +13101,26 @@ func (fake *FakeContainerServer) GetInstanceLogfile(arg1 string, arg2 string) (i
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfileCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceLogfileCallCount() int {
 	fake.getInstanceLogfileMutex.RLock()
 	defer fake.getInstanceLogfileMutex.RUnlock()
 	return len(fake.getInstanceLogfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfileCalls(stub func(string, string) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetInstanceLogfileCalls(stub func(string, string) (io.ReadCloser, error)) {
 	fake.getInstanceLogfileMutex.Lock()
 	defer fake.getInstanceLogfileMutex.Unlock()
 	fake.GetInstanceLogfileStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetInstanceLogfileArgsForCall(i int) (string, string) {
 	fake.getInstanceLogfileMutex.RLock()
 	defer fake.getInstanceLogfileMutex.RUnlock()
 	argsForCall := fake.getInstanceLogfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfileReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceLogfileReturns(result1 io.ReadCloser, result2 error) {
 	fake.getInstanceLogfileMutex.Lock()
 	defer fake.getInstanceLogfileMutex.Unlock()
 	fake.GetInstanceLogfileStub = nil
@@ -13130,7 +13130,7 @@ func (fake *FakeContainerServer) GetInstanceLogfileReturns(result1 io.ReadCloser
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getInstanceLogfileMutex.Lock()
 	defer fake.getInstanceLogfileMutex.Unlock()
 	fake.GetInstanceLogfileStub = nil
@@ -13146,7 +13146,7 @@ func (fake *FakeContainerServer) GetInstanceLogfileReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfiles(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetInstanceLogfiles(arg1 string) ([]string, error) {
 	fake.getInstanceLogfilesMutex.Lock()
 	ret, specificReturn := fake.getInstanceLogfilesReturnsOnCall[len(fake.getInstanceLogfilesArgsForCall)]
 	fake.getInstanceLogfilesArgsForCall = append(fake.getInstanceLogfilesArgsForCall, struct {
@@ -13165,26 +13165,26 @@ func (fake *FakeContainerServer) GetInstanceLogfiles(arg1 string) ([]string, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfilesCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceLogfilesCallCount() int {
 	fake.getInstanceLogfilesMutex.RLock()
 	defer fake.getInstanceLogfilesMutex.RUnlock()
 	return len(fake.getInstanceLogfilesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfilesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceLogfilesCalls(stub func(string) ([]string, error)) {
 	fake.getInstanceLogfilesMutex.Lock()
 	defer fake.getInstanceLogfilesMutex.Unlock()
 	fake.GetInstanceLogfilesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfilesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceLogfilesArgsForCall(i int) string {
 	fake.getInstanceLogfilesMutex.RLock()
 	defer fake.getInstanceLogfilesMutex.RUnlock()
 	argsForCall := fake.getInstanceLogfilesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfilesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceLogfilesReturns(result1 []string, result2 error) {
 	fake.getInstanceLogfilesMutex.Lock()
 	defer fake.getInstanceLogfilesMutex.Unlock()
 	fake.GetInstanceLogfilesStub = nil
@@ -13194,7 +13194,7 @@ func (fake *FakeContainerServer) GetInstanceLogfilesReturns(result1 []string, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceLogfilesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceLogfilesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getInstanceLogfilesMutex.Lock()
 	defer fake.getInstanceLogfilesMutex.Unlock()
 	fake.GetInstanceLogfilesStub = nil
@@ -13210,7 +13210,7 @@ func (fake *FakeContainerServer) GetInstanceLogfilesReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadata(arg1 string) (*api.ImageMetadata, string, error) {
+func (fake *FakeInstanceServer) GetInstanceMetadata(arg1 string) (*api.ImageMetadata, string, error) {
 	fake.getInstanceMetadataMutex.Lock()
 	ret, specificReturn := fake.getInstanceMetadataReturnsOnCall[len(fake.getInstanceMetadataArgsForCall)]
 	fake.getInstanceMetadataArgsForCall = append(fake.getInstanceMetadataArgsForCall, struct {
@@ -13229,26 +13229,26 @@ func (fake *FakeContainerServer) GetInstanceMetadata(arg1 string) (*api.ImageMet
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadataCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceMetadataCallCount() int {
 	fake.getInstanceMetadataMutex.RLock()
 	defer fake.getInstanceMetadataMutex.RUnlock()
 	return len(fake.getInstanceMetadataArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadataCalls(stub func(string) (*api.ImageMetadata, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceMetadataCalls(stub func(string) (*api.ImageMetadata, string, error)) {
 	fake.getInstanceMetadataMutex.Lock()
 	defer fake.getInstanceMetadataMutex.Unlock()
 	fake.GetInstanceMetadataStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadataArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceMetadataArgsForCall(i int) string {
 	fake.getInstanceMetadataMutex.RLock()
 	defer fake.getInstanceMetadataMutex.RUnlock()
 	argsForCall := fake.getInstanceMetadataArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadataReturns(result1 *api.ImageMetadata, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceMetadataReturns(result1 *api.ImageMetadata, result2 string, result3 error) {
 	fake.getInstanceMetadataMutex.Lock()
 	defer fake.getInstanceMetadataMutex.Unlock()
 	fake.GetInstanceMetadataStub = nil
@@ -13259,7 +13259,7 @@ func (fake *FakeContainerServer) GetInstanceMetadataReturns(result1 *api.ImageMe
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceMetadataReturnsOnCall(i int, result1 *api.ImageMetadata, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceMetadataReturnsOnCall(i int, result1 *api.ImageMetadata, result2 string, result3 error) {
 	fake.getInstanceMetadataMutex.Lock()
 	defer fake.getInstanceMetadataMutex.Unlock()
 	fake.GetInstanceMetadataStub = nil
@@ -13277,7 +13277,7 @@ func (fake *FakeContainerServer) GetInstanceMetadataReturnsOnCall(i int, result1
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceNames(arg1 api.InstanceType) ([]string, error) {
+func (fake *FakeInstanceServer) GetInstanceNames(arg1 api.InstanceType) ([]string, error) {
 	fake.getInstanceNamesMutex.Lock()
 	ret, specificReturn := fake.getInstanceNamesReturnsOnCall[len(fake.getInstanceNamesArgsForCall)]
 	fake.getInstanceNamesArgsForCall = append(fake.getInstanceNamesArgsForCall, struct {
@@ -13296,26 +13296,26 @@ func (fake *FakeContainerServer) GetInstanceNames(arg1 api.InstanceType) ([]stri
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceNamesCallCount() int {
 	fake.getInstanceNamesMutex.RLock()
 	defer fake.getInstanceNamesMutex.RUnlock()
 	return len(fake.getInstanceNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesCalls(stub func(api.InstanceType) ([]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceNamesCalls(stub func(api.InstanceType) ([]string, error)) {
 	fake.getInstanceNamesMutex.Lock()
 	defer fake.getInstanceNamesMutex.Unlock()
 	fake.GetInstanceNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstanceNamesArgsForCall(i int) api.InstanceType {
 	fake.getInstanceNamesMutex.RLock()
 	defer fake.getInstanceNamesMutex.RUnlock()
 	argsForCall := fake.getInstanceNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceNamesReturns(result1 []string, result2 error) {
 	fake.getInstanceNamesMutex.Lock()
 	defer fake.getInstanceNamesMutex.Unlock()
 	fake.GetInstanceNamesStub = nil
@@ -13325,7 +13325,7 @@ func (fake *FakeContainerServer) GetInstanceNamesReturns(result1 []string, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getInstanceNamesMutex.Lock()
 	defer fake.getInstanceNamesMutex.Unlock()
 	fake.GetInstanceNamesStub = nil
@@ -13341,7 +13341,7 @@ func (fake *FakeContainerServer) GetInstanceNamesReturnsOnCall(i int, result1 []
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjects(arg1 api.InstanceType) (map[string][]string, error) {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjects(arg1 api.InstanceType) (map[string][]string, error) {
 	fake.getInstanceNamesAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getInstanceNamesAllProjectsReturnsOnCall[len(fake.getInstanceNamesAllProjectsArgsForCall)]
 	fake.getInstanceNamesAllProjectsArgsForCall = append(fake.getInstanceNamesAllProjectsArgsForCall, struct {
@@ -13360,26 +13360,26 @@ func (fake *FakeContainerServer) GetInstanceNamesAllProjects(arg1 api.InstanceTy
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjectsCallCount() int {
 	fake.getInstanceNamesAllProjectsMutex.RLock()
 	defer fake.getInstanceNamesAllProjectsMutex.RUnlock()
 	return len(fake.getInstanceNamesAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjectsCalls(stub func(api.InstanceType) (map[string][]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjectsCalls(stub func(api.InstanceType) (map[string][]string, error)) {
 	fake.getInstanceNamesAllProjectsMutex.Lock()
 	defer fake.getInstanceNamesAllProjectsMutex.Unlock()
 	fake.GetInstanceNamesAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjectsArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjectsArgsForCall(i int) api.InstanceType {
 	fake.getInstanceNamesAllProjectsMutex.RLock()
 	defer fake.getInstanceNamesAllProjectsMutex.RUnlock()
 	argsForCall := fake.getInstanceNamesAllProjectsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjectsReturns(result1 map[string][]string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjectsReturns(result1 map[string][]string, result2 error) {
 	fake.getInstanceNamesAllProjectsMutex.Lock()
 	defer fake.getInstanceNamesAllProjectsMutex.Unlock()
 	fake.GetInstanceNamesAllProjectsStub = nil
@@ -13389,7 +13389,7 @@ func (fake *FakeContainerServer) GetInstanceNamesAllProjectsReturns(result1 map[
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceNamesAllProjectsReturnsOnCall(i int, result1 map[string][]string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceNamesAllProjectsReturnsOnCall(i int, result1 map[string][]string, result2 error) {
 	fake.getInstanceNamesAllProjectsMutex.Lock()
 	defer fake.getInstanceNamesAllProjectsMutex.Unlock()
 	fake.GetInstanceNamesAllProjectsStub = nil
@@ -13405,7 +13405,7 @@ func (fake *FakeContainerServer) GetInstanceNamesAllProjectsReturnsOnCall(i int,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshot(arg1 string, arg2 string) (*api.InstanceSnapshot, string, error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshot(arg1 string, arg2 string) (*api.InstanceSnapshot, string, error) {
 	fake.getInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.getInstanceSnapshotReturnsOnCall[len(fake.getInstanceSnapshotArgsForCall)]
 	fake.getInstanceSnapshotArgsForCall = append(fake.getInstanceSnapshotArgsForCall, struct {
@@ -13425,26 +13425,26 @@ func (fake *FakeContainerServer) GetInstanceSnapshot(arg1 string, arg2 string) (
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceSnapshotCallCount() int {
 	fake.getInstanceSnapshotMutex.RLock()
 	defer fake.getInstanceSnapshotMutex.RUnlock()
 	return len(fake.getInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotCalls(stub func(string, string) (*api.InstanceSnapshot, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotCalls(stub func(string, string) (*api.InstanceSnapshot, string, error)) {
 	fake.getInstanceSnapshotMutex.Lock()
 	defer fake.getInstanceSnapshotMutex.Unlock()
 	fake.GetInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotArgsForCall(i int) (string, string) {
 	fake.getInstanceSnapshotMutex.RLock()
 	defer fake.getInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.getInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotReturns(result1 *api.InstanceSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotReturns(result1 *api.InstanceSnapshot, result2 string, result3 error) {
 	fake.getInstanceSnapshotMutex.Lock()
 	defer fake.getInstanceSnapshotMutex.Unlock()
 	fake.GetInstanceSnapshotStub = nil
@@ -13455,7 +13455,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotReturns(result1 *api.Instanc
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotReturnsOnCall(i int, result1 *api.InstanceSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotReturnsOnCall(i int, result1 *api.InstanceSnapshot, result2 string, result3 error) {
 	fake.getInstanceSnapshotMutex.Lock()
 	defer fake.getInstanceSnapshotMutex.Unlock()
 	fake.GetInstanceSnapshotStub = nil
@@ -13473,7 +13473,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotReturnsOnCall(i int, result1
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNames(arg1 string) ([]string, error) {
 	fake.getInstanceSnapshotNamesMutex.Lock()
 	ret, specificReturn := fake.getInstanceSnapshotNamesReturnsOnCall[len(fake.getInstanceSnapshotNamesArgsForCall)]
 	fake.getInstanceSnapshotNamesArgsForCall = append(fake.getInstanceSnapshotNamesArgsForCall, struct {
@@ -13492,26 +13492,26 @@ func (fake *FakeContainerServer) GetInstanceSnapshotNames(arg1 string) ([]string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNamesCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNamesCallCount() int {
 	fake.getInstanceSnapshotNamesMutex.RLock()
 	defer fake.getInstanceSnapshotNamesMutex.RUnlock()
 	return len(fake.getInstanceSnapshotNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNamesCalls(stub func(string) ([]string, error)) {
 	fake.getInstanceSnapshotNamesMutex.Lock()
 	defer fake.getInstanceSnapshotNamesMutex.Unlock()
 	fake.GetInstanceSnapshotNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNamesArgsForCall(i int) string {
 	fake.getInstanceSnapshotNamesMutex.RLock()
 	defer fake.getInstanceSnapshotNamesMutex.RUnlock()
 	argsForCall := fake.getInstanceSnapshotNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNamesReturns(result1 []string, result2 error) {
 	fake.getInstanceSnapshotNamesMutex.Lock()
 	defer fake.getInstanceSnapshotNamesMutex.Unlock()
 	fake.GetInstanceSnapshotNamesStub = nil
@@ -13521,7 +13521,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotNamesReturns(result1 []strin
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getInstanceSnapshotNamesMutex.Lock()
 	defer fake.getInstanceSnapshotNamesMutex.Unlock()
 	fake.GetInstanceSnapshotNamesStub = nil
@@ -13537,7 +13537,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotNamesReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshots(arg1 string) ([]api.InstanceSnapshot, error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshots(arg1 string) ([]api.InstanceSnapshot, error) {
 	fake.getInstanceSnapshotsMutex.Lock()
 	ret, specificReturn := fake.getInstanceSnapshotsReturnsOnCall[len(fake.getInstanceSnapshotsArgsForCall)]
 	fake.getInstanceSnapshotsArgsForCall = append(fake.getInstanceSnapshotsArgsForCall, struct {
@@ -13556,26 +13556,26 @@ func (fake *FakeContainerServer) GetInstanceSnapshots(arg1 string) ([]api.Instan
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotsCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceSnapshotsCallCount() int {
 	fake.getInstanceSnapshotsMutex.RLock()
 	defer fake.getInstanceSnapshotsMutex.RUnlock()
 	return len(fake.getInstanceSnapshotsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotsCalls(stub func(string) ([]api.InstanceSnapshot, error)) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotsCalls(stub func(string) ([]api.InstanceSnapshot, error)) {
 	fake.getInstanceSnapshotsMutex.Lock()
 	defer fake.getInstanceSnapshotsMutex.Unlock()
 	fake.GetInstanceSnapshotsStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceSnapshotsArgsForCall(i int) string {
 	fake.getInstanceSnapshotsMutex.RLock()
 	defer fake.getInstanceSnapshotsMutex.RUnlock()
 	argsForCall := fake.getInstanceSnapshotsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotsReturns(result1 []api.InstanceSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotsReturns(result1 []api.InstanceSnapshot, result2 error) {
 	fake.getInstanceSnapshotsMutex.Lock()
 	defer fake.getInstanceSnapshotsMutex.Unlock()
 	fake.GetInstanceSnapshotsStub = nil
@@ -13585,7 +13585,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotsReturns(result1 []api.Insta
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceSnapshotsReturnsOnCall(i int, result1 []api.InstanceSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceSnapshotsReturnsOnCall(i int, result1 []api.InstanceSnapshot, result2 error) {
 	fake.getInstanceSnapshotsMutex.Lock()
 	defer fake.getInstanceSnapshotsMutex.Unlock()
 	fake.GetInstanceSnapshotsStub = nil
@@ -13601,7 +13601,7 @@ func (fake *FakeContainerServer) GetInstanceSnapshotsReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceState(arg1 string) (*api.InstanceState, string, error) {
+func (fake *FakeInstanceServer) GetInstanceState(arg1 string) (*api.InstanceState, string, error) {
 	fake.getInstanceStateMutex.Lock()
 	ret, specificReturn := fake.getInstanceStateReturnsOnCall[len(fake.getInstanceStateArgsForCall)]
 	fake.getInstanceStateArgsForCall = append(fake.getInstanceStateArgsForCall, struct {
@@ -13620,26 +13620,26 @@ func (fake *FakeContainerServer) GetInstanceState(arg1 string) (*api.InstanceSta
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetInstanceStateCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceStateCallCount() int {
 	fake.getInstanceStateMutex.RLock()
 	defer fake.getInstanceStateMutex.RUnlock()
 	return len(fake.getInstanceStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceStateCalls(stub func(string) (*api.InstanceState, string, error)) {
+func (fake *FakeInstanceServer) GetInstanceStateCalls(stub func(string) (*api.InstanceState, string, error)) {
 	fake.getInstanceStateMutex.Lock()
 	defer fake.getInstanceStateMutex.Unlock()
 	fake.GetInstanceStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceStateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceStateArgsForCall(i int) string {
 	fake.getInstanceStateMutex.RLock()
 	defer fake.getInstanceStateMutex.RUnlock()
 	argsForCall := fake.getInstanceStateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceStateReturns(result1 *api.InstanceState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceStateReturns(result1 *api.InstanceState, result2 string, result3 error) {
 	fake.getInstanceStateMutex.Lock()
 	defer fake.getInstanceStateMutex.Unlock()
 	fake.GetInstanceStateStub = nil
@@ -13650,7 +13650,7 @@ func (fake *FakeContainerServer) GetInstanceStateReturns(result1 *api.InstanceSt
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceStateReturnsOnCall(i int, result1 *api.InstanceState, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetInstanceStateReturnsOnCall(i int, result1 *api.InstanceState, result2 string, result3 error) {
 	fake.getInstanceStateMutex.Lock()
 	defer fake.getInstanceStateMutex.Unlock()
 	fake.GetInstanceStateStub = nil
@@ -13668,7 +13668,7 @@ func (fake *FakeContainerServer) GetInstanceStateReturnsOnCall(i int, result1 *a
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFile(arg1 string, arg2 string) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFile(arg1 string, arg2 string) (io.ReadCloser, error) {
 	fake.getInstanceTemplateFileMutex.Lock()
 	ret, specificReturn := fake.getInstanceTemplateFileReturnsOnCall[len(fake.getInstanceTemplateFileArgsForCall)]
 	fake.getInstanceTemplateFileArgsForCall = append(fake.getInstanceTemplateFileArgsForCall, struct {
@@ -13688,26 +13688,26 @@ func (fake *FakeContainerServer) GetInstanceTemplateFile(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceTemplateFileCallCount() int {
 	fake.getInstanceTemplateFileMutex.RLock()
 	defer fake.getInstanceTemplateFileMutex.RUnlock()
 	return len(fake.getInstanceTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFileCalls(stub func(string, string) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFileCalls(stub func(string, string) (io.ReadCloser, error)) {
 	fake.getInstanceTemplateFileMutex.Lock()
 	defer fake.getInstanceTemplateFileMutex.Unlock()
 	fake.GetInstanceTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFileArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFileArgsForCall(i int) (string, string) {
 	fake.getInstanceTemplateFileMutex.RLock()
 	defer fake.getInstanceTemplateFileMutex.RUnlock()
 	argsForCall := fake.getInstanceTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFileReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFileReturns(result1 io.ReadCloser, result2 error) {
 	fake.getInstanceTemplateFileMutex.Lock()
 	defer fake.getInstanceTemplateFileMutex.Unlock()
 	fake.GetInstanceTemplateFileStub = nil
@@ -13717,7 +13717,7 @@ func (fake *FakeContainerServer) GetInstanceTemplateFileReturns(result1 io.ReadC
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getInstanceTemplateFileMutex.Lock()
 	defer fake.getInstanceTemplateFileMutex.Unlock()
 	fake.GetInstanceTemplateFileStub = nil
@@ -13733,7 +13733,7 @@ func (fake *FakeContainerServer) GetInstanceTemplateFileReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFiles(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFiles(arg1 string) ([]string, error) {
 	fake.getInstanceTemplateFilesMutex.Lock()
 	ret, specificReturn := fake.getInstanceTemplateFilesReturnsOnCall[len(fake.getInstanceTemplateFilesArgsForCall)]
 	fake.getInstanceTemplateFilesArgsForCall = append(fake.getInstanceTemplateFilesArgsForCall, struct {
@@ -13752,26 +13752,26 @@ func (fake *FakeContainerServer) GetInstanceTemplateFiles(arg1 string) ([]string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFilesCallCount() int {
+func (fake *FakeInstanceServer) GetInstanceTemplateFilesCallCount() int {
 	fake.getInstanceTemplateFilesMutex.RLock()
 	defer fake.getInstanceTemplateFilesMutex.RUnlock()
 	return len(fake.getInstanceTemplateFilesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFilesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFilesCalls(stub func(string) ([]string, error)) {
 	fake.getInstanceTemplateFilesMutex.Lock()
 	defer fake.getInstanceTemplateFilesMutex.Unlock()
 	fake.GetInstanceTemplateFilesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFilesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetInstanceTemplateFilesArgsForCall(i int) string {
 	fake.getInstanceTemplateFilesMutex.RLock()
 	defer fake.getInstanceTemplateFilesMutex.RUnlock()
 	argsForCall := fake.getInstanceTemplateFilesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFilesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFilesReturns(result1 []string, result2 error) {
 	fake.getInstanceTemplateFilesMutex.Lock()
 	defer fake.getInstanceTemplateFilesMutex.Unlock()
 	fake.GetInstanceTemplateFilesStub = nil
@@ -13781,7 +13781,7 @@ func (fake *FakeContainerServer) GetInstanceTemplateFilesReturns(result1 []strin
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstanceTemplateFilesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetInstanceTemplateFilesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getInstanceTemplateFilesMutex.Lock()
 	defer fake.getInstanceTemplateFilesMutex.Unlock()
 	fake.GetInstanceTemplateFilesStub = nil
@@ -13797,7 +13797,7 @@ func (fake *FakeContainerServer) GetInstanceTemplateFilesReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstances(arg1 api.InstanceType) ([]api.Instance, error) {
+func (fake *FakeInstanceServer) GetInstances(arg1 api.InstanceType) ([]api.Instance, error) {
 	fake.getInstancesMutex.Lock()
 	ret, specificReturn := fake.getInstancesReturnsOnCall[len(fake.getInstancesArgsForCall)]
 	fake.getInstancesArgsForCall = append(fake.getInstancesArgsForCall, struct {
@@ -13816,26 +13816,26 @@ func (fake *FakeContainerServer) GetInstances(arg1 api.InstanceType) ([]api.Inst
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesCallCount() int {
 	fake.getInstancesMutex.RLock()
 	defer fake.getInstancesMutex.RUnlock()
 	return len(fake.getInstancesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesCalls(stub func(api.InstanceType) ([]api.Instance, error)) {
+func (fake *FakeInstanceServer) GetInstancesCalls(stub func(api.InstanceType) ([]api.Instance, error)) {
 	fake.getInstancesMutex.Lock()
 	defer fake.getInstancesMutex.Unlock()
 	fake.GetInstancesStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstancesArgsForCall(i int) api.InstanceType {
 	fake.getInstancesMutex.RLock()
 	defer fake.getInstancesMutex.RUnlock()
 	argsForCall := fake.getInstancesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstancesReturns(result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesReturns(result1 []api.Instance, result2 error) {
 	fake.getInstancesMutex.Lock()
 	defer fake.getInstancesMutex.Unlock()
 	fake.GetInstancesStub = nil
@@ -13845,7 +13845,7 @@ func (fake *FakeContainerServer) GetInstancesReturns(result1 []api.Instance, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesReturnsOnCall(i int, result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesReturnsOnCall(i int, result1 []api.Instance, result2 error) {
 	fake.getInstancesMutex.Lock()
 	defer fake.getInstancesMutex.Unlock()
 	fake.GetInstancesStub = nil
@@ -13861,7 +13861,7 @@ func (fake *FakeContainerServer) GetInstancesReturnsOnCall(i int, result1 []api.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjects(arg1 api.InstanceType) ([]api.Instance, error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjects(arg1 api.InstanceType) ([]api.Instance, error) {
 	fake.getInstancesAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getInstancesAllProjectsReturnsOnCall[len(fake.getInstancesAllProjectsArgsForCall)]
 	fake.getInstancesAllProjectsArgsForCall = append(fake.getInstancesAllProjectsArgsForCall, struct {
@@ -13880,26 +13880,26 @@ func (fake *FakeContainerServer) GetInstancesAllProjects(arg1 api.InstanceType) 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsCallCount() int {
 	fake.getInstancesAllProjectsMutex.RLock()
 	defer fake.getInstancesAllProjectsMutex.RUnlock()
 	return len(fake.getInstancesAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsCalls(stub func(api.InstanceType) ([]api.Instance, error)) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsCalls(stub func(api.InstanceType) ([]api.Instance, error)) {
 	fake.getInstancesAllProjectsMutex.Lock()
 	defer fake.getInstancesAllProjectsMutex.Unlock()
 	fake.GetInstancesAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsArgsForCall(i int) api.InstanceType {
 	fake.getInstancesAllProjectsMutex.RLock()
 	defer fake.getInstancesAllProjectsMutex.RUnlock()
 	argsForCall := fake.getInstancesAllProjectsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsReturns(result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsReturns(result1 []api.Instance, result2 error) {
 	fake.getInstancesAllProjectsMutex.Lock()
 	defer fake.getInstancesAllProjectsMutex.Unlock()
 	fake.GetInstancesAllProjectsStub = nil
@@ -13909,7 +13909,7 @@ func (fake *FakeContainerServer) GetInstancesAllProjectsReturns(result1 []api.In
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsReturnsOnCall(i int, result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsReturnsOnCall(i int, result1 []api.Instance, result2 error) {
 	fake.getInstancesAllProjectsMutex.Lock()
 	defer fake.getInstancesAllProjectsMutex.Unlock()
 	fake.GetInstancesAllProjectsStub = nil
@@ -13925,7 +13925,7 @@ func (fake *FakeContainerServer) GetInstancesAllProjectsReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.Instance, error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.Instance, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -13950,26 +13950,26 @@ func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilter(arg1 api.Inst
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilterCallCount() int {
 	fake.getInstancesAllProjectsWithFilterMutex.RLock()
 	defer fake.getInstancesAllProjectsWithFilterMutex.RUnlock()
 	return len(fake.getInstancesAllProjectsWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterCalls(stub func(api.InstanceType, []string) ([]api.Instance, error)) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilterCalls(stub func(api.InstanceType, []string) ([]api.Instance, error)) {
 	fake.getInstancesAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesAllProjectsWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterArgsForCall(i int) (api.InstanceType, []string) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilterArgsForCall(i int) (api.InstanceType, []string) {
 	fake.getInstancesAllProjectsWithFilterMutex.RLock()
 	defer fake.getInstancesAllProjectsWithFilterMutex.RUnlock()
 	argsForCall := fake.getInstancesAllProjectsWithFilterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterReturns(result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilterReturns(result1 []api.Instance, result2 error) {
 	fake.getInstancesAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesAllProjectsWithFilterStub = nil
@@ -13979,7 +13979,7 @@ func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterReturns(result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterReturnsOnCall(i int, result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesAllProjectsWithFilterReturnsOnCall(i int, result1 []api.Instance, result2 error) {
 	fake.getInstancesAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesAllProjectsWithFilterStub = nil
@@ -13995,7 +13995,7 @@ func (fake *FakeContainerServer) GetInstancesAllProjectsWithFilterReturnsOnCall(
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFull(arg1 api.InstanceType) ([]api.InstanceFull, error) {
+func (fake *FakeInstanceServer) GetInstancesFull(arg1 api.InstanceType) ([]api.InstanceFull, error) {
 	fake.getInstancesFullMutex.Lock()
 	ret, specificReturn := fake.getInstancesFullReturnsOnCall[len(fake.getInstancesFullArgsForCall)]
 	fake.getInstancesFullArgsForCall = append(fake.getInstancesFullArgsForCall, struct {
@@ -14014,26 +14014,26 @@ func (fake *FakeContainerServer) GetInstancesFull(arg1 api.InstanceType) ([]api.
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesFullCallCount() int {
 	fake.getInstancesFullMutex.RLock()
 	defer fake.getInstancesFullMutex.RUnlock()
 	return len(fake.getInstancesFullArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesFullCalls(stub func(api.InstanceType) ([]api.InstanceFull, error)) {
+func (fake *FakeInstanceServer) GetInstancesFullCalls(stub func(api.InstanceType) ([]api.InstanceFull, error)) {
 	fake.getInstancesFullMutex.Lock()
 	defer fake.getInstancesFullMutex.Unlock()
 	fake.GetInstancesFullStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesFullArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstancesFullArgsForCall(i int) api.InstanceType {
 	fake.getInstancesFullMutex.RLock()
 	defer fake.getInstancesFullMutex.RUnlock()
 	argsForCall := fake.getInstancesFullArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstancesFullReturns(result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullReturns(result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullMutex.Lock()
 	defer fake.getInstancesFullMutex.Unlock()
 	fake.GetInstancesFullStub = nil
@@ -14043,7 +14043,7 @@ func (fake *FakeContainerServer) GetInstancesFullReturns(result1 []api.InstanceF
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullMutex.Lock()
 	defer fake.getInstancesFullMutex.Unlock()
 	fake.GetInstancesFullStub = nil
@@ -14059,7 +14059,7 @@ func (fake *FakeContainerServer) GetInstancesFullReturnsOnCall(i int, result1 []
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjects(arg1 api.InstanceType) ([]api.InstanceFull, error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjects(arg1 api.InstanceType) ([]api.InstanceFull, error) {
 	fake.getInstancesFullAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getInstancesFullAllProjectsReturnsOnCall[len(fake.getInstancesFullAllProjectsArgsForCall)]
 	fake.getInstancesFullAllProjectsArgsForCall = append(fake.getInstancesFullAllProjectsArgsForCall, struct {
@@ -14078,26 +14078,26 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjects(arg1 api.InstanceTy
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsCallCount() int {
 	fake.getInstancesFullAllProjectsMutex.RLock()
 	defer fake.getInstancesFullAllProjectsMutex.RUnlock()
 	return len(fake.getInstancesFullAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsCalls(stub func(api.InstanceType) ([]api.InstanceFull, error)) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsCalls(stub func(api.InstanceType) ([]api.InstanceFull, error)) {
 	fake.getInstancesFullAllProjectsMutex.Lock()
 	defer fake.getInstancesFullAllProjectsMutex.Unlock()
 	fake.GetInstancesFullAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsArgsForCall(i int) api.InstanceType {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsArgsForCall(i int) api.InstanceType {
 	fake.getInstancesFullAllProjectsMutex.RLock()
 	defer fake.getInstancesFullAllProjectsMutex.RUnlock()
 	argsForCall := fake.getInstancesFullAllProjectsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsReturns(result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsReturns(result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullAllProjectsMutex.Lock()
 	defer fake.getInstancesFullAllProjectsMutex.Unlock()
 	fake.GetInstancesFullAllProjectsStub = nil
@@ -14107,7 +14107,7 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjectsReturns(result1 []ap
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullAllProjectsMutex.Lock()
 	defer fake.getInstancesFullAllProjectsMutex.Unlock()
 	fake.GetInstancesFullAllProjectsStub = nil
@@ -14123,7 +14123,7 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjectsReturnsOnCall(i int,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.InstanceFull, error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.InstanceFull, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -14148,26 +14148,26 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilter(arg1 api.
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilterCallCount() int {
 	fake.getInstancesFullAllProjectsWithFilterMutex.RLock()
 	defer fake.getInstancesFullAllProjectsWithFilterMutex.RUnlock()
 	return len(fake.getInstancesFullAllProjectsWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterCalls(stub func(api.InstanceType, []string) ([]api.InstanceFull, error)) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilterCalls(stub func(api.InstanceType, []string) ([]api.InstanceFull, error)) {
 	fake.getInstancesFullAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesFullAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesFullAllProjectsWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterArgsForCall(i int) (api.InstanceType, []string) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilterArgsForCall(i int) (api.InstanceType, []string) {
 	fake.getInstancesFullAllProjectsWithFilterMutex.RLock()
 	defer fake.getInstancesFullAllProjectsWithFilterMutex.RUnlock()
 	argsForCall := fake.getInstancesFullAllProjectsWithFilterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterReturns(result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilterReturns(result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesFullAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesFullAllProjectsWithFilterStub = nil
@@ -14177,7 +14177,7 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterReturns(re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullAllProjectsWithFilterReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullAllProjectsWithFilterMutex.Lock()
 	defer fake.getInstancesFullAllProjectsWithFilterMutex.Unlock()
 	fake.GetInstancesFullAllProjectsWithFilterStub = nil
@@ -14193,7 +14193,7 @@ func (fake *FakeContainerServer) GetInstancesFullAllProjectsWithFilterReturnsOnC
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.InstanceFull, error) {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.InstanceFull, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -14218,26 +14218,26 @@ func (fake *FakeContainerServer) GetInstancesFullWithFilter(arg1 api.InstanceTyp
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilterCallCount() int {
 	fake.getInstancesFullWithFilterMutex.RLock()
 	defer fake.getInstancesFullWithFilterMutex.RUnlock()
 	return len(fake.getInstancesFullWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilterCalls(stub func(api.InstanceType, []string) ([]api.InstanceFull, error)) {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilterCalls(stub func(api.InstanceType, []string) ([]api.InstanceFull, error)) {
 	fake.getInstancesFullWithFilterMutex.Lock()
 	defer fake.getInstancesFullWithFilterMutex.Unlock()
 	fake.GetInstancesFullWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilterArgsForCall(i int) (api.InstanceType, []string) {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilterArgsForCall(i int) (api.InstanceType, []string) {
 	fake.getInstancesFullWithFilterMutex.RLock()
 	defer fake.getInstancesFullWithFilterMutex.RUnlock()
 	argsForCall := fake.getInstancesFullWithFilterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilterReturns(result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilterReturns(result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullWithFilterMutex.Lock()
 	defer fake.getInstancesFullWithFilterMutex.Unlock()
 	fake.GetInstancesFullWithFilterStub = nil
@@ -14247,7 +14247,7 @@ func (fake *FakeContainerServer) GetInstancesFullWithFilterReturns(result1 []api
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesFullWithFilterReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesFullWithFilterReturnsOnCall(i int, result1 []api.InstanceFull, result2 error) {
 	fake.getInstancesFullWithFilterMutex.Lock()
 	defer fake.getInstancesFullWithFilterMutex.Unlock()
 	fake.GetInstancesFullWithFilterStub = nil
@@ -14263,7 +14263,7 @@ func (fake *FakeContainerServer) GetInstancesFullWithFilterReturnsOnCall(i int, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.Instance, error) {
+func (fake *FakeInstanceServer) GetInstancesWithFilter(arg1 api.InstanceType, arg2 []string) ([]api.Instance, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -14288,26 +14288,26 @@ func (fake *FakeContainerServer) GetInstancesWithFilter(arg1 api.InstanceType, a
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetInstancesWithFilterCallCount() int {
 	fake.getInstancesWithFilterMutex.RLock()
 	defer fake.getInstancesWithFilterMutex.RUnlock()
 	return len(fake.getInstancesWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilterCalls(stub func(api.InstanceType, []string) ([]api.Instance, error)) {
+func (fake *FakeInstanceServer) GetInstancesWithFilterCalls(stub func(api.InstanceType, []string) ([]api.Instance, error)) {
 	fake.getInstancesWithFilterMutex.Lock()
 	defer fake.getInstancesWithFilterMutex.Unlock()
 	fake.GetInstancesWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilterArgsForCall(i int) (api.InstanceType, []string) {
+func (fake *FakeInstanceServer) GetInstancesWithFilterArgsForCall(i int) (api.InstanceType, []string) {
 	fake.getInstancesWithFilterMutex.RLock()
 	defer fake.getInstancesWithFilterMutex.RUnlock()
 	argsForCall := fake.getInstancesWithFilterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilterReturns(result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesWithFilterReturns(result1 []api.Instance, result2 error) {
 	fake.getInstancesWithFilterMutex.Lock()
 	defer fake.getInstancesWithFilterMutex.Unlock()
 	fake.GetInstancesWithFilterStub = nil
@@ -14317,7 +14317,7 @@ func (fake *FakeContainerServer) GetInstancesWithFilterReturns(result1 []api.Ins
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetInstancesWithFilterReturnsOnCall(i int, result1 []api.Instance, result2 error) {
+func (fake *FakeInstanceServer) GetInstancesWithFilterReturnsOnCall(i int, result1 []api.Instance, result2 error) {
 	fake.getInstancesWithFilterMutex.Lock()
 	defer fake.getInstancesWithFilterMutex.Unlock()
 	fake.GetInstancesWithFilterStub = nil
@@ -14333,7 +14333,7 @@ func (fake *FakeContainerServer) GetInstancesWithFilterReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetMetrics() (string, error) {
+func (fake *FakeInstanceServer) GetMetrics() (string, error) {
 	fake.getMetricsMutex.Lock()
 	ret, specificReturn := fake.getMetricsReturnsOnCall[len(fake.getMetricsArgsForCall)]
 	fake.getMetricsArgsForCall = append(fake.getMetricsArgsForCall, struct {
@@ -14351,19 +14351,19 @@ func (fake *FakeContainerServer) GetMetrics() (string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetMetricsCallCount() int {
+func (fake *FakeInstanceServer) GetMetricsCallCount() int {
 	fake.getMetricsMutex.RLock()
 	defer fake.getMetricsMutex.RUnlock()
 	return len(fake.getMetricsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetMetricsCalls(stub func() (string, error)) {
+func (fake *FakeInstanceServer) GetMetricsCalls(stub func() (string, error)) {
 	fake.getMetricsMutex.Lock()
 	defer fake.getMetricsMutex.Unlock()
 	fake.GetMetricsStub = stub
 }
 
-func (fake *FakeContainerServer) GetMetricsReturns(result1 string, result2 error) {
+func (fake *FakeInstanceServer) GetMetricsReturns(result1 string, result2 error) {
 	fake.getMetricsMutex.Lock()
 	defer fake.getMetricsMutex.Unlock()
 	fake.GetMetricsStub = nil
@@ -14373,7 +14373,7 @@ func (fake *FakeContainerServer) GetMetricsReturns(result1 string, result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetMetricsReturnsOnCall(i int, result1 string, result2 error) {
+func (fake *FakeInstanceServer) GetMetricsReturnsOnCall(i int, result1 string, result2 error) {
 	fake.getMetricsMutex.Lock()
 	defer fake.getMetricsMutex.Unlock()
 	fake.GetMetricsStub = nil
@@ -14389,7 +14389,7 @@ func (fake *FakeContainerServer) GetMetricsReturnsOnCall(i int, result1 string, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetwork(arg1 string) (*api.Network, string, error) {
+func (fake *FakeInstanceServer) GetNetwork(arg1 string) (*api.Network, string, error) {
 	fake.getNetworkMutex.Lock()
 	ret, specificReturn := fake.getNetworkReturnsOnCall[len(fake.getNetworkArgsForCall)]
 	fake.getNetworkArgsForCall = append(fake.getNetworkArgsForCall, struct {
@@ -14408,26 +14408,26 @@ func (fake *FakeContainerServer) GetNetwork(arg1 string) (*api.Network, string, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkCallCount() int {
 	fake.getNetworkMutex.RLock()
 	defer fake.getNetworkMutex.RUnlock()
 	return len(fake.getNetworkArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkCalls(stub func(string) (*api.Network, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkCalls(stub func(string) (*api.Network, string, error)) {
 	fake.getNetworkMutex.Lock()
 	defer fake.getNetworkMutex.Unlock()
 	fake.GetNetworkStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkArgsForCall(i int) string {
 	fake.getNetworkMutex.RLock()
 	defer fake.getNetworkMutex.RUnlock()
 	argsForCall := fake.getNetworkArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkReturns(result1 *api.Network, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkReturns(result1 *api.Network, result2 string, result3 error) {
 	fake.getNetworkMutex.Lock()
 	defer fake.getNetworkMutex.Unlock()
 	fake.GetNetworkStub = nil
@@ -14438,7 +14438,7 @@ func (fake *FakeContainerServer) GetNetworkReturns(result1 *api.Network, result2
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkReturnsOnCall(i int, result1 *api.Network, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkReturnsOnCall(i int, result1 *api.Network, result2 string, result3 error) {
 	fake.getNetworkMutex.Lock()
 	defer fake.getNetworkMutex.Unlock()
 	fake.GetNetworkStub = nil
@@ -14456,7 +14456,7 @@ func (fake *FakeContainerServer) GetNetworkReturnsOnCall(i int, result1 *api.Net
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkACL(arg1 string) (*api.NetworkACL, string, error) {
+func (fake *FakeInstanceServer) GetNetworkACL(arg1 string) (*api.NetworkACL, string, error) {
 	fake.getNetworkACLMutex.Lock()
 	ret, specificReturn := fake.getNetworkACLReturnsOnCall[len(fake.getNetworkACLArgsForCall)]
 	fake.getNetworkACLArgsForCall = append(fake.getNetworkACLArgsForCall, struct {
@@ -14475,26 +14475,26 @@ func (fake *FakeContainerServer) GetNetworkACL(arg1 string) (*api.NetworkACL, st
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkACLCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkACLCallCount() int {
 	fake.getNetworkACLMutex.RLock()
 	defer fake.getNetworkACLMutex.RUnlock()
 	return len(fake.getNetworkACLArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkACLCalls(stub func(string) (*api.NetworkACL, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkACLCalls(stub func(string) (*api.NetworkACL, string, error)) {
 	fake.getNetworkACLMutex.Lock()
 	defer fake.getNetworkACLMutex.Unlock()
 	fake.GetNetworkACLStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkACLArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkACLArgsForCall(i int) string {
 	fake.getNetworkACLMutex.RLock()
 	defer fake.getNetworkACLMutex.RUnlock()
 	argsForCall := fake.getNetworkACLArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkACLReturns(result1 *api.NetworkACL, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkACLReturns(result1 *api.NetworkACL, result2 string, result3 error) {
 	fake.getNetworkACLMutex.Lock()
 	defer fake.getNetworkACLMutex.Unlock()
 	fake.GetNetworkACLStub = nil
@@ -14505,7 +14505,7 @@ func (fake *FakeContainerServer) GetNetworkACLReturns(result1 *api.NetworkACL, r
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLReturnsOnCall(i int, result1 *api.NetworkACL, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkACLReturnsOnCall(i int, result1 *api.NetworkACL, result2 string, result3 error) {
 	fake.getNetworkACLMutex.Lock()
 	defer fake.getNetworkACLMutex.Unlock()
 	fake.GetNetworkACLStub = nil
@@ -14523,7 +14523,7 @@ func (fake *FakeContainerServer) GetNetworkACLReturnsOnCall(i int, result1 *api.
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfile(arg1 string) (io.ReadCloser, error) {
+func (fake *FakeInstanceServer) GetNetworkACLLogfile(arg1 string) (io.ReadCloser, error) {
 	fake.getNetworkACLLogfileMutex.Lock()
 	ret, specificReturn := fake.getNetworkACLLogfileReturnsOnCall[len(fake.getNetworkACLLogfileArgsForCall)]
 	fake.getNetworkACLLogfileArgsForCall = append(fake.getNetworkACLLogfileArgsForCall, struct {
@@ -14542,26 +14542,26 @@ func (fake *FakeContainerServer) GetNetworkACLLogfile(arg1 string) (io.ReadClose
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfileCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkACLLogfileCallCount() int {
 	fake.getNetworkACLLogfileMutex.RLock()
 	defer fake.getNetworkACLLogfileMutex.RUnlock()
 	return len(fake.getNetworkACLLogfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfileCalls(stub func(string) (io.ReadCloser, error)) {
+func (fake *FakeInstanceServer) GetNetworkACLLogfileCalls(stub func(string) (io.ReadCloser, error)) {
 	fake.getNetworkACLLogfileMutex.Lock()
 	defer fake.getNetworkACLLogfileMutex.Unlock()
 	fake.GetNetworkACLLogfileStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfileArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkACLLogfileArgsForCall(i int) string {
 	fake.getNetworkACLLogfileMutex.RLock()
 	defer fake.getNetworkACLLogfileMutex.RUnlock()
 	argsForCall := fake.getNetworkACLLogfileArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfileReturns(result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLLogfileReturns(result1 io.ReadCloser, result2 error) {
 	fake.getNetworkACLLogfileMutex.Lock()
 	defer fake.getNetworkACLLogfileMutex.Unlock()
 	fake.GetNetworkACLLogfileStub = nil
@@ -14571,7 +14571,7 @@ func (fake *FakeContainerServer) GetNetworkACLLogfileReturns(result1 io.ReadClos
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLLogfileReturnsOnCall(i int, result1 io.ReadCloser, result2 error) {
 	fake.getNetworkACLLogfileMutex.Lock()
 	defer fake.getNetworkACLLogfileMutex.Unlock()
 	fake.GetNetworkACLLogfileStub = nil
@@ -14587,7 +14587,7 @@ func (fake *FakeContainerServer) GetNetworkACLLogfileReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkACLNames() ([]string, error) {
 	fake.getNetworkACLNamesMutex.Lock()
 	ret, specificReturn := fake.getNetworkACLNamesReturnsOnCall[len(fake.getNetworkACLNamesArgsForCall)]
 	fake.getNetworkACLNamesArgsForCall = append(fake.getNetworkACLNamesArgsForCall, struct {
@@ -14605,19 +14605,19 @@ func (fake *FakeContainerServer) GetNetworkACLNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkACLNamesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkACLNamesCallCount() int {
 	fake.getNetworkACLNamesMutex.RLock()
 	defer fake.getNetworkACLNamesMutex.RUnlock()
 	return len(fake.getNetworkACLNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkACLNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkACLNamesCalls(stub func() ([]string, error)) {
 	fake.getNetworkACLNamesMutex.Lock()
 	defer fake.getNetworkACLNamesMutex.Unlock()
 	fake.GetNetworkACLNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkACLNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLNamesReturns(result1 []string, result2 error) {
 	fake.getNetworkACLNamesMutex.Lock()
 	defer fake.getNetworkACLNamesMutex.Unlock()
 	fake.GetNetworkACLNamesStub = nil
@@ -14627,7 +14627,7 @@ func (fake *FakeContainerServer) GetNetworkACLNamesReturns(result1 []string, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkACLNamesMutex.Lock()
 	defer fake.getNetworkACLNamesMutex.Unlock()
 	fake.GetNetworkACLNamesStub = nil
@@ -14643,7 +14643,7 @@ func (fake *FakeContainerServer) GetNetworkACLNamesReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLs() ([]api.NetworkACL, error) {
+func (fake *FakeInstanceServer) GetNetworkACLs() ([]api.NetworkACL, error) {
 	fake.getNetworkACLsMutex.Lock()
 	ret, specificReturn := fake.getNetworkACLsReturnsOnCall[len(fake.getNetworkACLsArgsForCall)]
 	fake.getNetworkACLsArgsForCall = append(fake.getNetworkACLsArgsForCall, struct {
@@ -14661,19 +14661,19 @@ func (fake *FakeContainerServer) GetNetworkACLs() ([]api.NetworkACL, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkACLsCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkACLsCallCount() int {
 	fake.getNetworkACLsMutex.RLock()
 	defer fake.getNetworkACLsMutex.RUnlock()
 	return len(fake.getNetworkACLsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkACLsCalls(stub func() ([]api.NetworkACL, error)) {
+func (fake *FakeInstanceServer) GetNetworkACLsCalls(stub func() ([]api.NetworkACL, error)) {
 	fake.getNetworkACLsMutex.Lock()
 	defer fake.getNetworkACLsMutex.Unlock()
 	fake.GetNetworkACLsStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkACLsReturns(result1 []api.NetworkACL, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLsReturns(result1 []api.NetworkACL, result2 error) {
 	fake.getNetworkACLsMutex.Lock()
 	defer fake.getNetworkACLsMutex.Unlock()
 	fake.GetNetworkACLsStub = nil
@@ -14683,7 +14683,7 @@ func (fake *FakeContainerServer) GetNetworkACLsReturns(result1 []api.NetworkACL,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkACLsReturnsOnCall(i int, result1 []api.NetworkACL, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkACLsReturnsOnCall(i int, result1 []api.NetworkACL, result2 error) {
 	fake.getNetworkACLsMutex.Lock()
 	defer fake.getNetworkACLsMutex.Unlock()
 	fake.GetNetworkACLsStub = nil
@@ -14699,7 +14699,7 @@ func (fake *FakeContainerServer) GetNetworkACLsReturnsOnCall(i int, result1 []ap
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocations(arg1 bool) ([]api.NetworkAllocations, error) {
+func (fake *FakeInstanceServer) GetNetworkAllocations(arg1 bool) ([]api.NetworkAllocations, error) {
 	fake.getNetworkAllocationsMutex.Lock()
 	ret, specificReturn := fake.getNetworkAllocationsReturnsOnCall[len(fake.getNetworkAllocationsArgsForCall)]
 	fake.getNetworkAllocationsArgsForCall = append(fake.getNetworkAllocationsArgsForCall, struct {
@@ -14718,26 +14718,26 @@ func (fake *FakeContainerServer) GetNetworkAllocations(arg1 bool) ([]api.Network
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocationsCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkAllocationsCallCount() int {
 	fake.getNetworkAllocationsMutex.RLock()
 	defer fake.getNetworkAllocationsMutex.RUnlock()
 	return len(fake.getNetworkAllocationsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocationsCalls(stub func(bool) ([]api.NetworkAllocations, error)) {
+func (fake *FakeInstanceServer) GetNetworkAllocationsCalls(stub func(bool) ([]api.NetworkAllocations, error)) {
 	fake.getNetworkAllocationsMutex.Lock()
 	defer fake.getNetworkAllocationsMutex.Unlock()
 	fake.GetNetworkAllocationsStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocationsArgsForCall(i int) bool {
+func (fake *FakeInstanceServer) GetNetworkAllocationsArgsForCall(i int) bool {
 	fake.getNetworkAllocationsMutex.RLock()
 	defer fake.getNetworkAllocationsMutex.RUnlock()
 	argsForCall := fake.getNetworkAllocationsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocationsReturns(result1 []api.NetworkAllocations, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkAllocationsReturns(result1 []api.NetworkAllocations, result2 error) {
 	fake.getNetworkAllocationsMutex.Lock()
 	defer fake.getNetworkAllocationsMutex.Unlock()
 	fake.GetNetworkAllocationsStub = nil
@@ -14747,7 +14747,7 @@ func (fake *FakeContainerServer) GetNetworkAllocationsReturns(result1 []api.Netw
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkAllocationsReturnsOnCall(i int, result1 []api.NetworkAllocations, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkAllocationsReturnsOnCall(i int, result1 []api.NetworkAllocations, result2 error) {
 	fake.getNetworkAllocationsMutex.Lock()
 	defer fake.getNetworkAllocationsMutex.Unlock()
 	fake.GetNetworkAllocationsStub = nil
@@ -14763,7 +14763,7 @@ func (fake *FakeContainerServer) GetNetworkAllocationsReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkForward(arg1 string, arg2 string) (*api.NetworkForward, string, error) {
+func (fake *FakeInstanceServer) GetNetworkForward(arg1 string, arg2 string) (*api.NetworkForward, string, error) {
 	fake.getNetworkForwardMutex.Lock()
 	ret, specificReturn := fake.getNetworkForwardReturnsOnCall[len(fake.getNetworkForwardArgsForCall)]
 	fake.getNetworkForwardArgsForCall = append(fake.getNetworkForwardArgsForCall, struct {
@@ -14783,26 +14783,26 @@ func (fake *FakeContainerServer) GetNetworkForward(arg1 string, arg2 string) (*a
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkForwardCallCount() int {
 	fake.getNetworkForwardMutex.RLock()
 	defer fake.getNetworkForwardMutex.RUnlock()
 	return len(fake.getNetworkForwardArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardCalls(stub func(string, string) (*api.NetworkForward, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkForwardCalls(stub func(string, string) (*api.NetworkForward, string, error)) {
 	fake.getNetworkForwardMutex.Lock()
 	defer fake.getNetworkForwardMutex.Unlock()
 	fake.GetNetworkForwardStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetNetworkForwardArgsForCall(i int) (string, string) {
 	fake.getNetworkForwardMutex.RLock()
 	defer fake.getNetworkForwardMutex.RUnlock()
 	argsForCall := fake.getNetworkForwardArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardReturns(result1 *api.NetworkForward, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardReturns(result1 *api.NetworkForward, result2 string, result3 error) {
 	fake.getNetworkForwardMutex.Lock()
 	defer fake.getNetworkForwardMutex.Unlock()
 	fake.GetNetworkForwardStub = nil
@@ -14813,7 +14813,7 @@ func (fake *FakeContainerServer) GetNetworkForwardReturns(result1 *api.NetworkFo
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardReturnsOnCall(i int, result1 *api.NetworkForward, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardReturnsOnCall(i int, result1 *api.NetworkForward, result2 string, result3 error) {
 	fake.getNetworkForwardMutex.Lock()
 	defer fake.getNetworkForwardMutex.Unlock()
 	fake.GetNetworkForwardStub = nil
@@ -14831,7 +14831,7 @@ func (fake *FakeContainerServer) GetNetworkForwardReturnsOnCall(i int, result1 *
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddresses(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkForwardAddresses(arg1 string) ([]string, error) {
 	fake.getNetworkForwardAddressesMutex.Lock()
 	ret, specificReturn := fake.getNetworkForwardAddressesReturnsOnCall[len(fake.getNetworkForwardAddressesArgsForCall)]
 	fake.getNetworkForwardAddressesArgsForCall = append(fake.getNetworkForwardAddressesArgsForCall, struct {
@@ -14850,26 +14850,26 @@ func (fake *FakeContainerServer) GetNetworkForwardAddresses(arg1 string) ([]stri
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddressesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkForwardAddressesCallCount() int {
 	fake.getNetworkForwardAddressesMutex.RLock()
 	defer fake.getNetworkForwardAddressesMutex.RUnlock()
 	return len(fake.getNetworkForwardAddressesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddressesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkForwardAddressesCalls(stub func(string) ([]string, error)) {
 	fake.getNetworkForwardAddressesMutex.Lock()
 	defer fake.getNetworkForwardAddressesMutex.Unlock()
 	fake.GetNetworkForwardAddressesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddressesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkForwardAddressesArgsForCall(i int) string {
 	fake.getNetworkForwardAddressesMutex.RLock()
 	defer fake.getNetworkForwardAddressesMutex.RUnlock()
 	argsForCall := fake.getNetworkForwardAddressesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddressesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardAddressesReturns(result1 []string, result2 error) {
 	fake.getNetworkForwardAddressesMutex.Lock()
 	defer fake.getNetworkForwardAddressesMutex.Unlock()
 	fake.GetNetworkForwardAddressesStub = nil
@@ -14879,7 +14879,7 @@ func (fake *FakeContainerServer) GetNetworkForwardAddressesReturns(result1 []str
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardAddressesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardAddressesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkForwardAddressesMutex.Lock()
 	defer fake.getNetworkForwardAddressesMutex.Unlock()
 	fake.GetNetworkForwardAddressesStub = nil
@@ -14895,7 +14895,7 @@ func (fake *FakeContainerServer) GetNetworkForwardAddressesReturnsOnCall(i int, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkForwards(arg1 string) ([]api.NetworkForward, error) {
+func (fake *FakeInstanceServer) GetNetworkForwards(arg1 string) ([]api.NetworkForward, error) {
 	fake.getNetworkForwardsMutex.Lock()
 	ret, specificReturn := fake.getNetworkForwardsReturnsOnCall[len(fake.getNetworkForwardsArgsForCall)]
 	fake.getNetworkForwardsArgsForCall = append(fake.getNetworkForwardsArgsForCall, struct {
@@ -14914,26 +14914,26 @@ func (fake *FakeContainerServer) GetNetworkForwards(arg1 string) ([]api.NetworkF
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardsCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkForwardsCallCount() int {
 	fake.getNetworkForwardsMutex.RLock()
 	defer fake.getNetworkForwardsMutex.RUnlock()
 	return len(fake.getNetworkForwardsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardsCalls(stub func(string) ([]api.NetworkForward, error)) {
+func (fake *FakeInstanceServer) GetNetworkForwardsCalls(stub func(string) ([]api.NetworkForward, error)) {
 	fake.getNetworkForwardsMutex.Lock()
 	defer fake.getNetworkForwardsMutex.Unlock()
 	fake.GetNetworkForwardsStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkForwardsArgsForCall(i int) string {
 	fake.getNetworkForwardsMutex.RLock()
 	defer fake.getNetworkForwardsMutex.RUnlock()
 	argsForCall := fake.getNetworkForwardsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardsReturns(result1 []api.NetworkForward, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardsReturns(result1 []api.NetworkForward, result2 error) {
 	fake.getNetworkForwardsMutex.Lock()
 	defer fake.getNetworkForwardsMutex.Unlock()
 	fake.GetNetworkForwardsStub = nil
@@ -14943,7 +14943,7 @@ func (fake *FakeContainerServer) GetNetworkForwardsReturns(result1 []api.Network
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkForwardsReturnsOnCall(i int, result1 []api.NetworkForward, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkForwardsReturnsOnCall(i int, result1 []api.NetworkForward, result2 error) {
 	fake.getNetworkForwardsMutex.Lock()
 	defer fake.getNetworkForwardsMutex.Unlock()
 	fake.GetNetworkForwardsStub = nil
@@ -14959,7 +14959,7 @@ func (fake *FakeContainerServer) GetNetworkForwardsReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLeases(arg1 string) ([]api.NetworkLease, error) {
+func (fake *FakeInstanceServer) GetNetworkLeases(arg1 string) ([]api.NetworkLease, error) {
 	fake.getNetworkLeasesMutex.Lock()
 	ret, specificReturn := fake.getNetworkLeasesReturnsOnCall[len(fake.getNetworkLeasesArgsForCall)]
 	fake.getNetworkLeasesArgsForCall = append(fake.getNetworkLeasesArgsForCall, struct {
@@ -14978,26 +14978,26 @@ func (fake *FakeContainerServer) GetNetworkLeases(arg1 string) ([]api.NetworkLea
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkLeasesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkLeasesCallCount() int {
 	fake.getNetworkLeasesMutex.RLock()
 	defer fake.getNetworkLeasesMutex.RUnlock()
 	return len(fake.getNetworkLeasesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkLeasesCalls(stub func(string) ([]api.NetworkLease, error)) {
+func (fake *FakeInstanceServer) GetNetworkLeasesCalls(stub func(string) ([]api.NetworkLease, error)) {
 	fake.getNetworkLeasesMutex.Lock()
 	defer fake.getNetworkLeasesMutex.Unlock()
 	fake.GetNetworkLeasesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkLeasesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkLeasesArgsForCall(i int) string {
 	fake.getNetworkLeasesMutex.RLock()
 	defer fake.getNetworkLeasesMutex.RUnlock()
 	argsForCall := fake.getNetworkLeasesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkLeasesReturns(result1 []api.NetworkLease, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLeasesReturns(result1 []api.NetworkLease, result2 error) {
 	fake.getNetworkLeasesMutex.Lock()
 	defer fake.getNetworkLeasesMutex.Unlock()
 	fake.GetNetworkLeasesStub = nil
@@ -15007,7 +15007,7 @@ func (fake *FakeContainerServer) GetNetworkLeasesReturns(result1 []api.NetworkLe
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLeasesReturnsOnCall(i int, result1 []api.NetworkLease, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLeasesReturnsOnCall(i int, result1 []api.NetworkLease, result2 error) {
 	fake.getNetworkLeasesMutex.Lock()
 	defer fake.getNetworkLeasesMutex.Unlock()
 	fake.GetNetworkLeasesStub = nil
@@ -15023,7 +15023,7 @@ func (fake *FakeContainerServer) GetNetworkLeasesReturnsOnCall(i int, result1 []
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancer(arg1 string, arg2 string) (*api.NetworkLoadBalancer, string, error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancer(arg1 string, arg2 string) (*api.NetworkLoadBalancer, string, error) {
 	fake.getNetworkLoadBalancerMutex.Lock()
 	ret, specificReturn := fake.getNetworkLoadBalancerReturnsOnCall[len(fake.getNetworkLoadBalancerArgsForCall)]
 	fake.getNetworkLoadBalancerArgsForCall = append(fake.getNetworkLoadBalancerArgsForCall, struct {
@@ -15043,26 +15043,26 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancer(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerCallCount() int {
 	fake.getNetworkLoadBalancerMutex.RLock()
 	defer fake.getNetworkLoadBalancerMutex.RUnlock()
 	return len(fake.getNetworkLoadBalancerArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerCalls(stub func(string, string) (*api.NetworkLoadBalancer, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerCalls(stub func(string, string) (*api.NetworkLoadBalancer, string, error)) {
 	fake.getNetworkLoadBalancerMutex.Lock()
 	defer fake.getNetworkLoadBalancerMutex.Unlock()
 	fake.GetNetworkLoadBalancerStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerArgsForCall(i int) (string, string) {
 	fake.getNetworkLoadBalancerMutex.RLock()
 	defer fake.getNetworkLoadBalancerMutex.RUnlock()
 	argsForCall := fake.getNetworkLoadBalancerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerReturns(result1 *api.NetworkLoadBalancer, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerReturns(result1 *api.NetworkLoadBalancer, result2 string, result3 error) {
 	fake.getNetworkLoadBalancerMutex.Lock()
 	defer fake.getNetworkLoadBalancerMutex.Unlock()
 	fake.GetNetworkLoadBalancerStub = nil
@@ -15073,7 +15073,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancerReturns(result1 *api.Netw
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerReturnsOnCall(i int, result1 *api.NetworkLoadBalancer, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerReturnsOnCall(i int, result1 *api.NetworkLoadBalancer, result2 string, result3 error) {
 	fake.getNetworkLoadBalancerMutex.Lock()
 	defer fake.getNetworkLoadBalancerMutex.Unlock()
 	fake.GetNetworkLoadBalancerStub = nil
@@ -15091,7 +15091,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancerReturnsOnCall(i int, resu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddresses(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddresses(arg1 string) ([]string, error) {
 	fake.getNetworkLoadBalancerAddressesMutex.Lock()
 	ret, specificReturn := fake.getNetworkLoadBalancerAddressesReturnsOnCall[len(fake.getNetworkLoadBalancerAddressesArgsForCall)]
 	fake.getNetworkLoadBalancerAddressesArgsForCall = append(fake.getNetworkLoadBalancerAddressesArgsForCall, struct {
@@ -15110,26 +15110,26 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancerAddresses(arg1 string) ([
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddressesCallCount() int {
 	fake.getNetworkLoadBalancerAddressesMutex.RLock()
 	defer fake.getNetworkLoadBalancerAddressesMutex.RUnlock()
 	return len(fake.getNetworkLoadBalancerAddressesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddressesCalls(stub func(string) ([]string, error)) {
 	fake.getNetworkLoadBalancerAddressesMutex.Lock()
 	defer fake.getNetworkLoadBalancerAddressesMutex.Unlock()
 	fake.GetNetworkLoadBalancerAddressesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddressesArgsForCall(i int) string {
 	fake.getNetworkLoadBalancerAddressesMutex.RLock()
 	defer fake.getNetworkLoadBalancerAddressesMutex.RUnlock()
 	argsForCall := fake.getNetworkLoadBalancerAddressesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddressesReturns(result1 []string, result2 error) {
 	fake.getNetworkLoadBalancerAddressesMutex.Lock()
 	defer fake.getNetworkLoadBalancerAddressesMutex.Unlock()
 	fake.GetNetworkLoadBalancerAddressesStub = nil
@@ -15139,7 +15139,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancerAddressesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkLoadBalancerAddressesMutex.Lock()
 	defer fake.getNetworkLoadBalancerAddressesMutex.Unlock()
 	fake.GetNetworkLoadBalancerAddressesStub = nil
@@ -15155,7 +15155,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancerAddressesReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancers(arg1 string) ([]api.NetworkLoadBalancer, error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancers(arg1 string) ([]api.NetworkLoadBalancer, error) {
 	fake.getNetworkLoadBalancersMutex.Lock()
 	ret, specificReturn := fake.getNetworkLoadBalancersReturnsOnCall[len(fake.getNetworkLoadBalancersArgsForCall)]
 	fake.getNetworkLoadBalancersArgsForCall = append(fake.getNetworkLoadBalancersArgsForCall, struct {
@@ -15174,26 +15174,26 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancers(arg1 string) ([]api.Net
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancersCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancersCallCount() int {
 	fake.getNetworkLoadBalancersMutex.RLock()
 	defer fake.getNetworkLoadBalancersMutex.RUnlock()
 	return len(fake.getNetworkLoadBalancersArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancersCalls(stub func(string) ([]api.NetworkLoadBalancer, error)) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancersCalls(stub func(string) ([]api.NetworkLoadBalancer, error)) {
 	fake.getNetworkLoadBalancersMutex.Lock()
 	defer fake.getNetworkLoadBalancersMutex.Unlock()
 	fake.GetNetworkLoadBalancersStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancersArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancersArgsForCall(i int) string {
 	fake.getNetworkLoadBalancersMutex.RLock()
 	defer fake.getNetworkLoadBalancersMutex.RUnlock()
 	argsForCall := fake.getNetworkLoadBalancersArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancersReturns(result1 []api.NetworkLoadBalancer, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancersReturns(result1 []api.NetworkLoadBalancer, result2 error) {
 	fake.getNetworkLoadBalancersMutex.Lock()
 	defer fake.getNetworkLoadBalancersMutex.Unlock()
 	fake.GetNetworkLoadBalancersStub = nil
@@ -15203,7 +15203,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancersReturns(result1 []api.Ne
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkLoadBalancersReturnsOnCall(i int, result1 []api.NetworkLoadBalancer, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkLoadBalancersReturnsOnCall(i int, result1 []api.NetworkLoadBalancer, result2 error) {
 	fake.getNetworkLoadBalancersMutex.Lock()
 	defer fake.getNetworkLoadBalancersMutex.Unlock()
 	fake.GetNetworkLoadBalancersStub = nil
@@ -15219,7 +15219,7 @@ func (fake *FakeContainerServer) GetNetworkLoadBalancersReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkNames() ([]string, error) {
 	fake.getNetworkNamesMutex.Lock()
 	ret, specificReturn := fake.getNetworkNamesReturnsOnCall[len(fake.getNetworkNamesArgsForCall)]
 	fake.getNetworkNamesArgsForCall = append(fake.getNetworkNamesArgsForCall, struct {
@@ -15237,19 +15237,19 @@ func (fake *FakeContainerServer) GetNetworkNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkNamesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkNamesCallCount() int {
 	fake.getNetworkNamesMutex.RLock()
 	defer fake.getNetworkNamesMutex.RUnlock()
 	return len(fake.getNetworkNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkNamesCalls(stub func() ([]string, error)) {
 	fake.getNetworkNamesMutex.Lock()
 	defer fake.getNetworkNamesMutex.Unlock()
 	fake.GetNetworkNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkNamesReturns(result1 []string, result2 error) {
 	fake.getNetworkNamesMutex.Lock()
 	defer fake.getNetworkNamesMutex.Unlock()
 	fake.GetNetworkNamesStub = nil
@@ -15259,7 +15259,7 @@ func (fake *FakeContainerServer) GetNetworkNamesReturns(result1 []string, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkNamesMutex.Lock()
 	defer fake.getNetworkNamesMutex.Unlock()
 	fake.GetNetworkNamesStub = nil
@@ -15275,7 +15275,7 @@ func (fake *FakeContainerServer) GetNetworkNamesReturnsOnCall(i int, result1 []s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeer(arg1 string, arg2 string) (*api.NetworkPeer, string, error) {
+func (fake *FakeInstanceServer) GetNetworkPeer(arg1 string, arg2 string) (*api.NetworkPeer, string, error) {
 	fake.getNetworkPeerMutex.Lock()
 	ret, specificReturn := fake.getNetworkPeerReturnsOnCall[len(fake.getNetworkPeerArgsForCall)]
 	fake.getNetworkPeerArgsForCall = append(fake.getNetworkPeerArgsForCall, struct {
@@ -15295,26 +15295,26 @@ func (fake *FakeContainerServer) GetNetworkPeer(arg1 string, arg2 string) (*api.
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkPeerCallCount() int {
 	fake.getNetworkPeerMutex.RLock()
 	defer fake.getNetworkPeerMutex.RUnlock()
 	return len(fake.getNetworkPeerArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerCalls(stub func(string, string) (*api.NetworkPeer, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkPeerCalls(stub func(string, string) (*api.NetworkPeer, string, error)) {
 	fake.getNetworkPeerMutex.Lock()
 	defer fake.getNetworkPeerMutex.Unlock()
 	fake.GetNetworkPeerStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetNetworkPeerArgsForCall(i int) (string, string) {
 	fake.getNetworkPeerMutex.RLock()
 	defer fake.getNetworkPeerMutex.RUnlock()
 	argsForCall := fake.getNetworkPeerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerReturns(result1 *api.NetworkPeer, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkPeerReturns(result1 *api.NetworkPeer, result2 string, result3 error) {
 	fake.getNetworkPeerMutex.Lock()
 	defer fake.getNetworkPeerMutex.Unlock()
 	fake.GetNetworkPeerStub = nil
@@ -15325,7 +15325,7 @@ func (fake *FakeContainerServer) GetNetworkPeerReturns(result1 *api.NetworkPeer,
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerReturnsOnCall(i int, result1 *api.NetworkPeer, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkPeerReturnsOnCall(i int, result1 *api.NetworkPeer, result2 string, result3 error) {
 	fake.getNetworkPeerMutex.Lock()
 	defer fake.getNetworkPeerMutex.Unlock()
 	fake.GetNetworkPeerStub = nil
@@ -15343,7 +15343,7 @@ func (fake *FakeContainerServer) GetNetworkPeerReturnsOnCall(i int, result1 *api
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkPeerNames(arg1 string) ([]string, error) {
 	fake.getNetworkPeerNamesMutex.Lock()
 	ret, specificReturn := fake.getNetworkPeerNamesReturnsOnCall[len(fake.getNetworkPeerNamesArgsForCall)]
 	fake.getNetworkPeerNamesArgsForCall = append(fake.getNetworkPeerNamesArgsForCall, struct {
@@ -15362,26 +15362,26 @@ func (fake *FakeContainerServer) GetNetworkPeerNames(arg1 string) ([]string, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNamesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkPeerNamesCallCount() int {
 	fake.getNetworkPeerNamesMutex.RLock()
 	defer fake.getNetworkPeerNamesMutex.RUnlock()
 	return len(fake.getNetworkPeerNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkPeerNamesCalls(stub func(string) ([]string, error)) {
 	fake.getNetworkPeerNamesMutex.Lock()
 	defer fake.getNetworkPeerNamesMutex.Unlock()
 	fake.GetNetworkPeerNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkPeerNamesArgsForCall(i int) string {
 	fake.getNetworkPeerNamesMutex.RLock()
 	defer fake.getNetworkPeerNamesMutex.RUnlock()
 	argsForCall := fake.getNetworkPeerNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkPeerNamesReturns(result1 []string, result2 error) {
 	fake.getNetworkPeerNamesMutex.Lock()
 	defer fake.getNetworkPeerNamesMutex.Unlock()
 	fake.GetNetworkPeerNamesStub = nil
@@ -15391,7 +15391,7 @@ func (fake *FakeContainerServer) GetNetworkPeerNamesReturns(result1 []string, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeerNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkPeerNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkPeerNamesMutex.Lock()
 	defer fake.getNetworkPeerNamesMutex.Unlock()
 	fake.GetNetworkPeerNamesStub = nil
@@ -15407,7 +15407,7 @@ func (fake *FakeContainerServer) GetNetworkPeerNamesReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeers(arg1 string) ([]api.NetworkPeer, error) {
+func (fake *FakeInstanceServer) GetNetworkPeers(arg1 string) ([]api.NetworkPeer, error) {
 	fake.getNetworkPeersMutex.Lock()
 	ret, specificReturn := fake.getNetworkPeersReturnsOnCall[len(fake.getNetworkPeersArgsForCall)]
 	fake.getNetworkPeersArgsForCall = append(fake.getNetworkPeersArgsForCall, struct {
@@ -15426,26 +15426,26 @@ func (fake *FakeContainerServer) GetNetworkPeers(arg1 string) ([]api.NetworkPeer
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkPeersCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkPeersCallCount() int {
 	fake.getNetworkPeersMutex.RLock()
 	defer fake.getNetworkPeersMutex.RUnlock()
 	return len(fake.getNetworkPeersArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkPeersCalls(stub func(string) ([]api.NetworkPeer, error)) {
+func (fake *FakeInstanceServer) GetNetworkPeersCalls(stub func(string) ([]api.NetworkPeer, error)) {
 	fake.getNetworkPeersMutex.Lock()
 	defer fake.getNetworkPeersMutex.Unlock()
 	fake.GetNetworkPeersStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkPeersArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkPeersArgsForCall(i int) string {
 	fake.getNetworkPeersMutex.RLock()
 	defer fake.getNetworkPeersMutex.RUnlock()
 	argsForCall := fake.getNetworkPeersArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkPeersReturns(result1 []api.NetworkPeer, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkPeersReturns(result1 []api.NetworkPeer, result2 error) {
 	fake.getNetworkPeersMutex.Lock()
 	defer fake.getNetworkPeersMutex.Unlock()
 	fake.GetNetworkPeersStub = nil
@@ -15455,7 +15455,7 @@ func (fake *FakeContainerServer) GetNetworkPeersReturns(result1 []api.NetworkPee
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkPeersReturnsOnCall(i int, result1 []api.NetworkPeer, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkPeersReturnsOnCall(i int, result1 []api.NetworkPeer, result2 error) {
 	fake.getNetworkPeersMutex.Lock()
 	defer fake.getNetworkPeersMutex.Unlock()
 	fake.GetNetworkPeersStub = nil
@@ -15471,7 +15471,7 @@ func (fake *FakeContainerServer) GetNetworkPeersReturnsOnCall(i int, result1 []a
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkState(arg1 string) (*api.NetworkState, error) {
+func (fake *FakeInstanceServer) GetNetworkState(arg1 string) (*api.NetworkState, error) {
 	fake.getNetworkStateMutex.Lock()
 	ret, specificReturn := fake.getNetworkStateReturnsOnCall[len(fake.getNetworkStateArgsForCall)]
 	fake.getNetworkStateArgsForCall = append(fake.getNetworkStateArgsForCall, struct {
@@ -15490,26 +15490,26 @@ func (fake *FakeContainerServer) GetNetworkState(arg1 string) (*api.NetworkState
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkStateCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkStateCallCount() int {
 	fake.getNetworkStateMutex.RLock()
 	defer fake.getNetworkStateMutex.RUnlock()
 	return len(fake.getNetworkStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkStateCalls(stub func(string) (*api.NetworkState, error)) {
+func (fake *FakeInstanceServer) GetNetworkStateCalls(stub func(string) (*api.NetworkState, error)) {
 	fake.getNetworkStateMutex.Lock()
 	defer fake.getNetworkStateMutex.Unlock()
 	fake.GetNetworkStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkStateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkStateArgsForCall(i int) string {
 	fake.getNetworkStateMutex.RLock()
 	defer fake.getNetworkStateMutex.RUnlock()
 	argsForCall := fake.getNetworkStateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkStateReturns(result1 *api.NetworkState, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkStateReturns(result1 *api.NetworkState, result2 error) {
 	fake.getNetworkStateMutex.Lock()
 	defer fake.getNetworkStateMutex.Unlock()
 	fake.GetNetworkStateStub = nil
@@ -15519,7 +15519,7 @@ func (fake *FakeContainerServer) GetNetworkStateReturns(result1 *api.NetworkStat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkStateReturnsOnCall(i int, result1 *api.NetworkState, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkStateReturnsOnCall(i int, result1 *api.NetworkState, result2 error) {
 	fake.getNetworkStateMutex.Lock()
 	defer fake.getNetworkStateMutex.Unlock()
 	fake.GetNetworkStateStub = nil
@@ -15535,7 +15535,7 @@ func (fake *FakeContainerServer) GetNetworkStateReturnsOnCall(i int, result1 *ap
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZone(arg1 string) (*api.NetworkZone, string, error) {
+func (fake *FakeInstanceServer) GetNetworkZone(arg1 string) (*api.NetworkZone, string, error) {
 	fake.getNetworkZoneMutex.Lock()
 	ret, specificReturn := fake.getNetworkZoneReturnsOnCall[len(fake.getNetworkZoneArgsForCall)]
 	fake.getNetworkZoneArgsForCall = append(fake.getNetworkZoneArgsForCall, struct {
@@ -15554,26 +15554,26 @@ func (fake *FakeContainerServer) GetNetworkZone(arg1 string) (*api.NetworkZone, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZoneCallCount() int {
 	fake.getNetworkZoneMutex.RLock()
 	defer fake.getNetworkZoneMutex.RUnlock()
 	return len(fake.getNetworkZoneArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneCalls(stub func(string) (*api.NetworkZone, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkZoneCalls(stub func(string) (*api.NetworkZone, string, error)) {
 	fake.getNetworkZoneMutex.Lock()
 	defer fake.getNetworkZoneMutex.Unlock()
 	fake.GetNetworkZoneStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkZoneArgsForCall(i int) string {
 	fake.getNetworkZoneMutex.RLock()
 	defer fake.getNetworkZoneMutex.RUnlock()
 	argsForCall := fake.getNetworkZoneArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneReturns(result1 *api.NetworkZone, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneReturns(result1 *api.NetworkZone, result2 string, result3 error) {
 	fake.getNetworkZoneMutex.Lock()
 	defer fake.getNetworkZoneMutex.Unlock()
 	fake.GetNetworkZoneStub = nil
@@ -15584,7 +15584,7 @@ func (fake *FakeContainerServer) GetNetworkZoneReturns(result1 *api.NetworkZone,
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneReturnsOnCall(i int, result1 *api.NetworkZone, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneReturnsOnCall(i int, result1 *api.NetworkZone, result2 string, result3 error) {
 	fake.getNetworkZoneMutex.Lock()
 	defer fake.getNetworkZoneMutex.Unlock()
 	fake.GetNetworkZoneStub = nil
@@ -15602,7 +15602,7 @@ func (fake *FakeContainerServer) GetNetworkZoneReturnsOnCall(i int, result1 *api
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkZoneNames() ([]string, error) {
 	fake.getNetworkZoneNamesMutex.Lock()
 	ret, specificReturn := fake.getNetworkZoneNamesReturnsOnCall[len(fake.getNetworkZoneNamesArgsForCall)]
 	fake.getNetworkZoneNamesArgsForCall = append(fake.getNetworkZoneNamesArgsForCall, struct {
@@ -15620,19 +15620,19 @@ func (fake *FakeContainerServer) GetNetworkZoneNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneNamesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZoneNamesCallCount() int {
 	fake.getNetworkZoneNamesMutex.RLock()
 	defer fake.getNetworkZoneNamesMutex.RUnlock()
 	return len(fake.getNetworkZoneNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkZoneNamesCalls(stub func() ([]string, error)) {
 	fake.getNetworkZoneNamesMutex.Lock()
 	defer fake.getNetworkZoneNamesMutex.Unlock()
 	fake.GetNetworkZoneNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneNamesReturns(result1 []string, result2 error) {
 	fake.getNetworkZoneNamesMutex.Lock()
 	defer fake.getNetworkZoneNamesMutex.Unlock()
 	fake.GetNetworkZoneNamesStub = nil
@@ -15642,7 +15642,7 @@ func (fake *FakeContainerServer) GetNetworkZoneNamesReturns(result1 []string, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkZoneNamesMutex.Lock()
 	defer fake.getNetworkZoneNamesMutex.Unlock()
 	fake.GetNetworkZoneNamesStub = nil
@@ -15658,7 +15658,7 @@ func (fake *FakeContainerServer) GetNetworkZoneNamesReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecord(arg1 string, arg2 string) (*api.NetworkZoneRecord, string, error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecord(arg1 string, arg2 string) (*api.NetworkZoneRecord, string, error) {
 	fake.getNetworkZoneRecordMutex.Lock()
 	ret, specificReturn := fake.getNetworkZoneRecordReturnsOnCall[len(fake.getNetworkZoneRecordArgsForCall)]
 	fake.getNetworkZoneRecordArgsForCall = append(fake.getNetworkZoneRecordArgsForCall, struct {
@@ -15678,26 +15678,26 @@ func (fake *FakeContainerServer) GetNetworkZoneRecord(arg1 string, arg2 string) 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordCallCount() int {
 	fake.getNetworkZoneRecordMutex.RLock()
 	defer fake.getNetworkZoneRecordMutex.RUnlock()
 	return len(fake.getNetworkZoneRecordArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordCalls(stub func(string, string) (*api.NetworkZoneRecord, string, error)) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordCalls(stub func(string, string) (*api.NetworkZoneRecord, string, error)) {
 	fake.getNetworkZoneRecordMutex.Lock()
 	defer fake.getNetworkZoneRecordMutex.Unlock()
 	fake.GetNetworkZoneRecordStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordArgsForCall(i int) (string, string) {
 	fake.getNetworkZoneRecordMutex.RLock()
 	defer fake.getNetworkZoneRecordMutex.RUnlock()
 	argsForCall := fake.getNetworkZoneRecordArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordReturns(result1 *api.NetworkZoneRecord, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordReturns(result1 *api.NetworkZoneRecord, result2 string, result3 error) {
 	fake.getNetworkZoneRecordMutex.Lock()
 	defer fake.getNetworkZoneRecordMutex.Unlock()
 	fake.GetNetworkZoneRecordStub = nil
@@ -15708,7 +15708,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordReturns(result1 *api.Networ
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordReturnsOnCall(i int, result1 *api.NetworkZoneRecord, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordReturnsOnCall(i int, result1 *api.NetworkZoneRecord, result2 string, result3 error) {
 	fake.getNetworkZoneRecordMutex.Lock()
 	defer fake.getNetworkZoneRecordMutex.Unlock()
 	fake.GetNetworkZoneRecordStub = nil
@@ -15726,7 +15726,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNames(arg1 string) ([]string, error) {
 	fake.getNetworkZoneRecordNamesMutex.Lock()
 	ret, specificReturn := fake.getNetworkZoneRecordNamesReturnsOnCall[len(fake.getNetworkZoneRecordNamesArgsForCall)]
 	fake.getNetworkZoneRecordNamesArgsForCall = append(fake.getNetworkZoneRecordNamesArgsForCall, struct {
@@ -15745,26 +15745,26 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordNames(arg1 string) ([]strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNamesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNamesCallCount() int {
 	fake.getNetworkZoneRecordNamesMutex.RLock()
 	defer fake.getNetworkZoneRecordNamesMutex.RUnlock()
 	return len(fake.getNetworkZoneRecordNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNamesCalls(stub func(string) ([]string, error)) {
 	fake.getNetworkZoneRecordNamesMutex.Lock()
 	defer fake.getNetworkZoneRecordNamesMutex.Unlock()
 	fake.GetNetworkZoneRecordNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNamesArgsForCall(i int) string {
 	fake.getNetworkZoneRecordNamesMutex.RLock()
 	defer fake.getNetworkZoneRecordNamesMutex.RUnlock()
 	argsForCall := fake.getNetworkZoneRecordNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNamesReturns(result1 []string, result2 error) {
 	fake.getNetworkZoneRecordNamesMutex.Lock()
 	defer fake.getNetworkZoneRecordNamesMutex.Unlock()
 	fake.GetNetworkZoneRecordNamesStub = nil
@@ -15774,7 +15774,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordNamesReturns(result1 []stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getNetworkZoneRecordNamesMutex.Lock()
 	defer fake.getNetworkZoneRecordNamesMutex.Unlock()
 	fake.GetNetworkZoneRecordNamesStub = nil
@@ -15790,7 +15790,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordNamesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecords(arg1 string) ([]api.NetworkZoneRecord, error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecords(arg1 string) ([]api.NetworkZoneRecord, error) {
 	fake.getNetworkZoneRecordsMutex.Lock()
 	ret, specificReturn := fake.getNetworkZoneRecordsReturnsOnCall[len(fake.getNetworkZoneRecordsArgsForCall)]
 	fake.getNetworkZoneRecordsArgsForCall = append(fake.getNetworkZoneRecordsArgsForCall, struct {
@@ -15809,26 +15809,26 @@ func (fake *FakeContainerServer) GetNetworkZoneRecords(arg1 string) ([]api.Netwo
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordsCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordsCallCount() int {
 	fake.getNetworkZoneRecordsMutex.RLock()
 	defer fake.getNetworkZoneRecordsMutex.RUnlock()
 	return len(fake.getNetworkZoneRecordsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordsCalls(stub func(string) ([]api.NetworkZoneRecord, error)) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordsCalls(stub func(string) ([]api.NetworkZoneRecord, error)) {
 	fake.getNetworkZoneRecordsMutex.Lock()
 	defer fake.getNetworkZoneRecordsMutex.Unlock()
 	fake.GetNetworkZoneRecordsStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordsArgsForCall(i int) string {
 	fake.getNetworkZoneRecordsMutex.RLock()
 	defer fake.getNetworkZoneRecordsMutex.RUnlock()
 	argsForCall := fake.getNetworkZoneRecordsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordsReturns(result1 []api.NetworkZoneRecord, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordsReturns(result1 []api.NetworkZoneRecord, result2 error) {
 	fake.getNetworkZoneRecordsMutex.Lock()
 	defer fake.getNetworkZoneRecordsMutex.Unlock()
 	fake.GetNetworkZoneRecordsStub = nil
@@ -15838,7 +15838,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordsReturns(result1 []api.Netw
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZoneRecordsReturnsOnCall(i int, result1 []api.NetworkZoneRecord, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZoneRecordsReturnsOnCall(i int, result1 []api.NetworkZoneRecord, result2 error) {
 	fake.getNetworkZoneRecordsMutex.Lock()
 	defer fake.getNetworkZoneRecordsMutex.Unlock()
 	fake.GetNetworkZoneRecordsStub = nil
@@ -15854,7 +15854,7 @@ func (fake *FakeContainerServer) GetNetworkZoneRecordsReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZones() ([]api.NetworkZone, error) {
+func (fake *FakeInstanceServer) GetNetworkZones() ([]api.NetworkZone, error) {
 	fake.getNetworkZonesMutex.Lock()
 	ret, specificReturn := fake.getNetworkZonesReturnsOnCall[len(fake.getNetworkZonesArgsForCall)]
 	fake.getNetworkZonesArgsForCall = append(fake.getNetworkZonesArgsForCall, struct {
@@ -15872,19 +15872,19 @@ func (fake *FakeContainerServer) GetNetworkZones() ([]api.NetworkZone, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworkZonesCallCount() int {
+func (fake *FakeInstanceServer) GetNetworkZonesCallCount() int {
 	fake.getNetworkZonesMutex.RLock()
 	defer fake.getNetworkZonesMutex.RUnlock()
 	return len(fake.getNetworkZonesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworkZonesCalls(stub func() ([]api.NetworkZone, error)) {
+func (fake *FakeInstanceServer) GetNetworkZonesCalls(stub func() ([]api.NetworkZone, error)) {
 	fake.getNetworkZonesMutex.Lock()
 	defer fake.getNetworkZonesMutex.Unlock()
 	fake.GetNetworkZonesStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworkZonesReturns(result1 []api.NetworkZone, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZonesReturns(result1 []api.NetworkZone, result2 error) {
 	fake.getNetworkZonesMutex.Lock()
 	defer fake.getNetworkZonesMutex.Unlock()
 	fake.GetNetworkZonesStub = nil
@@ -15894,7 +15894,7 @@ func (fake *FakeContainerServer) GetNetworkZonesReturns(result1 []api.NetworkZon
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworkZonesReturnsOnCall(i int, result1 []api.NetworkZone, result2 error) {
+func (fake *FakeInstanceServer) GetNetworkZonesReturnsOnCall(i int, result1 []api.NetworkZone, result2 error) {
 	fake.getNetworkZonesMutex.Lock()
 	defer fake.getNetworkZonesMutex.Unlock()
 	fake.GetNetworkZonesStub = nil
@@ -15910,7 +15910,7 @@ func (fake *FakeContainerServer) GetNetworkZonesReturnsOnCall(i int, result1 []a
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworks() ([]api.Network, error) {
+func (fake *FakeInstanceServer) GetNetworks() ([]api.Network, error) {
 	fake.getNetworksMutex.Lock()
 	ret, specificReturn := fake.getNetworksReturnsOnCall[len(fake.getNetworksArgsForCall)]
 	fake.getNetworksArgsForCall = append(fake.getNetworksArgsForCall, struct {
@@ -15928,19 +15928,19 @@ func (fake *FakeContainerServer) GetNetworks() ([]api.Network, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetNetworksCallCount() int {
+func (fake *FakeInstanceServer) GetNetworksCallCount() int {
 	fake.getNetworksMutex.RLock()
 	defer fake.getNetworksMutex.RUnlock()
 	return len(fake.getNetworksArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetNetworksCalls(stub func() ([]api.Network, error)) {
+func (fake *FakeInstanceServer) GetNetworksCalls(stub func() ([]api.Network, error)) {
 	fake.getNetworksMutex.Lock()
 	defer fake.getNetworksMutex.Unlock()
 	fake.GetNetworksStub = stub
 }
 
-func (fake *FakeContainerServer) GetNetworksReturns(result1 []api.Network, result2 error) {
+func (fake *FakeInstanceServer) GetNetworksReturns(result1 []api.Network, result2 error) {
 	fake.getNetworksMutex.Lock()
 	defer fake.getNetworksMutex.Unlock()
 	fake.GetNetworksStub = nil
@@ -15950,7 +15950,7 @@ func (fake *FakeContainerServer) GetNetworksReturns(result1 []api.Network, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetNetworksReturnsOnCall(i int, result1 []api.Network, result2 error) {
+func (fake *FakeInstanceServer) GetNetworksReturnsOnCall(i int, result1 []api.Network, result2 error) {
 	fake.getNetworksMutex.Lock()
 	defer fake.getNetworksMutex.Unlock()
 	fake.GetNetworksStub = nil
@@ -15966,7 +15966,7 @@ func (fake *FakeContainerServer) GetNetworksReturnsOnCall(i int, result1 []api.N
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperation(arg1 string) (*api.Operation, string, error) {
+func (fake *FakeInstanceServer) GetOperation(arg1 string) (*api.Operation, string, error) {
 	fake.getOperationMutex.Lock()
 	ret, specificReturn := fake.getOperationReturnsOnCall[len(fake.getOperationArgsForCall)]
 	fake.getOperationArgsForCall = append(fake.getOperationArgsForCall, struct {
@@ -15985,26 +15985,26 @@ func (fake *FakeContainerServer) GetOperation(arg1 string) (*api.Operation, stri
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetOperationCallCount() int {
+func (fake *FakeInstanceServer) GetOperationCallCount() int {
 	fake.getOperationMutex.RLock()
 	defer fake.getOperationMutex.RUnlock()
 	return len(fake.getOperationArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationCalls(stub func(string) (*api.Operation, string, error)) {
+func (fake *FakeInstanceServer) GetOperationCalls(stub func(string) (*api.Operation, string, error)) {
 	fake.getOperationMutex.Lock()
 	defer fake.getOperationMutex.Unlock()
 	fake.GetOperationStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetOperationArgsForCall(i int) string {
 	fake.getOperationMutex.RLock()
 	defer fake.getOperationMutex.RUnlock()
 	argsForCall := fake.getOperationArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetOperationReturns(result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationReturns(result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationMutex.Lock()
 	defer fake.getOperationMutex.Unlock()
 	fake.GetOperationStub = nil
@@ -16015,7 +16015,7 @@ func (fake *FakeContainerServer) GetOperationReturns(result1 *api.Operation, res
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationMutex.Lock()
 	defer fake.getOperationMutex.Unlock()
 	fake.GetOperationStub = nil
@@ -16033,7 +16033,7 @@ func (fake *FakeContainerServer) GetOperationReturnsOnCall(i int, result1 *api.O
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationUUIDs() ([]string, error) {
+func (fake *FakeInstanceServer) GetOperationUUIDs() ([]string, error) {
 	fake.getOperationUUIDsMutex.Lock()
 	ret, specificReturn := fake.getOperationUUIDsReturnsOnCall[len(fake.getOperationUUIDsArgsForCall)]
 	fake.getOperationUUIDsArgsForCall = append(fake.getOperationUUIDsArgsForCall, struct {
@@ -16051,19 +16051,19 @@ func (fake *FakeContainerServer) GetOperationUUIDs() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetOperationUUIDsCallCount() int {
+func (fake *FakeInstanceServer) GetOperationUUIDsCallCount() int {
 	fake.getOperationUUIDsMutex.RLock()
 	defer fake.getOperationUUIDsMutex.RUnlock()
 	return len(fake.getOperationUUIDsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationUUIDsCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetOperationUUIDsCalls(stub func() ([]string, error)) {
 	fake.getOperationUUIDsMutex.Lock()
 	defer fake.getOperationUUIDsMutex.Unlock()
 	fake.GetOperationUUIDsStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationUUIDsReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetOperationUUIDsReturns(result1 []string, result2 error) {
 	fake.getOperationUUIDsMutex.Lock()
 	defer fake.getOperationUUIDsMutex.Unlock()
 	fake.GetOperationUUIDsStub = nil
@@ -16073,7 +16073,7 @@ func (fake *FakeContainerServer) GetOperationUUIDsReturns(result1 []string, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationUUIDsReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetOperationUUIDsReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getOperationUUIDsMutex.Lock()
 	defer fake.getOperationUUIDsMutex.Unlock()
 	fake.GetOperationUUIDsStub = nil
@@ -16089,7 +16089,7 @@ func (fake *FakeContainerServer) GetOperationUUIDsReturnsOnCall(i int, result1 [
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationWait(arg1 string, arg2 int) (*api.Operation, string, error) {
+func (fake *FakeInstanceServer) GetOperationWait(arg1 string, arg2 int) (*api.Operation, string, error) {
 	fake.getOperationWaitMutex.Lock()
 	ret, specificReturn := fake.getOperationWaitReturnsOnCall[len(fake.getOperationWaitArgsForCall)]
 	fake.getOperationWaitArgsForCall = append(fake.getOperationWaitArgsForCall, struct {
@@ -16109,26 +16109,26 @@ func (fake *FakeContainerServer) GetOperationWait(arg1 string, arg2 int) (*api.O
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetOperationWaitCallCount() int {
+func (fake *FakeInstanceServer) GetOperationWaitCallCount() int {
 	fake.getOperationWaitMutex.RLock()
 	defer fake.getOperationWaitMutex.RUnlock()
 	return len(fake.getOperationWaitArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationWaitCalls(stub func(string, int) (*api.Operation, string, error)) {
+func (fake *FakeInstanceServer) GetOperationWaitCalls(stub func(string, int) (*api.Operation, string, error)) {
 	fake.getOperationWaitMutex.Lock()
 	defer fake.getOperationWaitMutex.Unlock()
 	fake.GetOperationWaitStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationWaitArgsForCall(i int) (string, int) {
+func (fake *FakeInstanceServer) GetOperationWaitArgsForCall(i int) (string, int) {
 	fake.getOperationWaitMutex.RLock()
 	defer fake.getOperationWaitMutex.RUnlock()
 	argsForCall := fake.getOperationWaitArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetOperationWaitReturns(result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationWaitReturns(result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationWaitMutex.Lock()
 	defer fake.getOperationWaitMutex.Unlock()
 	fake.GetOperationWaitStub = nil
@@ -16139,7 +16139,7 @@ func (fake *FakeContainerServer) GetOperationWaitReturns(result1 *api.Operation,
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationWaitReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationWaitReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationWaitMutex.Lock()
 	defer fake.getOperationWaitMutex.Unlock()
 	fake.GetOperationWaitStub = nil
@@ -16157,7 +16157,7 @@ func (fake *FakeContainerServer) GetOperationWaitReturnsOnCall(i int, result1 *a
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecret(arg1 string, arg2 string, arg3 int) (*api.Operation, string, error) {
+func (fake *FakeInstanceServer) GetOperationWaitSecret(arg1 string, arg2 string, arg3 int) (*api.Operation, string, error) {
 	fake.getOperationWaitSecretMutex.Lock()
 	ret, specificReturn := fake.getOperationWaitSecretReturnsOnCall[len(fake.getOperationWaitSecretArgsForCall)]
 	fake.getOperationWaitSecretArgsForCall = append(fake.getOperationWaitSecretArgsForCall, struct {
@@ -16178,26 +16178,26 @@ func (fake *FakeContainerServer) GetOperationWaitSecret(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecretCallCount() int {
+func (fake *FakeInstanceServer) GetOperationWaitSecretCallCount() int {
 	fake.getOperationWaitSecretMutex.RLock()
 	defer fake.getOperationWaitSecretMutex.RUnlock()
 	return len(fake.getOperationWaitSecretArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecretCalls(stub func(string, string, int) (*api.Operation, string, error)) {
+func (fake *FakeInstanceServer) GetOperationWaitSecretCalls(stub func(string, string, int) (*api.Operation, string, error)) {
 	fake.getOperationWaitSecretMutex.Lock()
 	defer fake.getOperationWaitSecretMutex.Unlock()
 	fake.GetOperationWaitSecretStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecretArgsForCall(i int) (string, string, int) {
+func (fake *FakeInstanceServer) GetOperationWaitSecretArgsForCall(i int) (string, string, int) {
 	fake.getOperationWaitSecretMutex.RLock()
 	defer fake.getOperationWaitSecretMutex.RUnlock()
 	argsForCall := fake.getOperationWaitSecretArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecretReturns(result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationWaitSecretReturns(result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationWaitSecretMutex.Lock()
 	defer fake.getOperationWaitSecretMutex.Unlock()
 	fake.GetOperationWaitSecretStub = nil
@@ -16208,7 +16208,7 @@ func (fake *FakeContainerServer) GetOperationWaitSecretReturns(result1 *api.Oper
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationWaitSecretReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetOperationWaitSecretReturnsOnCall(i int, result1 *api.Operation, result2 string, result3 error) {
 	fake.getOperationWaitSecretMutex.Lock()
 	defer fake.getOperationWaitSecretMutex.Unlock()
 	fake.GetOperationWaitSecretStub = nil
@@ -16226,7 +16226,7 @@ func (fake *FakeContainerServer) GetOperationWaitSecretReturnsOnCall(i int, resu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocket(arg1 string, arg2 string) (*websocket.Conn, error) {
+func (fake *FakeInstanceServer) GetOperationWebsocket(arg1 string, arg2 string) (*websocket.Conn, error) {
 	fake.getOperationWebsocketMutex.Lock()
 	ret, specificReturn := fake.getOperationWebsocketReturnsOnCall[len(fake.getOperationWebsocketArgsForCall)]
 	fake.getOperationWebsocketArgsForCall = append(fake.getOperationWebsocketArgsForCall, struct {
@@ -16246,26 +16246,26 @@ func (fake *FakeContainerServer) GetOperationWebsocket(arg1 string, arg2 string)
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocketCallCount() int {
+func (fake *FakeInstanceServer) GetOperationWebsocketCallCount() int {
 	fake.getOperationWebsocketMutex.RLock()
 	defer fake.getOperationWebsocketMutex.RUnlock()
 	return len(fake.getOperationWebsocketArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocketCalls(stub func(string, string) (*websocket.Conn, error)) {
+func (fake *FakeInstanceServer) GetOperationWebsocketCalls(stub func(string, string) (*websocket.Conn, error)) {
 	fake.getOperationWebsocketMutex.Lock()
 	defer fake.getOperationWebsocketMutex.Unlock()
 	fake.GetOperationWebsocketStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocketArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetOperationWebsocketArgsForCall(i int) (string, string) {
 	fake.getOperationWebsocketMutex.RLock()
 	defer fake.getOperationWebsocketMutex.RUnlock()
 	argsForCall := fake.getOperationWebsocketArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocketReturns(result1 *websocket.Conn, result2 error) {
+func (fake *FakeInstanceServer) GetOperationWebsocketReturns(result1 *websocket.Conn, result2 error) {
 	fake.getOperationWebsocketMutex.Lock()
 	defer fake.getOperationWebsocketMutex.Unlock()
 	fake.GetOperationWebsocketStub = nil
@@ -16275,7 +16275,7 @@ func (fake *FakeContainerServer) GetOperationWebsocketReturns(result1 *websocket
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationWebsocketReturnsOnCall(i int, result1 *websocket.Conn, result2 error) {
+func (fake *FakeInstanceServer) GetOperationWebsocketReturnsOnCall(i int, result1 *websocket.Conn, result2 error) {
 	fake.getOperationWebsocketMutex.Lock()
 	defer fake.getOperationWebsocketMutex.Unlock()
 	fake.GetOperationWebsocketStub = nil
@@ -16291,7 +16291,7 @@ func (fake *FakeContainerServer) GetOperationWebsocketReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperations() ([]api.Operation, error) {
+func (fake *FakeInstanceServer) GetOperations() ([]api.Operation, error) {
 	fake.getOperationsMutex.Lock()
 	ret, specificReturn := fake.getOperationsReturnsOnCall[len(fake.getOperationsArgsForCall)]
 	fake.getOperationsArgsForCall = append(fake.getOperationsArgsForCall, struct {
@@ -16309,19 +16309,19 @@ func (fake *FakeContainerServer) GetOperations() ([]api.Operation, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetOperationsCallCount() int {
+func (fake *FakeInstanceServer) GetOperationsCallCount() int {
 	fake.getOperationsMutex.RLock()
 	defer fake.getOperationsMutex.RUnlock()
 	return len(fake.getOperationsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationsCalls(stub func() ([]api.Operation, error)) {
+func (fake *FakeInstanceServer) GetOperationsCalls(stub func() ([]api.Operation, error)) {
 	fake.getOperationsMutex.Lock()
 	defer fake.getOperationsMutex.Unlock()
 	fake.GetOperationsStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationsReturns(result1 []api.Operation, result2 error) {
+func (fake *FakeInstanceServer) GetOperationsReturns(result1 []api.Operation, result2 error) {
 	fake.getOperationsMutex.Lock()
 	defer fake.getOperationsMutex.Unlock()
 	fake.GetOperationsStub = nil
@@ -16331,7 +16331,7 @@ func (fake *FakeContainerServer) GetOperationsReturns(result1 []api.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationsReturnsOnCall(i int, result1 []api.Operation, result2 error) {
+func (fake *FakeInstanceServer) GetOperationsReturnsOnCall(i int, result1 []api.Operation, result2 error) {
 	fake.getOperationsMutex.Lock()
 	defer fake.getOperationsMutex.Unlock()
 	fake.GetOperationsStub = nil
@@ -16347,7 +16347,7 @@ func (fake *FakeContainerServer) GetOperationsReturnsOnCall(i int, result1 []api
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationsAllProjects() ([]api.Operation, error) {
+func (fake *FakeInstanceServer) GetOperationsAllProjects() ([]api.Operation, error) {
 	fake.getOperationsAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getOperationsAllProjectsReturnsOnCall[len(fake.getOperationsAllProjectsArgsForCall)]
 	fake.getOperationsAllProjectsArgsForCall = append(fake.getOperationsAllProjectsArgsForCall, struct {
@@ -16365,19 +16365,19 @@ func (fake *FakeContainerServer) GetOperationsAllProjects() ([]api.Operation, er
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetOperationsAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetOperationsAllProjectsCallCount() int {
 	fake.getOperationsAllProjectsMutex.RLock()
 	defer fake.getOperationsAllProjectsMutex.RUnlock()
 	return len(fake.getOperationsAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetOperationsAllProjectsCalls(stub func() ([]api.Operation, error)) {
+func (fake *FakeInstanceServer) GetOperationsAllProjectsCalls(stub func() ([]api.Operation, error)) {
 	fake.getOperationsAllProjectsMutex.Lock()
 	defer fake.getOperationsAllProjectsMutex.Unlock()
 	fake.GetOperationsAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetOperationsAllProjectsReturns(result1 []api.Operation, result2 error) {
+func (fake *FakeInstanceServer) GetOperationsAllProjectsReturns(result1 []api.Operation, result2 error) {
 	fake.getOperationsAllProjectsMutex.Lock()
 	defer fake.getOperationsAllProjectsMutex.Unlock()
 	fake.GetOperationsAllProjectsStub = nil
@@ -16387,7 +16387,7 @@ func (fake *FakeContainerServer) GetOperationsAllProjectsReturns(result1 []api.O
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetOperationsAllProjectsReturnsOnCall(i int, result1 []api.Operation, result2 error) {
+func (fake *FakeInstanceServer) GetOperationsAllProjectsReturnsOnCall(i int, result1 []api.Operation, result2 error) {
 	fake.getOperationsAllProjectsMutex.Lock()
 	defer fake.getOperationsAllProjectsMutex.Unlock()
 	fake.GetOperationsAllProjectsStub = nil
@@ -16403,7 +16403,7 @@ func (fake *FakeContainerServer) GetOperationsAllProjectsReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetPrivateImage(arg1 string, arg2 string) (*api.Image, string, error) {
+func (fake *FakeInstanceServer) GetPrivateImage(arg1 string, arg2 string) (*api.Image, string, error) {
 	fake.getPrivateImageMutex.Lock()
 	ret, specificReturn := fake.getPrivateImageReturnsOnCall[len(fake.getPrivateImageArgsForCall)]
 	fake.getPrivateImageArgsForCall = append(fake.getPrivateImageArgsForCall, struct {
@@ -16423,26 +16423,26 @@ func (fake *FakeContainerServer) GetPrivateImage(arg1 string, arg2 string) (*api
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetPrivateImageCallCount() int {
+func (fake *FakeInstanceServer) GetPrivateImageCallCount() int {
 	fake.getPrivateImageMutex.RLock()
 	defer fake.getPrivateImageMutex.RUnlock()
 	return len(fake.getPrivateImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetPrivateImageCalls(stub func(string, string) (*api.Image, string, error)) {
+func (fake *FakeInstanceServer) GetPrivateImageCalls(stub func(string, string) (*api.Image, string, error)) {
 	fake.getPrivateImageMutex.Lock()
 	defer fake.getPrivateImageMutex.Unlock()
 	fake.GetPrivateImageStub = stub
 }
 
-func (fake *FakeContainerServer) GetPrivateImageArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetPrivateImageArgsForCall(i int) (string, string) {
 	fake.getPrivateImageMutex.RLock()
 	defer fake.getPrivateImageMutex.RUnlock()
 	argsForCall := fake.getPrivateImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetPrivateImageReturns(result1 *api.Image, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetPrivateImageReturns(result1 *api.Image, result2 string, result3 error) {
 	fake.getPrivateImageMutex.Lock()
 	defer fake.getPrivateImageMutex.Unlock()
 	fake.GetPrivateImageStub = nil
@@ -16453,7 +16453,7 @@ func (fake *FakeContainerServer) GetPrivateImageReturns(result1 *api.Image, resu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetPrivateImageReturnsOnCall(i int, result1 *api.Image, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetPrivateImageReturnsOnCall(i int, result1 *api.Image, result2 string, result3 error) {
 	fake.getPrivateImageMutex.Lock()
 	defer fake.getPrivateImageMutex.Unlock()
 	fake.GetPrivateImageStub = nil
@@ -16471,7 +16471,7 @@ func (fake *FakeContainerServer) GetPrivateImageReturnsOnCall(i int, result1 *ap
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFile(arg1 string, arg2 string, arg3 lxd.ImageFileRequest) (*lxd.ImageFileResponse, error) {
+func (fake *FakeInstanceServer) GetPrivateImageFile(arg1 string, arg2 string, arg3 lxd.ImageFileRequest) (*lxd.ImageFileResponse, error) {
 	fake.getPrivateImageFileMutex.Lock()
 	ret, specificReturn := fake.getPrivateImageFileReturnsOnCall[len(fake.getPrivateImageFileArgsForCall)]
 	fake.getPrivateImageFileArgsForCall = append(fake.getPrivateImageFileArgsForCall, struct {
@@ -16492,26 +16492,26 @@ func (fake *FakeContainerServer) GetPrivateImageFile(arg1 string, arg2 string, a
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFileCallCount() int {
+func (fake *FakeInstanceServer) GetPrivateImageFileCallCount() int {
 	fake.getPrivateImageFileMutex.RLock()
 	defer fake.getPrivateImageFileMutex.RUnlock()
 	return len(fake.getPrivateImageFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFileCalls(stub func(string, string, lxd.ImageFileRequest) (*lxd.ImageFileResponse, error)) {
+func (fake *FakeInstanceServer) GetPrivateImageFileCalls(stub func(string, string, lxd.ImageFileRequest) (*lxd.ImageFileResponse, error)) {
 	fake.getPrivateImageFileMutex.Lock()
 	defer fake.getPrivateImageFileMutex.Unlock()
 	fake.GetPrivateImageFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFileArgsForCall(i int) (string, string, lxd.ImageFileRequest) {
+func (fake *FakeInstanceServer) GetPrivateImageFileArgsForCall(i int) (string, string, lxd.ImageFileRequest) {
 	fake.getPrivateImageFileMutex.RLock()
 	defer fake.getPrivateImageFileMutex.RUnlock()
 	argsForCall := fake.getPrivateImageFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFileReturns(result1 *lxd.ImageFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetPrivateImageFileReturns(result1 *lxd.ImageFileResponse, result2 error) {
 	fake.getPrivateImageFileMutex.Lock()
 	defer fake.getPrivateImageFileMutex.Unlock()
 	fake.GetPrivateImageFileStub = nil
@@ -16521,7 +16521,7 @@ func (fake *FakeContainerServer) GetPrivateImageFileReturns(result1 *lxd.ImageFi
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetPrivateImageFileReturnsOnCall(i int, result1 *lxd.ImageFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetPrivateImageFileReturnsOnCall(i int, result1 *lxd.ImageFileResponse, result2 error) {
 	fake.getPrivateImageFileMutex.Lock()
 	defer fake.getPrivateImageFileMutex.Unlock()
 	fake.GetPrivateImageFileStub = nil
@@ -16537,7 +16537,7 @@ func (fake *FakeContainerServer) GetPrivateImageFileReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProfile(arg1 string) (*api.Profile, string, error) {
+func (fake *FakeInstanceServer) GetProfile(arg1 string) (*api.Profile, string, error) {
 	fake.getProfileMutex.Lock()
 	ret, specificReturn := fake.getProfileReturnsOnCall[len(fake.getProfileArgsForCall)]
 	fake.getProfileArgsForCall = append(fake.getProfileArgsForCall, struct {
@@ -16556,26 +16556,26 @@ func (fake *FakeContainerServer) GetProfile(arg1 string) (*api.Profile, string, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetProfileCallCount() int {
+func (fake *FakeInstanceServer) GetProfileCallCount() int {
 	fake.getProfileMutex.RLock()
 	defer fake.getProfileMutex.RUnlock()
 	return len(fake.getProfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProfileCalls(stub func(string) (*api.Profile, string, error)) {
+func (fake *FakeInstanceServer) GetProfileCalls(stub func(string) (*api.Profile, string, error)) {
 	fake.getProfileMutex.Lock()
 	defer fake.getProfileMutex.Unlock()
 	fake.GetProfileStub = stub
 }
 
-func (fake *FakeContainerServer) GetProfileArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetProfileArgsForCall(i int) string {
 	fake.getProfileMutex.RLock()
 	defer fake.getProfileMutex.RUnlock()
 	argsForCall := fake.getProfileArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetProfileReturns(result1 *api.Profile, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetProfileReturns(result1 *api.Profile, result2 string, result3 error) {
 	fake.getProfileMutex.Lock()
 	defer fake.getProfileMutex.Unlock()
 	fake.GetProfileStub = nil
@@ -16586,7 +16586,7 @@ func (fake *FakeContainerServer) GetProfileReturns(result1 *api.Profile, result2
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetProfileReturnsOnCall(i int, result1 *api.Profile, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetProfileReturnsOnCall(i int, result1 *api.Profile, result2 string, result3 error) {
 	fake.getProfileMutex.Lock()
 	defer fake.getProfileMutex.Unlock()
 	fake.GetProfileStub = nil
@@ -16604,7 +16604,7 @@ func (fake *FakeContainerServer) GetProfileReturnsOnCall(i int, result1 *api.Pro
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetProfileNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetProfileNames() ([]string, error) {
 	fake.getProfileNamesMutex.Lock()
 	ret, specificReturn := fake.getProfileNamesReturnsOnCall[len(fake.getProfileNamesArgsForCall)]
 	fake.getProfileNamesArgsForCall = append(fake.getProfileNamesArgsForCall, struct {
@@ -16622,19 +16622,19 @@ func (fake *FakeContainerServer) GetProfileNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetProfileNamesCallCount() int {
+func (fake *FakeInstanceServer) GetProfileNamesCallCount() int {
 	fake.getProfileNamesMutex.RLock()
 	defer fake.getProfileNamesMutex.RUnlock()
 	return len(fake.getProfileNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProfileNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetProfileNamesCalls(stub func() ([]string, error)) {
 	fake.getProfileNamesMutex.Lock()
 	defer fake.getProfileNamesMutex.Unlock()
 	fake.GetProfileNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetProfileNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetProfileNamesReturns(result1 []string, result2 error) {
 	fake.getProfileNamesMutex.Lock()
 	defer fake.getProfileNamesMutex.Unlock()
 	fake.GetProfileNamesStub = nil
@@ -16644,7 +16644,7 @@ func (fake *FakeContainerServer) GetProfileNamesReturns(result1 []string, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProfileNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetProfileNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getProfileNamesMutex.Lock()
 	defer fake.getProfileNamesMutex.Unlock()
 	fake.GetProfileNamesStub = nil
@@ -16660,7 +16660,7 @@ func (fake *FakeContainerServer) GetProfileNamesReturnsOnCall(i int, result1 []s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProfiles() ([]api.Profile, error) {
+func (fake *FakeInstanceServer) GetProfiles() ([]api.Profile, error) {
 	fake.getProfilesMutex.Lock()
 	ret, specificReturn := fake.getProfilesReturnsOnCall[len(fake.getProfilesArgsForCall)]
 	fake.getProfilesArgsForCall = append(fake.getProfilesArgsForCall, struct {
@@ -16678,19 +16678,19 @@ func (fake *FakeContainerServer) GetProfiles() ([]api.Profile, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetProfilesCallCount() int {
+func (fake *FakeInstanceServer) GetProfilesCallCount() int {
 	fake.getProfilesMutex.RLock()
 	defer fake.getProfilesMutex.RUnlock()
 	return len(fake.getProfilesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProfilesCalls(stub func() ([]api.Profile, error)) {
+func (fake *FakeInstanceServer) GetProfilesCalls(stub func() ([]api.Profile, error)) {
 	fake.getProfilesMutex.Lock()
 	defer fake.getProfilesMutex.Unlock()
 	fake.GetProfilesStub = stub
 }
 
-func (fake *FakeContainerServer) GetProfilesReturns(result1 []api.Profile, result2 error) {
+func (fake *FakeInstanceServer) GetProfilesReturns(result1 []api.Profile, result2 error) {
 	fake.getProfilesMutex.Lock()
 	defer fake.getProfilesMutex.Unlock()
 	fake.GetProfilesStub = nil
@@ -16700,7 +16700,7 @@ func (fake *FakeContainerServer) GetProfilesReturns(result1 []api.Profile, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProfilesReturnsOnCall(i int, result1 []api.Profile, result2 error) {
+func (fake *FakeInstanceServer) GetProfilesReturnsOnCall(i int, result1 []api.Profile, result2 error) {
 	fake.getProfilesMutex.Lock()
 	defer fake.getProfilesMutex.Unlock()
 	fake.GetProfilesStub = nil
@@ -16716,7 +16716,7 @@ func (fake *FakeContainerServer) GetProfilesReturnsOnCall(i int, result1 []api.P
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProject(arg1 string) (*api.Project, string, error) {
+func (fake *FakeInstanceServer) GetProject(arg1 string) (*api.Project, string, error) {
 	fake.getProjectMutex.Lock()
 	ret, specificReturn := fake.getProjectReturnsOnCall[len(fake.getProjectArgsForCall)]
 	fake.getProjectArgsForCall = append(fake.getProjectArgsForCall, struct {
@@ -16735,26 +16735,26 @@ func (fake *FakeContainerServer) GetProject(arg1 string) (*api.Project, string, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetProjectCallCount() int {
+func (fake *FakeInstanceServer) GetProjectCallCount() int {
 	fake.getProjectMutex.RLock()
 	defer fake.getProjectMutex.RUnlock()
 	return len(fake.getProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProjectCalls(stub func(string) (*api.Project, string, error)) {
+func (fake *FakeInstanceServer) GetProjectCalls(stub func(string) (*api.Project, string, error)) {
 	fake.getProjectMutex.Lock()
 	defer fake.getProjectMutex.Unlock()
 	fake.GetProjectStub = stub
 }
 
-func (fake *FakeContainerServer) GetProjectArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetProjectArgsForCall(i int) string {
 	fake.getProjectMutex.RLock()
 	defer fake.getProjectMutex.RUnlock()
 	argsForCall := fake.getProjectArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetProjectReturns(result1 *api.Project, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetProjectReturns(result1 *api.Project, result2 string, result3 error) {
 	fake.getProjectMutex.Lock()
 	defer fake.getProjectMutex.Unlock()
 	fake.GetProjectStub = nil
@@ -16765,7 +16765,7 @@ func (fake *FakeContainerServer) GetProjectReturns(result1 *api.Project, result2
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetProjectReturnsOnCall(i int, result1 *api.Project, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetProjectReturnsOnCall(i int, result1 *api.Project, result2 string, result3 error) {
 	fake.getProjectMutex.Lock()
 	defer fake.getProjectMutex.Unlock()
 	fake.GetProjectStub = nil
@@ -16783,7 +16783,7 @@ func (fake *FakeContainerServer) GetProjectReturnsOnCall(i int, result1 *api.Pro
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetProjectNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetProjectNames() ([]string, error) {
 	fake.getProjectNamesMutex.Lock()
 	ret, specificReturn := fake.getProjectNamesReturnsOnCall[len(fake.getProjectNamesArgsForCall)]
 	fake.getProjectNamesArgsForCall = append(fake.getProjectNamesArgsForCall, struct {
@@ -16801,19 +16801,19 @@ func (fake *FakeContainerServer) GetProjectNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetProjectNamesCallCount() int {
+func (fake *FakeInstanceServer) GetProjectNamesCallCount() int {
 	fake.getProjectNamesMutex.RLock()
 	defer fake.getProjectNamesMutex.RUnlock()
 	return len(fake.getProjectNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProjectNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetProjectNamesCalls(stub func() ([]string, error)) {
 	fake.getProjectNamesMutex.Lock()
 	defer fake.getProjectNamesMutex.Unlock()
 	fake.GetProjectNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetProjectNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetProjectNamesReturns(result1 []string, result2 error) {
 	fake.getProjectNamesMutex.Lock()
 	defer fake.getProjectNamesMutex.Unlock()
 	fake.GetProjectNamesStub = nil
@@ -16823,7 +16823,7 @@ func (fake *FakeContainerServer) GetProjectNamesReturns(result1 []string, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProjectNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetProjectNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getProjectNamesMutex.Lock()
 	defer fake.getProjectNamesMutex.Unlock()
 	fake.GetProjectNamesStub = nil
@@ -16839,7 +16839,7 @@ func (fake *FakeContainerServer) GetProjectNamesReturnsOnCall(i int, result1 []s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProjectState(arg1 string) (*api.ProjectState, error) {
+func (fake *FakeInstanceServer) GetProjectState(arg1 string) (*api.ProjectState, error) {
 	fake.getProjectStateMutex.Lock()
 	ret, specificReturn := fake.getProjectStateReturnsOnCall[len(fake.getProjectStateArgsForCall)]
 	fake.getProjectStateArgsForCall = append(fake.getProjectStateArgsForCall, struct {
@@ -16858,26 +16858,26 @@ func (fake *FakeContainerServer) GetProjectState(arg1 string) (*api.ProjectState
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetProjectStateCallCount() int {
+func (fake *FakeInstanceServer) GetProjectStateCallCount() int {
 	fake.getProjectStateMutex.RLock()
 	defer fake.getProjectStateMutex.RUnlock()
 	return len(fake.getProjectStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProjectStateCalls(stub func(string) (*api.ProjectState, error)) {
+func (fake *FakeInstanceServer) GetProjectStateCalls(stub func(string) (*api.ProjectState, error)) {
 	fake.getProjectStateMutex.Lock()
 	defer fake.getProjectStateMutex.Unlock()
 	fake.GetProjectStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetProjectStateArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetProjectStateArgsForCall(i int) string {
 	fake.getProjectStateMutex.RLock()
 	defer fake.getProjectStateMutex.RUnlock()
 	argsForCall := fake.getProjectStateArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetProjectStateReturns(result1 *api.ProjectState, result2 error) {
+func (fake *FakeInstanceServer) GetProjectStateReturns(result1 *api.ProjectState, result2 error) {
 	fake.getProjectStateMutex.Lock()
 	defer fake.getProjectStateMutex.Unlock()
 	fake.GetProjectStateStub = nil
@@ -16887,7 +16887,7 @@ func (fake *FakeContainerServer) GetProjectStateReturns(result1 *api.ProjectStat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProjectStateReturnsOnCall(i int, result1 *api.ProjectState, result2 error) {
+func (fake *FakeInstanceServer) GetProjectStateReturnsOnCall(i int, result1 *api.ProjectState, result2 error) {
 	fake.getProjectStateMutex.Lock()
 	defer fake.getProjectStateMutex.Unlock()
 	fake.GetProjectStateStub = nil
@@ -16903,7 +16903,7 @@ func (fake *FakeContainerServer) GetProjectStateReturnsOnCall(i int, result1 *ap
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProjects() ([]api.Project, error) {
+func (fake *FakeInstanceServer) GetProjects() ([]api.Project, error) {
 	fake.getProjectsMutex.Lock()
 	ret, specificReturn := fake.getProjectsReturnsOnCall[len(fake.getProjectsArgsForCall)]
 	fake.getProjectsArgsForCall = append(fake.getProjectsArgsForCall, struct {
@@ -16921,19 +16921,19 @@ func (fake *FakeContainerServer) GetProjects() ([]api.Project, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetProjectsCallCount() int {
 	fake.getProjectsMutex.RLock()
 	defer fake.getProjectsMutex.RUnlock()
 	return len(fake.getProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetProjectsCalls(stub func() ([]api.Project, error)) {
+func (fake *FakeInstanceServer) GetProjectsCalls(stub func() ([]api.Project, error)) {
 	fake.getProjectsMutex.Lock()
 	defer fake.getProjectsMutex.Unlock()
 	fake.GetProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetProjectsReturns(result1 []api.Project, result2 error) {
+func (fake *FakeInstanceServer) GetProjectsReturns(result1 []api.Project, result2 error) {
 	fake.getProjectsMutex.Lock()
 	defer fake.getProjectsMutex.Unlock()
 	fake.GetProjectsStub = nil
@@ -16943,7 +16943,7 @@ func (fake *FakeContainerServer) GetProjectsReturns(result1 []api.Project, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetProjectsReturnsOnCall(i int, result1 []api.Project, result2 error) {
+func (fake *FakeInstanceServer) GetProjectsReturnsOnCall(i int, result1 []api.Project, result2 error) {
 	fake.getProjectsMutex.Lock()
 	defer fake.getProjectsMutex.Unlock()
 	fake.GetProjectsStub = nil
@@ -16959,7 +16959,7 @@ func (fake *FakeContainerServer) GetProjectsReturnsOnCall(i int, result1 []api.P
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetServer() (*api.Server, string, error) {
+func (fake *FakeInstanceServer) GetServer() (*api.Server, string, error) {
 	fake.getServerMutex.Lock()
 	ret, specificReturn := fake.getServerReturnsOnCall[len(fake.getServerArgsForCall)]
 	fake.getServerArgsForCall = append(fake.getServerArgsForCall, struct {
@@ -16977,19 +16977,19 @@ func (fake *FakeContainerServer) GetServer() (*api.Server, string, error) {
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetServerCallCount() int {
+func (fake *FakeInstanceServer) GetServerCallCount() int {
 	fake.getServerMutex.RLock()
 	defer fake.getServerMutex.RUnlock()
 	return len(fake.getServerArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetServerCalls(stub func() (*api.Server, string, error)) {
+func (fake *FakeInstanceServer) GetServerCalls(stub func() (*api.Server, string, error)) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = stub
 }
 
-func (fake *FakeContainerServer) GetServerReturns(result1 *api.Server, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetServerReturns(result1 *api.Server, result2 string, result3 error) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = nil
@@ -17000,7 +17000,7 @@ func (fake *FakeContainerServer) GetServerReturns(result1 *api.Server, result2 s
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetServerReturnsOnCall(i int, result1 *api.Server, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetServerReturnsOnCall(i int, result1 *api.Server, result2 string, result3 error) {
 	fake.getServerMutex.Lock()
 	defer fake.getServerMutex.Unlock()
 	fake.GetServerStub = nil
@@ -17018,7 +17018,7 @@ func (fake *FakeContainerServer) GetServerReturnsOnCall(i int, result1 *api.Serv
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetServerResources() (*api.Resources, error) {
+func (fake *FakeInstanceServer) GetServerResources() (*api.Resources, error) {
 	fake.getServerResourcesMutex.Lock()
 	ret, specificReturn := fake.getServerResourcesReturnsOnCall[len(fake.getServerResourcesArgsForCall)]
 	fake.getServerResourcesArgsForCall = append(fake.getServerResourcesArgsForCall, struct {
@@ -17036,19 +17036,19 @@ func (fake *FakeContainerServer) GetServerResources() (*api.Resources, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetServerResourcesCallCount() int {
+func (fake *FakeInstanceServer) GetServerResourcesCallCount() int {
 	fake.getServerResourcesMutex.RLock()
 	defer fake.getServerResourcesMutex.RUnlock()
 	return len(fake.getServerResourcesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetServerResourcesCalls(stub func() (*api.Resources, error)) {
+func (fake *FakeInstanceServer) GetServerResourcesCalls(stub func() (*api.Resources, error)) {
 	fake.getServerResourcesMutex.Lock()
 	defer fake.getServerResourcesMutex.Unlock()
 	fake.GetServerResourcesStub = stub
 }
 
-func (fake *FakeContainerServer) GetServerResourcesReturns(result1 *api.Resources, result2 error) {
+func (fake *FakeInstanceServer) GetServerResourcesReturns(result1 *api.Resources, result2 error) {
 	fake.getServerResourcesMutex.Lock()
 	defer fake.getServerResourcesMutex.Unlock()
 	fake.GetServerResourcesStub = nil
@@ -17058,7 +17058,7 @@ func (fake *FakeContainerServer) GetServerResourcesReturns(result1 *api.Resource
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetServerResourcesReturnsOnCall(i int, result1 *api.Resources, result2 error) {
+func (fake *FakeInstanceServer) GetServerResourcesReturnsOnCall(i int, result1 *api.Resources, result2 error) {
 	fake.getServerResourcesMutex.Lock()
 	defer fake.getServerResourcesMutex.Unlock()
 	fake.GetServerResourcesStub = nil
@@ -17074,7 +17074,7 @@ func (fake *FakeContainerServer) GetServerResourcesReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePool(arg1 string) (*api.StoragePool, string, error) {
+func (fake *FakeInstanceServer) GetStoragePool(arg1 string) (*api.StoragePool, string, error) {
 	fake.getStoragePoolMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolReturnsOnCall[len(fake.getStoragePoolArgsForCall)]
 	fake.getStoragePoolArgsForCall = append(fake.getStoragePoolArgsForCall, struct {
@@ -17093,26 +17093,26 @@ func (fake *FakeContainerServer) GetStoragePool(arg1 string) (*api.StoragePool, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolCallCount() int {
 	fake.getStoragePoolMutex.RLock()
 	defer fake.getStoragePoolMutex.RUnlock()
 	return len(fake.getStoragePoolArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolCalls(stub func(string) (*api.StoragePool, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolCalls(stub func(string) (*api.StoragePool, string, error)) {
 	fake.getStoragePoolMutex.Lock()
 	defer fake.getStoragePoolMutex.Unlock()
 	fake.GetStoragePoolStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolArgsForCall(i int) string {
 	fake.getStoragePoolMutex.RLock()
 	defer fake.getStoragePoolMutex.RUnlock()
 	argsForCall := fake.getStoragePoolArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolReturns(result1 *api.StoragePool, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolReturns(result1 *api.StoragePool, result2 string, result3 error) {
 	fake.getStoragePoolMutex.Lock()
 	defer fake.getStoragePoolMutex.Unlock()
 	fake.GetStoragePoolStub = nil
@@ -17123,7 +17123,7 @@ func (fake *FakeContainerServer) GetStoragePoolReturns(result1 *api.StoragePool,
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolReturnsOnCall(i int, result1 *api.StoragePool, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolReturnsOnCall(i int, result1 *api.StoragePool, result2 string, result3 error) {
 	fake.getStoragePoolMutex.Lock()
 	defer fake.getStoragePoolMutex.Unlock()
 	fake.GetStoragePoolStub = nil
@@ -17141,7 +17141,7 @@ func (fake *FakeContainerServer) GetStoragePoolReturnsOnCall(i int, result1 *api
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucket(arg1 string, arg2 string) (*api.StorageBucket, string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucket(arg1 string, arg2 string) (*api.StorageBucket, string, error) {
 	fake.getStoragePoolBucketMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketReturnsOnCall[len(fake.getStoragePoolBucketArgsForCall)]
 	fake.getStoragePoolBucketArgsForCall = append(fake.getStoragePoolBucketArgsForCall, struct {
@@ -17161,26 +17161,26 @@ func (fake *FakeContainerServer) GetStoragePoolBucket(arg1 string, arg2 string) 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketCallCount() int {
 	fake.getStoragePoolBucketMutex.RLock()
 	defer fake.getStoragePoolBucketMutex.RUnlock()
 	return len(fake.getStoragePoolBucketArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketCalls(stub func(string, string) (*api.StorageBucket, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketCalls(stub func(string, string) (*api.StorageBucket, string, error)) {
 	fake.getStoragePoolBucketMutex.Lock()
 	defer fake.getStoragePoolBucketMutex.Unlock()
 	fake.GetStoragePoolBucketStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketArgsForCall(i int) (string, string) {
 	fake.getStoragePoolBucketMutex.RLock()
 	defer fake.getStoragePoolBucketMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketReturns(result1 *api.StorageBucket, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketReturns(result1 *api.StorageBucket, result2 string, result3 error) {
 	fake.getStoragePoolBucketMutex.Lock()
 	defer fake.getStoragePoolBucketMutex.Unlock()
 	fake.GetStoragePoolBucketStub = nil
@@ -17191,7 +17191,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketReturns(result1 *api.Storag
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucket, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucket, result2 string, result3 error) {
 	fake.getStoragePoolBucketMutex.Lock()
 	defer fake.getStoragePoolBucketMutex.Unlock()
 	fake.GetStoragePoolBucketStub = nil
@@ -17209,7 +17209,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) (*api.StorageBucketKey, string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) (*api.StorageBucketKey, string, error) {
 	fake.getStoragePoolBucketKeyMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketKeyReturnsOnCall[len(fake.getStoragePoolBucketKeyArgsForCall)]
 	fake.getStoragePoolBucketKeyArgsForCall = append(fake.getStoragePoolBucketKeyArgsForCall, struct {
@@ -17230,26 +17230,26 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKey(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyCallCount() int {
 	fake.getStoragePoolBucketKeyMutex.RLock()
 	defer fake.getStoragePoolBucketKeyMutex.RUnlock()
 	return len(fake.getStoragePoolBucketKeyArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyCalls(stub func(string, string, string) (*api.StorageBucketKey, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyCalls(stub func(string, string, string) (*api.StorageBucketKey, string, error)) {
 	fake.getStoragePoolBucketKeyMutex.Lock()
 	defer fake.getStoragePoolBucketKeyMutex.Unlock()
 	fake.GetStoragePoolBucketKeyStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolBucketKeyMutex.RLock()
 	defer fake.getStoragePoolBucketKeyMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketKeyArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 string, result3 error) {
 	fake.getStoragePoolBucketKeyMutex.Lock()
 	defer fake.getStoragePoolBucketKeyMutex.Unlock()
 	fake.GetStoragePoolBucketKeyStub = nil
@@ -17260,7 +17260,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturns(result1 *api.Sto
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 string, result3 error) {
 	fake.getStoragePoolBucketKeyMutex.Lock()
 	defer fake.getStoragePoolBucketKeyMutex.Unlock()
 	fake.GetStoragePoolBucketKeyStub = nil
@@ -17278,7 +17278,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturnsOnCall(i int, res
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNames(arg1 string, arg2 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNames(arg1 string, arg2 string) ([]string, error) {
 	fake.getStoragePoolBucketKeyNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketKeyNamesReturnsOnCall[len(fake.getStoragePoolBucketKeyNamesArgsForCall)]
 	fake.getStoragePoolBucketKeyNamesArgsForCall = append(fake.getStoragePoolBucketKeyNamesArgsForCall, struct {
@@ -17298,26 +17298,26 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeyNames(arg1 string, arg2 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNamesCallCount() int {
 	fake.getStoragePoolBucketKeyNamesMutex.RLock()
 	defer fake.getStoragePoolBucketKeyNamesMutex.RUnlock()
 	return len(fake.getStoragePoolBucketKeyNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesCalls(stub func(string, string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNamesCalls(stub func(string, string) ([]string, error)) {
 	fake.getStoragePoolBucketKeyNamesMutex.Lock()
 	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
 	fake.GetStoragePoolBucketKeyNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNamesArgsForCall(i int) (string, string) {
 	fake.getStoragePoolBucketKeyNamesMutex.RLock()
 	defer fake.getStoragePoolBucketKeyNamesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketKeyNamesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolBucketKeyNamesMutex.Lock()
 	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
 	fake.GetStoragePoolBucketKeyNamesStub = nil
@@ -17327,7 +17327,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturns(result1 []s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeyNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolBucketKeyNamesMutex.Lock()
 	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
 	fake.GetStoragePoolBucketKeyNamesStub = nil
@@ -17343,7 +17343,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturnsOnCall(i int
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeys(arg1 string, arg2 string) ([]api.StorageBucketKey, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeys(arg1 string, arg2 string) ([]api.StorageBucketKey, error) {
 	fake.getStoragePoolBucketKeysMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketKeysReturnsOnCall[len(fake.getStoragePoolBucketKeysArgsForCall)]
 	fake.getStoragePoolBucketKeysArgsForCall = append(fake.getStoragePoolBucketKeysArgsForCall, struct {
@@ -17363,26 +17363,26 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeys(arg1 string, arg2 stri
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeysCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeysCallCount() int {
 	fake.getStoragePoolBucketKeysMutex.RLock()
 	defer fake.getStoragePoolBucketKeysMutex.RUnlock()
 	return len(fake.getStoragePoolBucketKeysArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeysCalls(stub func(string, string) ([]api.StorageBucketKey, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeysCalls(stub func(string, string) ([]api.StorageBucketKey, error)) {
 	fake.getStoragePoolBucketKeysMutex.Lock()
 	defer fake.getStoragePoolBucketKeysMutex.Unlock()
 	fake.GetStoragePoolBucketKeysStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeysArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeysArgsForCall(i int) (string, string) {
 	fake.getStoragePoolBucketKeysMutex.RLock()
 	defer fake.getStoragePoolBucketKeysMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketKeysArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturns(result1 []api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeysReturns(result1 []api.StorageBucketKey, result2 error) {
 	fake.getStoragePoolBucketKeysMutex.Lock()
 	defer fake.getStoragePoolBucketKeysMutex.Unlock()
 	fake.GetStoragePoolBucketKeysStub = nil
@@ -17392,7 +17392,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturns(result1 []api.S
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturnsOnCall(i int, result1 []api.StorageBucketKey, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketKeysReturnsOnCall(i int, result1 []api.StorageBucketKey, result2 error) {
 	fake.getStoragePoolBucketKeysMutex.Lock()
 	defer fake.getStoragePoolBucketKeysMutex.Unlock()
 	fake.GetStoragePoolBucketKeysStub = nil
@@ -17408,7 +17408,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNames(arg1 string) ([]string, error) {
 	fake.getStoragePoolBucketNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketNamesReturnsOnCall[len(fake.getStoragePoolBucketNamesArgsForCall)]
 	fake.getStoragePoolBucketNamesArgsForCall = append(fake.getStoragePoolBucketNamesArgsForCall, struct {
@@ -17427,26 +17427,26 @@ func (fake *FakeContainerServer) GetStoragePoolBucketNames(arg1 string) ([]strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNamesCallCount() int {
 	fake.getStoragePoolBucketNamesMutex.RLock()
 	defer fake.getStoragePoolBucketNamesMutex.RUnlock()
 	return len(fake.getStoragePoolBucketNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNamesCalls(stub func(string) ([]string, error)) {
 	fake.getStoragePoolBucketNamesMutex.Lock()
 	defer fake.getStoragePoolBucketNamesMutex.Unlock()
 	fake.GetStoragePoolBucketNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNamesArgsForCall(i int) string {
 	fake.getStoragePoolBucketNamesMutex.RLock()
 	defer fake.getStoragePoolBucketNamesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolBucketNamesMutex.Lock()
 	defer fake.getStoragePoolBucketNamesMutex.Unlock()
 	fake.GetStoragePoolBucketNamesStub = nil
@@ -17456,7 +17456,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturns(result1 []stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolBucketNamesMutex.Lock()
 	defer fake.getStoragePoolBucketNamesMutex.Unlock()
 	fake.GetStoragePoolBucketNamesStub = nil
@@ -17472,7 +17472,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBuckets(arg1 string) ([]api.StorageBucket, error) {
+func (fake *FakeInstanceServer) GetStoragePoolBuckets(arg1 string) ([]api.StorageBucket, error) {
 	fake.getStoragePoolBucketsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolBucketsReturnsOnCall[len(fake.getStoragePoolBucketsArgsForCall)]
 	fake.getStoragePoolBucketsArgsForCall = append(fake.getStoragePoolBucketsArgsForCall, struct {
@@ -17491,26 +17491,26 @@ func (fake *FakeContainerServer) GetStoragePoolBuckets(arg1 string) ([]api.Stora
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolBucketsCallCount() int {
 	fake.getStoragePoolBucketsMutex.RLock()
 	defer fake.getStoragePoolBucketsMutex.RUnlock()
 	return len(fake.getStoragePoolBucketsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketsCalls(stub func(string) ([]api.StorageBucket, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketsCalls(stub func(string) ([]api.StorageBucket, error)) {
 	fake.getStoragePoolBucketsMutex.Lock()
 	defer fake.getStoragePoolBucketsMutex.Unlock()
 	fake.GetStoragePoolBucketsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolBucketsArgsForCall(i int) string {
 	fake.getStoragePoolBucketsMutex.RLock()
 	defer fake.getStoragePoolBucketsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolBucketsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketsReturns(result1 []api.StorageBucket, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketsReturns(result1 []api.StorageBucket, result2 error) {
 	fake.getStoragePoolBucketsMutex.Lock()
 	defer fake.getStoragePoolBucketsMutex.Unlock()
 	fake.GetStoragePoolBucketsStub = nil
@@ -17520,7 +17520,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketsReturns(result1 []api.Stor
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolBucketsReturnsOnCall(i int, result1 []api.StorageBucket, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolBucketsReturnsOnCall(i int, result1 []api.StorageBucket, result2 error) {
 	fake.getStoragePoolBucketsMutex.Lock()
 	defer fake.getStoragePoolBucketsMutex.Unlock()
 	fake.GetStoragePoolBucketsStub = nil
@@ -17536,7 +17536,7 @@ func (fake *FakeContainerServer) GetStoragePoolBucketsReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolNames() ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolNames() ([]string, error) {
 	fake.getStoragePoolNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolNamesReturnsOnCall[len(fake.getStoragePoolNamesArgsForCall)]
 	fake.getStoragePoolNamesArgsForCall = append(fake.getStoragePoolNamesArgsForCall, struct {
@@ -17554,19 +17554,19 @@ func (fake *FakeContainerServer) GetStoragePoolNames() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolNamesCallCount() int {
 	fake.getStoragePoolNamesMutex.RLock()
 	defer fake.getStoragePoolNamesMutex.RUnlock()
 	return len(fake.getStoragePoolNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolNamesCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolNamesCalls(stub func() ([]string, error)) {
 	fake.getStoragePoolNamesMutex.Lock()
 	defer fake.getStoragePoolNamesMutex.Unlock()
 	fake.GetStoragePoolNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolNamesMutex.Lock()
 	defer fake.getStoragePoolNamesMutex.Unlock()
 	fake.GetStoragePoolNamesStub = nil
@@ -17576,7 +17576,7 @@ func (fake *FakeContainerServer) GetStoragePoolNamesReturns(result1 []string, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolNamesMutex.Lock()
 	defer fake.getStoragePoolNamesMutex.Unlock()
 	fake.GetStoragePoolNamesStub = nil
@@ -17592,7 +17592,7 @@ func (fake *FakeContainerServer) GetStoragePoolNamesReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResources(arg1 string) (*api.ResourcesStoragePool, error) {
+func (fake *FakeInstanceServer) GetStoragePoolResources(arg1 string) (*api.ResourcesStoragePool, error) {
 	fake.getStoragePoolResourcesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolResourcesReturnsOnCall[len(fake.getStoragePoolResourcesArgsForCall)]
 	fake.getStoragePoolResourcesArgsForCall = append(fake.getStoragePoolResourcesArgsForCall, struct {
@@ -17611,26 +17611,26 @@ func (fake *FakeContainerServer) GetStoragePoolResources(arg1 string) (*api.Reso
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResourcesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolResourcesCallCount() int {
 	fake.getStoragePoolResourcesMutex.RLock()
 	defer fake.getStoragePoolResourcesMutex.RUnlock()
 	return len(fake.getStoragePoolResourcesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResourcesCalls(stub func(string) (*api.ResourcesStoragePool, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolResourcesCalls(stub func(string) (*api.ResourcesStoragePool, error)) {
 	fake.getStoragePoolResourcesMutex.Lock()
 	defer fake.getStoragePoolResourcesMutex.Unlock()
 	fake.GetStoragePoolResourcesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResourcesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolResourcesArgsForCall(i int) string {
 	fake.getStoragePoolResourcesMutex.RLock()
 	defer fake.getStoragePoolResourcesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolResourcesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResourcesReturns(result1 *api.ResourcesStoragePool, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolResourcesReturns(result1 *api.ResourcesStoragePool, result2 error) {
 	fake.getStoragePoolResourcesMutex.Lock()
 	defer fake.getStoragePoolResourcesMutex.Unlock()
 	fake.GetStoragePoolResourcesStub = nil
@@ -17640,7 +17640,7 @@ func (fake *FakeContainerServer) GetStoragePoolResourcesReturns(result1 *api.Res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolResourcesReturnsOnCall(i int, result1 *api.ResourcesStoragePool, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolResourcesReturnsOnCall(i int, result1 *api.ResourcesStoragePool, result2 error) {
 	fake.getStoragePoolResourcesMutex.Lock()
 	defer fake.getStoragePoolResourcesMutex.Unlock()
 	fake.GetStoragePoolResourcesStub = nil
@@ -17656,7 +17656,7 @@ func (fake *FakeContainerServer) GetStoragePoolResourcesReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolume(arg1 string, arg2 string, arg3 string) (*api.StorageVolume, string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolume(arg1 string, arg2 string, arg3 string) (*api.StorageVolume, string, error) {
 	fake.getStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeReturnsOnCall[len(fake.getStoragePoolVolumeArgsForCall)]
 	fake.getStoragePoolVolumeArgsForCall = append(fake.getStoragePoolVolumeArgsForCall, struct {
@@ -17677,26 +17677,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolume(arg1 string, arg2 string, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeCallCount() int {
 	fake.getStoragePoolVolumeMutex.RLock()
 	defer fake.getStoragePoolVolumeMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeCalls(stub func(string, string, string) (*api.StorageVolume, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeCalls(stub func(string, string, string) (*api.StorageVolume, string, error)) {
 	fake.getStoragePoolVolumeMutex.Lock()
 	defer fake.getStoragePoolVolumeMutex.Unlock()
 	fake.GetStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolVolumeMutex.RLock()
 	defer fake.getStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeReturns(result1 *api.StorageVolume, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeReturns(result1 *api.StorageVolume, result2 string, result3 error) {
 	fake.getStoragePoolVolumeMutex.Lock()
 	defer fake.getStoragePoolVolumeMutex.Unlock()
 	fake.GetStoragePoolVolumeStub = nil
@@ -17707,7 +17707,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeReturns(result1 *api.Storag
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeReturnsOnCall(i int, result1 *api.StorageVolume, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeReturnsOnCall(i int, result1 *api.StorageVolume, result2 string, result3 error) {
 	fake.getStoragePoolVolumeMutex.Lock()
 	defer fake.getStoragePoolVolumeMutex.Unlock()
 	fake.GetStoragePoolVolumeStub = nil
@@ -17725,7 +17725,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string) (*api.StoragePoolVolumeBackup, string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string) (*api.StoragePoolVolumeBackup, string, error) {
 	fake.getStoragePoolVolumeBackupMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeBackupReturnsOnCall[len(fake.getStoragePoolVolumeBackupArgsForCall)]
 	fake.getStoragePoolVolumeBackupArgsForCall = append(fake.getStoragePoolVolumeBackupArgsForCall, struct {
@@ -17746,26 +17746,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackup(arg1 string, arg2 st
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupCallCount() int {
 	fake.getStoragePoolVolumeBackupMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupCalls(stub func(string, string, string) (*api.StoragePoolVolumeBackup, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupCalls(stub func(string, string, string) (*api.StoragePoolVolumeBackup, string, error)) {
 	fake.getStoragePoolVolumeBackupMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolVolumeBackupMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupReturns(result1 *api.StoragePoolVolumeBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupReturns(result1 *api.StoragePoolVolumeBackup, result2 string, result3 error) {
 	fake.getStoragePoolVolumeBackupMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupStub = nil
@@ -17776,7 +17776,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupReturns(result1 *api.
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupReturnsOnCall(i int, result1 *api.StoragePoolVolumeBackup, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupReturnsOnCall(i int, result1 *api.StoragePoolVolumeBackup, result2 string, result3 error) {
 	fake.getStoragePoolVolumeBackupMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupStub = nil
@@ -17794,7 +17794,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupReturnsOnCall(i int, 
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFile(arg1 string, arg2 string, arg3 string, arg4 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFile(arg1 string, arg2 string, arg3 string, arg4 *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error) {
 	fake.getStoragePoolVolumeBackupFileMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeBackupFileReturnsOnCall[len(fake.getStoragePoolVolumeBackupFileArgsForCall)]
 	fake.getStoragePoolVolumeBackupFileArgsForCall = append(fake.getStoragePoolVolumeBackupFileArgsForCall, struct {
@@ -17816,26 +17816,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFile(arg1 string, arg
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFileCallCount() int {
 	fake.getStoragePoolVolumeBackupFileMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupFileMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeBackupFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileCalls(stub func(string, string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFileCalls(stub func(string, string, string, *lxd.BackupFileRequest) (*lxd.BackupFileResponse, error)) {
 	fake.getStoragePoolVolumeBackupFileMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupFileMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupFileStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileArgsForCall(i int) (string, string, string, *lxd.BackupFileRequest) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFileArgsForCall(i int) (string, string, string, *lxd.BackupFileRequest) {
 	fake.getStoragePoolVolumeBackupFileMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupFileMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeBackupFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFileReturns(result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getStoragePoolVolumeBackupFileMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupFileMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupFileStub = nil
@@ -17845,7 +17845,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileReturns(result1 *
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupFileReturnsOnCall(i int, result1 *lxd.BackupFileResponse, result2 error) {
 	fake.getStoragePoolVolumeBackupFileMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupFileMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupFileStub = nil
@@ -17861,7 +17861,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupFileReturnsOnCall(i i
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNames(arg1 string, arg2 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNames(arg1 string, arg2 string) ([]string, error) {
 	fake.getStoragePoolVolumeBackupNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeBackupNamesReturnsOnCall[len(fake.getStoragePoolVolumeBackupNamesArgsForCall)]
 	fake.getStoragePoolVolumeBackupNamesArgsForCall = append(fake.getStoragePoolVolumeBackupNamesArgsForCall, struct {
@@ -17881,26 +17881,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNames(arg1 string, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNamesCallCount() int {
 	fake.getStoragePoolVolumeBackupNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupNamesMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeBackupNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesCalls(stub func(string, string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNamesCalls(stub func(string, string) ([]string, error)) {
 	fake.getStoragePoolVolumeBackupNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNamesArgsForCall(i int) (string, string) {
 	fake.getStoragePoolVolumeBackupNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupNamesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeBackupNamesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolVolumeBackupNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupNamesStub = nil
@@ -17910,7 +17910,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolVolumeBackupNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupNamesStub = nil
@@ -17926,7 +17926,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupNamesReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackups(arg1 string, arg2 string) ([]api.StoragePoolVolumeBackup, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackups(arg1 string, arg2 string) ([]api.StoragePoolVolumeBackup, error) {
 	fake.getStoragePoolVolumeBackupsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeBackupsReturnsOnCall[len(fake.getStoragePoolVolumeBackupsArgsForCall)]
 	fake.getStoragePoolVolumeBackupsArgsForCall = append(fake.getStoragePoolVolumeBackupsArgsForCall, struct {
@@ -17946,26 +17946,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackups(arg1 string, arg2 s
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupsCallCount() int {
 	fake.getStoragePoolVolumeBackupsMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupsMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeBackupsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsCalls(stub func(string, string) ([]api.StoragePoolVolumeBackup, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupsCalls(stub func(string, string) ([]api.StoragePoolVolumeBackup, error)) {
 	fake.getStoragePoolVolumeBackupsMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupsMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsArgsForCall(i int) (string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupsArgsForCall(i int) (string, string) {
 	fake.getStoragePoolVolumeBackupsMutex.RLock()
 	defer fake.getStoragePoolVolumeBackupsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeBackupsArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsReturns(result1 []api.StoragePoolVolumeBackup, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupsReturns(result1 []api.StoragePoolVolumeBackup, result2 error) {
 	fake.getStoragePoolVolumeBackupsMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupsMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupsStub = nil
@@ -17975,7 +17975,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsReturns(result1 []ap
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsReturnsOnCall(i int, result1 []api.StoragePoolVolumeBackup, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeBackupsReturnsOnCall(i int, result1 []api.StoragePoolVolumeBackup, result2 error) {
 	fake.getStoragePoolVolumeBackupsMutex.Lock()
 	defer fake.getStoragePoolVolumeBackupsMutex.Unlock()
 	fake.GetStoragePoolVolumeBackupsStub = nil
@@ -17991,7 +17991,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeBackupsReturnsOnCall(i int,
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNames(arg1 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNames(arg1 string) ([]string, error) {
 	fake.getStoragePoolVolumeNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeNamesReturnsOnCall[len(fake.getStoragePoolVolumeNamesArgsForCall)]
 	fake.getStoragePoolVolumeNamesArgsForCall = append(fake.getStoragePoolVolumeNamesArgsForCall, struct {
@@ -18010,26 +18010,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNames(arg1 string) ([]strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesCallCount() int {
 	fake.getStoragePoolVolumeNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeNamesMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesCalls(stub func(string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesCalls(stub func(string) ([]string, error)) {
 	fake.getStoragePoolVolumeNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesArgsForCall(i int) string {
 	fake.getStoragePoolVolumeNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeNamesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeNamesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolVolumeNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesStub = nil
@@ -18039,7 +18039,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesReturns(result1 []stri
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolVolumeNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesStub = nil
@@ -18055,7 +18055,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjects(arg1 string) (map[string][]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjects(arg1 string) (map[string][]string, error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeNamesAllProjectsReturnsOnCall[len(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall)]
 	fake.getStoragePoolVolumeNamesAllProjectsArgsForCall = append(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall, struct {
@@ -18074,26 +18074,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjects(arg1 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjectsCallCount() int {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsCalls(stub func(string) (map[string][]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjectsCalls(stub func(string) (map[string][]string, error)) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjectsArgsForCall(i int) string {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeNamesAllProjectsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturns(result1 map[string][]string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjectsReturns(result1 map[string][]string, result2 error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = nil
@@ -18103,7 +18103,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturns(res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturnsOnCall(i int, result1 map[string][]string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeNamesAllProjectsReturnsOnCall(i int, result1 map[string][]string, result2 error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = nil
@@ -18119,7 +18119,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturnsOnCa
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string) (*api.StorageVolumeSnapshot, string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string) (*api.StorageVolumeSnapshot, string, error) {
 	fake.getStoragePoolVolumeSnapshotMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeSnapshotReturnsOnCall[len(fake.getStoragePoolVolumeSnapshotArgsForCall)]
 	fake.getStoragePoolVolumeSnapshotArgsForCall = append(fake.getStoragePoolVolumeSnapshotArgsForCall, struct {
@@ -18141,26 +18141,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshot(arg1 string, arg2 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotCallCount() int {
 	fake.getStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string) (*api.StorageVolumeSnapshot, string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string) (*api.StorageVolumeSnapshot, string, error)) {
 	fake.getStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string) {
 	fake.getStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotReturns(result1 *api.StorageVolumeSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotReturns(result1 *api.StorageVolumeSnapshot, result2 string, result3 error) {
 	fake.getStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotStub = nil
@@ -18171,7 +18171,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotReturns(result1 *ap
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 *api.StorageVolumeSnapshot, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 *api.StorageVolumeSnapshot, result2 string, result3 error) {
 	fake.getStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotStub = nil
@@ -18189,7 +18189,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotReturnsOnCall(i int
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNames(arg1 string, arg2 string, arg3 string) ([]string, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNames(arg1 string, arg2 string, arg3 string) ([]string, error) {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeSnapshotNamesReturnsOnCall[len(fake.getStoragePoolVolumeSnapshotNamesArgsForCall)]
 	fake.getStoragePoolVolumeSnapshotNamesArgsForCall = append(fake.getStoragePoolVolumeSnapshotNamesArgsForCall, struct {
@@ -18210,26 +18210,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNames(arg1 string, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNamesCallCount() int {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotNamesMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeSnapshotNamesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesCalls(stub func(string, string, string) ([]string, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNamesCalls(stub func(string, string, string) ([]string, error)) {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotNamesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNamesArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotNamesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeSnapshotNamesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNamesReturns(result1 []string, result2 error) {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotNamesStub = nil
@@ -18239,7 +18239,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesReturns(result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotNamesReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getStoragePoolVolumeSnapshotNamesMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotNamesMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotNamesStub = nil
@@ -18255,7 +18255,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotNamesReturnsOnCall(
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshots(arg1 string, arg2 string, arg3 string) ([]api.StorageVolumeSnapshot, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshots(arg1 string, arg2 string, arg3 string) ([]api.StorageVolumeSnapshot, error) {
 	fake.getStoragePoolVolumeSnapshotsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeSnapshotsReturnsOnCall[len(fake.getStoragePoolVolumeSnapshotsArgsForCall)]
 	fake.getStoragePoolVolumeSnapshotsArgsForCall = append(fake.getStoragePoolVolumeSnapshotsArgsForCall, struct {
@@ -18276,26 +18276,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshots(arg1 string, arg2
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotsCallCount() int {
 	fake.getStoragePoolVolumeSnapshotsMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotsMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeSnapshotsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsCalls(stub func(string, string, string) ([]api.StorageVolumeSnapshot, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotsCalls(stub func(string, string, string) ([]api.StorageVolumeSnapshot, error)) {
 	fake.getStoragePoolVolumeSnapshotsMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotsMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotsArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolVolumeSnapshotsMutex.RLock()
 	defer fake.getStoragePoolVolumeSnapshotsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeSnapshotsArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsReturns(result1 []api.StorageVolumeSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotsReturns(result1 []api.StorageVolumeSnapshot, result2 error) {
 	fake.getStoragePoolVolumeSnapshotsMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotsMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotsStub = nil
@@ -18305,7 +18305,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsReturns(result1 []
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsReturnsOnCall(i int, result1 []api.StorageVolumeSnapshot, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeSnapshotsReturnsOnCall(i int, result1 []api.StorageVolumeSnapshot, result2 error) {
 	fake.getStoragePoolVolumeSnapshotsMutex.Lock()
 	defer fake.getStoragePoolVolumeSnapshotsMutex.Unlock()
 	fake.GetStoragePoolVolumeSnapshotsStub = nil
@@ -18321,7 +18321,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeSnapshotsReturnsOnCall(i in
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeState(arg1 string, arg2 string, arg3 string) (*api.StorageVolumeState, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeState(arg1 string, arg2 string, arg3 string) (*api.StorageVolumeState, error) {
 	fake.getStoragePoolVolumeStateMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeStateReturnsOnCall[len(fake.getStoragePoolVolumeStateArgsForCall)]
 	fake.getStoragePoolVolumeStateArgsForCall = append(fake.getStoragePoolVolumeStateArgsForCall, struct {
@@ -18342,26 +18342,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeState(arg1 string, arg2 str
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeStateCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeStateCallCount() int {
 	fake.getStoragePoolVolumeStateMutex.RLock()
 	defer fake.getStoragePoolVolumeStateMutex.RUnlock()
 	return len(fake.getStoragePoolVolumeStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeStateCalls(stub func(string, string, string) (*api.StorageVolumeState, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeStateCalls(stub func(string, string, string) (*api.StorageVolumeState, error)) {
 	fake.getStoragePoolVolumeStateMutex.Lock()
 	defer fake.getStoragePoolVolumeStateMutex.Unlock()
 	fake.GetStoragePoolVolumeStateStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeStateArgsForCall(i int) (string, string, string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeStateArgsForCall(i int) (string, string, string) {
 	fake.getStoragePoolVolumeStateMutex.RLock()
 	defer fake.getStoragePoolVolumeStateMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumeStateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeStateReturns(result1 *api.StorageVolumeState, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeStateReturns(result1 *api.StorageVolumeState, result2 error) {
 	fake.getStoragePoolVolumeStateMutex.Lock()
 	defer fake.getStoragePoolVolumeStateMutex.Unlock()
 	fake.GetStoragePoolVolumeStateStub = nil
@@ -18371,7 +18371,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeStateReturns(result1 *api.S
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeStateReturnsOnCall(i int, result1 *api.StorageVolumeState, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumeStateReturnsOnCall(i int, result1 *api.StorageVolumeState, result2 error) {
 	fake.getStoragePoolVolumeStateMutex.Lock()
 	defer fake.getStoragePoolVolumeStateMutex.Unlock()
 	fake.GetStoragePoolVolumeStateStub = nil
@@ -18387,7 +18387,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeStateReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumes(arg1 string) ([]api.StorageVolume, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumes(arg1 string) ([]api.StorageVolume, error) {
 	fake.getStoragePoolVolumesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumesReturnsOnCall[len(fake.getStoragePoolVolumesArgsForCall)]
 	fake.getStoragePoolVolumesArgsForCall = append(fake.getStoragePoolVolumesArgsForCall, struct {
@@ -18406,26 +18406,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumes(arg1 string) ([]api.Stora
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesCallCount() int {
 	fake.getStoragePoolVolumesMutex.RLock()
 	defer fake.getStoragePoolVolumesMutex.RUnlock()
 	return len(fake.getStoragePoolVolumesArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesCalls(stub func(string) ([]api.StorageVolume, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesCalls(stub func(string) ([]api.StorageVolume, error)) {
 	fake.getStoragePoolVolumesMutex.Lock()
 	defer fake.getStoragePoolVolumesMutex.Unlock()
 	fake.GetStoragePoolVolumesStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesArgsForCall(i int) string {
 	fake.getStoragePoolVolumesMutex.RLock()
 	defer fake.getStoragePoolVolumesMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumesArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesReturns(result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesReturns(result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesMutex.Lock()
 	defer fake.getStoragePoolVolumesMutex.Unlock()
 	fake.GetStoragePoolVolumesStub = nil
@@ -18435,7 +18435,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesReturns(result1 []api.Stor
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesMutex.Lock()
 	defer fake.getStoragePoolVolumesMutex.Unlock()
 	fake.GetStoragePoolVolumesStub = nil
@@ -18451,7 +18451,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjects(arg1 string) ([]api.StorageVolume, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjects(arg1 string) ([]api.StorageVolume, error) {
 	fake.getStoragePoolVolumesAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumesAllProjectsReturnsOnCall[len(fake.getStoragePoolVolumesAllProjectsArgsForCall)]
 	fake.getStoragePoolVolumesAllProjectsArgsForCall = append(fake.getStoragePoolVolumesAllProjectsArgsForCall, struct {
@@ -18470,26 +18470,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjects(arg1 string) (
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjectsCallCount() int {
 	fake.getStoragePoolVolumesAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumesAllProjectsMutex.RUnlock()
 	return len(fake.getStoragePoolVolumesAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsCalls(stub func(string) ([]api.StorageVolume, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjectsCalls(stub func(string) ([]api.StorageVolume, error)) {
 	fake.getStoragePoolVolumesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjectsArgsForCall(i int) string {
 	fake.getStoragePoolVolumesAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumesAllProjectsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumesAllProjectsArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsReturns(result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjectsReturns(result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesAllProjectsStub = nil
@@ -18499,7 +18499,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsReturns(result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesAllProjectsReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesAllProjectsStub = nil
@@ -18515,7 +18515,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesAllProjectsReturnsOnCall(i
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilter(arg1 string, arg2 []string) ([]api.StorageVolume, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilter(arg1 string, arg2 []string) ([]api.StorageVolume, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -18540,26 +18540,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilter(arg1 string, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterCallCount() int {
 	fake.getStoragePoolVolumesWithFilterMutex.RLock()
 	defer fake.getStoragePoolVolumesWithFilterMutex.RUnlock()
 	return len(fake.getStoragePoolVolumesWithFilterArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterCalls(stub func(string, []string) ([]api.StorageVolume, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterCalls(stub func(string, []string) ([]api.StorageVolume, error)) {
 	fake.getStoragePoolVolumesWithFilterMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterArgsForCall(i int) (string, []string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterArgsForCall(i int) (string, []string) {
 	fake.getStoragePoolVolumesWithFilterMutex.RLock()
 	defer fake.getStoragePoolVolumesWithFilterMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumesWithFilterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterReturns(result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterReturns(result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesWithFilterMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterStub = nil
@@ -18569,7 +18569,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesWithFilterMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterStub = nil
@@ -18585,7 +18585,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjects(arg1 string, arg2 []string) ([]api.StorageVolume, error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjects(arg1 string, arg2 []string) ([]api.StorageVolume, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -18610,26 +18610,26 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjects(arg1
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjectsCallCount() int {
 	fake.getStoragePoolVolumesWithFilterAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumesWithFilterAllProjectsMutex.RUnlock()
 	return len(fake.getStoragePoolVolumesWithFilterAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsCalls(stub func(string, []string) ([]api.StorageVolume, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjectsCalls(stub func(string, []string) ([]api.StorageVolume, error)) {
 	fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterAllProjectsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsArgsForCall(i int) (string, []string) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjectsArgsForCall(i int) (string, []string) {
 	fake.getStoragePoolVolumesWithFilterAllProjectsMutex.RLock()
 	defer fake.getStoragePoolVolumesWithFilterAllProjectsMutex.RUnlock()
 	argsForCall := fake.getStoragePoolVolumesWithFilterAllProjectsArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsReturns(result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjectsReturns(result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterAllProjectsStub = nil
@@ -18639,7 +18639,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsRetur
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolVolumesWithFilterAllProjectsReturnsOnCall(i int, result1 []api.StorageVolume, result2 error) {
 	fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumesWithFilterAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumesWithFilterAllProjectsStub = nil
@@ -18655,7 +18655,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumesWithFilterAllProjectsRetur
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePools() ([]api.StoragePool, error) {
+func (fake *FakeInstanceServer) GetStoragePools() ([]api.StoragePool, error) {
 	fake.getStoragePoolsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolsReturnsOnCall[len(fake.getStoragePoolsArgsForCall)]
 	fake.getStoragePoolsArgsForCall = append(fake.getStoragePoolsArgsForCall, struct {
@@ -18673,19 +18673,19 @@ func (fake *FakeContainerServer) GetStoragePools() ([]api.StoragePool, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetStoragePoolsCallCount() int {
+func (fake *FakeInstanceServer) GetStoragePoolsCallCount() int {
 	fake.getStoragePoolsMutex.RLock()
 	defer fake.getStoragePoolsMutex.RUnlock()
 	return len(fake.getStoragePoolsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolsCalls(stub func() ([]api.StoragePool, error)) {
+func (fake *FakeInstanceServer) GetStoragePoolsCalls(stub func() ([]api.StoragePool, error)) {
 	fake.getStoragePoolsMutex.Lock()
 	defer fake.getStoragePoolsMutex.Unlock()
 	fake.GetStoragePoolsStub = stub
 }
 
-func (fake *FakeContainerServer) GetStoragePoolsReturns(result1 []api.StoragePool, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolsReturns(result1 []api.StoragePool, result2 error) {
 	fake.getStoragePoolsMutex.Lock()
 	defer fake.getStoragePoolsMutex.Unlock()
 	fake.GetStoragePoolsStub = nil
@@ -18695,7 +18695,7 @@ func (fake *FakeContainerServer) GetStoragePoolsReturns(result1 []api.StoragePoo
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolsReturnsOnCall(i int, result1 []api.StoragePool, result2 error) {
+func (fake *FakeInstanceServer) GetStoragePoolsReturnsOnCall(i int, result1 []api.StoragePool, result2 error) {
 	fake.getStoragePoolsMutex.Lock()
 	defer fake.getStoragePoolsMutex.Unlock()
 	fake.GetStoragePoolsStub = nil
@@ -18711,7 +18711,7 @@ func (fake *FakeContainerServer) GetStoragePoolsReturnsOnCall(i int, result1 []a
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetWarning(arg1 string) (*api.Warning, string, error) {
+func (fake *FakeInstanceServer) GetWarning(arg1 string) (*api.Warning, string, error) {
 	fake.getWarningMutex.Lock()
 	ret, specificReturn := fake.getWarningReturnsOnCall[len(fake.getWarningArgsForCall)]
 	fake.getWarningArgsForCall = append(fake.getWarningArgsForCall, struct {
@@ -18730,26 +18730,26 @@ func (fake *FakeContainerServer) GetWarning(arg1 string) (*api.Warning, string, 
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) GetWarningCallCount() int {
+func (fake *FakeInstanceServer) GetWarningCallCount() int {
 	fake.getWarningMutex.RLock()
 	defer fake.getWarningMutex.RUnlock()
 	return len(fake.getWarningArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetWarningCalls(stub func(string) (*api.Warning, string, error)) {
+func (fake *FakeInstanceServer) GetWarningCalls(stub func(string) (*api.Warning, string, error)) {
 	fake.getWarningMutex.Lock()
 	defer fake.getWarningMutex.Unlock()
 	fake.GetWarningStub = stub
 }
 
-func (fake *FakeContainerServer) GetWarningArgsForCall(i int) string {
+func (fake *FakeInstanceServer) GetWarningArgsForCall(i int) string {
 	fake.getWarningMutex.RLock()
 	defer fake.getWarningMutex.RUnlock()
 	argsForCall := fake.getWarningArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetWarningReturns(result1 *api.Warning, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetWarningReturns(result1 *api.Warning, result2 string, result3 error) {
 	fake.getWarningMutex.Lock()
 	defer fake.getWarningMutex.Unlock()
 	fake.GetWarningStub = nil
@@ -18760,7 +18760,7 @@ func (fake *FakeContainerServer) GetWarningReturns(result1 *api.Warning, result2
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetWarningReturnsOnCall(i int, result1 *api.Warning, result2 string, result3 error) {
+func (fake *FakeInstanceServer) GetWarningReturnsOnCall(i int, result1 *api.Warning, result2 string, result3 error) {
 	fake.getWarningMutex.Lock()
 	defer fake.getWarningMutex.Unlock()
 	fake.GetWarningStub = nil
@@ -18778,7 +18778,7 @@ func (fake *FakeContainerServer) GetWarningReturnsOnCall(i int, result1 *api.War
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) GetWarningUUIDs() ([]string, error) {
+func (fake *FakeInstanceServer) GetWarningUUIDs() ([]string, error) {
 	fake.getWarningUUIDsMutex.Lock()
 	ret, specificReturn := fake.getWarningUUIDsReturnsOnCall[len(fake.getWarningUUIDsArgsForCall)]
 	fake.getWarningUUIDsArgsForCall = append(fake.getWarningUUIDsArgsForCall, struct {
@@ -18796,19 +18796,19 @@ func (fake *FakeContainerServer) GetWarningUUIDs() ([]string, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetWarningUUIDsCallCount() int {
+func (fake *FakeInstanceServer) GetWarningUUIDsCallCount() int {
 	fake.getWarningUUIDsMutex.RLock()
 	defer fake.getWarningUUIDsMutex.RUnlock()
 	return len(fake.getWarningUUIDsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetWarningUUIDsCalls(stub func() ([]string, error)) {
+func (fake *FakeInstanceServer) GetWarningUUIDsCalls(stub func() ([]string, error)) {
 	fake.getWarningUUIDsMutex.Lock()
 	defer fake.getWarningUUIDsMutex.Unlock()
 	fake.GetWarningUUIDsStub = stub
 }
 
-func (fake *FakeContainerServer) GetWarningUUIDsReturns(result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetWarningUUIDsReturns(result1 []string, result2 error) {
 	fake.getWarningUUIDsMutex.Lock()
 	defer fake.getWarningUUIDsMutex.Unlock()
 	fake.GetWarningUUIDsStub = nil
@@ -18818,7 +18818,7 @@ func (fake *FakeContainerServer) GetWarningUUIDsReturns(result1 []string, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetWarningUUIDsReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeInstanceServer) GetWarningUUIDsReturnsOnCall(i int, result1 []string, result2 error) {
 	fake.getWarningUUIDsMutex.Lock()
 	defer fake.getWarningUUIDsMutex.Unlock()
 	fake.GetWarningUUIDsStub = nil
@@ -18834,7 +18834,7 @@ func (fake *FakeContainerServer) GetWarningUUIDsReturnsOnCall(i int, result1 []s
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetWarnings() ([]api.Warning, error) {
+func (fake *FakeInstanceServer) GetWarnings() ([]api.Warning, error) {
 	fake.getWarningsMutex.Lock()
 	ret, specificReturn := fake.getWarningsReturnsOnCall[len(fake.getWarningsArgsForCall)]
 	fake.getWarningsArgsForCall = append(fake.getWarningsArgsForCall, struct {
@@ -18852,19 +18852,19 @@ func (fake *FakeContainerServer) GetWarnings() ([]api.Warning, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) GetWarningsCallCount() int {
+func (fake *FakeInstanceServer) GetWarningsCallCount() int {
 	fake.getWarningsMutex.RLock()
 	defer fake.getWarningsMutex.RUnlock()
 	return len(fake.getWarningsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetWarningsCalls(stub func() ([]api.Warning, error)) {
+func (fake *FakeInstanceServer) GetWarningsCalls(stub func() ([]api.Warning, error)) {
 	fake.getWarningsMutex.Lock()
 	defer fake.getWarningsMutex.Unlock()
 	fake.GetWarningsStub = stub
 }
 
-func (fake *FakeContainerServer) GetWarningsReturns(result1 []api.Warning, result2 error) {
+func (fake *FakeInstanceServer) GetWarningsReturns(result1 []api.Warning, result2 error) {
 	fake.getWarningsMutex.Lock()
 	defer fake.getWarningsMutex.Unlock()
 	fake.GetWarningsStub = nil
@@ -18874,7 +18874,7 @@ func (fake *FakeContainerServer) GetWarningsReturns(result1 []api.Warning, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetWarningsReturnsOnCall(i int, result1 []api.Warning, result2 error) {
+func (fake *FakeInstanceServer) GetWarningsReturnsOnCall(i int, result1 []api.Warning, result2 error) {
 	fake.getWarningsMutex.Lock()
 	defer fake.getWarningsMutex.Unlock()
 	fake.GetWarningsStub = nil
@@ -18890,7 +18890,7 @@ func (fake *FakeContainerServer) GetWarningsReturnsOnCall(i int, result1 []api.W
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) HasExtension(arg1 string) bool {
+func (fake *FakeInstanceServer) HasExtension(arg1 string) bool {
 	fake.hasExtensionMutex.Lock()
 	ret, specificReturn := fake.hasExtensionReturnsOnCall[len(fake.hasExtensionArgsForCall)]
 	fake.hasExtensionArgsForCall = append(fake.hasExtensionArgsForCall, struct {
@@ -18909,26 +18909,26 @@ func (fake *FakeContainerServer) HasExtension(arg1 string) bool {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) HasExtensionCallCount() int {
+func (fake *FakeInstanceServer) HasExtensionCallCount() int {
 	fake.hasExtensionMutex.RLock()
 	defer fake.hasExtensionMutex.RUnlock()
 	return len(fake.hasExtensionArgsForCall)
 }
 
-func (fake *FakeContainerServer) HasExtensionCalls(stub func(string) bool) {
+func (fake *FakeInstanceServer) HasExtensionCalls(stub func(string) bool) {
 	fake.hasExtensionMutex.Lock()
 	defer fake.hasExtensionMutex.Unlock()
 	fake.HasExtensionStub = stub
 }
 
-func (fake *FakeContainerServer) HasExtensionArgsForCall(i int) string {
+func (fake *FakeInstanceServer) HasExtensionArgsForCall(i int) string {
 	fake.hasExtensionMutex.RLock()
 	defer fake.hasExtensionMutex.RUnlock()
 	argsForCall := fake.hasExtensionArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) HasExtensionReturns(result1 bool) {
+func (fake *FakeInstanceServer) HasExtensionReturns(result1 bool) {
 	fake.hasExtensionMutex.Lock()
 	defer fake.hasExtensionMutex.Unlock()
 	fake.HasExtensionStub = nil
@@ -18937,7 +18937,7 @@ func (fake *FakeContainerServer) HasExtensionReturns(result1 bool) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) HasExtensionReturnsOnCall(i int, result1 bool) {
+func (fake *FakeInstanceServer) HasExtensionReturnsOnCall(i int, result1 bool) {
 	fake.hasExtensionMutex.Lock()
 	defer fake.hasExtensionMutex.Unlock()
 	fake.HasExtensionStub = nil
@@ -18951,7 +18951,7 @@ func (fake *FakeContainerServer) HasExtensionReturnsOnCall(i int, result1 bool) 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) IsClustered() bool {
+func (fake *FakeInstanceServer) IsClustered() bool {
 	fake.isClusteredMutex.Lock()
 	ret, specificReturn := fake.isClusteredReturnsOnCall[len(fake.isClusteredArgsForCall)]
 	fake.isClusteredArgsForCall = append(fake.isClusteredArgsForCall, struct {
@@ -18969,19 +18969,19 @@ func (fake *FakeContainerServer) IsClustered() bool {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) IsClusteredCallCount() int {
+func (fake *FakeInstanceServer) IsClusteredCallCount() int {
 	fake.isClusteredMutex.RLock()
 	defer fake.isClusteredMutex.RUnlock()
 	return len(fake.isClusteredArgsForCall)
 }
 
-func (fake *FakeContainerServer) IsClusteredCalls(stub func() bool) {
+func (fake *FakeInstanceServer) IsClusteredCalls(stub func() bool) {
 	fake.isClusteredMutex.Lock()
 	defer fake.isClusteredMutex.Unlock()
 	fake.IsClusteredStub = stub
 }
 
-func (fake *FakeContainerServer) IsClusteredReturns(result1 bool) {
+func (fake *FakeInstanceServer) IsClusteredReturns(result1 bool) {
 	fake.isClusteredMutex.Lock()
 	defer fake.isClusteredMutex.Unlock()
 	fake.IsClusteredStub = nil
@@ -18990,7 +18990,7 @@ func (fake *FakeContainerServer) IsClusteredReturns(result1 bool) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) IsClusteredReturnsOnCall(i int, result1 bool) {
+func (fake *FakeInstanceServer) IsClusteredReturnsOnCall(i int, result1 bool) {
 	fake.isClusteredMutex.Lock()
 	defer fake.isClusteredMutex.Unlock()
 	fake.IsClusteredStub = nil
@@ -19004,7 +19004,7 @@ func (fake *FakeContainerServer) IsClusteredReturnsOnCall(i int, result1 bool) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) MigrateContainer(arg1 string, arg2 api.ContainerPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) MigrateContainer(arg1 string, arg2 api.ContainerPost) (lxd.Operation, error) {
 	fake.migrateContainerMutex.Lock()
 	ret, specificReturn := fake.migrateContainerReturnsOnCall[len(fake.migrateContainerArgsForCall)]
 	fake.migrateContainerArgsForCall = append(fake.migrateContainerArgsForCall, struct {
@@ -19024,26 +19024,26 @@ func (fake *FakeContainerServer) MigrateContainer(arg1 string, arg2 api.Containe
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MigrateContainerCallCount() int {
+func (fake *FakeInstanceServer) MigrateContainerCallCount() int {
 	fake.migrateContainerMutex.RLock()
 	defer fake.migrateContainerMutex.RUnlock()
 	return len(fake.migrateContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) MigrateContainerCalls(stub func(string, api.ContainerPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) MigrateContainerCalls(stub func(string, api.ContainerPost) (lxd.Operation, error)) {
 	fake.migrateContainerMutex.Lock()
 	defer fake.migrateContainerMutex.Unlock()
 	fake.MigrateContainerStub = stub
 }
 
-func (fake *FakeContainerServer) MigrateContainerArgsForCall(i int) (string, api.ContainerPost) {
+func (fake *FakeInstanceServer) MigrateContainerArgsForCall(i int) (string, api.ContainerPost) {
 	fake.migrateContainerMutex.RLock()
 	defer fake.migrateContainerMutex.RUnlock()
 	argsForCall := fake.migrateContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) MigrateContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.migrateContainerMutex.Lock()
 	defer fake.migrateContainerMutex.Unlock()
 	fake.MigrateContainerStub = nil
@@ -19053,7 +19053,7 @@ func (fake *FakeContainerServer) MigrateContainerReturns(result1 lxd.Operation, 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.migrateContainerMutex.Lock()
 	defer fake.migrateContainerMutex.Unlock()
 	fake.MigrateContainerStub = nil
@@ -19069,7 +19069,7 @@ func (fake *FakeContainerServer) MigrateContainerReturnsOnCall(i int, result1 lx
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) MigrateContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPost) (lxd.Operation, error) {
 	fake.migrateContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.migrateContainerSnapshotReturnsOnCall[len(fake.migrateContainerSnapshotArgsForCall)]
 	fake.migrateContainerSnapshotArgsForCall = append(fake.migrateContainerSnapshotArgsForCall, struct {
@@ -19090,26 +19090,26 @@ func (fake *FakeContainerServer) MigrateContainerSnapshot(arg1 string, arg2 stri
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) MigrateContainerSnapshotCallCount() int {
 	fake.migrateContainerSnapshotMutex.RLock()
 	defer fake.migrateContainerSnapshotMutex.RUnlock()
 	return len(fake.migrateContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) MigrateContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPost) (lxd.Operation, error)) {
 	fake.migrateContainerSnapshotMutex.Lock()
 	defer fake.migrateContainerSnapshotMutex.Unlock()
 	fake.MigrateContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPost) {
+func (fake *FakeInstanceServer) MigrateContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPost) {
 	fake.migrateContainerSnapshotMutex.RLock()
 	defer fake.migrateContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.migrateContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.migrateContainerSnapshotMutex.Lock()
 	defer fake.migrateContainerSnapshotMutex.Unlock()
 	fake.MigrateContainerSnapshotStub = nil
@@ -19119,7 +19119,7 @@ func (fake *FakeContainerServer) MigrateContainerSnapshotReturns(result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.migrateContainerSnapshotMutex.Lock()
 	defer fake.migrateContainerSnapshotMutex.Unlock()
 	fake.MigrateContainerSnapshotStub = nil
@@ -19135,7 +19135,7 @@ func (fake *FakeContainerServer) MigrateContainerSnapshotReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateInstance(arg1 string, arg2 api.InstancePost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) MigrateInstance(arg1 string, arg2 api.InstancePost) (lxd.Operation, error) {
 	fake.migrateInstanceMutex.Lock()
 	ret, specificReturn := fake.migrateInstanceReturnsOnCall[len(fake.migrateInstanceArgsForCall)]
 	fake.migrateInstanceArgsForCall = append(fake.migrateInstanceArgsForCall, struct {
@@ -19155,26 +19155,26 @@ func (fake *FakeContainerServer) MigrateInstance(arg1 string, arg2 api.InstanceP
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MigrateInstanceCallCount() int {
+func (fake *FakeInstanceServer) MigrateInstanceCallCount() int {
 	fake.migrateInstanceMutex.RLock()
 	defer fake.migrateInstanceMutex.RUnlock()
 	return len(fake.migrateInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) MigrateInstanceCalls(stub func(string, api.InstancePost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) MigrateInstanceCalls(stub func(string, api.InstancePost) (lxd.Operation, error)) {
 	fake.migrateInstanceMutex.Lock()
 	defer fake.migrateInstanceMutex.Unlock()
 	fake.MigrateInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) MigrateInstanceArgsForCall(i int) (string, api.InstancePost) {
+func (fake *FakeInstanceServer) MigrateInstanceArgsForCall(i int) (string, api.InstancePost) {
 	fake.migrateInstanceMutex.RLock()
 	defer fake.migrateInstanceMutex.RUnlock()
 	argsForCall := fake.migrateInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) MigrateInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.migrateInstanceMutex.Lock()
 	defer fake.migrateInstanceMutex.Unlock()
 	fake.MigrateInstanceStub = nil
@@ -19184,7 +19184,7 @@ func (fake *FakeContainerServer) MigrateInstanceReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.migrateInstanceMutex.Lock()
 	defer fake.migrateInstanceMutex.Unlock()
 	fake.MigrateInstanceStub = nil
@@ -19200,7 +19200,7 @@ func (fake *FakeContainerServer) MigrateInstanceReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPost) (lxd.Operation, error) {
 	fake.migrateInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.migrateInstanceSnapshotReturnsOnCall[len(fake.migrateInstanceSnapshotArgsForCall)]
 	fake.migrateInstanceSnapshotArgsForCall = append(fake.migrateInstanceSnapshotArgsForCall, struct {
@@ -19221,26 +19221,26 @@ func (fake *FakeContainerServer) MigrateInstanceSnapshot(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshotCallCount() int {
 	fake.migrateInstanceSnapshotMutex.RLock()
 	defer fake.migrateInstanceSnapshotMutex.RUnlock()
 	return len(fake.migrateInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPost) (lxd.Operation, error)) {
 	fake.migrateInstanceSnapshotMutex.Lock()
 	defer fake.migrateInstanceSnapshotMutex.Unlock()
 	fake.MigrateInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPost) {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPost) {
 	fake.migrateInstanceSnapshotMutex.RLock()
 	defer fake.migrateInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.migrateInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.migrateInstanceSnapshotMutex.Lock()
 	defer fake.migrateInstanceSnapshotMutex.Unlock()
 	fake.MigrateInstanceSnapshotStub = nil
@@ -19250,7 +19250,7 @@ func (fake *FakeContainerServer) MigrateInstanceSnapshotReturns(result1 lxd.Oper
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.migrateInstanceSnapshotMutex.Lock()
 	defer fake.migrateInstanceSnapshotMutex.Unlock()
 	fake.MigrateInstanceSnapshotStub = nil
@@ -19266,7 +19266,7 @@ func (fake *FakeContainerServer) MigrateInstanceSnapshotReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolume(arg1 string, arg2 api.StorageVolumePost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolume(arg1 string, arg2 api.StorageVolumePost) (lxd.Operation, error) {
 	fake.migrateStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.migrateStoragePoolVolumeReturnsOnCall[len(fake.migrateStoragePoolVolumeArgsForCall)]
 	fake.migrateStoragePoolVolumeArgsForCall = append(fake.migrateStoragePoolVolumeArgsForCall, struct {
@@ -19286,26 +19286,26 @@ func (fake *FakeContainerServer) MigrateStoragePoolVolume(arg1 string, arg2 api.
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolumeCallCount() int {
 	fake.migrateStoragePoolVolumeMutex.RLock()
 	defer fake.migrateStoragePoolVolumeMutex.RUnlock()
 	return len(fake.migrateStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolumeCalls(stub func(string, api.StorageVolumePost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolumeCalls(stub func(string, api.StorageVolumePost) (lxd.Operation, error)) {
 	fake.migrateStoragePoolVolumeMutex.Lock()
 	defer fake.migrateStoragePoolVolumeMutex.Unlock()
 	fake.MigrateStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolumeArgsForCall(i int) (string, api.StorageVolumePost) {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolumeArgsForCall(i int) (string, api.StorageVolumePost) {
 	fake.migrateStoragePoolVolumeMutex.RLock()
 	defer fake.migrateStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.migrateStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolumeReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolumeReturns(result1 lxd.Operation, result2 error) {
 	fake.migrateStoragePoolVolumeMutex.Lock()
 	defer fake.migrateStoragePoolVolumeMutex.Unlock()
 	fake.MigrateStoragePoolVolumeStub = nil
@@ -19315,7 +19315,7 @@ func (fake *FakeContainerServer) MigrateStoragePoolVolumeReturns(result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MigrateStoragePoolVolumeReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) MigrateStoragePoolVolumeReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.migrateStoragePoolVolumeMutex.Lock()
 	defer fake.migrateStoragePoolVolumeMutex.Unlock()
 	fake.MigrateStoragePoolVolumeStub = nil
@@ -19331,7 +19331,7 @@ func (fake *FakeContainerServer) MigrateStoragePoolVolumeReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolume(arg1 string, arg2 lxd.InstanceServer, arg3 string, arg4 api.StorageVolume, arg5 *lxd.StoragePoolVolumeMoveArgs) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) MoveStoragePoolVolume(arg1 string, arg2 lxd.InstanceServer, arg3 string, arg4 api.StorageVolume, arg5 *lxd.StoragePoolVolumeMoveArgs) (lxd.RemoteOperation, error) {
 	fake.moveStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.moveStoragePoolVolumeReturnsOnCall[len(fake.moveStoragePoolVolumeArgsForCall)]
 	fake.moveStoragePoolVolumeArgsForCall = append(fake.moveStoragePoolVolumeArgsForCall, struct {
@@ -19354,26 +19354,26 @@ func (fake *FakeContainerServer) MoveStoragePoolVolume(arg1 string, arg2 lxd.Ins
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) MoveStoragePoolVolumeCallCount() int {
 	fake.moveStoragePoolVolumeMutex.RLock()
 	defer fake.moveStoragePoolVolumeMutex.RUnlock()
 	return len(fake.moveStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolumeCalls(stub func(string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeMoveArgs) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) MoveStoragePoolVolumeCalls(stub func(string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeMoveArgs) (lxd.RemoteOperation, error)) {
 	fake.moveStoragePoolVolumeMutex.Lock()
 	defer fake.moveStoragePoolVolumeMutex.Unlock()
 	fake.MoveStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolumeArgsForCall(i int) (string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeMoveArgs) {
+func (fake *FakeInstanceServer) MoveStoragePoolVolumeArgsForCall(i int) (string, lxd.InstanceServer, string, api.StorageVolume, *lxd.StoragePoolVolumeMoveArgs) {
 	fake.moveStoragePoolVolumeMutex.RLock()
 	defer fake.moveStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.moveStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolumeReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) MoveStoragePoolVolumeReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.moveStoragePoolVolumeMutex.Lock()
 	defer fake.moveStoragePoolVolumeMutex.Unlock()
 	fake.MoveStoragePoolVolumeStub = nil
@@ -19383,7 +19383,7 @@ func (fake *FakeContainerServer) MoveStoragePoolVolumeReturns(result1 lxd.Remote
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) MoveStoragePoolVolumeReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) MoveStoragePoolVolumeReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.moveStoragePoolVolumeMutex.Lock()
 	defer fake.moveStoragePoolVolumeMutex.Unlock()
 	fake.MoveStoragePoolVolumeStub = nil
@@ -19399,7 +19399,7 @@ func (fake *FakeContainerServer) MoveStoragePoolVolumeReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RawOperation(arg1 string, arg2 string, arg3 any, arg4 string) (lxd.Operation, string, error) {
+func (fake *FakeInstanceServer) RawOperation(arg1 string, arg2 string, arg3 any, arg4 string) (lxd.Operation, string, error) {
 	fake.rawOperationMutex.Lock()
 	ret, specificReturn := fake.rawOperationReturnsOnCall[len(fake.rawOperationArgsForCall)]
 	fake.rawOperationArgsForCall = append(fake.rawOperationArgsForCall, struct {
@@ -19421,26 +19421,26 @@ func (fake *FakeContainerServer) RawOperation(arg1 string, arg2 string, arg3 any
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) RawOperationCallCount() int {
+func (fake *FakeInstanceServer) RawOperationCallCount() int {
 	fake.rawOperationMutex.RLock()
 	defer fake.rawOperationMutex.RUnlock()
 	return len(fake.rawOperationArgsForCall)
 }
 
-func (fake *FakeContainerServer) RawOperationCalls(stub func(string, string, any, string) (lxd.Operation, string, error)) {
+func (fake *FakeInstanceServer) RawOperationCalls(stub func(string, string, any, string) (lxd.Operation, string, error)) {
 	fake.rawOperationMutex.Lock()
 	defer fake.rawOperationMutex.Unlock()
 	fake.RawOperationStub = stub
 }
 
-func (fake *FakeContainerServer) RawOperationArgsForCall(i int) (string, string, any, string) {
+func (fake *FakeInstanceServer) RawOperationArgsForCall(i int) (string, string, any, string) {
 	fake.rawOperationMutex.RLock()
 	defer fake.rawOperationMutex.RUnlock()
 	argsForCall := fake.rawOperationArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) RawOperationReturns(result1 lxd.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) RawOperationReturns(result1 lxd.Operation, result2 string, result3 error) {
 	fake.rawOperationMutex.Lock()
 	defer fake.rawOperationMutex.Unlock()
 	fake.RawOperationStub = nil
@@ -19451,7 +19451,7 @@ func (fake *FakeContainerServer) RawOperationReturns(result1 lxd.Operation, resu
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) RawOperationReturnsOnCall(i int, result1 lxd.Operation, result2 string, result3 error) {
+func (fake *FakeInstanceServer) RawOperationReturnsOnCall(i int, result1 lxd.Operation, result2 string, result3 error) {
 	fake.rawOperationMutex.Lock()
 	defer fake.rawOperationMutex.Unlock()
 	fake.RawOperationStub = nil
@@ -19469,7 +19469,7 @@ func (fake *FakeContainerServer) RawOperationReturnsOnCall(i int, result1 lxd.Op
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) RawQuery(arg1 string, arg2 string, arg3 any, arg4 string) (*api.Response, string, error) {
+func (fake *FakeInstanceServer) RawQuery(arg1 string, arg2 string, arg3 any, arg4 string) (*api.Response, string, error) {
 	fake.rawQueryMutex.Lock()
 	ret, specificReturn := fake.rawQueryReturnsOnCall[len(fake.rawQueryArgsForCall)]
 	fake.rawQueryArgsForCall = append(fake.rawQueryArgsForCall, struct {
@@ -19491,26 +19491,26 @@ func (fake *FakeContainerServer) RawQuery(arg1 string, arg2 string, arg3 any, ar
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeContainerServer) RawQueryCallCount() int {
+func (fake *FakeInstanceServer) RawQueryCallCount() int {
 	fake.rawQueryMutex.RLock()
 	defer fake.rawQueryMutex.RUnlock()
 	return len(fake.rawQueryArgsForCall)
 }
 
-func (fake *FakeContainerServer) RawQueryCalls(stub func(string, string, any, string) (*api.Response, string, error)) {
+func (fake *FakeInstanceServer) RawQueryCalls(stub func(string, string, any, string) (*api.Response, string, error)) {
 	fake.rawQueryMutex.Lock()
 	defer fake.rawQueryMutex.Unlock()
 	fake.RawQueryStub = stub
 }
 
-func (fake *FakeContainerServer) RawQueryArgsForCall(i int) (string, string, any, string) {
+func (fake *FakeInstanceServer) RawQueryArgsForCall(i int) (string, string, any, string) {
 	fake.rawQueryMutex.RLock()
 	defer fake.rawQueryMutex.RUnlock()
 	argsForCall := fake.rawQueryArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) RawQueryReturns(result1 *api.Response, result2 string, result3 error) {
+func (fake *FakeInstanceServer) RawQueryReturns(result1 *api.Response, result2 string, result3 error) {
 	fake.rawQueryMutex.Lock()
 	defer fake.rawQueryMutex.Unlock()
 	fake.RawQueryStub = nil
@@ -19521,7 +19521,7 @@ func (fake *FakeContainerServer) RawQueryReturns(result1 *api.Response, result2 
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) RawQueryReturnsOnCall(i int, result1 *api.Response, result2 string, result3 error) {
+func (fake *FakeInstanceServer) RawQueryReturnsOnCall(i int, result1 *api.Response, result2 string, result3 error) {
 	fake.rawQueryMutex.Lock()
 	defer fake.rawQueryMutex.Unlock()
 	fake.RawQueryStub = nil
@@ -19539,7 +19539,7 @@ func (fake *FakeContainerServer) RawQueryReturnsOnCall(i int, result1 *api.Respo
 	}{result1, result2, result3}
 }
 
-func (fake *FakeContainerServer) RawWebsocket(arg1 string) (*websocket.Conn, error) {
+func (fake *FakeInstanceServer) RawWebsocket(arg1 string) (*websocket.Conn, error) {
 	fake.rawWebsocketMutex.Lock()
 	ret, specificReturn := fake.rawWebsocketReturnsOnCall[len(fake.rawWebsocketArgsForCall)]
 	fake.rawWebsocketArgsForCall = append(fake.rawWebsocketArgsForCall, struct {
@@ -19558,26 +19558,26 @@ func (fake *FakeContainerServer) RawWebsocket(arg1 string) (*websocket.Conn, err
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RawWebsocketCallCount() int {
+func (fake *FakeInstanceServer) RawWebsocketCallCount() int {
 	fake.rawWebsocketMutex.RLock()
 	defer fake.rawWebsocketMutex.RUnlock()
 	return len(fake.rawWebsocketArgsForCall)
 }
 
-func (fake *FakeContainerServer) RawWebsocketCalls(stub func(string) (*websocket.Conn, error)) {
+func (fake *FakeInstanceServer) RawWebsocketCalls(stub func(string) (*websocket.Conn, error)) {
 	fake.rawWebsocketMutex.Lock()
 	defer fake.rawWebsocketMutex.Unlock()
 	fake.RawWebsocketStub = stub
 }
 
-func (fake *FakeContainerServer) RawWebsocketArgsForCall(i int) string {
+func (fake *FakeInstanceServer) RawWebsocketArgsForCall(i int) string {
 	fake.rawWebsocketMutex.RLock()
 	defer fake.rawWebsocketMutex.RUnlock()
 	argsForCall := fake.rawWebsocketArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) RawWebsocketReturns(result1 *websocket.Conn, result2 error) {
+func (fake *FakeInstanceServer) RawWebsocketReturns(result1 *websocket.Conn, result2 error) {
 	fake.rawWebsocketMutex.Lock()
 	defer fake.rawWebsocketMutex.Unlock()
 	fake.RawWebsocketStub = nil
@@ -19587,7 +19587,7 @@ func (fake *FakeContainerServer) RawWebsocketReturns(result1 *websocket.Conn, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RawWebsocketReturnsOnCall(i int, result1 *websocket.Conn, result2 error) {
+func (fake *FakeInstanceServer) RawWebsocketReturnsOnCall(i int, result1 *websocket.Conn, result2 error) {
 	fake.rawWebsocketMutex.Lock()
 	defer fake.rawWebsocketMutex.Unlock()
 	fake.RawWebsocketStub = nil
@@ -19603,7 +19603,7 @@ func (fake *FakeContainerServer) RawWebsocketReturnsOnCall(i int, result1 *webso
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RebuildInstance(arg1 string, arg2 api.InstanceRebuildPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RebuildInstance(arg1 string, arg2 api.InstanceRebuildPost) (lxd.Operation, error) {
 	fake.rebuildInstanceMutex.Lock()
 	ret, specificReturn := fake.rebuildInstanceReturnsOnCall[len(fake.rebuildInstanceArgsForCall)]
 	fake.rebuildInstanceArgsForCall = append(fake.rebuildInstanceArgsForCall, struct {
@@ -19623,26 +19623,26 @@ func (fake *FakeContainerServer) RebuildInstance(arg1 string, arg2 api.InstanceR
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RebuildInstanceCallCount() int {
+func (fake *FakeInstanceServer) RebuildInstanceCallCount() int {
 	fake.rebuildInstanceMutex.RLock()
 	defer fake.rebuildInstanceMutex.RUnlock()
 	return len(fake.rebuildInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) RebuildInstanceCalls(stub func(string, api.InstanceRebuildPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RebuildInstanceCalls(stub func(string, api.InstanceRebuildPost) (lxd.Operation, error)) {
 	fake.rebuildInstanceMutex.Lock()
 	defer fake.rebuildInstanceMutex.Unlock()
 	fake.RebuildInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) RebuildInstanceArgsForCall(i int) (string, api.InstanceRebuildPost) {
+func (fake *FakeInstanceServer) RebuildInstanceArgsForCall(i int) (string, api.InstanceRebuildPost) {
 	fake.rebuildInstanceMutex.RLock()
 	defer fake.rebuildInstanceMutex.RUnlock()
 	argsForCall := fake.rebuildInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RebuildInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RebuildInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.rebuildInstanceMutex.Lock()
 	defer fake.rebuildInstanceMutex.Unlock()
 	fake.RebuildInstanceStub = nil
@@ -19652,7 +19652,7 @@ func (fake *FakeContainerServer) RebuildInstanceReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RebuildInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RebuildInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.rebuildInstanceMutex.Lock()
 	defer fake.rebuildInstanceMutex.Unlock()
 	fake.RebuildInstanceStub = nil
@@ -19668,7 +19668,7 @@ func (fake *FakeContainerServer) RebuildInstanceReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 string, arg4 api.InstanceRebuildPost) (lxd.RemoteOperation, error) {
+func (fake *FakeInstanceServer) RebuildInstanceFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 string, arg4 api.InstanceRebuildPost) (lxd.RemoteOperation, error) {
 	fake.rebuildInstanceFromImageMutex.Lock()
 	ret, specificReturn := fake.rebuildInstanceFromImageReturnsOnCall[len(fake.rebuildInstanceFromImageArgsForCall)]
 	fake.rebuildInstanceFromImageArgsForCall = append(fake.rebuildInstanceFromImageArgsForCall, struct {
@@ -19690,26 +19690,26 @@ func (fake *FakeContainerServer) RebuildInstanceFromImage(arg1 lxd.ImageServer, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImageCallCount() int {
+func (fake *FakeInstanceServer) RebuildInstanceFromImageCallCount() int {
 	fake.rebuildInstanceFromImageMutex.RLock()
 	defer fake.rebuildInstanceFromImageMutex.RUnlock()
 	return len(fake.rebuildInstanceFromImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImageCalls(stub func(lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) (lxd.RemoteOperation, error)) {
+func (fake *FakeInstanceServer) RebuildInstanceFromImageCalls(stub func(lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) (lxd.RemoteOperation, error)) {
 	fake.rebuildInstanceFromImageMutex.Lock()
 	defer fake.rebuildInstanceFromImageMutex.Unlock()
 	fake.RebuildInstanceFromImageStub = stub
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) {
+func (fake *FakeInstanceServer) RebuildInstanceFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) {
 	fake.rebuildInstanceFromImageMutex.RLock()
 	defer fake.rebuildInstanceFromImageMutex.RUnlock()
 	argsForCall := fake.rebuildInstanceFromImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) RebuildInstanceFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
 	fake.rebuildInstanceFromImageMutex.Lock()
 	defer fake.rebuildInstanceFromImageMutex.Unlock()
 	fake.RebuildInstanceFromImageStub = nil
@@ -19719,7 +19719,7 @@ func (fake *FakeContainerServer) RebuildInstanceFromImageReturns(result1 lxd.Rem
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RebuildInstanceFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+func (fake *FakeInstanceServer) RebuildInstanceFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
 	fake.rebuildInstanceFromImageMutex.Lock()
 	defer fake.rebuildInstanceFromImageMutex.Unlock()
 	fake.RebuildInstanceFromImageStub = nil
@@ -19735,7 +19735,7 @@ func (fake *FakeContainerServer) RebuildInstanceFromImageReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RefreshImage(arg1 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RefreshImage(arg1 string) (lxd.Operation, error) {
 	fake.refreshImageMutex.Lock()
 	ret, specificReturn := fake.refreshImageReturnsOnCall[len(fake.refreshImageArgsForCall)]
 	fake.refreshImageArgsForCall = append(fake.refreshImageArgsForCall, struct {
@@ -19754,26 +19754,26 @@ func (fake *FakeContainerServer) RefreshImage(arg1 string) (lxd.Operation, error
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RefreshImageCallCount() int {
+func (fake *FakeInstanceServer) RefreshImageCallCount() int {
 	fake.refreshImageMutex.RLock()
 	defer fake.refreshImageMutex.RUnlock()
 	return len(fake.refreshImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) RefreshImageCalls(stub func(string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RefreshImageCalls(stub func(string) (lxd.Operation, error)) {
 	fake.refreshImageMutex.Lock()
 	defer fake.refreshImageMutex.Unlock()
 	fake.RefreshImageStub = stub
 }
 
-func (fake *FakeContainerServer) RefreshImageArgsForCall(i int) string {
+func (fake *FakeInstanceServer) RefreshImageArgsForCall(i int) string {
 	fake.refreshImageMutex.RLock()
 	defer fake.refreshImageMutex.RUnlock()
 	argsForCall := fake.refreshImageArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) RefreshImageReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RefreshImageReturns(result1 lxd.Operation, result2 error) {
 	fake.refreshImageMutex.Lock()
 	defer fake.refreshImageMutex.Unlock()
 	fake.RefreshImageStub = nil
@@ -19783,7 +19783,7 @@ func (fake *FakeContainerServer) RefreshImageReturns(result1 lxd.Operation, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RefreshImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RefreshImageReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.refreshImageMutex.Lock()
 	defer fake.refreshImageMutex.Unlock()
 	fake.RefreshImageStub = nil
@@ -19799,7 +19799,7 @@ func (fake *FakeContainerServer) RefreshImageReturnsOnCall(i int, result1 lxd.Op
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameClusterGroup(arg1 string, arg2 api.ClusterGroupPost) error {
+func (fake *FakeInstanceServer) RenameClusterGroup(arg1 string, arg2 api.ClusterGroupPost) error {
 	fake.renameClusterGroupMutex.Lock()
 	ret, specificReturn := fake.renameClusterGroupReturnsOnCall[len(fake.renameClusterGroupArgsForCall)]
 	fake.renameClusterGroupArgsForCall = append(fake.renameClusterGroupArgsForCall, struct {
@@ -19819,26 +19819,26 @@ func (fake *FakeContainerServer) RenameClusterGroup(arg1 string, arg2 api.Cluste
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameClusterGroupCallCount() int {
+func (fake *FakeInstanceServer) RenameClusterGroupCallCount() int {
 	fake.renameClusterGroupMutex.RLock()
 	defer fake.renameClusterGroupMutex.RUnlock()
 	return len(fake.renameClusterGroupArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameClusterGroupCalls(stub func(string, api.ClusterGroupPost) error) {
+func (fake *FakeInstanceServer) RenameClusterGroupCalls(stub func(string, api.ClusterGroupPost) error) {
 	fake.renameClusterGroupMutex.Lock()
 	defer fake.renameClusterGroupMutex.Unlock()
 	fake.RenameClusterGroupStub = stub
 }
 
-func (fake *FakeContainerServer) RenameClusterGroupArgsForCall(i int) (string, api.ClusterGroupPost) {
+func (fake *FakeInstanceServer) RenameClusterGroupArgsForCall(i int) (string, api.ClusterGroupPost) {
 	fake.renameClusterGroupMutex.RLock()
 	defer fake.renameClusterGroupMutex.RUnlock()
 	argsForCall := fake.renameClusterGroupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameClusterGroupReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameClusterGroupReturns(result1 error) {
 	fake.renameClusterGroupMutex.Lock()
 	defer fake.renameClusterGroupMutex.Unlock()
 	fake.RenameClusterGroupStub = nil
@@ -19847,7 +19847,7 @@ func (fake *FakeContainerServer) RenameClusterGroupReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameClusterGroupReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameClusterGroupReturnsOnCall(i int, result1 error) {
 	fake.renameClusterGroupMutex.Lock()
 	defer fake.renameClusterGroupMutex.Unlock()
 	fake.RenameClusterGroupStub = nil
@@ -19861,7 +19861,7 @@ func (fake *FakeContainerServer) RenameClusterGroupReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameClusterMember(arg1 string, arg2 api.ClusterMemberPost) error {
+func (fake *FakeInstanceServer) RenameClusterMember(arg1 string, arg2 api.ClusterMemberPost) error {
 	fake.renameClusterMemberMutex.Lock()
 	ret, specificReturn := fake.renameClusterMemberReturnsOnCall[len(fake.renameClusterMemberArgsForCall)]
 	fake.renameClusterMemberArgsForCall = append(fake.renameClusterMemberArgsForCall, struct {
@@ -19881,26 +19881,26 @@ func (fake *FakeContainerServer) RenameClusterMember(arg1 string, arg2 api.Clust
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameClusterMemberCallCount() int {
+func (fake *FakeInstanceServer) RenameClusterMemberCallCount() int {
 	fake.renameClusterMemberMutex.RLock()
 	defer fake.renameClusterMemberMutex.RUnlock()
 	return len(fake.renameClusterMemberArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameClusterMemberCalls(stub func(string, api.ClusterMemberPost) error) {
+func (fake *FakeInstanceServer) RenameClusterMemberCalls(stub func(string, api.ClusterMemberPost) error) {
 	fake.renameClusterMemberMutex.Lock()
 	defer fake.renameClusterMemberMutex.Unlock()
 	fake.RenameClusterMemberStub = stub
 }
 
-func (fake *FakeContainerServer) RenameClusterMemberArgsForCall(i int) (string, api.ClusterMemberPost) {
+func (fake *FakeInstanceServer) RenameClusterMemberArgsForCall(i int) (string, api.ClusterMemberPost) {
 	fake.renameClusterMemberMutex.RLock()
 	defer fake.renameClusterMemberMutex.RUnlock()
 	argsForCall := fake.renameClusterMemberArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameClusterMemberReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameClusterMemberReturns(result1 error) {
 	fake.renameClusterMemberMutex.Lock()
 	defer fake.renameClusterMemberMutex.Unlock()
 	fake.RenameClusterMemberStub = nil
@@ -19909,7 +19909,7 @@ func (fake *FakeContainerServer) RenameClusterMemberReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameClusterMemberReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameClusterMemberReturnsOnCall(i int, result1 error) {
 	fake.renameClusterMemberMutex.Lock()
 	defer fake.renameClusterMemberMutex.Unlock()
 	fake.RenameClusterMemberStub = nil
@@ -19923,7 +19923,7 @@ func (fake *FakeContainerServer) RenameClusterMemberReturnsOnCall(i int, result1
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameContainer(arg1 string, arg2 api.ContainerPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameContainer(arg1 string, arg2 api.ContainerPost) (lxd.Operation, error) {
 	fake.renameContainerMutex.Lock()
 	ret, specificReturn := fake.renameContainerReturnsOnCall[len(fake.renameContainerArgsForCall)]
 	fake.renameContainerArgsForCall = append(fake.renameContainerArgsForCall, struct {
@@ -19943,26 +19943,26 @@ func (fake *FakeContainerServer) RenameContainer(arg1 string, arg2 api.Container
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameContainerCallCount() int {
+func (fake *FakeInstanceServer) RenameContainerCallCount() int {
 	fake.renameContainerMutex.RLock()
 	defer fake.renameContainerMutex.RUnlock()
 	return len(fake.renameContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameContainerCalls(stub func(string, api.ContainerPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameContainerCalls(stub func(string, api.ContainerPost) (lxd.Operation, error)) {
 	fake.renameContainerMutex.Lock()
 	defer fake.renameContainerMutex.Unlock()
 	fake.RenameContainerStub = stub
 }
 
-func (fake *FakeContainerServer) RenameContainerArgsForCall(i int) (string, api.ContainerPost) {
+func (fake *FakeInstanceServer) RenameContainerArgsForCall(i int) (string, api.ContainerPost) {
 	fake.renameContainerMutex.RLock()
 	defer fake.renameContainerMutex.RUnlock()
 	argsForCall := fake.renameContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.renameContainerMutex.Lock()
 	defer fake.renameContainerMutex.Unlock()
 	fake.RenameContainerStub = nil
@@ -19972,7 +19972,7 @@ func (fake *FakeContainerServer) RenameContainerReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameContainerMutex.Lock()
 	defer fake.renameContainerMutex.Unlock()
 	fake.RenameContainerStub = nil
@@ -19988,7 +19988,7 @@ func (fake *FakeContainerServer) RenameContainerReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameContainerBackup(arg1 string, arg2 string, arg3 api.ContainerBackupPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameContainerBackup(arg1 string, arg2 string, arg3 api.ContainerBackupPost) (lxd.Operation, error) {
 	fake.renameContainerBackupMutex.Lock()
 	ret, specificReturn := fake.renameContainerBackupReturnsOnCall[len(fake.renameContainerBackupArgsForCall)]
 	fake.renameContainerBackupArgsForCall = append(fake.renameContainerBackupArgsForCall, struct {
@@ -20009,26 +20009,26 @@ func (fake *FakeContainerServer) RenameContainerBackup(arg1 string, arg2 string,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameContainerBackupCallCount() int {
+func (fake *FakeInstanceServer) RenameContainerBackupCallCount() int {
 	fake.renameContainerBackupMutex.RLock()
 	defer fake.renameContainerBackupMutex.RUnlock()
 	return len(fake.renameContainerBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameContainerBackupCalls(stub func(string, string, api.ContainerBackupPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameContainerBackupCalls(stub func(string, string, api.ContainerBackupPost) (lxd.Operation, error)) {
 	fake.renameContainerBackupMutex.Lock()
 	defer fake.renameContainerBackupMutex.Unlock()
 	fake.RenameContainerBackupStub = stub
 }
 
-func (fake *FakeContainerServer) RenameContainerBackupArgsForCall(i int) (string, string, api.ContainerBackupPost) {
+func (fake *FakeInstanceServer) RenameContainerBackupArgsForCall(i int) (string, string, api.ContainerBackupPost) {
 	fake.renameContainerBackupMutex.RLock()
 	defer fake.renameContainerBackupMutex.RUnlock()
 	argsForCall := fake.renameContainerBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) RenameContainerBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.renameContainerBackupMutex.Lock()
 	defer fake.renameContainerBackupMutex.Unlock()
 	fake.RenameContainerBackupStub = nil
@@ -20038,7 +20038,7 @@ func (fake *FakeContainerServer) RenameContainerBackupReturns(result1 lxd.Operat
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameContainerBackupMutex.Lock()
 	defer fake.renameContainerBackupMutex.Unlock()
 	fake.RenameContainerBackupStub = nil
@@ -20054,7 +20054,7 @@ func (fake *FakeContainerServer) RenameContainerBackupReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPost) (lxd.Operation, error) {
 	fake.renameContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.renameContainerSnapshotReturnsOnCall[len(fake.renameContainerSnapshotArgsForCall)]
 	fake.renameContainerSnapshotArgsForCall = append(fake.renameContainerSnapshotArgsForCall, struct {
@@ -20075,26 +20075,26 @@ func (fake *FakeContainerServer) RenameContainerSnapshot(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) RenameContainerSnapshotCallCount() int {
 	fake.renameContainerSnapshotMutex.RLock()
 	defer fake.renameContainerSnapshotMutex.RUnlock()
 	return len(fake.renameContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPost) (lxd.Operation, error)) {
 	fake.renameContainerSnapshotMutex.Lock()
 	defer fake.renameContainerSnapshotMutex.Unlock()
 	fake.RenameContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPost) {
+func (fake *FakeInstanceServer) RenameContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPost) {
 	fake.renameContainerSnapshotMutex.RLock()
 	defer fake.renameContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.renameContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.renameContainerSnapshotMutex.Lock()
 	defer fake.renameContainerSnapshotMutex.Unlock()
 	fake.RenameContainerSnapshotStub = nil
@@ -20104,7 +20104,7 @@ func (fake *FakeContainerServer) RenameContainerSnapshotReturns(result1 lxd.Oper
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameContainerSnapshotMutex.Lock()
 	defer fake.renameContainerSnapshotMutex.Unlock()
 	fake.RenameContainerSnapshotStub = nil
@@ -20120,7 +20120,7 @@ func (fake *FakeContainerServer) RenameContainerSnapshotReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameImageAlias(arg1 string, arg2 api.ImageAliasesEntryPost) error {
+func (fake *FakeInstanceServer) RenameImageAlias(arg1 string, arg2 api.ImageAliasesEntryPost) error {
 	fake.renameImageAliasMutex.Lock()
 	ret, specificReturn := fake.renameImageAliasReturnsOnCall[len(fake.renameImageAliasArgsForCall)]
 	fake.renameImageAliasArgsForCall = append(fake.renameImageAliasArgsForCall, struct {
@@ -20140,26 +20140,26 @@ func (fake *FakeContainerServer) RenameImageAlias(arg1 string, arg2 api.ImageAli
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameImageAliasCallCount() int {
+func (fake *FakeInstanceServer) RenameImageAliasCallCount() int {
 	fake.renameImageAliasMutex.RLock()
 	defer fake.renameImageAliasMutex.RUnlock()
 	return len(fake.renameImageAliasArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameImageAliasCalls(stub func(string, api.ImageAliasesEntryPost) error) {
+func (fake *FakeInstanceServer) RenameImageAliasCalls(stub func(string, api.ImageAliasesEntryPost) error) {
 	fake.renameImageAliasMutex.Lock()
 	defer fake.renameImageAliasMutex.Unlock()
 	fake.RenameImageAliasStub = stub
 }
 
-func (fake *FakeContainerServer) RenameImageAliasArgsForCall(i int) (string, api.ImageAliasesEntryPost) {
+func (fake *FakeInstanceServer) RenameImageAliasArgsForCall(i int) (string, api.ImageAliasesEntryPost) {
 	fake.renameImageAliasMutex.RLock()
 	defer fake.renameImageAliasMutex.RUnlock()
 	argsForCall := fake.renameImageAliasArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameImageAliasReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameImageAliasReturns(result1 error) {
 	fake.renameImageAliasMutex.Lock()
 	defer fake.renameImageAliasMutex.Unlock()
 	fake.RenameImageAliasStub = nil
@@ -20168,7 +20168,7 @@ func (fake *FakeContainerServer) RenameImageAliasReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameImageAliasReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameImageAliasReturnsOnCall(i int, result1 error) {
 	fake.renameImageAliasMutex.Lock()
 	defer fake.renameImageAliasMutex.Unlock()
 	fake.RenameImageAliasStub = nil
@@ -20182,7 +20182,7 @@ func (fake *FakeContainerServer) RenameImageAliasReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameInstance(arg1 string, arg2 api.InstancePost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameInstance(arg1 string, arg2 api.InstancePost) (lxd.Operation, error) {
 	fake.renameInstanceMutex.Lock()
 	ret, specificReturn := fake.renameInstanceReturnsOnCall[len(fake.renameInstanceArgsForCall)]
 	fake.renameInstanceArgsForCall = append(fake.renameInstanceArgsForCall, struct {
@@ -20202,26 +20202,26 @@ func (fake *FakeContainerServer) RenameInstance(arg1 string, arg2 api.InstancePo
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameInstanceCallCount() int {
+func (fake *FakeInstanceServer) RenameInstanceCallCount() int {
 	fake.renameInstanceMutex.RLock()
 	defer fake.renameInstanceMutex.RUnlock()
 	return len(fake.renameInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameInstanceCalls(stub func(string, api.InstancePost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameInstanceCalls(stub func(string, api.InstancePost) (lxd.Operation, error)) {
 	fake.renameInstanceMutex.Lock()
 	defer fake.renameInstanceMutex.Unlock()
 	fake.RenameInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) RenameInstanceArgsForCall(i int) (string, api.InstancePost) {
+func (fake *FakeInstanceServer) RenameInstanceArgsForCall(i int) (string, api.InstancePost) {
 	fake.renameInstanceMutex.RLock()
 	defer fake.renameInstanceMutex.RUnlock()
 	argsForCall := fake.renameInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.renameInstanceMutex.Lock()
 	defer fake.renameInstanceMutex.Unlock()
 	fake.RenameInstanceStub = nil
@@ -20231,7 +20231,7 @@ func (fake *FakeContainerServer) RenameInstanceReturns(result1 lxd.Operation, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameInstanceMutex.Lock()
 	defer fake.renameInstanceMutex.Unlock()
 	fake.RenameInstanceStub = nil
@@ -20247,7 +20247,7 @@ func (fake *FakeContainerServer) RenameInstanceReturnsOnCall(i int, result1 lxd.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackup(arg1 string, arg2 string, arg3 api.InstanceBackupPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameInstanceBackup(arg1 string, arg2 string, arg3 api.InstanceBackupPost) (lxd.Operation, error) {
 	fake.renameInstanceBackupMutex.Lock()
 	ret, specificReturn := fake.renameInstanceBackupReturnsOnCall[len(fake.renameInstanceBackupArgsForCall)]
 	fake.renameInstanceBackupArgsForCall = append(fake.renameInstanceBackupArgsForCall, struct {
@@ -20268,26 +20268,26 @@ func (fake *FakeContainerServer) RenameInstanceBackup(arg1 string, arg2 string, 
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackupCallCount() int {
+func (fake *FakeInstanceServer) RenameInstanceBackupCallCount() int {
 	fake.renameInstanceBackupMutex.RLock()
 	defer fake.renameInstanceBackupMutex.RUnlock()
 	return len(fake.renameInstanceBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackupCalls(stub func(string, string, api.InstanceBackupPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameInstanceBackupCalls(stub func(string, string, api.InstanceBackupPost) (lxd.Operation, error)) {
 	fake.renameInstanceBackupMutex.Lock()
 	defer fake.renameInstanceBackupMutex.Unlock()
 	fake.RenameInstanceBackupStub = stub
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackupArgsForCall(i int) (string, string, api.InstanceBackupPost) {
+func (fake *FakeInstanceServer) RenameInstanceBackupArgsForCall(i int) (string, string, api.InstanceBackupPost) {
 	fake.renameInstanceBackupMutex.RLock()
 	defer fake.renameInstanceBackupMutex.RUnlock()
 	argsForCall := fake.renameInstanceBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.renameInstanceBackupMutex.Lock()
 	defer fake.renameInstanceBackupMutex.Unlock()
 	fake.RenameInstanceBackupStub = nil
@@ -20297,7 +20297,7 @@ func (fake *FakeContainerServer) RenameInstanceBackupReturns(result1 lxd.Operati
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameInstanceBackupMutex.Lock()
 	defer fake.renameInstanceBackupMutex.Unlock()
 	fake.RenameInstanceBackupStub = nil
@@ -20313,7 +20313,7 @@ func (fake *FakeContainerServer) RenameInstanceBackupReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPost) (lxd.Operation, error) {
 	fake.renameInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.renameInstanceSnapshotReturnsOnCall[len(fake.renameInstanceSnapshotArgsForCall)]
 	fake.renameInstanceSnapshotArgsForCall = append(fake.renameInstanceSnapshotArgsForCall, struct {
@@ -20334,26 +20334,26 @@ func (fake *FakeContainerServer) RenameInstanceSnapshot(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) RenameInstanceSnapshotCallCount() int {
 	fake.renameInstanceSnapshotMutex.RLock()
 	defer fake.renameInstanceSnapshotMutex.RUnlock()
 	return len(fake.renameInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPost) (lxd.Operation, error)) {
 	fake.renameInstanceSnapshotMutex.Lock()
 	defer fake.renameInstanceSnapshotMutex.Unlock()
 	fake.RenameInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPost) {
+func (fake *FakeInstanceServer) RenameInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPost) {
 	fake.renameInstanceSnapshotMutex.RLock()
 	defer fake.renameInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.renameInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.renameInstanceSnapshotMutex.Lock()
 	defer fake.renameInstanceSnapshotMutex.Unlock()
 	fake.RenameInstanceSnapshotStub = nil
@@ -20363,7 +20363,7 @@ func (fake *FakeContainerServer) RenameInstanceSnapshotReturns(result1 lxd.Opera
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameInstanceSnapshotMutex.Lock()
 	defer fake.renameInstanceSnapshotMutex.Unlock()
 	fake.RenameInstanceSnapshotStub = nil
@@ -20379,7 +20379,7 @@ func (fake *FakeContainerServer) RenameInstanceSnapshotReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameNetwork(arg1 string, arg2 api.NetworkPost) error {
+func (fake *FakeInstanceServer) RenameNetwork(arg1 string, arg2 api.NetworkPost) error {
 	fake.renameNetworkMutex.Lock()
 	ret, specificReturn := fake.renameNetworkReturnsOnCall[len(fake.renameNetworkArgsForCall)]
 	fake.renameNetworkArgsForCall = append(fake.renameNetworkArgsForCall, struct {
@@ -20399,26 +20399,26 @@ func (fake *FakeContainerServer) RenameNetwork(arg1 string, arg2 api.NetworkPost
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameNetworkCallCount() int {
+func (fake *FakeInstanceServer) RenameNetworkCallCount() int {
 	fake.renameNetworkMutex.RLock()
 	defer fake.renameNetworkMutex.RUnlock()
 	return len(fake.renameNetworkArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameNetworkCalls(stub func(string, api.NetworkPost) error) {
+func (fake *FakeInstanceServer) RenameNetworkCalls(stub func(string, api.NetworkPost) error) {
 	fake.renameNetworkMutex.Lock()
 	defer fake.renameNetworkMutex.Unlock()
 	fake.RenameNetworkStub = stub
 }
 
-func (fake *FakeContainerServer) RenameNetworkArgsForCall(i int) (string, api.NetworkPost) {
+func (fake *FakeInstanceServer) RenameNetworkArgsForCall(i int) (string, api.NetworkPost) {
 	fake.renameNetworkMutex.RLock()
 	defer fake.renameNetworkMutex.RUnlock()
 	argsForCall := fake.renameNetworkArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameNetworkReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameNetworkReturns(result1 error) {
 	fake.renameNetworkMutex.Lock()
 	defer fake.renameNetworkMutex.Unlock()
 	fake.RenameNetworkStub = nil
@@ -20427,7 +20427,7 @@ func (fake *FakeContainerServer) RenameNetworkReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameNetworkReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameNetworkReturnsOnCall(i int, result1 error) {
 	fake.renameNetworkMutex.Lock()
 	defer fake.renameNetworkMutex.Unlock()
 	fake.RenameNetworkStub = nil
@@ -20441,7 +20441,7 @@ func (fake *FakeContainerServer) RenameNetworkReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameNetworkACL(arg1 string, arg2 api.NetworkACLPost) error {
+func (fake *FakeInstanceServer) RenameNetworkACL(arg1 string, arg2 api.NetworkACLPost) error {
 	fake.renameNetworkACLMutex.Lock()
 	ret, specificReturn := fake.renameNetworkACLReturnsOnCall[len(fake.renameNetworkACLArgsForCall)]
 	fake.renameNetworkACLArgsForCall = append(fake.renameNetworkACLArgsForCall, struct {
@@ -20461,26 +20461,26 @@ func (fake *FakeContainerServer) RenameNetworkACL(arg1 string, arg2 api.NetworkA
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameNetworkACLCallCount() int {
+func (fake *FakeInstanceServer) RenameNetworkACLCallCount() int {
 	fake.renameNetworkACLMutex.RLock()
 	defer fake.renameNetworkACLMutex.RUnlock()
 	return len(fake.renameNetworkACLArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameNetworkACLCalls(stub func(string, api.NetworkACLPost) error) {
+func (fake *FakeInstanceServer) RenameNetworkACLCalls(stub func(string, api.NetworkACLPost) error) {
 	fake.renameNetworkACLMutex.Lock()
 	defer fake.renameNetworkACLMutex.Unlock()
 	fake.RenameNetworkACLStub = stub
 }
 
-func (fake *FakeContainerServer) RenameNetworkACLArgsForCall(i int) (string, api.NetworkACLPost) {
+func (fake *FakeInstanceServer) RenameNetworkACLArgsForCall(i int) (string, api.NetworkACLPost) {
 	fake.renameNetworkACLMutex.RLock()
 	defer fake.renameNetworkACLMutex.RUnlock()
 	argsForCall := fake.renameNetworkACLArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameNetworkACLReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameNetworkACLReturns(result1 error) {
 	fake.renameNetworkACLMutex.Lock()
 	defer fake.renameNetworkACLMutex.Unlock()
 	fake.RenameNetworkACLStub = nil
@@ -20489,7 +20489,7 @@ func (fake *FakeContainerServer) RenameNetworkACLReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameNetworkACLReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameNetworkACLReturnsOnCall(i int, result1 error) {
 	fake.renameNetworkACLMutex.Lock()
 	defer fake.renameNetworkACLMutex.Unlock()
 	fake.RenameNetworkACLStub = nil
@@ -20503,7 +20503,7 @@ func (fake *FakeContainerServer) RenameNetworkACLReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameProfile(arg1 string, arg2 api.ProfilePost) error {
+func (fake *FakeInstanceServer) RenameProfile(arg1 string, arg2 api.ProfilePost) error {
 	fake.renameProfileMutex.Lock()
 	ret, specificReturn := fake.renameProfileReturnsOnCall[len(fake.renameProfileArgsForCall)]
 	fake.renameProfileArgsForCall = append(fake.renameProfileArgsForCall, struct {
@@ -20523,26 +20523,26 @@ func (fake *FakeContainerServer) RenameProfile(arg1 string, arg2 api.ProfilePost
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameProfileCallCount() int {
+func (fake *FakeInstanceServer) RenameProfileCallCount() int {
 	fake.renameProfileMutex.RLock()
 	defer fake.renameProfileMutex.RUnlock()
 	return len(fake.renameProfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameProfileCalls(stub func(string, api.ProfilePost) error) {
+func (fake *FakeInstanceServer) RenameProfileCalls(stub func(string, api.ProfilePost) error) {
 	fake.renameProfileMutex.Lock()
 	defer fake.renameProfileMutex.Unlock()
 	fake.RenameProfileStub = stub
 }
 
-func (fake *FakeContainerServer) RenameProfileArgsForCall(i int) (string, api.ProfilePost) {
+func (fake *FakeInstanceServer) RenameProfileArgsForCall(i int) (string, api.ProfilePost) {
 	fake.renameProfileMutex.RLock()
 	defer fake.renameProfileMutex.RUnlock()
 	argsForCall := fake.renameProfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameProfileReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameProfileReturns(result1 error) {
 	fake.renameProfileMutex.Lock()
 	defer fake.renameProfileMutex.Unlock()
 	fake.RenameProfileStub = nil
@@ -20551,7 +20551,7 @@ func (fake *FakeContainerServer) RenameProfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameProfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameProfileReturnsOnCall(i int, result1 error) {
 	fake.renameProfileMutex.Lock()
 	defer fake.renameProfileMutex.Unlock()
 	fake.RenameProfileStub = nil
@@ -20565,7 +20565,7 @@ func (fake *FakeContainerServer) RenameProfileReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameProject(arg1 string, arg2 api.ProjectPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameProject(arg1 string, arg2 api.ProjectPost) (lxd.Operation, error) {
 	fake.renameProjectMutex.Lock()
 	ret, specificReturn := fake.renameProjectReturnsOnCall[len(fake.renameProjectArgsForCall)]
 	fake.renameProjectArgsForCall = append(fake.renameProjectArgsForCall, struct {
@@ -20585,26 +20585,26 @@ func (fake *FakeContainerServer) RenameProject(arg1 string, arg2 api.ProjectPost
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameProjectCallCount() int {
+func (fake *FakeInstanceServer) RenameProjectCallCount() int {
 	fake.renameProjectMutex.RLock()
 	defer fake.renameProjectMutex.RUnlock()
 	return len(fake.renameProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameProjectCalls(stub func(string, api.ProjectPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameProjectCalls(stub func(string, api.ProjectPost) (lxd.Operation, error)) {
 	fake.renameProjectMutex.Lock()
 	defer fake.renameProjectMutex.Unlock()
 	fake.RenameProjectStub = stub
 }
 
-func (fake *FakeContainerServer) RenameProjectArgsForCall(i int) (string, api.ProjectPost) {
+func (fake *FakeInstanceServer) RenameProjectArgsForCall(i int) (string, api.ProjectPost) {
 	fake.renameProjectMutex.RLock()
 	defer fake.renameProjectMutex.RUnlock()
 	argsForCall := fake.renameProjectArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) RenameProjectReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameProjectReturns(result1 lxd.Operation, result2 error) {
 	fake.renameProjectMutex.Lock()
 	defer fake.renameProjectMutex.Unlock()
 	fake.RenameProjectStub = nil
@@ -20614,7 +20614,7 @@ func (fake *FakeContainerServer) RenameProjectReturns(result1 lxd.Operation, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameProjectReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameProjectReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameProjectMutex.Lock()
 	defer fake.renameProjectMutex.Unlock()
 	fake.RenameProjectStub = nil
@@ -20630,7 +20630,7 @@ func (fake *FakeContainerServer) RenameProjectReturnsOnCall(i int, result1 lxd.O
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolume(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumePost) error {
+func (fake *FakeInstanceServer) RenameStoragePoolVolume(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumePost) error {
 	fake.renameStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.renameStoragePoolVolumeReturnsOnCall[len(fake.renameStoragePoolVolumeArgsForCall)]
 	fake.renameStoragePoolVolumeArgsForCall = append(fake.renameStoragePoolVolumeArgsForCall, struct {
@@ -20652,26 +20652,26 @@ func (fake *FakeContainerServer) RenameStoragePoolVolume(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeCallCount() int {
 	fake.renameStoragePoolVolumeMutex.RLock()
 	defer fake.renameStoragePoolVolumeMutex.RUnlock()
 	return len(fake.renameStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeCalls(stub func(string, string, string, api.StorageVolumePost) error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeCalls(stub func(string, string, string, api.StorageVolumePost) error) {
 	fake.renameStoragePoolVolumeMutex.Lock()
 	defer fake.renameStoragePoolVolumeMutex.Unlock()
 	fake.RenameStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeArgsForCall(i int) (string, string, string, api.StorageVolumePost) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeArgsForCall(i int) (string, string, string, api.StorageVolumePost) {
 	fake.renameStoragePoolVolumeMutex.RLock()
 	defer fake.renameStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.renameStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeReturns(result1 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeReturns(result1 error) {
 	fake.renameStoragePoolVolumeMutex.Lock()
 	defer fake.renameStoragePoolVolumeMutex.Unlock()
 	fake.RenameStoragePoolVolumeStub = nil
@@ -20680,7 +20680,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeReturnsOnCall(i int, result1 error) {
 	fake.renameStoragePoolVolumeMutex.Lock()
 	defer fake.renameStoragePoolVolumeMutex.Unlock()
 	fake.RenameStoragePoolVolumeStub = nil
@@ -20694,7 +20694,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string, arg4 api.StoragePoolVolumeBackupPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackup(arg1 string, arg2 string, arg3 string, arg4 api.StoragePoolVolumeBackupPost) (lxd.Operation, error) {
 	fake.renameStoragePoolVolumeBackupMutex.Lock()
 	ret, specificReturn := fake.renameStoragePoolVolumeBackupReturnsOnCall[len(fake.renameStoragePoolVolumeBackupArgsForCall)]
 	fake.renameStoragePoolVolumeBackupArgsForCall = append(fake.renameStoragePoolVolumeBackupArgsForCall, struct {
@@ -20716,26 +20716,26 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeBackup(arg1 string, arg2
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupCallCount() int {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackupCallCount() int {
 	fake.renameStoragePoolVolumeBackupMutex.RLock()
 	defer fake.renameStoragePoolVolumeBackupMutex.RUnlock()
 	return len(fake.renameStoragePoolVolumeBackupArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupCalls(stub func(string, string, string, api.StoragePoolVolumeBackupPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackupCalls(stub func(string, string, string, api.StoragePoolVolumeBackupPost) (lxd.Operation, error)) {
 	fake.renameStoragePoolVolumeBackupMutex.Lock()
 	defer fake.renameStoragePoolVolumeBackupMutex.Unlock()
 	fake.RenameStoragePoolVolumeBackupStub = stub
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupArgsForCall(i int) (string, string, string, api.StoragePoolVolumeBackupPost) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackupArgsForCall(i int) (string, string, string, api.StoragePoolVolumeBackupPost) {
 	fake.renameStoragePoolVolumeBackupMutex.RLock()
 	defer fake.renameStoragePoolVolumeBackupMutex.RUnlock()
 	argsForCall := fake.renameStoragePoolVolumeBackupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackupReturns(result1 lxd.Operation, result2 error) {
 	fake.renameStoragePoolVolumeBackupMutex.Lock()
 	defer fake.renameStoragePoolVolumeBackupMutex.Unlock()
 	fake.RenameStoragePoolVolumeBackupStub = nil
@@ -20745,7 +20745,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupReturns(result1 lx
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeBackupReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameStoragePoolVolumeBackupMutex.Lock()
 	defer fake.renameStoragePoolVolumeBackupMutex.Unlock()
 	fake.RenameStoragePoolVolumeBackupStub = nil
@@ -20761,7 +20761,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeBackupReturnsOnCall(i in
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string, arg5 api.StorageVolumeSnapshotPost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string, arg5 api.StorageVolumeSnapshotPost) (lxd.Operation, error) {
 	fake.renameStoragePoolVolumeSnapshotMutex.Lock()
 	ret, specificReturn := fake.renameStoragePoolVolumeSnapshotReturnsOnCall[len(fake.renameStoragePoolVolumeSnapshotArgsForCall)]
 	fake.renameStoragePoolVolumeSnapshotArgsForCall = append(fake.renameStoragePoolVolumeSnapshotArgsForCall, struct {
@@ -20784,26 +20784,26 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshot(arg1 string, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotCallCount() int {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshotCallCount() int {
 	fake.renameStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.renameStoragePoolVolumeSnapshotMutex.RUnlock()
 	return len(fake.renameStoragePoolVolumeSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string, api.StorageVolumeSnapshotPost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string, api.StorageVolumeSnapshotPost) (lxd.Operation, error)) {
 	fake.renameStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.renameStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.RenameStoragePoolVolumeSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string, api.StorageVolumeSnapshotPost) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string, api.StorageVolumeSnapshotPost) {
 	fake.renameStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.renameStoragePoolVolumeSnapshotMutex.RUnlock()
 	argsForCall := fake.renameStoragePoolVolumeSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.renameStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.renameStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.RenameStoragePoolVolumeSnapshotStub = nil
@@ -20813,7 +20813,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotReturns(result1 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) RenameStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.renameStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.renameStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.RenameStoragePoolVolumeSnapshotStub = nil
@@ -20829,7 +20829,7 @@ func (fake *FakeContainerServer) RenameStoragePoolVolumeSnapshotReturnsOnCall(i 
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) RequireAuthenticated(arg1 bool) {
+func (fake *FakeInstanceServer) RequireAuthenticated(arg1 bool) {
 	fake.requireAuthenticatedMutex.Lock()
 	fake.requireAuthenticatedArgsForCall = append(fake.requireAuthenticatedArgsForCall, struct {
 		arg1 bool
@@ -20842,26 +20842,26 @@ func (fake *FakeContainerServer) RequireAuthenticated(arg1 bool) {
 	}
 }
 
-func (fake *FakeContainerServer) RequireAuthenticatedCallCount() int {
+func (fake *FakeInstanceServer) RequireAuthenticatedCallCount() int {
 	fake.requireAuthenticatedMutex.RLock()
 	defer fake.requireAuthenticatedMutex.RUnlock()
 	return len(fake.requireAuthenticatedArgsForCall)
 }
 
-func (fake *FakeContainerServer) RequireAuthenticatedCalls(stub func(bool)) {
+func (fake *FakeInstanceServer) RequireAuthenticatedCalls(stub func(bool)) {
 	fake.requireAuthenticatedMutex.Lock()
 	defer fake.requireAuthenticatedMutex.Unlock()
 	fake.RequireAuthenticatedStub = stub
 }
 
-func (fake *FakeContainerServer) RequireAuthenticatedArgsForCall(i int) bool {
+func (fake *FakeInstanceServer) RequireAuthenticatedArgsForCall(i int) bool {
 	fake.requireAuthenticatedMutex.RLock()
 	defer fake.requireAuthenticatedMutex.RUnlock()
 	argsForCall := fake.requireAuthenticatedArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) SendEvent(arg1 api.Event) error {
+func (fake *FakeInstanceServer) SendEvent(arg1 api.Event) error {
 	fake.sendEventMutex.Lock()
 	ret, specificReturn := fake.sendEventReturnsOnCall[len(fake.sendEventArgsForCall)]
 	fake.sendEventArgsForCall = append(fake.sendEventArgsForCall, struct {
@@ -20880,26 +20880,26 @@ func (fake *FakeContainerServer) SendEvent(arg1 api.Event) error {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) SendEventCallCount() int {
+func (fake *FakeInstanceServer) SendEventCallCount() int {
 	fake.sendEventMutex.RLock()
 	defer fake.sendEventMutex.RUnlock()
 	return len(fake.sendEventArgsForCall)
 }
 
-func (fake *FakeContainerServer) SendEventCalls(stub func(api.Event) error) {
+func (fake *FakeInstanceServer) SendEventCalls(stub func(api.Event) error) {
 	fake.sendEventMutex.Lock()
 	defer fake.sendEventMutex.Unlock()
 	fake.SendEventStub = stub
 }
 
-func (fake *FakeContainerServer) SendEventArgsForCall(i int) api.Event {
+func (fake *FakeInstanceServer) SendEventArgsForCall(i int) api.Event {
 	fake.sendEventMutex.RLock()
 	defer fake.sendEventMutex.RUnlock()
 	argsForCall := fake.sendEventArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) SendEventReturns(result1 error) {
+func (fake *FakeInstanceServer) SendEventReturns(result1 error) {
 	fake.sendEventMutex.Lock()
 	defer fake.sendEventMutex.Unlock()
 	fake.SendEventStub = nil
@@ -20908,7 +20908,7 @@ func (fake *FakeContainerServer) SendEventReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) SendEventReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) SendEventReturnsOnCall(i int, result1 error) {
 	fake.sendEventMutex.Lock()
 	defer fake.sendEventMutex.Unlock()
 	fake.SendEventStub = nil
@@ -20922,7 +20922,7 @@ func (fake *FakeContainerServer) SendEventReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) SetContainerMetadata(arg1 string, arg2 api.ImageMetadata, arg3 string) error {
+func (fake *FakeInstanceServer) SetContainerMetadata(arg1 string, arg2 api.ImageMetadata, arg3 string) error {
 	fake.setContainerMetadataMutex.Lock()
 	ret, specificReturn := fake.setContainerMetadataReturnsOnCall[len(fake.setContainerMetadataArgsForCall)]
 	fake.setContainerMetadataArgsForCall = append(fake.setContainerMetadataArgsForCall, struct {
@@ -20943,26 +20943,26 @@ func (fake *FakeContainerServer) SetContainerMetadata(arg1 string, arg2 api.Imag
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) SetContainerMetadataCallCount() int {
+func (fake *FakeInstanceServer) SetContainerMetadataCallCount() int {
 	fake.setContainerMetadataMutex.RLock()
 	defer fake.setContainerMetadataMutex.RUnlock()
 	return len(fake.setContainerMetadataArgsForCall)
 }
 
-func (fake *FakeContainerServer) SetContainerMetadataCalls(stub func(string, api.ImageMetadata, string) error) {
+func (fake *FakeInstanceServer) SetContainerMetadataCalls(stub func(string, api.ImageMetadata, string) error) {
 	fake.setContainerMetadataMutex.Lock()
 	defer fake.setContainerMetadataMutex.Unlock()
 	fake.SetContainerMetadataStub = stub
 }
 
-func (fake *FakeContainerServer) SetContainerMetadataArgsForCall(i int) (string, api.ImageMetadata, string) {
+func (fake *FakeInstanceServer) SetContainerMetadataArgsForCall(i int) (string, api.ImageMetadata, string) {
 	fake.setContainerMetadataMutex.RLock()
 	defer fake.setContainerMetadataMutex.RUnlock()
 	argsForCall := fake.setContainerMetadataArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) SetContainerMetadataReturns(result1 error) {
+func (fake *FakeInstanceServer) SetContainerMetadataReturns(result1 error) {
 	fake.setContainerMetadataMutex.Lock()
 	defer fake.setContainerMetadataMutex.Unlock()
 	fake.SetContainerMetadataStub = nil
@@ -20971,7 +20971,7 @@ func (fake *FakeContainerServer) SetContainerMetadataReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) SetContainerMetadataReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) SetContainerMetadataReturnsOnCall(i int, result1 error) {
 	fake.setContainerMetadataMutex.Lock()
 	defer fake.setContainerMetadataMutex.Unlock()
 	fake.SetContainerMetadataStub = nil
@@ -20985,7 +20985,7 @@ func (fake *FakeContainerServer) SetContainerMetadataReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateCertificate(arg1 string, arg2 api.CertificatePut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateCertificate(arg1 string, arg2 api.CertificatePut, arg3 string) error {
 	fake.updateCertificateMutex.Lock()
 	ret, specificReturn := fake.updateCertificateReturnsOnCall[len(fake.updateCertificateArgsForCall)]
 	fake.updateCertificateArgsForCall = append(fake.updateCertificateArgsForCall, struct {
@@ -21006,26 +21006,26 @@ func (fake *FakeContainerServer) UpdateCertificate(arg1 string, arg2 api.Certifi
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateCertificateCallCount() int {
+func (fake *FakeInstanceServer) UpdateCertificateCallCount() int {
 	fake.updateCertificateMutex.RLock()
 	defer fake.updateCertificateMutex.RUnlock()
 	return len(fake.updateCertificateArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateCertificateCalls(stub func(string, api.CertificatePut, string) error) {
+func (fake *FakeInstanceServer) UpdateCertificateCalls(stub func(string, api.CertificatePut, string) error) {
 	fake.updateCertificateMutex.Lock()
 	defer fake.updateCertificateMutex.Unlock()
 	fake.UpdateCertificateStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateCertificateArgsForCall(i int) (string, api.CertificatePut, string) {
+func (fake *FakeInstanceServer) UpdateCertificateArgsForCall(i int) (string, api.CertificatePut, string) {
 	fake.updateCertificateMutex.RLock()
 	defer fake.updateCertificateMutex.RUnlock()
 	argsForCall := fake.updateCertificateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateCertificateReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateCertificateReturns(result1 error) {
 	fake.updateCertificateMutex.Lock()
 	defer fake.updateCertificateMutex.Unlock()
 	fake.UpdateCertificateStub = nil
@@ -21034,7 +21034,7 @@ func (fake *FakeContainerServer) UpdateCertificateReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateCertificateReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateCertificateReturnsOnCall(i int, result1 error) {
 	fake.updateCertificateMutex.Lock()
 	defer fake.updateCertificateMutex.Unlock()
 	fake.UpdateCertificateStub = nil
@@ -21048,7 +21048,7 @@ func (fake *FakeContainerServer) UpdateCertificateReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateCluster(arg1 api.ClusterPut, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateCluster(arg1 api.ClusterPut, arg2 string) (lxd.Operation, error) {
 	fake.updateClusterMutex.Lock()
 	ret, specificReturn := fake.updateClusterReturnsOnCall[len(fake.updateClusterArgsForCall)]
 	fake.updateClusterArgsForCall = append(fake.updateClusterArgsForCall, struct {
@@ -21068,26 +21068,26 @@ func (fake *FakeContainerServer) UpdateCluster(arg1 api.ClusterPut, arg2 string)
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateClusterCallCount() int {
+func (fake *FakeInstanceServer) UpdateClusterCallCount() int {
 	fake.updateClusterMutex.RLock()
 	defer fake.updateClusterMutex.RUnlock()
 	return len(fake.updateClusterArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateClusterCalls(stub func(api.ClusterPut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateClusterCalls(stub func(api.ClusterPut, string) (lxd.Operation, error)) {
 	fake.updateClusterMutex.Lock()
 	defer fake.updateClusterMutex.Unlock()
 	fake.UpdateClusterStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateClusterArgsForCall(i int) (api.ClusterPut, string) {
+func (fake *FakeInstanceServer) UpdateClusterArgsForCall(i int) (api.ClusterPut, string) {
 	fake.updateClusterMutex.RLock()
 	defer fake.updateClusterMutex.RUnlock()
 	argsForCall := fake.updateClusterArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) UpdateClusterReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateClusterReturns(result1 lxd.Operation, result2 error) {
 	fake.updateClusterMutex.Lock()
 	defer fake.updateClusterMutex.Unlock()
 	fake.UpdateClusterStub = nil
@@ -21097,7 +21097,7 @@ func (fake *FakeContainerServer) UpdateClusterReturns(result1 lxd.Operation, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateClusterReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateClusterReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateClusterMutex.Lock()
 	defer fake.updateClusterMutex.Unlock()
 	fake.UpdateClusterStub = nil
@@ -21113,7 +21113,7 @@ func (fake *FakeContainerServer) UpdateClusterReturnsOnCall(i int, result1 lxd.O
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificate(arg1 api.ClusterCertificatePut, arg2 string) error {
+func (fake *FakeInstanceServer) UpdateClusterCertificate(arg1 api.ClusterCertificatePut, arg2 string) error {
 	fake.updateClusterCertificateMutex.Lock()
 	ret, specificReturn := fake.updateClusterCertificateReturnsOnCall[len(fake.updateClusterCertificateArgsForCall)]
 	fake.updateClusterCertificateArgsForCall = append(fake.updateClusterCertificateArgsForCall, struct {
@@ -21133,26 +21133,26 @@ func (fake *FakeContainerServer) UpdateClusterCertificate(arg1 api.ClusterCertif
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificateCallCount() int {
+func (fake *FakeInstanceServer) UpdateClusterCertificateCallCount() int {
 	fake.updateClusterCertificateMutex.RLock()
 	defer fake.updateClusterCertificateMutex.RUnlock()
 	return len(fake.updateClusterCertificateArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificateCalls(stub func(api.ClusterCertificatePut, string) error) {
+func (fake *FakeInstanceServer) UpdateClusterCertificateCalls(stub func(api.ClusterCertificatePut, string) error) {
 	fake.updateClusterCertificateMutex.Lock()
 	defer fake.updateClusterCertificateMutex.Unlock()
 	fake.UpdateClusterCertificateStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificateArgsForCall(i int) (api.ClusterCertificatePut, string) {
+func (fake *FakeInstanceServer) UpdateClusterCertificateArgsForCall(i int) (api.ClusterCertificatePut, string) {
 	fake.updateClusterCertificateMutex.RLock()
 	defer fake.updateClusterCertificateMutex.RUnlock()
 	argsForCall := fake.updateClusterCertificateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificateReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterCertificateReturns(result1 error) {
 	fake.updateClusterCertificateMutex.Lock()
 	defer fake.updateClusterCertificateMutex.Unlock()
 	fake.UpdateClusterCertificateStub = nil
@@ -21161,7 +21161,7 @@ func (fake *FakeContainerServer) UpdateClusterCertificateReturns(result1 error) 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterCertificateReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterCertificateReturnsOnCall(i int, result1 error) {
 	fake.updateClusterCertificateMutex.Lock()
 	defer fake.updateClusterCertificateMutex.Unlock()
 	fake.UpdateClusterCertificateStub = nil
@@ -21175,7 +21175,7 @@ func (fake *FakeContainerServer) UpdateClusterCertificateReturnsOnCall(i int, re
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroup(arg1 string, arg2 api.ClusterGroupPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateClusterGroup(arg1 string, arg2 api.ClusterGroupPut, arg3 string) error {
 	fake.updateClusterGroupMutex.Lock()
 	ret, specificReturn := fake.updateClusterGroupReturnsOnCall[len(fake.updateClusterGroupArgsForCall)]
 	fake.updateClusterGroupArgsForCall = append(fake.updateClusterGroupArgsForCall, struct {
@@ -21196,26 +21196,26 @@ func (fake *FakeContainerServer) UpdateClusterGroup(arg1 string, arg2 api.Cluste
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroupCallCount() int {
+func (fake *FakeInstanceServer) UpdateClusterGroupCallCount() int {
 	fake.updateClusterGroupMutex.RLock()
 	defer fake.updateClusterGroupMutex.RUnlock()
 	return len(fake.updateClusterGroupArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroupCalls(stub func(string, api.ClusterGroupPut, string) error) {
+func (fake *FakeInstanceServer) UpdateClusterGroupCalls(stub func(string, api.ClusterGroupPut, string) error) {
 	fake.updateClusterGroupMutex.Lock()
 	defer fake.updateClusterGroupMutex.Unlock()
 	fake.UpdateClusterGroupStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroupArgsForCall(i int) (string, api.ClusterGroupPut, string) {
+func (fake *FakeInstanceServer) UpdateClusterGroupArgsForCall(i int) (string, api.ClusterGroupPut, string) {
 	fake.updateClusterGroupMutex.RLock()
 	defer fake.updateClusterGroupMutex.RUnlock()
 	argsForCall := fake.updateClusterGroupArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroupReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterGroupReturns(result1 error) {
 	fake.updateClusterGroupMutex.Lock()
 	defer fake.updateClusterGroupMutex.Unlock()
 	fake.UpdateClusterGroupStub = nil
@@ -21224,7 +21224,7 @@ func (fake *FakeContainerServer) UpdateClusterGroupReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterGroupReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterGroupReturnsOnCall(i int, result1 error) {
 	fake.updateClusterGroupMutex.Lock()
 	defer fake.updateClusterGroupMutex.Unlock()
 	fake.UpdateClusterGroupStub = nil
@@ -21238,7 +21238,7 @@ func (fake *FakeContainerServer) UpdateClusterGroupReturnsOnCall(i int, result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterMember(arg1 string, arg2 api.ClusterMemberPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateClusterMember(arg1 string, arg2 api.ClusterMemberPut, arg3 string) error {
 	fake.updateClusterMemberMutex.Lock()
 	ret, specificReturn := fake.updateClusterMemberReturnsOnCall[len(fake.updateClusterMemberArgsForCall)]
 	fake.updateClusterMemberArgsForCall = append(fake.updateClusterMemberArgsForCall, struct {
@@ -21259,26 +21259,26 @@ func (fake *FakeContainerServer) UpdateClusterMember(arg1 string, arg2 api.Clust
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberCallCount() int {
+func (fake *FakeInstanceServer) UpdateClusterMemberCallCount() int {
 	fake.updateClusterMemberMutex.RLock()
 	defer fake.updateClusterMemberMutex.RUnlock()
 	return len(fake.updateClusterMemberArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberCalls(stub func(string, api.ClusterMemberPut, string) error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberCalls(stub func(string, api.ClusterMemberPut, string) error) {
 	fake.updateClusterMemberMutex.Lock()
 	defer fake.updateClusterMemberMutex.Unlock()
 	fake.UpdateClusterMemberStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberArgsForCall(i int) (string, api.ClusterMemberPut, string) {
+func (fake *FakeInstanceServer) UpdateClusterMemberArgsForCall(i int) (string, api.ClusterMemberPut, string) {
 	fake.updateClusterMemberMutex.RLock()
 	defer fake.updateClusterMemberMutex.RUnlock()
 	argsForCall := fake.updateClusterMemberArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberReturns(result1 error) {
 	fake.updateClusterMemberMutex.Lock()
 	defer fake.updateClusterMemberMutex.Unlock()
 	fake.UpdateClusterMemberStub = nil
@@ -21287,7 +21287,7 @@ func (fake *FakeContainerServer) UpdateClusterMemberReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberReturnsOnCall(i int, result1 error) {
 	fake.updateClusterMemberMutex.Lock()
 	defer fake.updateClusterMemberMutex.Unlock()
 	fake.UpdateClusterMemberStub = nil
@@ -21301,7 +21301,7 @@ func (fake *FakeContainerServer) UpdateClusterMemberReturnsOnCall(i int, result1
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberState(arg1 string, arg2 api.ClusterMemberStatePost) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberState(arg1 string, arg2 api.ClusterMemberStatePost) (lxd.Operation, error) {
 	fake.updateClusterMemberStateMutex.Lock()
 	ret, specificReturn := fake.updateClusterMemberStateReturnsOnCall[len(fake.updateClusterMemberStateArgsForCall)]
 	fake.updateClusterMemberStateArgsForCall = append(fake.updateClusterMemberStateArgsForCall, struct {
@@ -21321,26 +21321,26 @@ func (fake *FakeContainerServer) UpdateClusterMemberState(arg1 string, arg2 api.
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberStateCallCount() int {
+func (fake *FakeInstanceServer) UpdateClusterMemberStateCallCount() int {
 	fake.updateClusterMemberStateMutex.RLock()
 	defer fake.updateClusterMemberStateMutex.RUnlock()
 	return len(fake.updateClusterMemberStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberStateCalls(stub func(string, api.ClusterMemberStatePost) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateClusterMemberStateCalls(stub func(string, api.ClusterMemberStatePost) (lxd.Operation, error)) {
 	fake.updateClusterMemberStateMutex.Lock()
 	defer fake.updateClusterMemberStateMutex.Unlock()
 	fake.UpdateClusterMemberStateStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberStateArgsForCall(i int) (string, api.ClusterMemberStatePost) {
+func (fake *FakeInstanceServer) UpdateClusterMemberStateArgsForCall(i int) (string, api.ClusterMemberStatePost) {
 	fake.updateClusterMemberStateMutex.RLock()
 	defer fake.updateClusterMemberStateMutex.RUnlock()
 	argsForCall := fake.updateClusterMemberStateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberStateReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberStateReturns(result1 lxd.Operation, result2 error) {
 	fake.updateClusterMemberStateMutex.Lock()
 	defer fake.updateClusterMemberStateMutex.Unlock()
 	fake.UpdateClusterMemberStateStub = nil
@@ -21350,7 +21350,7 @@ func (fake *FakeContainerServer) UpdateClusterMemberStateReturns(result1 lxd.Ope
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateClusterMemberStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateClusterMemberStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateClusterMemberStateMutex.Lock()
 	defer fake.updateClusterMemberStateMutex.Unlock()
 	fake.UpdateClusterMemberStateStub = nil
@@ -21366,7 +21366,7 @@ func (fake *FakeContainerServer) UpdateClusterMemberStateReturnsOnCall(i int, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainer(arg1 string, arg2 api.ContainerPut, arg3 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateContainer(arg1 string, arg2 api.ContainerPut, arg3 string) (lxd.Operation, error) {
 	fake.updateContainerMutex.Lock()
 	ret, specificReturn := fake.updateContainerReturnsOnCall[len(fake.updateContainerArgsForCall)]
 	fake.updateContainerArgsForCall = append(fake.updateContainerArgsForCall, struct {
@@ -21387,26 +21387,26 @@ func (fake *FakeContainerServer) UpdateContainer(arg1 string, arg2 api.Container
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateContainerCallCount() int {
+func (fake *FakeInstanceServer) UpdateContainerCallCount() int {
 	fake.updateContainerMutex.RLock()
 	defer fake.updateContainerMutex.RUnlock()
 	return len(fake.updateContainerArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateContainerCalls(stub func(string, api.ContainerPut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateContainerCalls(stub func(string, api.ContainerPut, string) (lxd.Operation, error)) {
 	fake.updateContainerMutex.Lock()
 	defer fake.updateContainerMutex.Unlock()
 	fake.UpdateContainerStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateContainerArgsForCall(i int) (string, api.ContainerPut, string) {
+func (fake *FakeInstanceServer) UpdateContainerArgsForCall(i int) (string, api.ContainerPut, string) {
 	fake.updateContainerMutex.RLock()
 	defer fake.updateContainerMutex.RUnlock()
 	argsForCall := fake.updateContainerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateContainerReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerReturns(result1 lxd.Operation, result2 error) {
 	fake.updateContainerMutex.Lock()
 	defer fake.updateContainerMutex.Unlock()
 	fake.UpdateContainerStub = nil
@@ -21416,7 +21416,7 @@ func (fake *FakeContainerServer) UpdateContainerReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateContainerMutex.Lock()
 	defer fake.updateContainerMutex.Unlock()
 	fake.UpdateContainerStub = nil
@@ -21432,7 +21432,7 @@ func (fake *FakeContainerServer) UpdateContainerReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPut, arg4 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateContainerSnapshot(arg1 string, arg2 string, arg3 api.ContainerSnapshotPut, arg4 string) (lxd.Operation, error) {
 	fake.updateContainerSnapshotMutex.Lock()
 	ret, specificReturn := fake.updateContainerSnapshotReturnsOnCall[len(fake.updateContainerSnapshotArgsForCall)]
 	fake.updateContainerSnapshotArgsForCall = append(fake.updateContainerSnapshotArgsForCall, struct {
@@ -21454,26 +21454,26 @@ func (fake *FakeContainerServer) UpdateContainerSnapshot(arg1 string, arg2 strin
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshotCallCount() int {
+func (fake *FakeInstanceServer) UpdateContainerSnapshotCallCount() int {
 	fake.updateContainerSnapshotMutex.RLock()
 	defer fake.updateContainerSnapshotMutex.RUnlock()
 	return len(fake.updateContainerSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateContainerSnapshotCalls(stub func(string, string, api.ContainerSnapshotPut, string) (lxd.Operation, error)) {
 	fake.updateContainerSnapshotMutex.Lock()
 	defer fake.updateContainerSnapshotMutex.Unlock()
 	fake.UpdateContainerSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPut, string) {
+func (fake *FakeInstanceServer) UpdateContainerSnapshotArgsForCall(i int) (string, string, api.ContainerSnapshotPut, string) {
 	fake.updateContainerSnapshotMutex.RLock()
 	defer fake.updateContainerSnapshotMutex.RUnlock()
 	argsForCall := fake.updateContainerSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.updateContainerSnapshotMutex.Lock()
 	defer fake.updateContainerSnapshotMutex.Unlock()
 	fake.UpdateContainerSnapshotStub = nil
@@ -21483,7 +21483,7 @@ func (fake *FakeContainerServer) UpdateContainerSnapshotReturns(result1 lxd.Oper
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateContainerSnapshotMutex.Lock()
 	defer fake.updateContainerSnapshotMutex.Unlock()
 	fake.UpdateContainerSnapshotStub = nil
@@ -21499,7 +21499,7 @@ func (fake *FakeContainerServer) UpdateContainerSnapshotReturnsOnCall(i int, res
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerState(arg1 string, arg2 api.ContainerStatePut, arg3 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateContainerState(arg1 string, arg2 api.ContainerStatePut, arg3 string) (lxd.Operation, error) {
 	fake.updateContainerStateMutex.Lock()
 	ret, specificReturn := fake.updateContainerStateReturnsOnCall[len(fake.updateContainerStateArgsForCall)]
 	fake.updateContainerStateArgsForCall = append(fake.updateContainerStateArgsForCall, struct {
@@ -21520,26 +21520,26 @@ func (fake *FakeContainerServer) UpdateContainerState(arg1 string, arg2 api.Cont
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateContainerStateCallCount() int {
+func (fake *FakeInstanceServer) UpdateContainerStateCallCount() int {
 	fake.updateContainerStateMutex.RLock()
 	defer fake.updateContainerStateMutex.RUnlock()
 	return len(fake.updateContainerStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateContainerStateCalls(stub func(string, api.ContainerStatePut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateContainerStateCalls(stub func(string, api.ContainerStatePut, string) (lxd.Operation, error)) {
 	fake.updateContainerStateMutex.Lock()
 	defer fake.updateContainerStateMutex.Unlock()
 	fake.UpdateContainerStateStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateContainerStateArgsForCall(i int) (string, api.ContainerStatePut, string) {
+func (fake *FakeInstanceServer) UpdateContainerStateArgsForCall(i int) (string, api.ContainerStatePut, string) {
 	fake.updateContainerStateMutex.RLock()
 	defer fake.updateContainerStateMutex.RUnlock()
 	argsForCall := fake.updateContainerStateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateContainerStateReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerStateReturns(result1 lxd.Operation, result2 error) {
 	fake.updateContainerStateMutex.Lock()
 	defer fake.updateContainerStateMutex.Unlock()
 	fake.UpdateContainerStateStub = nil
@@ -21549,7 +21549,7 @@ func (fake *FakeContainerServer) UpdateContainerStateReturns(result1 lxd.Operati
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateContainerStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateContainerStateMutex.Lock()
 	defer fake.updateContainerStateMutex.Unlock()
 	fake.UpdateContainerStateStub = nil
@@ -21565,7 +21565,7 @@ func (fake *FakeContainerServer) UpdateContainerStateReturnsOnCall(i int, result
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFile(arg1 string, arg2 string, arg3 io.ReadSeeker) error {
 	fake.updateContainerTemplateFileMutex.Lock()
 	ret, specificReturn := fake.updateContainerTemplateFileReturnsOnCall[len(fake.updateContainerTemplateFileArgsForCall)]
 	fake.updateContainerTemplateFileArgsForCall = append(fake.updateContainerTemplateFileArgsForCall, struct {
@@ -21586,26 +21586,26 @@ func (fake *FakeContainerServer) UpdateContainerTemplateFile(arg1 string, arg2 s
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFileCallCount() int {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFileCallCount() int {
 	fake.updateContainerTemplateFileMutex.RLock()
 	defer fake.updateContainerTemplateFileMutex.RUnlock()
 	return len(fake.updateContainerTemplateFileArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFileCalls(stub func(string, string, io.ReadSeeker) error) {
 	fake.updateContainerTemplateFileMutex.Lock()
 	defer fake.updateContainerTemplateFileMutex.Unlock()
 	fake.UpdateContainerTemplateFileStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFileArgsForCall(i int) (string, string, io.ReadSeeker) {
 	fake.updateContainerTemplateFileMutex.RLock()
 	defer fake.updateContainerTemplateFileMutex.RUnlock()
 	argsForCall := fake.updateContainerTemplateFileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFileReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFileReturns(result1 error) {
 	fake.updateContainerTemplateFileMutex.Lock()
 	defer fake.updateContainerTemplateFileMutex.Unlock()
 	fake.UpdateContainerTemplateFileStub = nil
@@ -21614,7 +21614,7 @@ func (fake *FakeContainerServer) UpdateContainerTemplateFileReturns(result1 erro
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateContainerTemplateFileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateContainerTemplateFileReturnsOnCall(i int, result1 error) {
 	fake.updateContainerTemplateFileMutex.Lock()
 	defer fake.updateContainerTemplateFileMutex.Unlock()
 	fake.UpdateContainerTemplateFileStub = nil
@@ -21628,7 +21628,7 @@ func (fake *FakeContainerServer) UpdateContainerTemplateFileReturnsOnCall(i int,
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateImage(arg1 string, arg2 api.ImagePut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateImage(arg1 string, arg2 api.ImagePut, arg3 string) error {
 	fake.updateImageMutex.Lock()
 	ret, specificReturn := fake.updateImageReturnsOnCall[len(fake.updateImageArgsForCall)]
 	fake.updateImageArgsForCall = append(fake.updateImageArgsForCall, struct {
@@ -21649,26 +21649,26 @@ func (fake *FakeContainerServer) UpdateImage(arg1 string, arg2 api.ImagePut, arg
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateImageCallCount() int {
+func (fake *FakeInstanceServer) UpdateImageCallCount() int {
 	fake.updateImageMutex.RLock()
 	defer fake.updateImageMutex.RUnlock()
 	return len(fake.updateImageArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateImageCalls(stub func(string, api.ImagePut, string) error) {
+func (fake *FakeInstanceServer) UpdateImageCalls(stub func(string, api.ImagePut, string) error) {
 	fake.updateImageMutex.Lock()
 	defer fake.updateImageMutex.Unlock()
 	fake.UpdateImageStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateImageArgsForCall(i int) (string, api.ImagePut, string) {
+func (fake *FakeInstanceServer) UpdateImageArgsForCall(i int) (string, api.ImagePut, string) {
 	fake.updateImageMutex.RLock()
 	defer fake.updateImageMutex.RUnlock()
 	argsForCall := fake.updateImageArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateImageReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateImageReturns(result1 error) {
 	fake.updateImageMutex.Lock()
 	defer fake.updateImageMutex.Unlock()
 	fake.UpdateImageStub = nil
@@ -21677,7 +21677,7 @@ func (fake *FakeContainerServer) UpdateImageReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateImageReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateImageReturnsOnCall(i int, result1 error) {
 	fake.updateImageMutex.Lock()
 	defer fake.updateImageMutex.Unlock()
 	fake.UpdateImageStub = nil
@@ -21691,7 +21691,7 @@ func (fake *FakeContainerServer) UpdateImageReturnsOnCall(i int, result1 error) 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateImageAlias(arg1 string, arg2 api.ImageAliasesEntryPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateImageAlias(arg1 string, arg2 api.ImageAliasesEntryPut, arg3 string) error {
 	fake.updateImageAliasMutex.Lock()
 	ret, specificReturn := fake.updateImageAliasReturnsOnCall[len(fake.updateImageAliasArgsForCall)]
 	fake.updateImageAliasArgsForCall = append(fake.updateImageAliasArgsForCall, struct {
@@ -21712,26 +21712,26 @@ func (fake *FakeContainerServer) UpdateImageAlias(arg1 string, arg2 api.ImageAli
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateImageAliasCallCount() int {
+func (fake *FakeInstanceServer) UpdateImageAliasCallCount() int {
 	fake.updateImageAliasMutex.RLock()
 	defer fake.updateImageAliasMutex.RUnlock()
 	return len(fake.updateImageAliasArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateImageAliasCalls(stub func(string, api.ImageAliasesEntryPut, string) error) {
+func (fake *FakeInstanceServer) UpdateImageAliasCalls(stub func(string, api.ImageAliasesEntryPut, string) error) {
 	fake.updateImageAliasMutex.Lock()
 	defer fake.updateImageAliasMutex.Unlock()
 	fake.UpdateImageAliasStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateImageAliasArgsForCall(i int) (string, api.ImageAliasesEntryPut, string) {
+func (fake *FakeInstanceServer) UpdateImageAliasArgsForCall(i int) (string, api.ImageAliasesEntryPut, string) {
 	fake.updateImageAliasMutex.RLock()
 	defer fake.updateImageAliasMutex.RUnlock()
 	argsForCall := fake.updateImageAliasArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateImageAliasReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateImageAliasReturns(result1 error) {
 	fake.updateImageAliasMutex.Lock()
 	defer fake.updateImageAliasMutex.Unlock()
 	fake.UpdateImageAliasStub = nil
@@ -21740,7 +21740,7 @@ func (fake *FakeContainerServer) UpdateImageAliasReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateImageAliasReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateImageAliasReturnsOnCall(i int, result1 error) {
 	fake.updateImageAliasMutex.Lock()
 	defer fake.updateImageAliasMutex.Unlock()
 	fake.UpdateImageAliasStub = nil
@@ -21754,7 +21754,7 @@ func (fake *FakeContainerServer) UpdateImageAliasReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateInstance(arg1 string, arg2 api.InstancePut, arg3 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateInstance(arg1 string, arg2 api.InstancePut, arg3 string) (lxd.Operation, error) {
 	fake.updateInstanceMutex.Lock()
 	ret, specificReturn := fake.updateInstanceReturnsOnCall[len(fake.updateInstanceArgsForCall)]
 	fake.updateInstanceArgsForCall = append(fake.updateInstanceArgsForCall, struct {
@@ -21775,26 +21775,26 @@ func (fake *FakeContainerServer) UpdateInstance(arg1 string, arg2 api.InstancePu
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateInstanceCallCount() int {
+func (fake *FakeInstanceServer) UpdateInstanceCallCount() int {
 	fake.updateInstanceMutex.RLock()
 	defer fake.updateInstanceMutex.RUnlock()
 	return len(fake.updateInstanceArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateInstanceCalls(stub func(string, api.InstancePut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateInstanceCalls(stub func(string, api.InstancePut, string) (lxd.Operation, error)) {
 	fake.updateInstanceMutex.Lock()
 	defer fake.updateInstanceMutex.Unlock()
 	fake.UpdateInstanceStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateInstanceArgsForCall(i int) (string, api.InstancePut, string) {
+func (fake *FakeInstanceServer) UpdateInstanceArgsForCall(i int) (string, api.InstancePut, string) {
 	fake.updateInstanceMutex.RLock()
 	defer fake.updateInstanceMutex.RUnlock()
 	argsForCall := fake.updateInstanceArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateInstanceReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceReturns(result1 lxd.Operation, result2 error) {
 	fake.updateInstanceMutex.Lock()
 	defer fake.updateInstanceMutex.Unlock()
 	fake.UpdateInstanceStub = nil
@@ -21804,7 +21804,7 @@ func (fake *FakeContainerServer) UpdateInstanceReturns(result1 lxd.Operation, re
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateInstanceMutex.Lock()
 	defer fake.updateInstanceMutex.Unlock()
 	fake.UpdateInstanceStub = nil
@@ -21820,7 +21820,7 @@ func (fake *FakeContainerServer) UpdateInstanceReturnsOnCall(i int, result1 lxd.
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadata(arg1 string, arg2 api.ImageMetadata, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateInstanceMetadata(arg1 string, arg2 api.ImageMetadata, arg3 string) error {
 	fake.updateInstanceMetadataMutex.Lock()
 	ret, specificReturn := fake.updateInstanceMetadataReturnsOnCall[len(fake.updateInstanceMetadataArgsForCall)]
 	fake.updateInstanceMetadataArgsForCall = append(fake.updateInstanceMetadataArgsForCall, struct {
@@ -21841,26 +21841,26 @@ func (fake *FakeContainerServer) UpdateInstanceMetadata(arg1 string, arg2 api.Im
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadataCallCount() int {
+func (fake *FakeInstanceServer) UpdateInstanceMetadataCallCount() int {
 	fake.updateInstanceMetadataMutex.RLock()
 	defer fake.updateInstanceMetadataMutex.RUnlock()
 	return len(fake.updateInstanceMetadataArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadataCalls(stub func(string, api.ImageMetadata, string) error) {
+func (fake *FakeInstanceServer) UpdateInstanceMetadataCalls(stub func(string, api.ImageMetadata, string) error) {
 	fake.updateInstanceMetadataMutex.Lock()
 	defer fake.updateInstanceMetadataMutex.Unlock()
 	fake.UpdateInstanceMetadataStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadataArgsForCall(i int) (string, api.ImageMetadata, string) {
+func (fake *FakeInstanceServer) UpdateInstanceMetadataArgsForCall(i int) (string, api.ImageMetadata, string) {
 	fake.updateInstanceMetadataMutex.RLock()
 	defer fake.updateInstanceMetadataMutex.RUnlock()
 	argsForCall := fake.updateInstanceMetadataArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadataReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateInstanceMetadataReturns(result1 error) {
 	fake.updateInstanceMetadataMutex.Lock()
 	defer fake.updateInstanceMetadataMutex.Unlock()
 	fake.UpdateInstanceMetadataStub = nil
@@ -21869,7 +21869,7 @@ func (fake *FakeContainerServer) UpdateInstanceMetadataReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceMetadataReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateInstanceMetadataReturnsOnCall(i int, result1 error) {
 	fake.updateInstanceMetadataMutex.Lock()
 	defer fake.updateInstanceMetadataMutex.Unlock()
 	fake.UpdateInstanceMetadataStub = nil
@@ -21883,7 +21883,7 @@ func (fake *FakeContainerServer) UpdateInstanceMetadataReturnsOnCall(i int, resu
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPut, arg4 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshot(arg1 string, arg2 string, arg3 api.InstanceSnapshotPut, arg4 string) (lxd.Operation, error) {
 	fake.updateInstanceSnapshotMutex.Lock()
 	ret, specificReturn := fake.updateInstanceSnapshotReturnsOnCall[len(fake.updateInstanceSnapshotArgsForCall)]
 	fake.updateInstanceSnapshotArgsForCall = append(fake.updateInstanceSnapshotArgsForCall, struct {
@@ -21905,26 +21905,26 @@ func (fake *FakeContainerServer) UpdateInstanceSnapshot(arg1 string, arg2 string
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshotCallCount() int {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshotCallCount() int {
 	fake.updateInstanceSnapshotMutex.RLock()
 	defer fake.updateInstanceSnapshotMutex.RUnlock()
 	return len(fake.updateInstanceSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshotCalls(stub func(string, string, api.InstanceSnapshotPut, string) (lxd.Operation, error)) {
 	fake.updateInstanceSnapshotMutex.Lock()
 	defer fake.updateInstanceSnapshotMutex.Unlock()
 	fake.UpdateInstanceSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPut, string) {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshotArgsForCall(i int) (string, string, api.InstanceSnapshotPut, string) {
 	fake.updateInstanceSnapshotMutex.RLock()
 	defer fake.updateInstanceSnapshotMutex.RUnlock()
 	argsForCall := fake.updateInstanceSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshotReturns(result1 lxd.Operation, result2 error) {
 	fake.updateInstanceSnapshotMutex.Lock()
 	defer fake.updateInstanceSnapshotMutex.Unlock()
 	fake.UpdateInstanceSnapshotStub = nil
@@ -21934,7 +21934,7 @@ func (fake *FakeContainerServer) UpdateInstanceSnapshotReturns(result1 lxd.Opera
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceSnapshotReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateInstanceSnapshotMutex.Lock()
 	defer fake.updateInstanceSnapshotMutex.Unlock()
 	fake.UpdateInstanceSnapshotStub = nil
@@ -21950,7 +21950,7 @@ func (fake *FakeContainerServer) UpdateInstanceSnapshotReturnsOnCall(i int, resu
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceState(arg1 string, arg2 api.InstanceStatePut, arg3 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateInstanceState(arg1 string, arg2 api.InstanceStatePut, arg3 string) (lxd.Operation, error) {
 	fake.updateInstanceStateMutex.Lock()
 	ret, specificReturn := fake.updateInstanceStateReturnsOnCall[len(fake.updateInstanceStateArgsForCall)]
 	fake.updateInstanceStateArgsForCall = append(fake.updateInstanceStateArgsForCall, struct {
@@ -21971,26 +21971,26 @@ func (fake *FakeContainerServer) UpdateInstanceState(arg1 string, arg2 api.Insta
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateInstanceStateCallCount() int {
+func (fake *FakeInstanceServer) UpdateInstanceStateCallCount() int {
 	fake.updateInstanceStateMutex.RLock()
 	defer fake.updateInstanceStateMutex.RUnlock()
 	return len(fake.updateInstanceStateArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateInstanceStateCalls(stub func(string, api.InstanceStatePut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateInstanceStateCalls(stub func(string, api.InstanceStatePut, string) (lxd.Operation, error)) {
 	fake.updateInstanceStateMutex.Lock()
 	defer fake.updateInstanceStateMutex.Unlock()
 	fake.UpdateInstanceStateStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateInstanceStateArgsForCall(i int) (string, api.InstanceStatePut, string) {
+func (fake *FakeInstanceServer) UpdateInstanceStateArgsForCall(i int) (string, api.InstanceStatePut, string) {
 	fake.updateInstanceStateMutex.RLock()
 	defer fake.updateInstanceStateMutex.RUnlock()
 	argsForCall := fake.updateInstanceStateArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateInstanceStateReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceStateReturns(result1 lxd.Operation, result2 error) {
 	fake.updateInstanceStateMutex.Lock()
 	defer fake.updateInstanceStateMutex.Unlock()
 	fake.UpdateInstanceStateStub = nil
@@ -22000,7 +22000,7 @@ func (fake *FakeContainerServer) UpdateInstanceStateReturns(result1 lxd.Operatio
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstanceStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstanceStateReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateInstanceStateMutex.Lock()
 	defer fake.updateInstanceStateMutex.Unlock()
 	fake.UpdateInstanceStateStub = nil
@@ -22016,7 +22016,7 @@ func (fake *FakeContainerServer) UpdateInstanceStateReturnsOnCall(i int, result1
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstances(arg1 api.InstancesPut, arg2 string) (lxd.Operation, error) {
+func (fake *FakeInstanceServer) UpdateInstances(arg1 api.InstancesPut, arg2 string) (lxd.Operation, error) {
 	fake.updateInstancesMutex.Lock()
 	ret, specificReturn := fake.updateInstancesReturnsOnCall[len(fake.updateInstancesArgsForCall)]
 	fake.updateInstancesArgsForCall = append(fake.updateInstancesArgsForCall, struct {
@@ -22036,26 +22036,26 @@ func (fake *FakeContainerServer) UpdateInstances(arg1 api.InstancesPut, arg2 str
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeContainerServer) UpdateInstancesCallCount() int {
+func (fake *FakeInstanceServer) UpdateInstancesCallCount() int {
 	fake.updateInstancesMutex.RLock()
 	defer fake.updateInstancesMutex.RUnlock()
 	return len(fake.updateInstancesArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateInstancesCalls(stub func(api.InstancesPut, string) (lxd.Operation, error)) {
+func (fake *FakeInstanceServer) UpdateInstancesCalls(stub func(api.InstancesPut, string) (lxd.Operation, error)) {
 	fake.updateInstancesMutex.Lock()
 	defer fake.updateInstancesMutex.Unlock()
 	fake.UpdateInstancesStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateInstancesArgsForCall(i int) (api.InstancesPut, string) {
+func (fake *FakeInstanceServer) UpdateInstancesArgsForCall(i int) (api.InstancesPut, string) {
 	fake.updateInstancesMutex.RLock()
 	defer fake.updateInstancesMutex.RUnlock()
 	argsForCall := fake.updateInstancesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) UpdateInstancesReturns(result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstancesReturns(result1 lxd.Operation, result2 error) {
 	fake.updateInstancesMutex.Lock()
 	defer fake.updateInstancesMutex.Unlock()
 	fake.UpdateInstancesStub = nil
@@ -22065,7 +22065,7 @@ func (fake *FakeContainerServer) UpdateInstancesReturns(result1 lxd.Operation, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateInstancesReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+func (fake *FakeInstanceServer) UpdateInstancesReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
 	fake.updateInstancesMutex.Lock()
 	defer fake.updateInstancesMutex.Unlock()
 	fake.UpdateInstancesStub = nil
@@ -22081,7 +22081,7 @@ func (fake *FakeContainerServer) UpdateInstancesReturnsOnCall(i int, result1 lxd
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) UpdateNetwork(arg1 string, arg2 api.NetworkPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateNetwork(arg1 string, arg2 api.NetworkPut, arg3 string) error {
 	fake.updateNetworkMutex.Lock()
 	ret, specificReturn := fake.updateNetworkReturnsOnCall[len(fake.updateNetworkArgsForCall)]
 	fake.updateNetworkArgsForCall = append(fake.updateNetworkArgsForCall, struct {
@@ -22102,26 +22102,26 @@ func (fake *FakeContainerServer) UpdateNetwork(arg1 string, arg2 api.NetworkPut,
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkCallCount() int {
 	fake.updateNetworkMutex.RLock()
 	defer fake.updateNetworkMutex.RUnlock()
 	return len(fake.updateNetworkArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkCalls(stub func(string, api.NetworkPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkCalls(stub func(string, api.NetworkPut, string) error) {
 	fake.updateNetworkMutex.Lock()
 	defer fake.updateNetworkMutex.Unlock()
 	fake.UpdateNetworkStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkArgsForCall(i int) (string, api.NetworkPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkArgsForCall(i int) (string, api.NetworkPut, string) {
 	fake.updateNetworkMutex.RLock()
 	defer fake.updateNetworkMutex.RUnlock()
 	argsForCall := fake.updateNetworkArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateNetworkReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkReturns(result1 error) {
 	fake.updateNetworkMutex.Lock()
 	defer fake.updateNetworkMutex.Unlock()
 	fake.UpdateNetworkStub = nil
@@ -22130,7 +22130,7 @@ func (fake *FakeContainerServer) UpdateNetworkReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkMutex.Lock()
 	defer fake.updateNetworkMutex.Unlock()
 	fake.UpdateNetworkStub = nil
@@ -22144,7 +22144,7 @@ func (fake *FakeContainerServer) UpdateNetworkReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACL(arg1 string, arg2 api.NetworkACLPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkACL(arg1 string, arg2 api.NetworkACLPut, arg3 string) error {
 	fake.updateNetworkACLMutex.Lock()
 	ret, specificReturn := fake.updateNetworkACLReturnsOnCall[len(fake.updateNetworkACLArgsForCall)]
 	fake.updateNetworkACLArgsForCall = append(fake.updateNetworkACLArgsForCall, struct {
@@ -22165,26 +22165,26 @@ func (fake *FakeContainerServer) UpdateNetworkACL(arg1 string, arg2 api.NetworkA
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACLCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkACLCallCount() int {
 	fake.updateNetworkACLMutex.RLock()
 	defer fake.updateNetworkACLMutex.RUnlock()
 	return len(fake.updateNetworkACLArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACLCalls(stub func(string, api.NetworkACLPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkACLCalls(stub func(string, api.NetworkACLPut, string) error) {
 	fake.updateNetworkACLMutex.Lock()
 	defer fake.updateNetworkACLMutex.Unlock()
 	fake.UpdateNetworkACLStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACLArgsForCall(i int) (string, api.NetworkACLPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkACLArgsForCall(i int) (string, api.NetworkACLPut, string) {
 	fake.updateNetworkACLMutex.RLock()
 	defer fake.updateNetworkACLMutex.RUnlock()
 	argsForCall := fake.updateNetworkACLArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACLReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkACLReturns(result1 error) {
 	fake.updateNetworkACLMutex.Lock()
 	defer fake.updateNetworkACLMutex.Unlock()
 	fake.UpdateNetworkACLStub = nil
@@ -22193,7 +22193,7 @@ func (fake *FakeContainerServer) UpdateNetworkACLReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkACLReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkACLReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkACLMutex.Lock()
 	defer fake.updateNetworkACLMutex.Unlock()
 	fake.UpdateNetworkACLStub = nil
@@ -22207,7 +22207,7 @@ func (fake *FakeContainerServer) UpdateNetworkACLReturnsOnCall(i int, result1 er
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForward(arg1 string, arg2 string, arg3 api.NetworkForwardPut, arg4 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkForward(arg1 string, arg2 string, arg3 api.NetworkForwardPut, arg4 string) error {
 	fake.updateNetworkForwardMutex.Lock()
 	ret, specificReturn := fake.updateNetworkForwardReturnsOnCall[len(fake.updateNetworkForwardArgsForCall)]
 	fake.updateNetworkForwardArgsForCall = append(fake.updateNetworkForwardArgsForCall, struct {
@@ -22229,26 +22229,26 @@ func (fake *FakeContainerServer) UpdateNetworkForward(arg1 string, arg2 string, 
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForwardCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkForwardCallCount() int {
 	fake.updateNetworkForwardMutex.RLock()
 	defer fake.updateNetworkForwardMutex.RUnlock()
 	return len(fake.updateNetworkForwardArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForwardCalls(stub func(string, string, api.NetworkForwardPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkForwardCalls(stub func(string, string, api.NetworkForwardPut, string) error) {
 	fake.updateNetworkForwardMutex.Lock()
 	defer fake.updateNetworkForwardMutex.Unlock()
 	fake.UpdateNetworkForwardStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForwardArgsForCall(i int) (string, string, api.NetworkForwardPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkForwardArgsForCall(i int) (string, string, api.NetworkForwardPut, string) {
 	fake.updateNetworkForwardMutex.RLock()
 	defer fake.updateNetworkForwardMutex.RUnlock()
 	argsForCall := fake.updateNetworkForwardArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForwardReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkForwardReturns(result1 error) {
 	fake.updateNetworkForwardMutex.Lock()
 	defer fake.updateNetworkForwardMutex.Unlock()
 	fake.UpdateNetworkForwardStub = nil
@@ -22257,7 +22257,7 @@ func (fake *FakeContainerServer) UpdateNetworkForwardReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkForwardReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkForwardReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkForwardMutex.Lock()
 	defer fake.updateNetworkForwardMutex.Unlock()
 	fake.UpdateNetworkForwardStub = nil
@@ -22271,7 +22271,7 @@ func (fake *FakeContainerServer) UpdateNetworkForwardReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancer(arg1 string, arg2 string, arg3 api.NetworkLoadBalancerPut, arg4 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancer(arg1 string, arg2 string, arg3 api.NetworkLoadBalancerPut, arg4 string) error {
 	fake.updateNetworkLoadBalancerMutex.Lock()
 	ret, specificReturn := fake.updateNetworkLoadBalancerReturnsOnCall[len(fake.updateNetworkLoadBalancerArgsForCall)]
 	fake.updateNetworkLoadBalancerArgsForCall = append(fake.updateNetworkLoadBalancerArgsForCall, struct {
@@ -22293,26 +22293,26 @@ func (fake *FakeContainerServer) UpdateNetworkLoadBalancer(arg1 string, arg2 str
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancerCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancerCallCount() int {
 	fake.updateNetworkLoadBalancerMutex.RLock()
 	defer fake.updateNetworkLoadBalancerMutex.RUnlock()
 	return len(fake.updateNetworkLoadBalancerArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancerCalls(stub func(string, string, api.NetworkLoadBalancerPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancerCalls(stub func(string, string, api.NetworkLoadBalancerPut, string) error) {
 	fake.updateNetworkLoadBalancerMutex.Lock()
 	defer fake.updateNetworkLoadBalancerMutex.Unlock()
 	fake.UpdateNetworkLoadBalancerStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancerArgsForCall(i int) (string, string, api.NetworkLoadBalancerPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancerArgsForCall(i int) (string, string, api.NetworkLoadBalancerPut, string) {
 	fake.updateNetworkLoadBalancerMutex.RLock()
 	defer fake.updateNetworkLoadBalancerMutex.RUnlock()
 	argsForCall := fake.updateNetworkLoadBalancerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancerReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancerReturns(result1 error) {
 	fake.updateNetworkLoadBalancerMutex.Lock()
 	defer fake.updateNetworkLoadBalancerMutex.Unlock()
 	fake.UpdateNetworkLoadBalancerStub = nil
@@ -22321,7 +22321,7 @@ func (fake *FakeContainerServer) UpdateNetworkLoadBalancerReturns(result1 error)
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkLoadBalancerReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkLoadBalancerMutex.Lock()
 	defer fake.updateNetworkLoadBalancerMutex.Unlock()
 	fake.UpdateNetworkLoadBalancerStub = nil
@@ -22335,7 +22335,7 @@ func (fake *FakeContainerServer) UpdateNetworkLoadBalancerReturnsOnCall(i int, r
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeer(arg1 string, arg2 string, arg3 api.NetworkPeerPut, arg4 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkPeer(arg1 string, arg2 string, arg3 api.NetworkPeerPut, arg4 string) error {
 	fake.updateNetworkPeerMutex.Lock()
 	ret, specificReturn := fake.updateNetworkPeerReturnsOnCall[len(fake.updateNetworkPeerArgsForCall)]
 	fake.updateNetworkPeerArgsForCall = append(fake.updateNetworkPeerArgsForCall, struct {
@@ -22357,26 +22357,26 @@ func (fake *FakeContainerServer) UpdateNetworkPeer(arg1 string, arg2 string, arg
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeerCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkPeerCallCount() int {
 	fake.updateNetworkPeerMutex.RLock()
 	defer fake.updateNetworkPeerMutex.RUnlock()
 	return len(fake.updateNetworkPeerArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeerCalls(stub func(string, string, api.NetworkPeerPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkPeerCalls(stub func(string, string, api.NetworkPeerPut, string) error) {
 	fake.updateNetworkPeerMutex.Lock()
 	defer fake.updateNetworkPeerMutex.Unlock()
 	fake.UpdateNetworkPeerStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeerArgsForCall(i int) (string, string, api.NetworkPeerPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkPeerArgsForCall(i int) (string, string, api.NetworkPeerPut, string) {
 	fake.updateNetworkPeerMutex.RLock()
 	defer fake.updateNetworkPeerMutex.RUnlock()
 	argsForCall := fake.updateNetworkPeerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeerReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkPeerReturns(result1 error) {
 	fake.updateNetworkPeerMutex.Lock()
 	defer fake.updateNetworkPeerMutex.Unlock()
 	fake.UpdateNetworkPeerStub = nil
@@ -22385,7 +22385,7 @@ func (fake *FakeContainerServer) UpdateNetworkPeerReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkPeerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkPeerReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkPeerMutex.Lock()
 	defer fake.updateNetworkPeerMutex.Unlock()
 	fake.UpdateNetworkPeerStub = nil
@@ -22399,7 +22399,7 @@ func (fake *FakeContainerServer) UpdateNetworkPeerReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZone(arg1 string, arg2 api.NetworkZonePut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkZone(arg1 string, arg2 api.NetworkZonePut, arg3 string) error {
 	fake.updateNetworkZoneMutex.Lock()
 	ret, specificReturn := fake.updateNetworkZoneReturnsOnCall[len(fake.updateNetworkZoneArgsForCall)]
 	fake.updateNetworkZoneArgsForCall = append(fake.updateNetworkZoneArgsForCall, struct {
@@ -22420,26 +22420,26 @@ func (fake *FakeContainerServer) UpdateNetworkZone(arg1 string, arg2 api.Network
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkZoneCallCount() int {
 	fake.updateNetworkZoneMutex.RLock()
 	defer fake.updateNetworkZoneMutex.RUnlock()
 	return len(fake.updateNetworkZoneArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneCalls(stub func(string, api.NetworkZonePut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneCalls(stub func(string, api.NetworkZonePut, string) error) {
 	fake.updateNetworkZoneMutex.Lock()
 	defer fake.updateNetworkZoneMutex.Unlock()
 	fake.UpdateNetworkZoneStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneArgsForCall(i int) (string, api.NetworkZonePut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneArgsForCall(i int) (string, api.NetworkZonePut, string) {
 	fake.updateNetworkZoneMutex.RLock()
 	defer fake.updateNetworkZoneMutex.RUnlock()
 	argsForCall := fake.updateNetworkZoneArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneReturns(result1 error) {
 	fake.updateNetworkZoneMutex.Lock()
 	defer fake.updateNetworkZoneMutex.Unlock()
 	fake.UpdateNetworkZoneStub = nil
@@ -22448,7 +22448,7 @@ func (fake *FakeContainerServer) UpdateNetworkZoneReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkZoneMutex.Lock()
 	defer fake.updateNetworkZoneMutex.Unlock()
 	fake.UpdateNetworkZoneStub = nil
@@ -22462,7 +22462,7 @@ func (fake *FakeContainerServer) UpdateNetworkZoneReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecord(arg1 string, arg2 string, arg3 api.NetworkZoneRecordPut, arg4 string) error {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecord(arg1 string, arg2 string, arg3 api.NetworkZoneRecordPut, arg4 string) error {
 	fake.updateNetworkZoneRecordMutex.Lock()
 	ret, specificReturn := fake.updateNetworkZoneRecordReturnsOnCall[len(fake.updateNetworkZoneRecordArgsForCall)]
 	fake.updateNetworkZoneRecordArgsForCall = append(fake.updateNetworkZoneRecordArgsForCall, struct {
@@ -22484,26 +22484,26 @@ func (fake *FakeContainerServer) UpdateNetworkZoneRecord(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecordCallCount() int {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecordCallCount() int {
 	fake.updateNetworkZoneRecordMutex.RLock()
 	defer fake.updateNetworkZoneRecordMutex.RUnlock()
 	return len(fake.updateNetworkZoneRecordArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecordCalls(stub func(string, string, api.NetworkZoneRecordPut, string) error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecordCalls(stub func(string, string, api.NetworkZoneRecordPut, string) error) {
 	fake.updateNetworkZoneRecordMutex.Lock()
 	defer fake.updateNetworkZoneRecordMutex.Unlock()
 	fake.UpdateNetworkZoneRecordStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecordArgsForCall(i int) (string, string, api.NetworkZoneRecordPut, string) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecordArgsForCall(i int) (string, string, api.NetworkZoneRecordPut, string) {
 	fake.updateNetworkZoneRecordMutex.RLock()
 	defer fake.updateNetworkZoneRecordMutex.RUnlock()
 	argsForCall := fake.updateNetworkZoneRecordArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecordReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecordReturns(result1 error) {
 	fake.updateNetworkZoneRecordMutex.Lock()
 	defer fake.updateNetworkZoneRecordMutex.Unlock()
 	fake.UpdateNetworkZoneRecordStub = nil
@@ -22512,7 +22512,7 @@ func (fake *FakeContainerServer) UpdateNetworkZoneRecordReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateNetworkZoneRecordReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateNetworkZoneRecordReturnsOnCall(i int, result1 error) {
 	fake.updateNetworkZoneRecordMutex.Lock()
 	defer fake.updateNetworkZoneRecordMutex.Unlock()
 	fake.UpdateNetworkZoneRecordStub = nil
@@ -22526,7 +22526,7 @@ func (fake *FakeContainerServer) UpdateNetworkZoneRecordReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateProfile(arg1 string, arg2 api.ProfilePut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateProfile(arg1 string, arg2 api.ProfilePut, arg3 string) error {
 	fake.updateProfileMutex.Lock()
 	ret, specificReturn := fake.updateProfileReturnsOnCall[len(fake.updateProfileArgsForCall)]
 	fake.updateProfileArgsForCall = append(fake.updateProfileArgsForCall, struct {
@@ -22547,26 +22547,26 @@ func (fake *FakeContainerServer) UpdateProfile(arg1 string, arg2 api.ProfilePut,
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateProfileCallCount() int {
+func (fake *FakeInstanceServer) UpdateProfileCallCount() int {
 	fake.updateProfileMutex.RLock()
 	defer fake.updateProfileMutex.RUnlock()
 	return len(fake.updateProfileArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateProfileCalls(stub func(string, api.ProfilePut, string) error) {
+func (fake *FakeInstanceServer) UpdateProfileCalls(stub func(string, api.ProfilePut, string) error) {
 	fake.updateProfileMutex.Lock()
 	defer fake.updateProfileMutex.Unlock()
 	fake.UpdateProfileStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateProfileArgsForCall(i int) (string, api.ProfilePut, string) {
+func (fake *FakeInstanceServer) UpdateProfileArgsForCall(i int) (string, api.ProfilePut, string) {
 	fake.updateProfileMutex.RLock()
 	defer fake.updateProfileMutex.RUnlock()
 	argsForCall := fake.updateProfileArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateProfileReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateProfileReturns(result1 error) {
 	fake.updateProfileMutex.Lock()
 	defer fake.updateProfileMutex.Unlock()
 	fake.UpdateProfileStub = nil
@@ -22575,7 +22575,7 @@ func (fake *FakeContainerServer) UpdateProfileReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateProfileReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateProfileReturnsOnCall(i int, result1 error) {
 	fake.updateProfileMutex.Lock()
 	defer fake.updateProfileMutex.Unlock()
 	fake.UpdateProfileStub = nil
@@ -22589,7 +22589,7 @@ func (fake *FakeContainerServer) UpdateProfileReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateProject(arg1 string, arg2 api.ProjectPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateProject(arg1 string, arg2 api.ProjectPut, arg3 string) error {
 	fake.updateProjectMutex.Lock()
 	ret, specificReturn := fake.updateProjectReturnsOnCall[len(fake.updateProjectArgsForCall)]
 	fake.updateProjectArgsForCall = append(fake.updateProjectArgsForCall, struct {
@@ -22610,26 +22610,26 @@ func (fake *FakeContainerServer) UpdateProject(arg1 string, arg2 api.ProjectPut,
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateProjectCallCount() int {
+func (fake *FakeInstanceServer) UpdateProjectCallCount() int {
 	fake.updateProjectMutex.RLock()
 	defer fake.updateProjectMutex.RUnlock()
 	return len(fake.updateProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateProjectCalls(stub func(string, api.ProjectPut, string) error) {
+func (fake *FakeInstanceServer) UpdateProjectCalls(stub func(string, api.ProjectPut, string) error) {
 	fake.updateProjectMutex.Lock()
 	defer fake.updateProjectMutex.Unlock()
 	fake.UpdateProjectStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateProjectArgsForCall(i int) (string, api.ProjectPut, string) {
+func (fake *FakeInstanceServer) UpdateProjectArgsForCall(i int) (string, api.ProjectPut, string) {
 	fake.updateProjectMutex.RLock()
 	defer fake.updateProjectMutex.RUnlock()
 	argsForCall := fake.updateProjectArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateProjectReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateProjectReturns(result1 error) {
 	fake.updateProjectMutex.Lock()
 	defer fake.updateProjectMutex.Unlock()
 	fake.UpdateProjectStub = nil
@@ -22638,7 +22638,7 @@ func (fake *FakeContainerServer) UpdateProjectReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateProjectReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateProjectReturnsOnCall(i int, result1 error) {
 	fake.updateProjectMutex.Lock()
 	defer fake.updateProjectMutex.Unlock()
 	fake.UpdateProjectStub = nil
@@ -22652,7 +22652,7 @@ func (fake *FakeContainerServer) UpdateProjectReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateServer(arg1 api.ServerPut, arg2 string) error {
+func (fake *FakeInstanceServer) UpdateServer(arg1 api.ServerPut, arg2 string) error {
 	fake.updateServerMutex.Lock()
 	ret, specificReturn := fake.updateServerReturnsOnCall[len(fake.updateServerArgsForCall)]
 	fake.updateServerArgsForCall = append(fake.updateServerArgsForCall, struct {
@@ -22672,26 +22672,26 @@ func (fake *FakeContainerServer) UpdateServer(arg1 api.ServerPut, arg2 string) e
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateServerCallCount() int {
+func (fake *FakeInstanceServer) UpdateServerCallCount() int {
 	fake.updateServerMutex.RLock()
 	defer fake.updateServerMutex.RUnlock()
 	return len(fake.updateServerArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateServerCalls(stub func(api.ServerPut, string) error) {
+func (fake *FakeInstanceServer) UpdateServerCalls(stub func(api.ServerPut, string) error) {
 	fake.updateServerMutex.Lock()
 	defer fake.updateServerMutex.Unlock()
 	fake.UpdateServerStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateServerArgsForCall(i int) (api.ServerPut, string) {
+func (fake *FakeInstanceServer) UpdateServerArgsForCall(i int) (api.ServerPut, string) {
 	fake.updateServerMutex.RLock()
 	defer fake.updateServerMutex.RUnlock()
 	argsForCall := fake.updateServerArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeContainerServer) UpdateServerReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateServerReturns(result1 error) {
 	fake.updateServerMutex.Lock()
 	defer fake.updateServerMutex.Unlock()
 	fake.UpdateServerStub = nil
@@ -22700,7 +22700,7 @@ func (fake *FakeContainerServer) UpdateServerReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateServerReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateServerReturnsOnCall(i int, result1 error) {
 	fake.updateServerMutex.Lock()
 	defer fake.updateServerMutex.Unlock()
 	fake.UpdateServerStub = nil
@@ -22714,7 +22714,7 @@ func (fake *FakeContainerServer) UpdateServerReturnsOnCall(i int, result1 error)
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePool(arg1 string, arg2 api.StoragePoolPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateStoragePool(arg1 string, arg2 api.StoragePoolPut, arg3 string) error {
 	fake.updateStoragePoolMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolReturnsOnCall[len(fake.updateStoragePoolArgsForCall)]
 	fake.updateStoragePoolArgsForCall = append(fake.updateStoragePoolArgsForCall, struct {
@@ -22735,26 +22735,26 @@ func (fake *FakeContainerServer) UpdateStoragePool(arg1 string, arg2 api.Storage
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolCallCount() int {
+func (fake *FakeInstanceServer) UpdateStoragePoolCallCount() int {
 	fake.updateStoragePoolMutex.RLock()
 	defer fake.updateStoragePoolMutex.RUnlock()
 	return len(fake.updateStoragePoolArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolCalls(stub func(string, api.StoragePoolPut, string) error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolCalls(stub func(string, api.StoragePoolPut, string) error) {
 	fake.updateStoragePoolMutex.Lock()
 	defer fake.updateStoragePoolMutex.Unlock()
 	fake.UpdateStoragePoolStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolArgsForCall(i int) (string, api.StoragePoolPut, string) {
+func (fake *FakeInstanceServer) UpdateStoragePoolArgsForCall(i int) (string, api.StoragePoolPut, string) {
 	fake.updateStoragePoolMutex.RLock()
 	defer fake.updateStoragePoolMutex.RUnlock()
 	argsForCall := fake.updateStoragePoolArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolReturns(result1 error) {
 	fake.updateStoragePoolMutex.Lock()
 	defer fake.updateStoragePoolMutex.Unlock()
 	fake.UpdateStoragePoolStub = nil
@@ -22763,7 +22763,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolReturnsOnCall(i int, result1 error) {
 	fake.updateStoragePoolMutex.Lock()
 	defer fake.updateStoragePoolMutex.Unlock()
 	fake.UpdateStoragePoolStub = nil
@@ -22777,7 +22777,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucket(arg1 string, arg2 string, arg3 api.StorageBucketPut, arg4 string) error {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucket(arg1 string, arg2 string, arg3 api.StorageBucketPut, arg4 string) error {
 	fake.updateStoragePoolBucketMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolBucketReturnsOnCall[len(fake.updateStoragePoolBucketArgsForCall)]
 	fake.updateStoragePoolBucketArgsForCall = append(fake.updateStoragePoolBucketArgsForCall, struct {
@@ -22799,26 +22799,26 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucket(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketCallCount() int {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketCallCount() int {
 	fake.updateStoragePoolBucketMutex.RLock()
 	defer fake.updateStoragePoolBucketMutex.RUnlock()
 	return len(fake.updateStoragePoolBucketArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketCalls(stub func(string, string, api.StorageBucketPut, string) error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketCalls(stub func(string, string, api.StorageBucketPut, string) error) {
 	fake.updateStoragePoolBucketMutex.Lock()
 	defer fake.updateStoragePoolBucketMutex.Unlock()
 	fake.UpdateStoragePoolBucketStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketArgsForCall(i int) (string, string, api.StorageBucketPut, string) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketArgsForCall(i int) (string, string, api.StorageBucketPut, string) {
 	fake.updateStoragePoolBucketMutex.RLock()
 	defer fake.updateStoragePoolBucketMutex.RUnlock()
 	argsForCall := fake.updateStoragePoolBucketArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketReturns(result1 error) {
 	fake.updateStoragePoolBucketMutex.Lock()
 	defer fake.updateStoragePoolBucketMutex.Unlock()
 	fake.UpdateStoragePoolBucketStub = nil
@@ -22827,7 +22827,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucketReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketReturnsOnCall(i int, result1 error) {
 	fake.updateStoragePoolBucketMutex.Lock()
 	defer fake.updateStoragePoolBucketMutex.Unlock()
 	fake.UpdateStoragePoolBucketStub = nil
@@ -22841,7 +22841,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucketReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKey(arg1 string, arg2 string, arg3 string, arg4 api.StorageBucketKeyPut, arg5 string) error {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKey(arg1 string, arg2 string, arg3 string, arg4 api.StorageBucketKeyPut, arg5 string) error {
 	fake.updateStoragePoolBucketKeyMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolBucketKeyReturnsOnCall[len(fake.updateStoragePoolBucketKeyArgsForCall)]
 	fake.updateStoragePoolBucketKeyArgsForCall = append(fake.updateStoragePoolBucketKeyArgsForCall, struct {
@@ -22864,26 +22864,26 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucketKey(arg1 string, arg2 st
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyCallCount() int {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKeyCallCount() int {
 	fake.updateStoragePoolBucketKeyMutex.RLock()
 	defer fake.updateStoragePoolBucketKeyMutex.RUnlock()
 	return len(fake.updateStoragePoolBucketKeyArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyCalls(stub func(string, string, string, api.StorageBucketKeyPut, string) error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKeyCalls(stub func(string, string, string, api.StorageBucketKeyPut, string) error) {
 	fake.updateStoragePoolBucketKeyMutex.Lock()
 	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
 	fake.UpdateStoragePoolBucketKeyStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyArgsForCall(i int) (string, string, string, api.StorageBucketKeyPut, string) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKeyArgsForCall(i int) (string, string, string, api.StorageBucketKeyPut, string) {
 	fake.updateStoragePoolBucketKeyMutex.RLock()
 	defer fake.updateStoragePoolBucketKeyMutex.RUnlock()
 	argsForCall := fake.updateStoragePoolBucketKeyArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKeyReturns(result1 error) {
 	fake.updateStoragePoolBucketKeyMutex.Lock()
 	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
 	fake.UpdateStoragePoolBucketKeyStub = nil
@@ -22892,7 +22892,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturns(result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
 	fake.updateStoragePoolBucketKeyMutex.Lock()
 	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
 	fake.UpdateStoragePoolBucketKeyStub = nil
@@ -22906,7 +22906,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturnsOnCall(i int, 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolume(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumePut, arg5 string) error {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolume(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumePut, arg5 string) error {
 	fake.updateStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolVolumeReturnsOnCall[len(fake.updateStoragePoolVolumeArgsForCall)]
 	fake.updateStoragePoolVolumeArgsForCall = append(fake.updateStoragePoolVolumeArgsForCall, struct {
@@ -22929,26 +22929,26 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolume(arg1 string, arg2 strin
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeCallCount() int {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeCallCount() int {
 	fake.updateStoragePoolVolumeMutex.RLock()
 	defer fake.updateStoragePoolVolumeMutex.RUnlock()
 	return len(fake.updateStoragePoolVolumeArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeCalls(stub func(string, string, string, api.StorageVolumePut, string) error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeCalls(stub func(string, string, string, api.StorageVolumePut, string) error) {
 	fake.updateStoragePoolVolumeMutex.Lock()
 	defer fake.updateStoragePoolVolumeMutex.Unlock()
 	fake.UpdateStoragePoolVolumeStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeArgsForCall(i int) (string, string, string, api.StorageVolumePut, string) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeArgsForCall(i int) (string, string, string, api.StorageVolumePut, string) {
 	fake.updateStoragePoolVolumeMutex.RLock()
 	defer fake.updateStoragePoolVolumeMutex.RUnlock()
 	argsForCall := fake.updateStoragePoolVolumeArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeReturns(result1 error) {
 	fake.updateStoragePoolVolumeMutex.Lock()
 	defer fake.updateStoragePoolVolumeMutex.Unlock()
 	fake.UpdateStoragePoolVolumeStub = nil
@@ -22957,7 +22957,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeReturnsOnCall(i int, result1 error) {
 	fake.updateStoragePoolVolumeMutex.Lock()
 	defer fake.updateStoragePoolVolumeMutex.Unlock()
 	fake.UpdateStoragePoolVolumeStub = nil
@@ -22971,7 +22971,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeReturnsOnCall(i int, res
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string, arg5 api.StorageVolumeSnapshotPut, arg6 string) error {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshot(arg1 string, arg2 string, arg3 string, arg4 string, arg5 api.StorageVolumeSnapshotPut, arg6 string) error {
 	fake.updateStoragePoolVolumeSnapshotMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolVolumeSnapshotReturnsOnCall[len(fake.updateStoragePoolVolumeSnapshotArgsForCall)]
 	fake.updateStoragePoolVolumeSnapshotArgsForCall = append(fake.updateStoragePoolVolumeSnapshotArgsForCall, struct {
@@ -22995,26 +22995,26 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshot(arg1 string, ar
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotCallCount() int {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshotCallCount() int {
 	fake.updateStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.updateStoragePoolVolumeSnapshotMutex.RUnlock()
 	return len(fake.updateStoragePoolVolumeSnapshotArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string, api.StorageVolumeSnapshotPut, string) error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshotCalls(stub func(string, string, string, string, api.StorageVolumeSnapshotPut, string) error) {
 	fake.updateStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.updateStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.UpdateStoragePoolVolumeSnapshotStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string, api.StorageVolumeSnapshotPut, string) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshotArgsForCall(i int) (string, string, string, string, api.StorageVolumeSnapshotPut, string) {
 	fake.updateStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.updateStoragePoolVolumeSnapshotMutex.RUnlock()
 	argsForCall := fake.updateStoragePoolVolumeSnapshotArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5, argsForCall.arg6
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshotReturns(result1 error) {
 	fake.updateStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.updateStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.UpdateStoragePoolVolumeSnapshotStub = nil
@@ -23023,7 +23023,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotReturns(result1 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateStoragePoolVolumeSnapshotReturnsOnCall(i int, result1 error) {
 	fake.updateStoragePoolVolumeSnapshotMutex.Lock()
 	defer fake.updateStoragePoolVolumeSnapshotMutex.Unlock()
 	fake.UpdateStoragePoolVolumeSnapshotStub = nil
@@ -23037,7 +23037,7 @@ func (fake *FakeContainerServer) UpdateStoragePoolVolumeSnapshotReturnsOnCall(i 
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateWarning(arg1 string, arg2 api.WarningPut, arg3 string) error {
+func (fake *FakeInstanceServer) UpdateWarning(arg1 string, arg2 api.WarningPut, arg3 string) error {
 	fake.updateWarningMutex.Lock()
 	ret, specificReturn := fake.updateWarningReturnsOnCall[len(fake.updateWarningArgsForCall)]
 	fake.updateWarningArgsForCall = append(fake.updateWarningArgsForCall, struct {
@@ -23058,26 +23058,26 @@ func (fake *FakeContainerServer) UpdateWarning(arg1 string, arg2 api.WarningPut,
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UpdateWarningCallCount() int {
+func (fake *FakeInstanceServer) UpdateWarningCallCount() int {
 	fake.updateWarningMutex.RLock()
 	defer fake.updateWarningMutex.RUnlock()
 	return len(fake.updateWarningArgsForCall)
 }
 
-func (fake *FakeContainerServer) UpdateWarningCalls(stub func(string, api.WarningPut, string) error) {
+func (fake *FakeInstanceServer) UpdateWarningCalls(stub func(string, api.WarningPut, string) error) {
 	fake.updateWarningMutex.Lock()
 	defer fake.updateWarningMutex.Unlock()
 	fake.UpdateWarningStub = stub
 }
 
-func (fake *FakeContainerServer) UpdateWarningArgsForCall(i int) (string, api.WarningPut, string) {
+func (fake *FakeInstanceServer) UpdateWarningArgsForCall(i int) (string, api.WarningPut, string) {
 	fake.updateWarningMutex.RLock()
 	defer fake.updateWarningMutex.RUnlock()
 	argsForCall := fake.updateWarningArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeContainerServer) UpdateWarningReturns(result1 error) {
+func (fake *FakeInstanceServer) UpdateWarningReturns(result1 error) {
 	fake.updateWarningMutex.Lock()
 	defer fake.updateWarningMutex.Unlock()
 	fake.UpdateWarningStub = nil
@@ -23086,7 +23086,7 @@ func (fake *FakeContainerServer) UpdateWarningReturns(result1 error) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UpdateWarningReturnsOnCall(i int, result1 error) {
+func (fake *FakeInstanceServer) UpdateWarningReturnsOnCall(i int, result1 error) {
 	fake.updateWarningMutex.Lock()
 	defer fake.updateWarningMutex.Unlock()
 	fake.UpdateWarningStub = nil
@@ -23100,7 +23100,7 @@ func (fake *FakeContainerServer) UpdateWarningReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UseProject(arg1 string) lxd.InstanceServer {
+func (fake *FakeInstanceServer) UseProject(arg1 string) lxd.InstanceServer {
 	fake.useProjectMutex.Lock()
 	ret, specificReturn := fake.useProjectReturnsOnCall[len(fake.useProjectArgsForCall)]
 	fake.useProjectArgsForCall = append(fake.useProjectArgsForCall, struct {
@@ -23119,26 +23119,26 @@ func (fake *FakeContainerServer) UseProject(arg1 string) lxd.InstanceServer {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UseProjectCallCount() int {
+func (fake *FakeInstanceServer) UseProjectCallCount() int {
 	fake.useProjectMutex.RLock()
 	defer fake.useProjectMutex.RUnlock()
 	return len(fake.useProjectArgsForCall)
 }
 
-func (fake *FakeContainerServer) UseProjectCalls(stub func(string) lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseProjectCalls(stub func(string) lxd.InstanceServer) {
 	fake.useProjectMutex.Lock()
 	defer fake.useProjectMutex.Unlock()
 	fake.UseProjectStub = stub
 }
 
-func (fake *FakeContainerServer) UseProjectArgsForCall(i int) string {
+func (fake *FakeInstanceServer) UseProjectArgsForCall(i int) string {
 	fake.useProjectMutex.RLock()
 	defer fake.useProjectMutex.RUnlock()
 	argsForCall := fake.useProjectArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) UseProjectReturns(result1 lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseProjectReturns(result1 lxd.InstanceServer) {
 	fake.useProjectMutex.Lock()
 	defer fake.useProjectMutex.Unlock()
 	fake.UseProjectStub = nil
@@ -23147,7 +23147,7 @@ func (fake *FakeContainerServer) UseProjectReturns(result1 lxd.InstanceServer) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UseProjectReturnsOnCall(i int, result1 lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseProjectReturnsOnCall(i int, result1 lxd.InstanceServer) {
 	fake.useProjectMutex.Lock()
 	defer fake.useProjectMutex.Unlock()
 	fake.UseProjectStub = nil
@@ -23161,7 +23161,7 @@ func (fake *FakeContainerServer) UseProjectReturnsOnCall(i int, result1 lxd.Inst
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UseTarget(arg1 string) lxd.InstanceServer {
+func (fake *FakeInstanceServer) UseTarget(arg1 string) lxd.InstanceServer {
 	fake.useTargetMutex.Lock()
 	ret, specificReturn := fake.useTargetReturnsOnCall[len(fake.useTargetArgsForCall)]
 	fake.useTargetArgsForCall = append(fake.useTargetArgsForCall, struct {
@@ -23180,26 +23180,26 @@ func (fake *FakeContainerServer) UseTarget(arg1 string) lxd.InstanceServer {
 	return fakeReturns.result1
 }
 
-func (fake *FakeContainerServer) UseTargetCallCount() int {
+func (fake *FakeInstanceServer) UseTargetCallCount() int {
 	fake.useTargetMutex.RLock()
 	defer fake.useTargetMutex.RUnlock()
 	return len(fake.useTargetArgsForCall)
 }
 
-func (fake *FakeContainerServer) UseTargetCalls(stub func(string) lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseTargetCalls(stub func(string) lxd.InstanceServer) {
 	fake.useTargetMutex.Lock()
 	defer fake.useTargetMutex.Unlock()
 	fake.UseTargetStub = stub
 }
 
-func (fake *FakeContainerServer) UseTargetArgsForCall(i int) string {
+func (fake *FakeInstanceServer) UseTargetArgsForCall(i int) string {
 	fake.useTargetMutex.RLock()
 	defer fake.useTargetMutex.RUnlock()
 	argsForCall := fake.useTargetArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) UseTargetReturns(result1 lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseTargetReturns(result1 lxd.InstanceServer) {
 	fake.useTargetMutex.Lock()
 	defer fake.useTargetMutex.Unlock()
 	fake.UseTargetStub = nil
@@ -23208,7 +23208,7 @@ func (fake *FakeContainerServer) UseTargetReturns(result1 lxd.InstanceServer) {
 	}{result1}
 }
 
-func (fake *FakeContainerServer) UseTargetReturnsOnCall(i int, result1 lxd.InstanceServer) {
+func (fake *FakeInstanceServer) UseTargetReturnsOnCall(i int, result1 lxd.InstanceServer) {
 	fake.useTargetMutex.Lock()
 	defer fake.useTargetMutex.Unlock()
 	fake.UseTargetStub = nil
@@ -23222,7 +23222,7 @@ func (fake *FakeContainerServer) UseTargetReturnsOnCall(i int, result1 lxd.Insta
 	}{result1}
 }
 
-func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
+func (fake *FakeInstanceServer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.consoleContainerMutex.RLock()
@@ -23836,7 +23836,7 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *FakeContainerServer) recordInvocation(key string, args []interface{}) {
+func (fake *FakeInstanceServer) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -23848,4 +23848,4 @@ func (fake *FakeContainerServer) recordInvocation(key string, args []interface{}
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ lxd.ContainerServer = new(FakeContainerServer)
+var _ lxd.InstanceServer = new(FakeInstanceServer)

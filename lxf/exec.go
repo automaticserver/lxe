@@ -54,7 +54,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 		closeResize: make(chan struct{}),
 	}
 
-	req := api.ContainerExecPost{
+	req := api.InstanceExecPost{
 		Command:      cmd,
 		WaitForWS:    true,
 		Interactive:  interactive,
@@ -63,7 +63,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 		Height:       WindowHeightDefault,
 		RecordOutput: false,
 	}
-	args := &lxd.ContainerExecArgs{
+	args := &lxd.InstanceExecArgs{
 		Stdin:    stdin,
 		Stdout:   stdout,
 		Stderr:   stderr,
@@ -71,7 +71,7 @@ func (l *client) Exec(cid string, cmd []string, stdin io.ReadCloser, stdout, std
 		DataDone: make(chan bool),
 	}
 
-	op, err := l.server.ExecContainer(cid, req, args)
+	op, err := l.server.ExecInstance(cid, req, args)
 	if err != nil {
 		return CodeExecError, err
 	}
@@ -177,7 +177,7 @@ func (s *session) sendResize(r remotecommand.TerminalSize) error {
 		return err
 	}
 
-	msg := api.ContainerExecControl{}
+	msg := api.InstanceExecControl{}
 	msg.Command = "window-resize"
 	msg.Args = make(map[string]string)
 	msg.Args["width"] = width
@@ -218,7 +218,7 @@ func (s *session) sendCancel() error {
 	}
 	defer w.Close()
 
-	msg := api.ContainerExecControl{}
+	msg := api.InstanceExecControl{}
 	msg.Command = "signal"
 	msg.Signal = int(sig)
 

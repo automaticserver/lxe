@@ -2,7 +2,7 @@
 # LXE
 
 <!-- markdownlint-disable-next-line MD033 -->
-<img src="fixtures/logo/logo_lxe_150.png" align="right" title="LXE Logo">
+<img src="fixtures/logo/logo_lxe_150.png" align="right" title="LXE Logo" alt="LXE Logo">
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-go.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)

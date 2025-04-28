@@ -12,7 +12,7 @@ import (
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
-// ImageServer is the PoC implementation of the CRI ImageServer
+// ImageServer implements the CRI ImageServer
 type ImageServer struct {
 	lxdConfig     *config.Config
 	criConfig     *Config

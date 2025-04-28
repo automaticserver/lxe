@@ -10,7 +10,7 @@ Kuberenetes has [specific resource limits section in the podspec](https://kubern
 
 | Kubernetes resource keyword                   | LXD container configuration keyword | Translation Notes                                                                                                       |
 |-----------------------------------------------|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| `spec.containers[].resources.requests.cpu`    | - (not used)                        | [LXD issue](https://github.com/lxc/lxd/issues/6231)                                                                     |
+| `spec.containers[].resources.requests.cpu`    | - (not used)                        | [LXD issue](https://github.com/canonical/lxd/issues/6231)                                                                     |
 | `spec.containers[].resources.limits.cpu`      | `limits.cpu.allowance`              | Translated into allowed cpu time usage. E.g. Kuberentes cpu limit of `1.5` or `1500m` cpu will result to `150ms/100ms`. |
 | `spec.containers[].resources.requests.memory` | - (not used)                        | -                                                                                                                       |
 | `spec.containers[].resources.limits.memory`   | `limits.memory`                     | -                                                                                                                       |

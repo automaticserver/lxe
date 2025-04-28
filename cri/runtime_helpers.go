@@ -11,7 +11,7 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
-	sharedLXD "github.com/lxc/lxd/shared"
+	sharedLXD "github.com/canonical/lxd/shared"
 	homedir "github.com/mitchellh/go-homedir"
 	"golang.org/x/net/context"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"

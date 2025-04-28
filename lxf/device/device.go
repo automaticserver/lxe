@@ -67,7 +67,7 @@ const (
 	middleSeparatorKeyNameLength = "--"
 )
 
-// Trims key name to allowed length by cutting in the middle. There is a bug in LXD 5.0.0 limiting device names to 27 characters (https://github.com/lxc/lxd/issues/10238). A PR now officially describes the allowed length to be 64 characters and the fix will be available in 5.0.1 and is already merged for 5.1 (https://github.com/lxc/lxd/pull/10251).
+// Trims key name to allowed length by cutting in the middle. There is a bug in LXD 5.0.0 limiting device names to 27 characters (https://github.com/canonical/lxd/issues/10238). A PR now officially describes the allowed length to be 64 characters and the fix will be available in 5.0.1 and is already merged for 5.1 (https://github.com/canonical/lxd/pull/10251).
 func trimKeyName(s string) string {
 	if len(s) <= maxKeyNameLength {
 		return s

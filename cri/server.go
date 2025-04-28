@@ -8,13 +8,11 @@ import (
 	"net"
 	"os"
 
-	old "github.com/automaticserver/lxe/cri/v1alpha2"
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/network"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
-	rtApiOld "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
 // NetworkPlugin defines how the pod network should be setup.
@@ -142,9 +140,6 @@ func NewServer(criConfig *Config) *Server { // nolint: cyclop
 
 	rtApi.RegisterRuntimeServiceServer(grpcServer, runtimeServer)
 	rtApi.RegisterImageServiceServer(grpcServer, imageServer)
-
-	rtApiOld.RegisterRuntimeServiceServer(grpcServer, old.NewOldRuntimeServer(runtimeServer))
-	rtApiOld.RegisterImageServiceServer(grpcServer, old.NewOldImageServer(imageServer))
 
 	return &Server{
 		server:    grpcServer,

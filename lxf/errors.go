@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/lxc/lxd/shared/api"
+	"github.com/canonical/lxd/shared/api"
 )
 
 // ErrNotFound for CRI related checks

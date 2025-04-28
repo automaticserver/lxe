@@ -6,8 +6,8 @@ import (
 
 	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/automaticserver/lxe/lxf/lxo"
-	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/api"
+	"github.com/canonical/lxd/lxc/config"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 )
 

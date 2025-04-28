@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf/lxo"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/lxc/config"
 	"github.com/fsnotify/fsnotify"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/lxc/config"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/remotecommand"
 )

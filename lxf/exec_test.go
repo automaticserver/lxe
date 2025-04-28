@@ -7,9 +7,9 @@ import (
 	"time"
 
 	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/gorilla/websocket"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/tools/remotecommand"
 )

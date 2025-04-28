@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/automaticserver/lxe/lxf"
-	"github.com/lxc/lxd/lxc/config"
-	sharedLXD "github.com/lxc/lxd/shared"
+	"github.com/canonical/lxd/lxc/config"
+	sharedLXD "github.com/canonical/lxd/shared"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sync"
 
-	lxd "github.com/lxc/lxd/client"
+	lxd "github.com/canonical/lxd/client"
 )
 
 type FakeServer struct {

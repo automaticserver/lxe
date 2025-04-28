@@ -5,8 +5,8 @@ import (
 
 	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/automaticserver/lxe/lxf"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )

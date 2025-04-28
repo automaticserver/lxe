@@ -2,11 +2,12 @@
 package client
 
 import (
+	"context"
 	"sync"
 
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/gorilla/websocket"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
 )
 
 type FakeOperation struct {
@@ -85,6 +86,17 @@ type FakeOperation struct {
 		result1 error
 	}
 	waitReturnsOnCall map[int]struct {
+		result1 error
+	}
+	WaitContextStub        func(context.Context) error
+	waitContextMutex       sync.RWMutex
+	waitContextArgsForCall []struct {
+		arg1 context.Context
+	}
+	waitContextReturns struct {
+		result1 error
+	}
+	waitContextReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
@@ -492,6 +504,67 @@ func (fake *FakeOperation) WaitReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeOperation) WaitContext(arg1 context.Context) error {
+	fake.waitContextMutex.Lock()
+	ret, specificReturn := fake.waitContextReturnsOnCall[len(fake.waitContextArgsForCall)]
+	fake.waitContextArgsForCall = append(fake.waitContextArgsForCall, struct {
+		arg1 context.Context
+	}{arg1})
+	stub := fake.WaitContextStub
+	fakeReturns := fake.waitContextReturns
+	fake.recordInvocation("WaitContext", []interface{}{arg1})
+	fake.waitContextMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeOperation) WaitContextCallCount() int {
+	fake.waitContextMutex.RLock()
+	defer fake.waitContextMutex.RUnlock()
+	return len(fake.waitContextArgsForCall)
+}
+
+func (fake *FakeOperation) WaitContextCalls(stub func(context.Context) error) {
+	fake.waitContextMutex.Lock()
+	defer fake.waitContextMutex.Unlock()
+	fake.WaitContextStub = stub
+}
+
+func (fake *FakeOperation) WaitContextArgsForCall(i int) context.Context {
+	fake.waitContextMutex.RLock()
+	defer fake.waitContextMutex.RUnlock()
+	argsForCall := fake.waitContextArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeOperation) WaitContextReturns(result1 error) {
+	fake.waitContextMutex.Lock()
+	defer fake.waitContextMutex.Unlock()
+	fake.WaitContextStub = nil
+	fake.waitContextReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOperation) WaitContextReturnsOnCall(i int, result1 error) {
+	fake.waitContextMutex.Lock()
+	defer fake.waitContextMutex.Unlock()
+	fake.WaitContextStub = nil
+	if fake.waitContextReturnsOnCall == nil {
+		fake.waitContextReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.waitContextReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeOperation) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -509,6 +582,8 @@ func (fake *FakeOperation) Invocations() map[string][][]interface{} {
 	defer fake.removeHandlerMutex.RUnlock()
 	fake.waitMutex.RLock()
 	defer fake.waitMutex.RUnlock()
+	fake.waitContextMutex.RLock()
+	defer fake.waitContextMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

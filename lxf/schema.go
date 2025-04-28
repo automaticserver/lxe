@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lxc/lxd/shared/api"
+	"github.com/canonical/lxd/shared/api"
 )
 
 // Schema Version this package is currently expecting

@@ -30,7 +30,7 @@ Head over to the [releases page](https://github.com/automaticserver/lxe/releases
 
 Please follow these steps carefully. Some parameters and arguments depend on how you installed LXD.
 
-Make sure [that you have LXD running](https://github.com/lxc/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), LXE will need that later.
+Make sure [that you have LXD running](https://github.com/canonical/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), LXE will need that later.
 
 ### Running LXE
 

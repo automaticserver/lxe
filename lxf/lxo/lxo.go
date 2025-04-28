@@ -1,7 +1,7 @@
 package lxo
 
 import (
-	lxd "github.com/lxc/lxd/client"
+	lxd "github.com/canonical/lxd/client"
 )
 
 // LXO abstracts some of the lxd calls with additional functionality like retrying, idempotency

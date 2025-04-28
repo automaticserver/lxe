@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"sync"
 
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/gorilla/websocket"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
 	"github.com/pkg/sftp"
 )
 
@@ -545,6 +545,35 @@ type FakeContainerServer struct {
 	createStoragePoolReturnsOnCall map[int]struct {
 		result1 error
 	}
+	CreateStoragePoolBucketStub        func(string, api.StorageBucketsPost) (*api.StorageBucketKey, error)
+	createStoragePoolBucketMutex       sync.RWMutex
+	createStoragePoolBucketArgsForCall []struct {
+		arg1 string
+		arg2 api.StorageBucketsPost
+	}
+	createStoragePoolBucketReturns struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}
+	createStoragePoolBucketReturnsOnCall map[int]struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}
+	CreateStoragePoolBucketKeyStub        func(string, string, api.StorageBucketKeysPost) (*api.StorageBucketKey, error)
+	createStoragePoolBucketKeyMutex       sync.RWMutex
+	createStoragePoolBucketKeyArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 api.StorageBucketKeysPost
+	}
+	createStoragePoolBucketKeyReturns struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}
+	createStoragePoolBucketKeyReturnsOnCall map[int]struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}
 	CreateStoragePoolVolumeStub        func(string, api.StorageVolumesPost) error
 	createStoragePoolVolumeMutex       sync.RWMutex
 	createStoragePoolVolumeArgsForCall []struct {
@@ -583,6 +612,20 @@ type FakeContainerServer struct {
 		result2 error
 	}
 	createStoragePoolVolumeFromBackupReturnsOnCall map[int]struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	CreateStoragePoolVolumeFromISOStub        func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)
+	createStoragePoolVolumeFromISOMutex       sync.RWMutex
+	createStoragePoolVolumeFromISOArgsForCall []struct {
+		arg1 string
+		arg2 lxd.StoragePoolVolumeBackupArgs
+	}
+	createStoragePoolVolumeFromISOReturns struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	createStoragePoolVolumeFromISOReturnsOnCall map[int]struct {
 		result1 lxd.Operation
 		result2 error
 	}
@@ -963,6 +1006,31 @@ type FakeContainerServer struct {
 	deleteStoragePoolReturnsOnCall map[int]struct {
 		result1 error
 	}
+	DeleteStoragePoolBucketStub        func(string, string) error
+	deleteStoragePoolBucketMutex       sync.RWMutex
+	deleteStoragePoolBucketArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	deleteStoragePoolBucketReturns struct {
+		result1 error
+	}
+	deleteStoragePoolBucketReturnsOnCall map[int]struct {
+		result1 error
+	}
+	DeleteStoragePoolBucketKeyStub        func(string, string, string) error
+	deleteStoragePoolBucketKeyMutex       sync.RWMutex
+	deleteStoragePoolBucketKeyArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}
+	deleteStoragePoolBucketKeyReturns struct {
+		result1 error
+	}
+	deleteStoragePoolBucketKeyReturnsOnCall map[int]struct {
+		result1 error
+	}
 	DeleteStoragePoolVolumeStub        func(string, string, string) error
 	deleteStoragePoolVolumeMutex       sync.RWMutex
 	deleteStoragePoolVolumeArgsForCall []struct {
@@ -1197,6 +1265,21 @@ type FakeContainerServer struct {
 	getClusterMemberNamesReturnsOnCall map[int]struct {
 		result1 []string
 		result2 error
+	}
+	GetClusterMemberStateStub        func(string) (*api.ClusterMemberState, string, error)
+	getClusterMemberStateMutex       sync.RWMutex
+	getClusterMemberStateArgsForCall []struct {
+		arg1 string
+	}
+	getClusterMemberStateReturns struct {
+		result1 *api.ClusterMemberState
+		result2 string
+		result3 error
+	}
+	getClusterMemberStateReturnsOnCall map[int]struct {
+		result1 *api.ClusterMemberState
+		result2 string
+		result3 error
 	}
 	GetClusterMembersStub        func() ([]api.ClusterMember, error)
 	getClusterMembersMutex       sync.RWMutex
@@ -2152,6 +2235,19 @@ type FakeContainerServer struct {
 		result1 []api.NetworkACL
 		result2 error
 	}
+	GetNetworkAllocationsStub        func(bool) ([]api.NetworkAllocations, error)
+	getNetworkAllocationsMutex       sync.RWMutex
+	getNetworkAllocationsArgsForCall []struct {
+		arg1 bool
+	}
+	getNetworkAllocationsReturns struct {
+		result1 []api.NetworkAllocations
+		result2 error
+	}
+	getNetworkAllocationsReturnsOnCall map[int]struct {
+		result1 []api.NetworkAllocations
+		result2 error
+	}
 	GetNetworkForwardStub        func(string, string) (*api.NetworkForward, string, error)
 	getNetworkForwardMutex       sync.RWMutex
 	getNetworkForwardArgsForCall []struct {
@@ -2495,6 +2591,18 @@ type FakeContainerServer struct {
 		result1 []api.Operation
 		result2 error
 	}
+	GetOperationsAllProjectsStub        func() ([]api.Operation, error)
+	getOperationsAllProjectsMutex       sync.RWMutex
+	getOperationsAllProjectsArgsForCall []struct {
+	}
+	getOperationsAllProjectsReturns struct {
+		result1 []api.Operation
+		result2 error
+	}
+	getOperationsAllProjectsReturnsOnCall map[int]struct {
+		result1 []api.Operation
+		result2 error
+	}
 	GetPrivateImageStub        func(string, string) (*api.Image, string, error)
 	getPrivateImageMutex       sync.RWMutex
 	getPrivateImageArgsForCall []struct {
@@ -2658,6 +2766,93 @@ type FakeContainerServer struct {
 		result2 string
 		result3 error
 	}
+	GetStoragePoolBucketStub        func(string, string) (*api.StorageBucket, string, error)
+	getStoragePoolBucketMutex       sync.RWMutex
+	getStoragePoolBucketArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getStoragePoolBucketReturns struct {
+		result1 *api.StorageBucket
+		result2 string
+		result3 error
+	}
+	getStoragePoolBucketReturnsOnCall map[int]struct {
+		result1 *api.StorageBucket
+		result2 string
+		result3 error
+	}
+	GetStoragePoolBucketKeyStub        func(string, string, string) (*api.StorageBucketKey, string, error)
+	getStoragePoolBucketKeyMutex       sync.RWMutex
+	getStoragePoolBucketKeyArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}
+	getStoragePoolBucketKeyReturns struct {
+		result1 *api.StorageBucketKey
+		result2 string
+		result3 error
+	}
+	getStoragePoolBucketKeyReturnsOnCall map[int]struct {
+		result1 *api.StorageBucketKey
+		result2 string
+		result3 error
+	}
+	GetStoragePoolBucketKeyNamesStub        func(string, string) ([]string, error)
+	getStoragePoolBucketKeyNamesMutex       sync.RWMutex
+	getStoragePoolBucketKeyNamesArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getStoragePoolBucketKeyNamesReturns struct {
+		result1 []string
+		result2 error
+	}
+	getStoragePoolBucketKeyNamesReturnsOnCall map[int]struct {
+		result1 []string
+		result2 error
+	}
+	GetStoragePoolBucketKeysStub        func(string, string) ([]api.StorageBucketKey, error)
+	getStoragePoolBucketKeysMutex       sync.RWMutex
+	getStoragePoolBucketKeysArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getStoragePoolBucketKeysReturns struct {
+		result1 []api.StorageBucketKey
+		result2 error
+	}
+	getStoragePoolBucketKeysReturnsOnCall map[int]struct {
+		result1 []api.StorageBucketKey
+		result2 error
+	}
+	GetStoragePoolBucketNamesStub        func(string) ([]string, error)
+	getStoragePoolBucketNamesMutex       sync.RWMutex
+	getStoragePoolBucketNamesArgsForCall []struct {
+		arg1 string
+	}
+	getStoragePoolBucketNamesReturns struct {
+		result1 []string
+		result2 error
+	}
+	getStoragePoolBucketNamesReturnsOnCall map[int]struct {
+		result1 []string
+		result2 error
+	}
+	GetStoragePoolBucketsStub        func(string) ([]api.StorageBucket, error)
+	getStoragePoolBucketsMutex       sync.RWMutex
+	getStoragePoolBucketsArgsForCall []struct {
+		arg1 string
+	}
+	getStoragePoolBucketsReturns struct {
+		result1 []api.StorageBucket
+		result2 error
+	}
+	getStoragePoolBucketsReturnsOnCall map[int]struct {
+		result1 []api.StorageBucket
+		result2 error
+	}
 	GetStoragePoolNamesStub        func() ([]string, error)
 	getStoragePoolNamesMutex       sync.RWMutex
 	getStoragePoolNamesArgsForCall []struct {
@@ -2774,17 +2969,17 @@ type FakeContainerServer struct {
 		result1 []string
 		result2 error
 	}
-	GetStoragePoolVolumeNamesAllProjectsStub        func(string) ([]string, error)
+	GetStoragePoolVolumeNamesAllProjectsStub        func(string) (map[string][]string, error)
 	getStoragePoolVolumeNamesAllProjectsMutex       sync.RWMutex
 	getStoragePoolVolumeNamesAllProjectsArgsForCall []struct {
 		arg1 string
 	}
 	getStoragePoolVolumeNamesAllProjectsReturns struct {
-		result1 []string
+		result1 map[string][]string
 		result2 error
 	}
 	getStoragePoolVolumeNamesAllProjectsReturnsOnCall map[int]struct {
-		result1 []string
+		result1 map[string][]string
 		result2 error
 	}
 	GetStoragePoolVolumeSnapshotStub        func(string, string, string, string) (*api.StorageVolumeSnapshot, string, error)
@@ -3112,6 +3307,36 @@ type FakeContainerServer struct {
 	}
 	rawWebsocketReturnsOnCall map[int]struct {
 		result1 *websocket.Conn
+		result2 error
+	}
+	RebuildInstanceStub        func(string, api.InstanceRebuildPost) (lxd.Operation, error)
+	rebuildInstanceMutex       sync.RWMutex
+	rebuildInstanceArgsForCall []struct {
+		arg1 string
+		arg2 api.InstanceRebuildPost
+	}
+	rebuildInstanceReturns struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	rebuildInstanceReturnsOnCall map[int]struct {
+		result1 lxd.Operation
+		result2 error
+	}
+	RebuildInstanceFromImageStub        func(lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) (lxd.RemoteOperation, error)
+	rebuildInstanceFromImageMutex       sync.RWMutex
+	rebuildInstanceFromImageArgsForCall []struct {
+		arg1 lxd.ImageServer
+		arg2 api.Image
+		arg3 string
+		arg4 api.InstanceRebuildPost
+	}
+	rebuildInstanceFromImageReturns struct {
+		result1 lxd.RemoteOperation
+		result2 error
+	}
+	rebuildInstanceFromImageReturnsOnCall map[int]struct {
+		result1 lxd.RemoteOperation
 		result2 error
 	}
 	RefreshImageStub        func(string) (lxd.Operation, error)
@@ -3758,6 +3983,35 @@ type FakeContainerServer struct {
 		result1 error
 	}
 	updateStoragePoolReturnsOnCall map[int]struct {
+		result1 error
+	}
+	UpdateStoragePoolBucketStub        func(string, string, api.StorageBucketPut, string) error
+	updateStoragePoolBucketMutex       sync.RWMutex
+	updateStoragePoolBucketArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 api.StorageBucketPut
+		arg4 string
+	}
+	updateStoragePoolBucketReturns struct {
+		result1 error
+	}
+	updateStoragePoolBucketReturnsOnCall map[int]struct {
+		result1 error
+	}
+	UpdateStoragePoolBucketKeyStub        func(string, string, string, api.StorageBucketKeyPut, string) error
+	updateStoragePoolBucketKeyMutex       sync.RWMutex
+	updateStoragePoolBucketKeyArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 string
+		arg4 api.StorageBucketKeyPut
+		arg5 string
+	}
+	updateStoragePoolBucketKeyReturns struct {
+		result1 error
+	}
+	updateStoragePoolBucketKeyReturnsOnCall map[int]struct {
 		result1 error
 	}
 	UpdateStoragePoolVolumeStub        func(string, string, string, api.StorageVolumePut, string) error
@@ -6385,6 +6639,137 @@ func (fake *FakeContainerServer) CreateStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
+func (fake *FakeContainerServer) CreateStoragePoolBucket(arg1 string, arg2 api.StorageBucketsPost) (*api.StorageBucketKey, error) {
+	fake.createStoragePoolBucketMutex.Lock()
+	ret, specificReturn := fake.createStoragePoolBucketReturnsOnCall[len(fake.createStoragePoolBucketArgsForCall)]
+	fake.createStoragePoolBucketArgsForCall = append(fake.createStoragePoolBucketArgsForCall, struct {
+		arg1 string
+		arg2 api.StorageBucketsPost
+	}{arg1, arg2})
+	stub := fake.CreateStoragePoolBucketStub
+	fakeReturns := fake.createStoragePoolBucketReturns
+	fake.recordInvocation("CreateStoragePoolBucket", []interface{}{arg1, arg2})
+	fake.createStoragePoolBucketMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketCallCount() int {
+	fake.createStoragePoolBucketMutex.RLock()
+	defer fake.createStoragePoolBucketMutex.RUnlock()
+	return len(fake.createStoragePoolBucketArgsForCall)
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketCalls(stub func(string, api.StorageBucketsPost) (*api.StorageBucketKey, error)) {
+	fake.createStoragePoolBucketMutex.Lock()
+	defer fake.createStoragePoolBucketMutex.Unlock()
+	fake.CreateStoragePoolBucketStub = stub
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketArgsForCall(i int) (string, api.StorageBucketsPost) {
+	fake.createStoragePoolBucketMutex.RLock()
+	defer fake.createStoragePoolBucketMutex.RUnlock()
+	argsForCall := fake.createStoragePoolBucketArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketReturns(result1 *api.StorageBucketKey, result2 error) {
+	fake.createStoragePoolBucketMutex.Lock()
+	defer fake.createStoragePoolBucketMutex.Unlock()
+	fake.CreateStoragePoolBucketStub = nil
+	fake.createStoragePoolBucketReturns = struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
+	fake.createStoragePoolBucketMutex.Lock()
+	defer fake.createStoragePoolBucketMutex.Unlock()
+	fake.CreateStoragePoolBucketStub = nil
+	if fake.createStoragePoolBucketReturnsOnCall == nil {
+		fake.createStoragePoolBucketReturnsOnCall = make(map[int]struct {
+			result1 *api.StorageBucketKey
+			result2 error
+		})
+	}
+	fake.createStoragePoolBucketReturnsOnCall[i] = struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKey(arg1 string, arg2 string, arg3 api.StorageBucketKeysPost) (*api.StorageBucketKey, error) {
+	fake.createStoragePoolBucketKeyMutex.Lock()
+	ret, specificReturn := fake.createStoragePoolBucketKeyReturnsOnCall[len(fake.createStoragePoolBucketKeyArgsForCall)]
+	fake.createStoragePoolBucketKeyArgsForCall = append(fake.createStoragePoolBucketKeyArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 api.StorageBucketKeysPost
+	}{arg1, arg2, arg3})
+	stub := fake.CreateStoragePoolBucketKeyStub
+	fakeReturns := fake.createStoragePoolBucketKeyReturns
+	fake.recordInvocation("CreateStoragePoolBucketKey", []interface{}{arg1, arg2, arg3})
+	fake.createStoragePoolBucketKeyMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKeyCallCount() int {
+	fake.createStoragePoolBucketKeyMutex.RLock()
+	defer fake.createStoragePoolBucketKeyMutex.RUnlock()
+	return len(fake.createStoragePoolBucketKeyArgsForCall)
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKeyCalls(stub func(string, string, api.StorageBucketKeysPost) (*api.StorageBucketKey, error)) {
+	fake.createStoragePoolBucketKeyMutex.Lock()
+	defer fake.createStoragePoolBucketKeyMutex.Unlock()
+	fake.CreateStoragePoolBucketKeyStub = stub
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKeyArgsForCall(i int) (string, string, api.StorageBucketKeysPost) {
+	fake.createStoragePoolBucketKeyMutex.RLock()
+	defer fake.createStoragePoolBucketKeyMutex.RUnlock()
+	argsForCall := fake.createStoragePoolBucketKeyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 error) {
+	fake.createStoragePoolBucketKeyMutex.Lock()
+	defer fake.createStoragePoolBucketKeyMutex.Unlock()
+	fake.CreateStoragePoolBucketKeyStub = nil
+	fake.createStoragePoolBucketKeyReturns = struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 error) {
+	fake.createStoragePoolBucketKeyMutex.Lock()
+	defer fake.createStoragePoolBucketKeyMutex.Unlock()
+	fake.CreateStoragePoolBucketKeyStub = nil
+	if fake.createStoragePoolBucketKeyReturnsOnCall == nil {
+		fake.createStoragePoolBucketKeyReturnsOnCall = make(map[int]struct {
+			result1 *api.StorageBucketKey
+			result2 error
+		})
+	}
+	fake.createStoragePoolBucketKeyReturnsOnCall[i] = struct {
+		result1 *api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeContainerServer) CreateStoragePoolVolume(arg1 string, arg2 api.StorageVolumesPost) error {
 	fake.createStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.createStoragePoolVolumeReturnsOnCall[len(fake.createStoragePoolVolumeArgsForCall)]
@@ -6573,6 +6958,71 @@ func (fake *FakeContainerServer) CreateStoragePoolVolumeFromBackupReturnsOnCall(
 		})
 	}
 	fake.createStoragePoolVolumeFromBackupReturnsOnCall[i] = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISO(arg1 string, arg2 lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error) {
+	fake.createStoragePoolVolumeFromISOMutex.Lock()
+	ret, specificReturn := fake.createStoragePoolVolumeFromISOReturnsOnCall[len(fake.createStoragePoolVolumeFromISOArgsForCall)]
+	fake.createStoragePoolVolumeFromISOArgsForCall = append(fake.createStoragePoolVolumeFromISOArgsForCall, struct {
+		arg1 string
+		arg2 lxd.StoragePoolVolumeBackupArgs
+	}{arg1, arg2})
+	stub := fake.CreateStoragePoolVolumeFromISOStub
+	fakeReturns := fake.createStoragePoolVolumeFromISOReturns
+	fake.recordInvocation("CreateStoragePoolVolumeFromISO", []interface{}{arg1, arg2})
+	fake.createStoragePoolVolumeFromISOMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOCallCount() int {
+	fake.createStoragePoolVolumeFromISOMutex.RLock()
+	defer fake.createStoragePoolVolumeFromISOMutex.RUnlock()
+	return len(fake.createStoragePoolVolumeFromISOArgsForCall)
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOCalls(stub func(string, lxd.StoragePoolVolumeBackupArgs) (lxd.Operation, error)) {
+	fake.createStoragePoolVolumeFromISOMutex.Lock()
+	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
+	fake.CreateStoragePoolVolumeFromISOStub = stub
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOArgsForCall(i int) (string, lxd.StoragePoolVolumeBackupArgs) {
+	fake.createStoragePoolVolumeFromISOMutex.RLock()
+	defer fake.createStoragePoolVolumeFromISOMutex.RUnlock()
+	argsForCall := fake.createStoragePoolVolumeFromISOArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturns(result1 lxd.Operation, result2 error) {
+	fake.createStoragePoolVolumeFromISOMutex.Lock()
+	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
+	fake.CreateStoragePoolVolumeFromISOStub = nil
+	fake.createStoragePoolVolumeFromISOReturns = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) CreateStoragePoolVolumeFromISOReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+	fake.createStoragePoolVolumeFromISOMutex.Lock()
+	defer fake.createStoragePoolVolumeFromISOMutex.Unlock()
+	fake.CreateStoragePoolVolumeFromISOStub = nil
+	if fake.createStoragePoolVolumeFromISOReturnsOnCall == nil {
+		fake.createStoragePoolVolumeFromISOReturnsOnCall = make(map[int]struct {
+			result1 lxd.Operation
+			result2 error
+		})
+	}
+	fake.createStoragePoolVolumeFromISOReturnsOnCall[i] = struct {
 		result1 lxd.Operation
 		result2 error
 	}{result1, result2}
@@ -8513,6 +8963,131 @@ func (fake *FakeContainerServer) DeleteStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
+func (fake *FakeContainerServer) DeleteStoragePoolBucket(arg1 string, arg2 string) error {
+	fake.deleteStoragePoolBucketMutex.Lock()
+	ret, specificReturn := fake.deleteStoragePoolBucketReturnsOnCall[len(fake.deleteStoragePoolBucketArgsForCall)]
+	fake.deleteStoragePoolBucketArgsForCall = append(fake.deleteStoragePoolBucketArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.DeleteStoragePoolBucketStub
+	fakeReturns := fake.deleteStoragePoolBucketReturns
+	fake.recordInvocation("DeleteStoragePoolBucket", []interface{}{arg1, arg2})
+	fake.deleteStoragePoolBucketMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketCallCount() int {
+	fake.deleteStoragePoolBucketMutex.RLock()
+	defer fake.deleteStoragePoolBucketMutex.RUnlock()
+	return len(fake.deleteStoragePoolBucketArgsForCall)
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketCalls(stub func(string, string) error) {
+	fake.deleteStoragePoolBucketMutex.Lock()
+	defer fake.deleteStoragePoolBucketMutex.Unlock()
+	fake.DeleteStoragePoolBucketStub = stub
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketArgsForCall(i int) (string, string) {
+	fake.deleteStoragePoolBucketMutex.RLock()
+	defer fake.deleteStoragePoolBucketMutex.RUnlock()
+	argsForCall := fake.deleteStoragePoolBucketArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketReturns(result1 error) {
+	fake.deleteStoragePoolBucketMutex.Lock()
+	defer fake.deleteStoragePoolBucketMutex.Unlock()
+	fake.DeleteStoragePoolBucketStub = nil
+	fake.deleteStoragePoolBucketReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketReturnsOnCall(i int, result1 error) {
+	fake.deleteStoragePoolBucketMutex.Lock()
+	defer fake.deleteStoragePoolBucketMutex.Unlock()
+	fake.DeleteStoragePoolBucketStub = nil
+	if fake.deleteStoragePoolBucketReturnsOnCall == nil {
+		fake.deleteStoragePoolBucketReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.deleteStoragePoolBucketReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) error {
+	fake.deleteStoragePoolBucketKeyMutex.Lock()
+	ret, specificReturn := fake.deleteStoragePoolBucketKeyReturnsOnCall[len(fake.deleteStoragePoolBucketKeyArgsForCall)]
+	fake.deleteStoragePoolBucketKeyArgsForCall = append(fake.deleteStoragePoolBucketKeyArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.DeleteStoragePoolBucketKeyStub
+	fakeReturns := fake.deleteStoragePoolBucketKeyReturns
+	fake.recordInvocation("DeleteStoragePoolBucketKey", []interface{}{arg1, arg2, arg3})
+	fake.deleteStoragePoolBucketKeyMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyCallCount() int {
+	fake.deleteStoragePoolBucketKeyMutex.RLock()
+	defer fake.deleteStoragePoolBucketKeyMutex.RUnlock()
+	return len(fake.deleteStoragePoolBucketKeyArgsForCall)
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyCalls(stub func(string, string, string) error) {
+	fake.deleteStoragePoolBucketKeyMutex.Lock()
+	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
+	fake.DeleteStoragePoolBucketKeyStub = stub
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
+	fake.deleteStoragePoolBucketKeyMutex.RLock()
+	defer fake.deleteStoragePoolBucketKeyMutex.RUnlock()
+	argsForCall := fake.deleteStoragePoolBucketKeyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturns(result1 error) {
+	fake.deleteStoragePoolBucketKeyMutex.Lock()
+	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
+	fake.DeleteStoragePoolBucketKeyStub = nil
+	fake.deleteStoragePoolBucketKeyReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) DeleteStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
+	fake.deleteStoragePoolBucketKeyMutex.Lock()
+	defer fake.deleteStoragePoolBucketKeyMutex.Unlock()
+	fake.DeleteStoragePoolBucketKeyStub = nil
+	if fake.deleteStoragePoolBucketKeyReturnsOnCall == nil {
+		fake.deleteStoragePoolBucketKeyReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.deleteStoragePoolBucketKeyReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeContainerServer) DeleteStoragePoolVolume(arg1 string, arg2 string, arg3 string) error {
 	fake.deleteStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.deleteStoragePoolVolumeReturnsOnCall[len(fake.deleteStoragePoolVolumeArgsForCall)]
@@ -9593,6 +10168,73 @@ func (fake *FakeContainerServer) GetClusterMemberNamesReturnsOnCall(i int, resul
 		result1 []string
 		result2 error
 	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetClusterMemberState(arg1 string) (*api.ClusterMemberState, string, error) {
+	fake.getClusterMemberStateMutex.Lock()
+	ret, specificReturn := fake.getClusterMemberStateReturnsOnCall[len(fake.getClusterMemberStateArgsForCall)]
+	fake.getClusterMemberStateArgsForCall = append(fake.getClusterMemberStateArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.GetClusterMemberStateStub
+	fakeReturns := fake.getClusterMemberStateReturns
+	fake.recordInvocation("GetClusterMemberState", []interface{}{arg1})
+	fake.getClusterMemberStateMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeContainerServer) GetClusterMemberStateCallCount() int {
+	fake.getClusterMemberStateMutex.RLock()
+	defer fake.getClusterMemberStateMutex.RUnlock()
+	return len(fake.getClusterMemberStateArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetClusterMemberStateCalls(stub func(string) (*api.ClusterMemberState, string, error)) {
+	fake.getClusterMemberStateMutex.Lock()
+	defer fake.getClusterMemberStateMutex.Unlock()
+	fake.GetClusterMemberStateStub = stub
+}
+
+func (fake *FakeContainerServer) GetClusterMemberStateArgsForCall(i int) string {
+	fake.getClusterMemberStateMutex.RLock()
+	defer fake.getClusterMemberStateMutex.RUnlock()
+	argsForCall := fake.getClusterMemberStateArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeContainerServer) GetClusterMemberStateReturns(result1 *api.ClusterMemberState, result2 string, result3 error) {
+	fake.getClusterMemberStateMutex.Lock()
+	defer fake.getClusterMemberStateMutex.Unlock()
+	fake.GetClusterMemberStateStub = nil
+	fake.getClusterMemberStateReturns = struct {
+		result1 *api.ClusterMemberState
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeContainerServer) GetClusterMemberStateReturnsOnCall(i int, result1 *api.ClusterMemberState, result2 string, result3 error) {
+	fake.getClusterMemberStateMutex.Lock()
+	defer fake.getClusterMemberStateMutex.Unlock()
+	fake.GetClusterMemberStateStub = nil
+	if fake.getClusterMemberStateReturnsOnCall == nil {
+		fake.getClusterMemberStateReturnsOnCall = make(map[int]struct {
+			result1 *api.ClusterMemberState
+			result2 string
+			result3 error
+		})
+	}
+	fake.getClusterMemberStateReturnsOnCall[i] = struct {
+		result1 *api.ClusterMemberState
+		result2 string
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeContainerServer) GetClusterMembers() ([]api.ClusterMember, error) {
@@ -14057,6 +14699,70 @@ func (fake *FakeContainerServer) GetNetworkACLsReturnsOnCall(i int, result1 []ap
 	}{result1, result2}
 }
 
+func (fake *FakeContainerServer) GetNetworkAllocations(arg1 bool) ([]api.NetworkAllocations, error) {
+	fake.getNetworkAllocationsMutex.Lock()
+	ret, specificReturn := fake.getNetworkAllocationsReturnsOnCall[len(fake.getNetworkAllocationsArgsForCall)]
+	fake.getNetworkAllocationsArgsForCall = append(fake.getNetworkAllocationsArgsForCall, struct {
+		arg1 bool
+	}{arg1})
+	stub := fake.GetNetworkAllocationsStub
+	fakeReturns := fake.getNetworkAllocationsReturns
+	fake.recordInvocation("GetNetworkAllocations", []interface{}{arg1})
+	fake.getNetworkAllocationsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetNetworkAllocationsCallCount() int {
+	fake.getNetworkAllocationsMutex.RLock()
+	defer fake.getNetworkAllocationsMutex.RUnlock()
+	return len(fake.getNetworkAllocationsArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetNetworkAllocationsCalls(stub func(bool) ([]api.NetworkAllocations, error)) {
+	fake.getNetworkAllocationsMutex.Lock()
+	defer fake.getNetworkAllocationsMutex.Unlock()
+	fake.GetNetworkAllocationsStub = stub
+}
+
+func (fake *FakeContainerServer) GetNetworkAllocationsArgsForCall(i int) bool {
+	fake.getNetworkAllocationsMutex.RLock()
+	defer fake.getNetworkAllocationsMutex.RUnlock()
+	argsForCall := fake.getNetworkAllocationsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeContainerServer) GetNetworkAllocationsReturns(result1 []api.NetworkAllocations, result2 error) {
+	fake.getNetworkAllocationsMutex.Lock()
+	defer fake.getNetworkAllocationsMutex.Unlock()
+	fake.GetNetworkAllocationsStub = nil
+	fake.getNetworkAllocationsReturns = struct {
+		result1 []api.NetworkAllocations
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetNetworkAllocationsReturnsOnCall(i int, result1 []api.NetworkAllocations, result2 error) {
+	fake.getNetworkAllocationsMutex.Lock()
+	defer fake.getNetworkAllocationsMutex.Unlock()
+	fake.GetNetworkAllocationsStub = nil
+	if fake.getNetworkAllocationsReturnsOnCall == nil {
+		fake.getNetworkAllocationsReturnsOnCall = make(map[int]struct {
+			result1 []api.NetworkAllocations
+			result2 error
+		})
+	}
+	fake.getNetworkAllocationsReturnsOnCall[i] = struct {
+		result1 []api.NetworkAllocations
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeContainerServer) GetNetworkForward(arg1 string, arg2 string) (*api.NetworkForward, string, error) {
 	fake.getNetworkForwardMutex.Lock()
 	ret, specificReturn := fake.getNetworkForwardReturnsOnCall[len(fake.getNetworkForwardArgsForCall)]
@@ -15641,6 +16347,62 @@ func (fake *FakeContainerServer) GetOperationsReturnsOnCall(i int, result1 []api
 	}{result1, result2}
 }
 
+func (fake *FakeContainerServer) GetOperationsAllProjects() ([]api.Operation, error) {
+	fake.getOperationsAllProjectsMutex.Lock()
+	ret, specificReturn := fake.getOperationsAllProjectsReturnsOnCall[len(fake.getOperationsAllProjectsArgsForCall)]
+	fake.getOperationsAllProjectsArgsForCall = append(fake.getOperationsAllProjectsArgsForCall, struct {
+	}{})
+	stub := fake.GetOperationsAllProjectsStub
+	fakeReturns := fake.getOperationsAllProjectsReturns
+	fake.recordInvocation("GetOperationsAllProjects", []interface{}{})
+	fake.getOperationsAllProjectsMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetOperationsAllProjectsCallCount() int {
+	fake.getOperationsAllProjectsMutex.RLock()
+	defer fake.getOperationsAllProjectsMutex.RUnlock()
+	return len(fake.getOperationsAllProjectsArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetOperationsAllProjectsCalls(stub func() ([]api.Operation, error)) {
+	fake.getOperationsAllProjectsMutex.Lock()
+	defer fake.getOperationsAllProjectsMutex.Unlock()
+	fake.GetOperationsAllProjectsStub = stub
+}
+
+func (fake *FakeContainerServer) GetOperationsAllProjectsReturns(result1 []api.Operation, result2 error) {
+	fake.getOperationsAllProjectsMutex.Lock()
+	defer fake.getOperationsAllProjectsMutex.Unlock()
+	fake.GetOperationsAllProjectsStub = nil
+	fake.getOperationsAllProjectsReturns = struct {
+		result1 []api.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetOperationsAllProjectsReturnsOnCall(i int, result1 []api.Operation, result2 error) {
+	fake.getOperationsAllProjectsMutex.Lock()
+	defer fake.getOperationsAllProjectsMutex.Unlock()
+	fake.GetOperationsAllProjectsStub = nil
+	if fake.getOperationsAllProjectsReturnsOnCall == nil {
+		fake.getOperationsAllProjectsReturnsOnCall = make(map[int]struct {
+			result1 []api.Operation
+			result2 error
+		})
+	}
+	fake.getOperationsAllProjectsReturnsOnCall[i] = struct {
+		result1 []api.Operation
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeContainerServer) GetPrivateImage(arg1 string, arg2 string) (*api.Image, string, error) {
 	fake.getPrivateImageMutex.Lock()
 	ret, specificReturn := fake.getPrivateImageReturnsOnCall[len(fake.getPrivateImageArgsForCall)]
@@ -16379,6 +17141,401 @@ func (fake *FakeContainerServer) GetStoragePoolReturnsOnCall(i int, result1 *api
 	}{result1, result2, result3}
 }
 
+func (fake *FakeContainerServer) GetStoragePoolBucket(arg1 string, arg2 string) (*api.StorageBucket, string, error) {
+	fake.getStoragePoolBucketMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketReturnsOnCall[len(fake.getStoragePoolBucketArgsForCall)]
+	fake.getStoragePoolBucketArgsForCall = append(fake.getStoragePoolBucketArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.GetStoragePoolBucketStub
+	fakeReturns := fake.getStoragePoolBucketReturns
+	fake.recordInvocation("GetStoragePoolBucket", []interface{}{arg1, arg2})
+	fake.getStoragePoolBucketMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketCallCount() int {
+	fake.getStoragePoolBucketMutex.RLock()
+	defer fake.getStoragePoolBucketMutex.RUnlock()
+	return len(fake.getStoragePoolBucketArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketCalls(stub func(string, string) (*api.StorageBucket, string, error)) {
+	fake.getStoragePoolBucketMutex.Lock()
+	defer fake.getStoragePoolBucketMutex.Unlock()
+	fake.GetStoragePoolBucketStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketArgsForCall(i int) (string, string) {
+	fake.getStoragePoolBucketMutex.RLock()
+	defer fake.getStoragePoolBucketMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketReturns(result1 *api.StorageBucket, result2 string, result3 error) {
+	fake.getStoragePoolBucketMutex.Lock()
+	defer fake.getStoragePoolBucketMutex.Unlock()
+	fake.GetStoragePoolBucketStub = nil
+	fake.getStoragePoolBucketReturns = struct {
+		result1 *api.StorageBucket
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketReturnsOnCall(i int, result1 *api.StorageBucket, result2 string, result3 error) {
+	fake.getStoragePoolBucketMutex.Lock()
+	defer fake.getStoragePoolBucketMutex.Unlock()
+	fake.GetStoragePoolBucketStub = nil
+	if fake.getStoragePoolBucketReturnsOnCall == nil {
+		fake.getStoragePoolBucketReturnsOnCall = make(map[int]struct {
+			result1 *api.StorageBucket
+			result2 string
+			result3 error
+		})
+	}
+	fake.getStoragePoolBucketReturnsOnCall[i] = struct {
+		result1 *api.StorageBucket
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKey(arg1 string, arg2 string, arg3 string) (*api.StorageBucketKey, string, error) {
+	fake.getStoragePoolBucketKeyMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketKeyReturnsOnCall[len(fake.getStoragePoolBucketKeyArgsForCall)]
+	fake.getStoragePoolBucketKeyArgsForCall = append(fake.getStoragePoolBucketKeyArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.GetStoragePoolBucketKeyStub
+	fakeReturns := fake.getStoragePoolBucketKeyReturns
+	fake.recordInvocation("GetStoragePoolBucketKey", []interface{}{arg1, arg2, arg3})
+	fake.getStoragePoolBucketKeyMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyCallCount() int {
+	fake.getStoragePoolBucketKeyMutex.RLock()
+	defer fake.getStoragePoolBucketKeyMutex.RUnlock()
+	return len(fake.getStoragePoolBucketKeyArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyCalls(stub func(string, string, string) (*api.StorageBucketKey, string, error)) {
+	fake.getStoragePoolBucketKeyMutex.Lock()
+	defer fake.getStoragePoolBucketKeyMutex.Unlock()
+	fake.GetStoragePoolBucketKeyStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyArgsForCall(i int) (string, string, string) {
+	fake.getStoragePoolBucketKeyMutex.RLock()
+	defer fake.getStoragePoolBucketKeyMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketKeyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturns(result1 *api.StorageBucketKey, result2 string, result3 error) {
+	fake.getStoragePoolBucketKeyMutex.Lock()
+	defer fake.getStoragePoolBucketKeyMutex.Unlock()
+	fake.GetStoragePoolBucketKeyStub = nil
+	fake.getStoragePoolBucketKeyReturns = struct {
+		result1 *api.StorageBucketKey
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyReturnsOnCall(i int, result1 *api.StorageBucketKey, result2 string, result3 error) {
+	fake.getStoragePoolBucketKeyMutex.Lock()
+	defer fake.getStoragePoolBucketKeyMutex.Unlock()
+	fake.GetStoragePoolBucketKeyStub = nil
+	if fake.getStoragePoolBucketKeyReturnsOnCall == nil {
+		fake.getStoragePoolBucketKeyReturnsOnCall = make(map[int]struct {
+			result1 *api.StorageBucketKey
+			result2 string
+			result3 error
+		})
+	}
+	fake.getStoragePoolBucketKeyReturnsOnCall[i] = struct {
+		result1 *api.StorageBucketKey
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNames(arg1 string, arg2 string) ([]string, error) {
+	fake.getStoragePoolBucketKeyNamesMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketKeyNamesReturnsOnCall[len(fake.getStoragePoolBucketKeyNamesArgsForCall)]
+	fake.getStoragePoolBucketKeyNamesArgsForCall = append(fake.getStoragePoolBucketKeyNamesArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.GetStoragePoolBucketKeyNamesStub
+	fakeReturns := fake.getStoragePoolBucketKeyNamesReturns
+	fake.recordInvocation("GetStoragePoolBucketKeyNames", []interface{}{arg1, arg2})
+	fake.getStoragePoolBucketKeyNamesMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesCallCount() int {
+	fake.getStoragePoolBucketKeyNamesMutex.RLock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.RUnlock()
+	return len(fake.getStoragePoolBucketKeyNamesArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesCalls(stub func(string, string) ([]string, error)) {
+	fake.getStoragePoolBucketKeyNamesMutex.Lock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
+	fake.GetStoragePoolBucketKeyNamesStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesArgsForCall(i int) (string, string) {
+	fake.getStoragePoolBucketKeyNamesMutex.RLock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketKeyNamesArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturns(result1 []string, result2 error) {
+	fake.getStoragePoolBucketKeyNamesMutex.Lock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
+	fake.GetStoragePoolBucketKeyNamesStub = nil
+	fake.getStoragePoolBucketKeyNamesReturns = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeyNamesReturnsOnCall(i int, result1 []string, result2 error) {
+	fake.getStoragePoolBucketKeyNamesMutex.Lock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.Unlock()
+	fake.GetStoragePoolBucketKeyNamesStub = nil
+	if fake.getStoragePoolBucketKeyNamesReturnsOnCall == nil {
+		fake.getStoragePoolBucketKeyNamesReturnsOnCall = make(map[int]struct {
+			result1 []string
+			result2 error
+		})
+	}
+	fake.getStoragePoolBucketKeyNamesReturnsOnCall[i] = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeys(arg1 string, arg2 string) ([]api.StorageBucketKey, error) {
+	fake.getStoragePoolBucketKeysMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketKeysReturnsOnCall[len(fake.getStoragePoolBucketKeysArgsForCall)]
+	fake.getStoragePoolBucketKeysArgsForCall = append(fake.getStoragePoolBucketKeysArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.GetStoragePoolBucketKeysStub
+	fakeReturns := fake.getStoragePoolBucketKeysReturns
+	fake.recordInvocation("GetStoragePoolBucketKeys", []interface{}{arg1, arg2})
+	fake.getStoragePoolBucketKeysMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeysCallCount() int {
+	fake.getStoragePoolBucketKeysMutex.RLock()
+	defer fake.getStoragePoolBucketKeysMutex.RUnlock()
+	return len(fake.getStoragePoolBucketKeysArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeysCalls(stub func(string, string) ([]api.StorageBucketKey, error)) {
+	fake.getStoragePoolBucketKeysMutex.Lock()
+	defer fake.getStoragePoolBucketKeysMutex.Unlock()
+	fake.GetStoragePoolBucketKeysStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeysArgsForCall(i int) (string, string) {
+	fake.getStoragePoolBucketKeysMutex.RLock()
+	defer fake.getStoragePoolBucketKeysMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketKeysArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturns(result1 []api.StorageBucketKey, result2 error) {
+	fake.getStoragePoolBucketKeysMutex.Lock()
+	defer fake.getStoragePoolBucketKeysMutex.Unlock()
+	fake.GetStoragePoolBucketKeysStub = nil
+	fake.getStoragePoolBucketKeysReturns = struct {
+		result1 []api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketKeysReturnsOnCall(i int, result1 []api.StorageBucketKey, result2 error) {
+	fake.getStoragePoolBucketKeysMutex.Lock()
+	defer fake.getStoragePoolBucketKeysMutex.Unlock()
+	fake.GetStoragePoolBucketKeysStub = nil
+	if fake.getStoragePoolBucketKeysReturnsOnCall == nil {
+		fake.getStoragePoolBucketKeysReturnsOnCall = make(map[int]struct {
+			result1 []api.StorageBucketKey
+			result2 error
+		})
+	}
+	fake.getStoragePoolBucketKeysReturnsOnCall[i] = struct {
+		result1 []api.StorageBucketKey
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNames(arg1 string) ([]string, error) {
+	fake.getStoragePoolBucketNamesMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketNamesReturnsOnCall[len(fake.getStoragePoolBucketNamesArgsForCall)]
+	fake.getStoragePoolBucketNamesArgsForCall = append(fake.getStoragePoolBucketNamesArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.GetStoragePoolBucketNamesStub
+	fakeReturns := fake.getStoragePoolBucketNamesReturns
+	fake.recordInvocation("GetStoragePoolBucketNames", []interface{}{arg1})
+	fake.getStoragePoolBucketNamesMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNamesCallCount() int {
+	fake.getStoragePoolBucketNamesMutex.RLock()
+	defer fake.getStoragePoolBucketNamesMutex.RUnlock()
+	return len(fake.getStoragePoolBucketNamesArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNamesCalls(stub func(string) ([]string, error)) {
+	fake.getStoragePoolBucketNamesMutex.Lock()
+	defer fake.getStoragePoolBucketNamesMutex.Unlock()
+	fake.GetStoragePoolBucketNamesStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNamesArgsForCall(i int) string {
+	fake.getStoragePoolBucketNamesMutex.RLock()
+	defer fake.getStoragePoolBucketNamesMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketNamesArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturns(result1 []string, result2 error) {
+	fake.getStoragePoolBucketNamesMutex.Lock()
+	defer fake.getStoragePoolBucketNamesMutex.Unlock()
+	fake.GetStoragePoolBucketNamesStub = nil
+	fake.getStoragePoolBucketNamesReturns = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketNamesReturnsOnCall(i int, result1 []string, result2 error) {
+	fake.getStoragePoolBucketNamesMutex.Lock()
+	defer fake.getStoragePoolBucketNamesMutex.Unlock()
+	fake.GetStoragePoolBucketNamesStub = nil
+	if fake.getStoragePoolBucketNamesReturnsOnCall == nil {
+		fake.getStoragePoolBucketNamesReturnsOnCall = make(map[int]struct {
+			result1 []string
+			result2 error
+		})
+	}
+	fake.getStoragePoolBucketNamesReturnsOnCall[i] = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBuckets(arg1 string) ([]api.StorageBucket, error) {
+	fake.getStoragePoolBucketsMutex.Lock()
+	ret, specificReturn := fake.getStoragePoolBucketsReturnsOnCall[len(fake.getStoragePoolBucketsArgsForCall)]
+	fake.getStoragePoolBucketsArgsForCall = append(fake.getStoragePoolBucketsArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.GetStoragePoolBucketsStub
+	fakeReturns := fake.getStoragePoolBucketsReturns
+	fake.recordInvocation("GetStoragePoolBuckets", []interface{}{arg1})
+	fake.getStoragePoolBucketsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketsCallCount() int {
+	fake.getStoragePoolBucketsMutex.RLock()
+	defer fake.getStoragePoolBucketsMutex.RUnlock()
+	return len(fake.getStoragePoolBucketsArgsForCall)
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketsCalls(stub func(string) ([]api.StorageBucket, error)) {
+	fake.getStoragePoolBucketsMutex.Lock()
+	defer fake.getStoragePoolBucketsMutex.Unlock()
+	fake.GetStoragePoolBucketsStub = stub
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketsArgsForCall(i int) string {
+	fake.getStoragePoolBucketsMutex.RLock()
+	defer fake.getStoragePoolBucketsMutex.RUnlock()
+	argsForCall := fake.getStoragePoolBucketsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketsReturns(result1 []api.StorageBucket, result2 error) {
+	fake.getStoragePoolBucketsMutex.Lock()
+	defer fake.getStoragePoolBucketsMutex.Unlock()
+	fake.GetStoragePoolBucketsStub = nil
+	fake.getStoragePoolBucketsReturns = struct {
+		result1 []api.StorageBucket
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) GetStoragePoolBucketsReturnsOnCall(i int, result1 []api.StorageBucket, result2 error) {
+	fake.getStoragePoolBucketsMutex.Lock()
+	defer fake.getStoragePoolBucketsMutex.Unlock()
+	fake.GetStoragePoolBucketsStub = nil
+	if fake.getStoragePoolBucketsReturnsOnCall == nil {
+		fake.getStoragePoolBucketsReturnsOnCall = make(map[int]struct {
+			result1 []api.StorageBucket
+			result2 error
+		})
+	}
+	fake.getStoragePoolBucketsReturnsOnCall[i] = struct {
+		result1 []api.StorageBucket
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeContainerServer) GetStoragePoolNames() ([]string, error) {
 	fake.getStoragePoolNamesMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolNamesReturnsOnCall[len(fake.getStoragePoolNamesArgsForCall)]
@@ -16898,7 +18055,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesReturnsOnCall(i int, r
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjects(arg1 string) ([]string, error) {
+func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjects(arg1 string) (map[string][]string, error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	ret, specificReturn := fake.getStoragePoolVolumeNamesAllProjectsReturnsOnCall[len(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall)]
 	fake.getStoragePoolVolumeNamesAllProjectsArgsForCall = append(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall, struct {
@@ -16923,7 +18080,7 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsCallCount()
 	return len(fake.getStoragePoolVolumeNamesAllProjectsArgsForCall)
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsCalls(stub func(string) ([]string, error)) {
+func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsCalls(stub func(string) (map[string][]string, error)) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = stub
@@ -16936,28 +18093,28 @@ func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsArgsForCall
 	return argsForCall.arg1
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturns(result1 []string, result2 error) {
+func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturns(result1 map[string][]string, result2 error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = nil
 	fake.getStoragePoolVolumeNamesAllProjectsReturns = struct {
-		result1 []string
+		result1 map[string][]string
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturnsOnCall(i int, result1 []string, result2 error) {
+func (fake *FakeContainerServer) GetStoragePoolVolumeNamesAllProjectsReturnsOnCall(i int, result1 map[string][]string, result2 error) {
 	fake.getStoragePoolVolumeNamesAllProjectsMutex.Lock()
 	defer fake.getStoragePoolVolumeNamesAllProjectsMutex.Unlock()
 	fake.GetStoragePoolVolumeNamesAllProjectsStub = nil
 	if fake.getStoragePoolVolumeNamesAllProjectsReturnsOnCall == nil {
 		fake.getStoragePoolVolumeNamesAllProjectsReturnsOnCall = make(map[int]struct {
-			result1 []string
+			result1 map[string][]string
 			result2 error
 		})
 	}
 	fake.getStoragePoolVolumeNamesAllProjectsReturnsOnCall[i] = struct {
-		result1 []string
+		result1 map[string][]string
 		result2 error
 	}{result1, result2}
 }
@@ -18442,6 +19599,138 @@ func (fake *FakeContainerServer) RawWebsocketReturnsOnCall(i int, result1 *webso
 	}
 	fake.rawWebsocketReturnsOnCall[i] = struct {
 		result1 *websocket.Conn
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) RebuildInstance(arg1 string, arg2 api.InstanceRebuildPost) (lxd.Operation, error) {
+	fake.rebuildInstanceMutex.Lock()
+	ret, specificReturn := fake.rebuildInstanceReturnsOnCall[len(fake.rebuildInstanceArgsForCall)]
+	fake.rebuildInstanceArgsForCall = append(fake.rebuildInstanceArgsForCall, struct {
+		arg1 string
+		arg2 api.InstanceRebuildPost
+	}{arg1, arg2})
+	stub := fake.RebuildInstanceStub
+	fakeReturns := fake.rebuildInstanceReturns
+	fake.recordInvocation("RebuildInstance", []interface{}{arg1, arg2})
+	fake.rebuildInstanceMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) RebuildInstanceCallCount() int {
+	fake.rebuildInstanceMutex.RLock()
+	defer fake.rebuildInstanceMutex.RUnlock()
+	return len(fake.rebuildInstanceArgsForCall)
+}
+
+func (fake *FakeContainerServer) RebuildInstanceCalls(stub func(string, api.InstanceRebuildPost) (lxd.Operation, error)) {
+	fake.rebuildInstanceMutex.Lock()
+	defer fake.rebuildInstanceMutex.Unlock()
+	fake.RebuildInstanceStub = stub
+}
+
+func (fake *FakeContainerServer) RebuildInstanceArgsForCall(i int) (string, api.InstanceRebuildPost) {
+	fake.rebuildInstanceMutex.RLock()
+	defer fake.rebuildInstanceMutex.RUnlock()
+	argsForCall := fake.rebuildInstanceArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeContainerServer) RebuildInstanceReturns(result1 lxd.Operation, result2 error) {
+	fake.rebuildInstanceMutex.Lock()
+	defer fake.rebuildInstanceMutex.Unlock()
+	fake.RebuildInstanceStub = nil
+	fake.rebuildInstanceReturns = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) RebuildInstanceReturnsOnCall(i int, result1 lxd.Operation, result2 error) {
+	fake.rebuildInstanceMutex.Lock()
+	defer fake.rebuildInstanceMutex.Unlock()
+	fake.RebuildInstanceStub = nil
+	if fake.rebuildInstanceReturnsOnCall == nil {
+		fake.rebuildInstanceReturnsOnCall = make(map[int]struct {
+			result1 lxd.Operation
+			result2 error
+		})
+	}
+	fake.rebuildInstanceReturnsOnCall[i] = struct {
+		result1 lxd.Operation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImage(arg1 lxd.ImageServer, arg2 api.Image, arg3 string, arg4 api.InstanceRebuildPost) (lxd.RemoteOperation, error) {
+	fake.rebuildInstanceFromImageMutex.Lock()
+	ret, specificReturn := fake.rebuildInstanceFromImageReturnsOnCall[len(fake.rebuildInstanceFromImageArgsForCall)]
+	fake.rebuildInstanceFromImageArgsForCall = append(fake.rebuildInstanceFromImageArgsForCall, struct {
+		arg1 lxd.ImageServer
+		arg2 api.Image
+		arg3 string
+		arg4 api.InstanceRebuildPost
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.RebuildInstanceFromImageStub
+	fakeReturns := fake.rebuildInstanceFromImageReturns
+	fake.recordInvocation("RebuildInstanceFromImage", []interface{}{arg1, arg2, arg3, arg4})
+	fake.rebuildInstanceFromImageMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImageCallCount() int {
+	fake.rebuildInstanceFromImageMutex.RLock()
+	defer fake.rebuildInstanceFromImageMutex.RUnlock()
+	return len(fake.rebuildInstanceFromImageArgsForCall)
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImageCalls(stub func(lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) (lxd.RemoteOperation, error)) {
+	fake.rebuildInstanceFromImageMutex.Lock()
+	defer fake.rebuildInstanceFromImageMutex.Unlock()
+	fake.RebuildInstanceFromImageStub = stub
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImageArgsForCall(i int) (lxd.ImageServer, api.Image, string, api.InstanceRebuildPost) {
+	fake.rebuildInstanceFromImageMutex.RLock()
+	defer fake.rebuildInstanceFromImageMutex.RUnlock()
+	argsForCall := fake.rebuildInstanceFromImageArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImageReturns(result1 lxd.RemoteOperation, result2 error) {
+	fake.rebuildInstanceFromImageMutex.Lock()
+	defer fake.rebuildInstanceFromImageMutex.Unlock()
+	fake.RebuildInstanceFromImageStub = nil
+	fake.rebuildInstanceFromImageReturns = struct {
+		result1 lxd.RemoteOperation
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeContainerServer) RebuildInstanceFromImageReturnsOnCall(i int, result1 lxd.RemoteOperation, result2 error) {
+	fake.rebuildInstanceFromImageMutex.Lock()
+	defer fake.rebuildInstanceFromImageMutex.Unlock()
+	fake.RebuildInstanceFromImageStub = nil
+	if fake.rebuildInstanceFromImageReturnsOnCall == nil {
+		fake.rebuildInstanceFromImageReturnsOnCall = make(map[int]struct {
+			result1 lxd.RemoteOperation
+			result2 error
+		})
+	}
+	fake.rebuildInstanceFromImageReturnsOnCall[i] = struct {
+		result1 lxd.RemoteOperation
 		result2 error
 	}{result1, result2}
 }
@@ -21488,6 +22777,135 @@ func (fake *FakeContainerServer) UpdateStoragePoolReturnsOnCall(i int, result1 e
 	}{result1}
 }
 
+func (fake *FakeContainerServer) UpdateStoragePoolBucket(arg1 string, arg2 string, arg3 api.StorageBucketPut, arg4 string) error {
+	fake.updateStoragePoolBucketMutex.Lock()
+	ret, specificReturn := fake.updateStoragePoolBucketReturnsOnCall[len(fake.updateStoragePoolBucketArgsForCall)]
+	fake.updateStoragePoolBucketArgsForCall = append(fake.updateStoragePoolBucketArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 api.StorageBucketPut
+		arg4 string
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.UpdateStoragePoolBucketStub
+	fakeReturns := fake.updateStoragePoolBucketReturns
+	fake.recordInvocation("UpdateStoragePoolBucket", []interface{}{arg1, arg2, arg3, arg4})
+	fake.updateStoragePoolBucketMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketCallCount() int {
+	fake.updateStoragePoolBucketMutex.RLock()
+	defer fake.updateStoragePoolBucketMutex.RUnlock()
+	return len(fake.updateStoragePoolBucketArgsForCall)
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketCalls(stub func(string, string, api.StorageBucketPut, string) error) {
+	fake.updateStoragePoolBucketMutex.Lock()
+	defer fake.updateStoragePoolBucketMutex.Unlock()
+	fake.UpdateStoragePoolBucketStub = stub
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketArgsForCall(i int) (string, string, api.StorageBucketPut, string) {
+	fake.updateStoragePoolBucketMutex.RLock()
+	defer fake.updateStoragePoolBucketMutex.RUnlock()
+	argsForCall := fake.updateStoragePoolBucketArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketReturns(result1 error) {
+	fake.updateStoragePoolBucketMutex.Lock()
+	defer fake.updateStoragePoolBucketMutex.Unlock()
+	fake.UpdateStoragePoolBucketStub = nil
+	fake.updateStoragePoolBucketReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketReturnsOnCall(i int, result1 error) {
+	fake.updateStoragePoolBucketMutex.Lock()
+	defer fake.updateStoragePoolBucketMutex.Unlock()
+	fake.UpdateStoragePoolBucketStub = nil
+	if fake.updateStoragePoolBucketReturnsOnCall == nil {
+		fake.updateStoragePoolBucketReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.updateStoragePoolBucketReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKey(arg1 string, arg2 string, arg3 string, arg4 api.StorageBucketKeyPut, arg5 string) error {
+	fake.updateStoragePoolBucketKeyMutex.Lock()
+	ret, specificReturn := fake.updateStoragePoolBucketKeyReturnsOnCall[len(fake.updateStoragePoolBucketKeyArgsForCall)]
+	fake.updateStoragePoolBucketKeyArgsForCall = append(fake.updateStoragePoolBucketKeyArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 string
+		arg4 api.StorageBucketKeyPut
+		arg5 string
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.UpdateStoragePoolBucketKeyStub
+	fakeReturns := fake.updateStoragePoolBucketKeyReturns
+	fake.recordInvocation("UpdateStoragePoolBucketKey", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.updateStoragePoolBucketKeyMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyCallCount() int {
+	fake.updateStoragePoolBucketKeyMutex.RLock()
+	defer fake.updateStoragePoolBucketKeyMutex.RUnlock()
+	return len(fake.updateStoragePoolBucketKeyArgsForCall)
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyCalls(stub func(string, string, string, api.StorageBucketKeyPut, string) error) {
+	fake.updateStoragePoolBucketKeyMutex.Lock()
+	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
+	fake.UpdateStoragePoolBucketKeyStub = stub
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyArgsForCall(i int) (string, string, string, api.StorageBucketKeyPut, string) {
+	fake.updateStoragePoolBucketKeyMutex.RLock()
+	defer fake.updateStoragePoolBucketKeyMutex.RUnlock()
+	argsForCall := fake.updateStoragePoolBucketKeyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturns(result1 error) {
+	fake.updateStoragePoolBucketKeyMutex.Lock()
+	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
+	fake.UpdateStoragePoolBucketKeyStub = nil
+	fake.updateStoragePoolBucketKeyReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeContainerServer) UpdateStoragePoolBucketKeyReturnsOnCall(i int, result1 error) {
+	fake.updateStoragePoolBucketKeyMutex.Lock()
+	defer fake.updateStoragePoolBucketKeyMutex.Unlock()
+	fake.UpdateStoragePoolBucketKeyStub = nil
+	if fake.updateStoragePoolBucketKeyReturnsOnCall == nil {
+		fake.updateStoragePoolBucketKeyReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.updateStoragePoolBucketKeyReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeContainerServer) UpdateStoragePoolVolume(arg1 string, arg2 string, arg3 string, arg4 api.StorageVolumePut, arg5 string) error {
 	fake.updateStoragePoolVolumeMutex.Lock()
 	ret, specificReturn := fake.updateStoragePoolVolumeReturnsOnCall[len(fake.updateStoragePoolVolumeArgsForCall)]
@@ -21887,12 +23305,18 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.createProjectMutex.RUnlock()
 	fake.createStoragePoolMutex.RLock()
 	defer fake.createStoragePoolMutex.RUnlock()
+	fake.createStoragePoolBucketMutex.RLock()
+	defer fake.createStoragePoolBucketMutex.RUnlock()
+	fake.createStoragePoolBucketKeyMutex.RLock()
+	defer fake.createStoragePoolBucketKeyMutex.RUnlock()
 	fake.createStoragePoolVolumeMutex.RLock()
 	defer fake.createStoragePoolVolumeMutex.RUnlock()
 	fake.createStoragePoolVolumeBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeBackupMutex.RUnlock()
 	fake.createStoragePoolVolumeFromBackupMutex.RLock()
 	defer fake.createStoragePoolVolumeFromBackupMutex.RUnlock()
+	fake.createStoragePoolVolumeFromISOMutex.RLock()
+	defer fake.createStoragePoolVolumeFromISOMutex.RUnlock()
 	fake.createStoragePoolVolumeSnapshotMutex.RLock()
 	defer fake.createStoragePoolVolumeSnapshotMutex.RUnlock()
 	fake.deleteCertificateMutex.RLock()
@@ -21955,6 +23379,10 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.deleteProjectMutex.RUnlock()
 	fake.deleteStoragePoolMutex.RLock()
 	defer fake.deleteStoragePoolMutex.RUnlock()
+	fake.deleteStoragePoolBucketMutex.RLock()
+	defer fake.deleteStoragePoolBucketMutex.RUnlock()
+	fake.deleteStoragePoolBucketKeyMutex.RLock()
+	defer fake.deleteStoragePoolBucketKeyMutex.RUnlock()
 	fake.deleteStoragePoolVolumeMutex.RLock()
 	defer fake.deleteStoragePoolVolumeMutex.RUnlock()
 	fake.deleteStoragePoolVolumeBackupMutex.RLock()
@@ -21991,6 +23419,8 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.getClusterMemberMutex.RUnlock()
 	fake.getClusterMemberNamesMutex.RLock()
 	defer fake.getClusterMemberNamesMutex.RUnlock()
+	fake.getClusterMemberStateMutex.RLock()
+	defer fake.getClusterMemberStateMutex.RUnlock()
 	fake.getClusterMembersMutex.RLock()
 	defer fake.getClusterMembersMutex.RUnlock()
 	fake.getConnectionInfoMutex.RLock()
@@ -22131,6 +23561,8 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.getNetworkACLNamesMutex.RUnlock()
 	fake.getNetworkACLsMutex.RLock()
 	defer fake.getNetworkACLsMutex.RUnlock()
+	fake.getNetworkAllocationsMutex.RLock()
+	defer fake.getNetworkAllocationsMutex.RUnlock()
 	fake.getNetworkForwardMutex.RLock()
 	defer fake.getNetworkForwardMutex.RUnlock()
 	fake.getNetworkForwardAddressesMutex.RLock()
@@ -22181,6 +23613,8 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.getOperationWebsocketMutex.RUnlock()
 	fake.getOperationsMutex.RLock()
 	defer fake.getOperationsMutex.RUnlock()
+	fake.getOperationsAllProjectsMutex.RLock()
+	defer fake.getOperationsAllProjectsMutex.RUnlock()
 	fake.getPrivateImageMutex.RLock()
 	defer fake.getPrivateImageMutex.RUnlock()
 	fake.getPrivateImageFileMutex.RLock()
@@ -22205,6 +23639,18 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.getServerResourcesMutex.RUnlock()
 	fake.getStoragePoolMutex.RLock()
 	defer fake.getStoragePoolMutex.RUnlock()
+	fake.getStoragePoolBucketMutex.RLock()
+	defer fake.getStoragePoolBucketMutex.RUnlock()
+	fake.getStoragePoolBucketKeyMutex.RLock()
+	defer fake.getStoragePoolBucketKeyMutex.RUnlock()
+	fake.getStoragePoolBucketKeyNamesMutex.RLock()
+	defer fake.getStoragePoolBucketKeyNamesMutex.RUnlock()
+	fake.getStoragePoolBucketKeysMutex.RLock()
+	defer fake.getStoragePoolBucketKeysMutex.RUnlock()
+	fake.getStoragePoolBucketNamesMutex.RLock()
+	defer fake.getStoragePoolBucketNamesMutex.RUnlock()
+	fake.getStoragePoolBucketsMutex.RLock()
+	defer fake.getStoragePoolBucketsMutex.RUnlock()
 	fake.getStoragePoolNamesMutex.RLock()
 	defer fake.getStoragePoolNamesMutex.RUnlock()
 	fake.getStoragePoolResourcesMutex.RLock()
@@ -22269,6 +23715,10 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.rawQueryMutex.RUnlock()
 	fake.rawWebsocketMutex.RLock()
 	defer fake.rawWebsocketMutex.RUnlock()
+	fake.rebuildInstanceMutex.RLock()
+	defer fake.rebuildInstanceMutex.RUnlock()
+	fake.rebuildInstanceFromImageMutex.RLock()
+	defer fake.rebuildInstanceFromImageMutex.RUnlock()
 	fake.refreshImageMutex.RLock()
 	defer fake.refreshImageMutex.RUnlock()
 	fake.renameClusterGroupMutex.RLock()
@@ -22365,6 +23815,10 @@ func (fake *FakeContainerServer) Invocations() map[string][][]interface{} {
 	defer fake.updateServerMutex.RUnlock()
 	fake.updateStoragePoolMutex.RLock()
 	defer fake.updateStoragePoolMutex.RUnlock()
+	fake.updateStoragePoolBucketMutex.RLock()
+	defer fake.updateStoragePoolBucketMutex.RUnlock()
+	fake.updateStoragePoolBucketKeyMutex.RLock()
+	defer fake.updateStoragePoolBucketKeyMutex.RUnlock()
 	fake.updateStoragePoolVolumeMutex.RLock()
 	defer fake.updateStoragePoolVolumeMutex.RUnlock()
 	fake.updateStoragePoolVolumeSnapshotMutex.RLock()

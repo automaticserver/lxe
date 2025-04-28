@@ -4,8 +4,8 @@ package client
 import (
 	"sync"
 
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 )
 
 type FakeRemoteOperation struct {

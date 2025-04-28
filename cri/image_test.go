@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	crifakes "github.com/automaticserver/lxe/fakes/lxe/lxf"
-	"github.com/lxc/lxd/lxc/config"
+	"github.com/canonical/lxd/lxc/config"
 	"github.com/stretchr/testify/assert"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
@@ -19,7 +19,7 @@ func testImageServer() (*ImageServer, *crifakes.FakeClient) {
 
 	return &ImageServer{
 		lxf:       fake,
-		lxdConfig: &config.DefaultConfig,
+		lxdConfig: config.DefaultConfig(),
 	}, fake
 }
 

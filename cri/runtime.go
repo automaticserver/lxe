@@ -13,7 +13,7 @@ import (
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
 	"github.com/automaticserver/lxe/third_party/ioutils"
-	"github.com/lxc/lxd/lxc/config"
+	"github.com/canonical/lxd/lxc/config"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"

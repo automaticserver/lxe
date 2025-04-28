@@ -3,9 +3,8 @@ package lxo
 import (
 	"strings"
 
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared"
-	"github.com/lxc/lxd/shared/api"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 )
 
 // StopContainer will try to stop the container and waits till operation is done
@@ -17,7 +16,7 @@ func (l *LXO) StopContainer(id string, timeout, retries int) error {
 
 	for i := 0; i <= retries; i++ {
 		lxdReq := api.ContainerStatePut{
-			Action:  string(shared.Stop),
+			Action:  "stop", // note: can't get constant within lxd/lxd/*, first licencing and we don't want to build dqlite
 			Timeout: timeout,
 			Force:   i == retries,
 		}
@@ -46,7 +45,7 @@ func (l *LXO) StopContainer(id string, timeout, retries int) error {
 func (l *LXO) StartContainer(id string) error {
 	ETag := ""
 	lxdReq := api.ContainerStatePut{
-		Action:  string(shared.Start),
+		Action:  "start", // note: can't get constant within lxd/lxd/*, first licencing and we don't want to build dqlite
 		Timeout: -1,
 	}
 

@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/automaticserver/lxe/lxf"
-	lxd "github.com/lxc/lxd/client"
+	lxd "github.com/canonical/lxd/client"
 	"k8s.io/client-go/tools/remotecommand"
 )
 

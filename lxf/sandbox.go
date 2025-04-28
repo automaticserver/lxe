@@ -9,8 +9,8 @@ import (
 
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network/cloudinit"
+	"github.com/canonical/lxd/shared/api"
 	"github.com/ghodss/yaml"
-	"github.com/lxc/lxd/shared/api"
 	"k8s.io/apimachinery/pkg/util/uuid"
 )
 

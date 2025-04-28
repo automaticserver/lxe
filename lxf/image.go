@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/shared/api"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/shared/api"
 )
 
 const lxeAliasPrefix = "lxe/"
@@ -120,7 +120,7 @@ func (l *client) ensureCRIImage(fingerprint string) error {
 }
 
 // Create the specified image alias, update if already exist
-// from github.com/lxc/lxd/lxc/image.go:172 + changes
+// from github.com/canonical/lxd/lxc/image.go:172 + changes
 func (l *client) ensureImageAlias(alias string, fingerprint string) error {
 	current, err := l.server.GetImageAliases()
 	if err != nil {

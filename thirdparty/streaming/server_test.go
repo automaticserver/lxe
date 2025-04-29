@@ -30,7 +30,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	kubeletportforward "github.com/automaticserver/lxe/third_party/streaming/portforward"
+	kubeletportforward "github.com/automaticserver/lxe/thirdparty/streaming/portforward"
 	api "k8s.io/api/core/v1"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
@@ -304,7 +304,6 @@ func TestServePortForward(t *testing.T) {
 	doClientStreams(t, "portforward", stream, stream, nil)
 }
 
-//
 // Run the remote command test.
 // commandType is either "exec" or "attach".
 func runRemoteCommandTest(t *testing.T, commandType string) {

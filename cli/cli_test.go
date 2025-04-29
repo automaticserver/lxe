@@ -10,6 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -25,7 +26,7 @@ func init() {
 	pflags := cmd.PersistentFlags()
 
 	pflags.StringP("short", "s", "", "A pretty normal short flag. Except this usage description is made exceptionally long so it should word-wrap in configuration files, depending on if they are told to do so. Do usage flags have an ending punctuation or not?")
-	pflags.StringP("remote-first", "", "", "A flag which is in in a subtree")
+	pflags.StringP("remote-first", "", "", "A flag which is in a subtree")
 	pflags.StringP("remote-second", "", "", "The other part of the subtree flag so we can see what this means")
 	pflags.StringP("store-dir", "S", "store", "A flag which has a dash and a subtree. The dash should is part of the main key, and not a delimititer for the subtree")
 	pflags.StringP("store-log-level", "L", "debug", "The other subtree element has a dash as well")
@@ -54,15 +55,16 @@ func runC(t *testing.T, c *cobra.Command, a []string, w io.Writer) {
 	}
 
 	cmd.SetArgs(a)
-	cmd.SetOutput(w)
+	cmd.SetOut(w)
+	cmd.SetErr(w)
 
 	_, err := cmd.ExecuteC()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func compareGoldenFile(t *testing.T, c *cobra.Command, a []string, g string) {
 	exp, err := os.ReadFile(g)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	act := &bytes.Buffer{}
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/automaticserver/lxe/third_party/ioutils"
+	"github.com/automaticserver/lxe/thirdparty/ioutils"
 	lxd "github.com/canonical/lxd/client"
 	"github.com/canonical/lxd/shared/api"
 	"gopkg.in/yaml.v3"
@@ -182,7 +182,7 @@ runcmd:
 		}
 
 		if code != 0 {
-			return fmt.Errorf("cloud-init did not complete successfully") // nolint: goerr113
+			return fmt.Errorf("cloud-init did not complete successfully") // nolint: perfsprint, err113
 		}
 
 		// clean up cloud-init before we create an image
@@ -225,7 +225,7 @@ runcmd:
 		return err
 	}
 
-	err = os.WriteFile(imagesFile, b, 0644) // nolint: gomnd
+	err = os.WriteFile(imagesFile, b, 0644) // nolint: mnd
 	if err != nil {
 		return err
 	}

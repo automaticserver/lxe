@@ -7,6 +7,7 @@ import (
 	lxdfakes "github.com/automaticserver/lxe/fakes/lxd/client"
 	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLXO_CopyImage_Simple(t *testing.T) {
@@ -20,7 +21,7 @@ func TestLXO_CopyImage_Simple(t *testing.T) {
 	fakeOp.WaitReturns(nil)
 
 	err := lxo.CopyImage(sourceFake, api.Image{}, nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, 1, fake.CopyImageCallCount())
 	assert.Equal(t, 1, fakeOp.WaitCallCount())
@@ -36,7 +37,7 @@ func TestLXO_CopyImage_Error(t *testing.T) {
 	fake.CopyImageReturns(fakeOp, errors.New("something failed"))
 
 	err := lxo.CopyImage(sourceFake, api.Image{}, nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	assert.Equal(t, 1, fake.CopyImageCallCount())
 	assert.Equal(t, 0, fakeOp.WaitCallCount())
@@ -52,7 +53,7 @@ func TestLXO_DeleteImage_Simple(t *testing.T) {
 	fakeOp.WaitReturns(nil)
 
 	err := lxo.DeleteImage("foo")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, 1, fake.DeleteImageCallCount())
 	assert.Equal(t, 1, fakeOp.WaitCallCount())
@@ -67,7 +68,7 @@ func TestLXO_DeleteImage_Error(t *testing.T) {
 	fake.DeleteImageReturns(fakeOp, errors.New("something failed"))
 
 	err := lxo.DeleteImage("foo")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	assert.Equal(t, 1, fake.DeleteImageCallCount())
 	assert.Equal(t, 0, fakeOp.WaitCallCount())
@@ -84,7 +85,7 @@ func TestLXO_CreateImage_Simple(t *testing.T) {
 	fakeOp.GetReturns(api.Operation{Metadata: map[string]any{"fingerprint": "abcdefg"}})
 
 	fingerprint, err := lxo.CreateImage(api.ImagesPost{}, nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, "abcdefg", fingerprint)
 	assert.Equal(t, 1, fake.CreateImageCallCount())
@@ -101,7 +102,7 @@ func TestLXO_CreateImage_Error(t *testing.T) {
 	fake.CreateImageReturns(fakeOp, errors.New("something failed"))
 
 	fingerprint, err := lxo.CreateImage(api.ImagesPost{}, nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	assert.Equal(t, "", fingerprint)
 	assert.Equal(t, 1, fake.CreateImageCallCount())

@@ -45,7 +45,7 @@ type lxdBridgePlugin struct {
 }
 
 // InitPluginLXDBridge instantiates the LXDBridge plugin using the provided config
-func InitPluginLXDBridge(server lxd.InstanceServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint, revive // intended to not export lxdBridgePlugin
+func InitPluginLXDBridge(server lxd.InstanceServer, conf ConfLXDBridge) (*lxdBridgePlugin, error) { // nolint: golint // intended to not export lxdBridgePlugin
 	conf.setDefaults()
 
 	p := &lxdBridgePlugin{
@@ -93,6 +93,7 @@ func (p *lxdBridgePlugin) ensureBridge() error {
 		if err != nil {
 			return err
 		}
+
 		net.IP[3]++
 		address = net.String()
 	}

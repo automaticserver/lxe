@@ -47,7 +47,6 @@ func (l *client) ListSandboxes() ([]*Sandbox, error) {
 	var sl = []*Sandbox{}
 
 	for _, p := range ps {
-		p := p // pin!
 		if !l.IsCRI(p) {
 			continue
 		}
@@ -64,6 +63,7 @@ func (l *client) ListSandboxes() ([]*Sandbox, error) {
 }
 
 // toSandbox will take a profile and convert it to a sandbox.
+// nolint: gosec // strconv.Parse* are used accordingly so conversion is always in bounds
 func (l *client) toSandbox(p *api.Profile, etag string) (*Sandbox, error) {
 	var err error
 

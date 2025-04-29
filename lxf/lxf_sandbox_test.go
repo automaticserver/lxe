@@ -8,6 +8,7 @@ import (
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func basicProfile(name string) *api.Profile {
@@ -42,7 +43,7 @@ func TestClient_GetSandbox_Minimal(t *testing.T) {
 	fake.GetProfileReturns(basicProfile("foo"), "", nil)
 
 	s, err := client.GetSandbox("foo")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "foo", s.ID)
 	assert.Equal(t, "foo", fake.GetProfileArgsForCall(0))
 	assert.Equal(t, 1, fake.GetProfileCallCount())
@@ -59,7 +60,7 @@ func TestClient_GetSandbox_Missing(t *testing.T) {
 
 	var expected *Sandbox
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Exactly(t, expected, s)
 	assert.Equal(t, 1, fake.GetProfileCallCount())
 }
@@ -75,7 +76,7 @@ func TestClient_GetSandbox_NonCri(t *testing.T) {
 
 	var expected *Sandbox
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Exactly(t, expected, s)
 	assert.Equal(t, 1, fake.GetProfileCallCount())
 }
@@ -88,7 +89,7 @@ func TestClient_ListSandboxes_Minimal(t *testing.T) {
 	fake.GetProfilesReturns([]api.Profile{*basicProfile("foo"), *basicProfile("bar")}, nil)
 
 	sl, err := client.ListSandboxes()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, sl, 2)
 	assert.Equal(t, 1, fake.GetProfilesCallCount())
 }
@@ -101,8 +102,8 @@ func TestClient_ListSandboxes_Error(t *testing.T) {
 	fake.GetProfilesReturns([]api.Profile{*basicProfile("foo"), *basicProfile("bar")}, ErrNotFound)
 
 	sl, err := client.ListSandboxes()
-	assert.Error(t, err)
-	assert.Len(t, sl, 0)
+	require.Error(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetProfilesCallCount())
 }
 
@@ -114,8 +115,8 @@ func TestClient_ListSandboxes_Missing(t *testing.T) {
 	fake.GetProfilesReturns([]api.Profile{}, nil)
 
 	sl, err := client.ListSandboxes()
-	assert.NoError(t, err)
-	assert.Len(t, sl, 0)
+	require.NoError(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetProfilesCallCount())
 }
 
@@ -127,8 +128,8 @@ func TestClient_ListSandboxes_NonCri(t *testing.T) {
 	fake.GetProfilesReturns([]api.Profile{{Name: "foo"}, {Name: "bar"}}, nil)
 
 	sl, err := client.ListSandboxes()
-	assert.NoError(t, err)
-	assert.Len(t, sl, 0)
+	require.NoError(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetProfilesCallCount())
 }
 
@@ -193,6 +194,6 @@ func TestClient_toSandbox_AllFieldsSuccessful(t *testing.T) {
 	exp.LogDirectory = "logDirectory"
 
 	s, err := client.toSandbox(p, "etag")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, s)
 }

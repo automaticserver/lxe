@@ -34,33 +34,33 @@ func TestIsSchemaEmpty(t *testing.T) {
 	t.Parallel()
 
 	c := IsSchemaCurrent(getSchemaInstance(""))
-	assert.Equal(t, false, c)
+	assert.False(t, c)
 
 	p := IsSchemaCurrent(getSchemaProfile(""))
-	assert.Equal(t, false, p)
+	assert.False(t, p)
 
 	e := IsSchemaCurrent(fmt.Errorf("some wrong object"))
-	assert.Equal(t, false, e)
+	assert.False(t, e)
 }
 
 func TestIsSchemaWrong(t *testing.T) {
 	t.Parallel()
 
 	c := IsSchemaCurrent(getSchemaInstance("0.0"))
-	assert.Equal(t, false, c)
+	assert.False(t, c)
 
 	p := IsSchemaCurrent(getSchemaProfile("0.0"))
-	assert.Equal(t, false, p)
+	assert.False(t, p)
 }
 
 func TestIsSchemaCurrent(t *testing.T) {
 	t.Parallel()
 
 	c := IsSchemaCurrent(getSchemaInstance(SchemaVersionInstance))
-	assert.Equal(t, true, c)
+	assert.True(t, c)
 
 	p := IsSchemaCurrent(getSchemaProfile(SchemaVersionProfile))
-	assert.Equal(t, true, p)
+	assert.True(t, p)
 }
 
 func TestIsSchemaPointer(t *testing.T) {
@@ -68,11 +68,11 @@ func TestIsSchemaPointer(t *testing.T) {
 
 	c1 := getSchemaInstance(SchemaVersionInstance)
 	c := IsSchemaCurrent(&c1)
-	assert.Equal(t, true, c)
+	assert.True(t, c)
 
 	p1 := getSchemaProfile(SchemaVersionProfile)
 	p := IsSchemaCurrent(&p1)
-	assert.Equal(t, true, p)
+	assert.True(t, p)
 }
 
 func satisfyInstanceSchema(ct *api.Instance) *api.Instance {

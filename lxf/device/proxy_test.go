@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProxy_getName_KeyName(t *testing.T) {
@@ -44,7 +45,7 @@ func TestProxy_FromMap(t *testing.T) {
 	exp := &Proxy{KeyName: "foo", Listen: &ProxyEndpoint{Protocol: ProtocolTCP, Address: "baz", Port: 22}, Destination: &ProxyEndpoint{Protocol: ProtocolUDP, Address: "cba", Port: 33}}
 	d := &Proxy{}
 	err := d.FromMap("foo", raw)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }
 
@@ -63,13 +64,11 @@ func Test_newProtocol(t *testing.T) {
 		{"foo", ProtocolUndefined, true},
 	}
 	for _, tt := range tests {
-		tt := tt // pin!
-
 		t.Run("", func(t *testing.T) {
 			t.Parallel()
 
 			got, err := newProtocol(tt.input)
-			assert.False(t, (err != nil) != tt.wantErr)
+			assert.False(t, (err != nil) != tt.wantErr) // nolint: testifylint
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -94,13 +93,11 @@ func TestNewProxyEndpoint(t *testing.T) {
 		{"udp:baz:foo", nil, true},
 	}
 	for _, tt := range tests {
-		tt := tt // pin!
-
 		t.Run("", func(t *testing.T) {
 			t.Parallel()
 
 			got, err := NewProxyEndpoint(tt.input)
-			assert.False(t, (err != nil) != tt.wantErr)
+			assert.False(t, (err != nil) != tt.wantErr) // nolint: testifylint
 			assert.Exactly(t, tt.want, got)
 		})
 	}

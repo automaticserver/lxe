@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestChar_getName_KeyName(t *testing.T) {
@@ -58,6 +59,6 @@ func TestChar_FromMap(t *testing.T) {
 	exp := &Char{KeyName: "foo", Path: "bar", Source: "baz"}
 	d := &Char{}
 	err := d.FromMap("foo", raw)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

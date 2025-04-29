@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/automaticserver/lxe/third_party/streaming"
+	"github.com/automaticserver/lxe/thirdparty/streaming"
 	"github.com/docker/docker/pkg/pools"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -90,7 +90,7 @@ func setupStreamService(criConfig *Config, runtime *RuntimeServer) error { // no
 	return nil
 }
 
-func (ss *streamService) serve() error {
+func (ss streamService) serve() error {
 	log.WithFields(logrus.Fields{"endpoint": ss.conf.Addr, "baseurl": ss.conf.BaseURL}).Info("started streaming server")
 
 	err := ss.streamServer.Start(true)

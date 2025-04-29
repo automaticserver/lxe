@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNone_getName_KeyName(t *testing.T) {
@@ -30,6 +31,6 @@ func TestNone_FromMap(t *testing.T) {
 	exp := &None{KeyName: "foo"}
 	d := &None{}
 	err := d.FromMap("foo", raw)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

@@ -21,8 +21,6 @@ func Test_convertDockerImageNameToLXC(t *testing.T) {
 		{"docker.io/library/nginx", "nginx"},
 	}
 	for _, tt := range tests {
-		tt := tt
-
 		t.Run(tt.inputName, func(t *testing.T) {
 			t.Parallel()
 
@@ -52,8 +50,6 @@ func Test_convertLXEAliasNameToDocker(t *testing.T) {
 		{"nginx", "nginx:latest"},
 	}
 	for _, tt := range tests {
-		tt := tt
-
 		t.Run(tt.inputName, func(t *testing.T) {
 			t.Parallel()
 

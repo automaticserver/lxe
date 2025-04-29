@@ -12,7 +12,7 @@ import (
 	"github.com/automaticserver/lxe/lxf"
 	"github.com/automaticserver/lxe/lxf/device"
 	"github.com/automaticserver/lxe/network"
-	"github.com/automaticserver/lxe/third_party/ioutils"
+	"github.com/automaticserver/lxe/thirdparty/ioutils"
 	"github.com/canonical/lxd/lxc/config"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
@@ -603,10 +603,10 @@ func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateCon
 		c.Resources = &opencontainers.LinuxResources{}
 		c.Resources.CPU = &opencontainers.LinuxCPU{}
 		c.Resources.Memory = &opencontainers.LinuxMemory{}
-		shares := uint64(resrc.CpuShares)
+		shares := uint64(resrc.CpuShares) // nolint: gosec // not expected to receive negative
 		c.Resources.CPU.Shares = &shares
 		c.Resources.CPU.Quota = &resrc.CpuQuota
-		period := uint64(resrc.CpuPeriod)
+		period := uint64(resrc.CpuPeriod) // nolint: gosec // not expected to receive negative
 		c.Resources.CPU.Period = &period
 		c.Resources.Memory.Limit = &resrc.MemoryLimitInBytes
 	}

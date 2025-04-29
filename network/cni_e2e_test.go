@@ -4,7 +4,7 @@ package network
 // 	t.Log("testCNIDir", testCNIDir)
 
 // 	cniPlugin, err := InitPluginCNI(ConfCNI{testCNIbinPath, testCNIconfPath, testCNInetnsPath})
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 
 // 	return cniPlugin
 // }
@@ -18,17 +18,17 @@ package network
 
 // func Test_cniPlugin_PodNetwork(t *testing.T) {
 // 	cniPlugin := testCNIPlugin(t)
-// 	type args struct {
+// 	type argss struct {
 // 		id          string
 // 		annotations map[string]string
 // 	}
 
 // 	tests := []struct {
 // 		name    string
-// 		args    args
+// 		args    argss
 // 		wantErr bool
 // 	}{
-// 		{"", args{"foo", nil}, false},
+// 		{"", argss{"foo", nil}, false},
 // 	}
 
 // 	for _, tt := range tests {
@@ -48,31 +48,31 @@ package network
 // 	testNeedsRoot(t)
 // 	cniPlugin := testCNIPlugin(t)
 // 	podNetwork, err := cniPlugin.PodNetwork("test_attach", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	fake := toFakeCniPlugin(t, cniPlugin)
 
 // 	_, err = containerNetwork.WhenStarted(ctx, &PropertiesRunning{Pid: 0})
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
 // 	out, err := exec.Command("ip", "netns", "delete", "test_attach").CombinedOutput()
-// 	assert.NoError(t, err, string(out))
+// 	require.NoError(t, err, string(out))
 // }
 
 // func Test_cniPodNetwork_Teardown_MissingNetwork(t *testing.T) {
 // 	testNeedsRoot(t)
 // 	cniPlugin := testCNIPlugin(t)
 // 	podNetwork, err := cniPlugin.PodNetwork("test_teardown_missingnetwork", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	//fake := toFakeCniPlugin(t, cniPlugin)
 
 // 	// CRI DelNetwork always tries to remove as good as possible without throwing error
 // 	err = containerNetwork.WhenDeleted(ctx, nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	//assert.Equal(t, 1, fake.DelNetworkListCallCount())
 // } // nolint: wsl
 
@@ -80,11 +80,11 @@ package network
 // 	testNeedsRoot(t)
 // 	cniPlugin := testCNIPlugin(t)
 // 	podNetwork, err := cniPlugin.PodNetwork("test_status_missingnetwork", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	//fake := toFakeCniPlugin(t, cniPlugin)
 
 // 	got, err := podNetwork.Status(ctx, &PropertiesRunning{})
-// 	assert.Error(t, err)
+// 	require.Error(t, err)
 // 	assert.Nil(t, got)
 // 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())
 // } // nolint: wsl
@@ -93,20 +93,20 @@ package network
 // 	testNeedsRoot(t)
 // 	cniPlugin := testCNIPlugin(t)
 // 	podNetwork, err := cniPlugin.PodNetwork("test_status_withnetwork", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	containerNetwork, err := podNetwork.ContainerNetwork("containerid", nil)
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	//fake := toFakeCniPlugin(t, cniPlugin)
 
 // 	_, err = containerNetwork.WhenStarted(ctx, &PropertiesRunning{Pid: 0})
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	//assert.Equal(t, 1, fake.AddNetworkListCallCount())
 
 // 	got, err := podNetwork.Status(ctx, &PropertiesRunning{Properties: Properties{Data: map[string]string{"result": `{"cniVersion":"0.4.0","ips":[{"version":"4","interface":2,"address":"10.22.0.64/16","gateway":"10.22.0.1"}]}`}}})
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	assert.NotNil(t, got)
 // 	//assert.Equal(t, 1, fake.CheckNetworkListCallCount())
 
 // 	out, err := exec.Command("ip", "netns", "delete", "test_status_withnetwork").CombinedOutput()
-// 	assert.NoError(t, err, string(out))
+// 	require.NoError(t, err, string(out))
 // }

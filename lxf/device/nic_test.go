@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNic_getName_KeyName(t *testing.T) {
@@ -44,6 +45,6 @@ func TestNic_FromMap(t *testing.T) {
 	exp := &Nic{KeyName: "foo", Name: "ethX", NicType: "bridge", Parent: "brX", IPv4Address: "1.2.3.4"}
 	d := &Nic{}
 	err := d.FromMap("foo", raw)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

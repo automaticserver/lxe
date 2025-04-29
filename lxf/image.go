@@ -173,8 +173,6 @@ func (l *client) ListImages(filter string) ([]*Image, error) {
 	}
 
 	for _, lxdImg := range imglist {
-		lxdImg := lxdImg
-
 		if !l.IsCRI(lxdImg) {
 			continue
 		}

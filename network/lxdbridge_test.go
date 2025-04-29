@@ -8,6 +8,7 @@ import (
 	lxd "github.com/canonical/lxd/client"
 	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -36,7 +37,7 @@ func TestInitPluginLXDBridge_DefaultsAndCreate(t *testing.T) {
 	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	p, err := InitPluginLXDBridge(server, ConfLXDBridge{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, fake, p.server)
 	assert.NotEmpty(t, p.conf.LXDBridge, "lxdbr0 is the default")
 
@@ -64,7 +65,7 @@ func TestInitPluginLXDBridge_DefinedAndUpdate(t *testing.T) {
 	}, "", nil)
 
 	p, err := InitPluginLXDBridge(server, ConfLXDBridge{LXDBridge: testLXDBridge, Cidr: cidr, Nat: true, CreateOnly: false})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, fake, p.server)
 	assert.NotEmpty(t, p.conf.Cidr)
 	assert.NotEmpty(t, p.conf.Nat)
@@ -95,7 +96,7 @@ func Test_lxdBridgePlugin_PodNetwork(t *testing.T) {
 	plugin, _ := testLXDBridgePlugin()
 
 	podNet, err := plugin.PodNetwork("foo", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tPodNet := podNet.(*lxdBridgePodNetwork)
 	assert.Equal(t, "foo", tPodNet.podID)
@@ -109,7 +110,7 @@ func Test_lxdBridgePlugin_UpdateRuntimeConfig(t *testing.T) {
 	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.UpdateRuntimeConfig(&rtApi.RuntimeConfig{NetworkConfig: &rtApi.NetworkConfig{PodCidr: "192.168.224.0/24"}})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, 1, fake.CreateNetworkCallCount())
 	args := fake.CreateNetworkArgsForCall(0)
@@ -125,7 +126,7 @@ func Test_lxdBridgePlugin_ensureBridge_WrongNetworkTypeExists(t *testing.T) {
 	fake.GetNetworkReturns(&api.Network{Type: "other"}, "", nil)
 
 	err := plugin.ensureBridge()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Empty(t, fake.CreateNetworkCallCount())
 	assert.Empty(t, fake.UpdateNetworkCallCount())
 }
@@ -139,7 +140,7 @@ func Test_lxdBridgePlugin_ensureBridge_CreateOnly(t *testing.T) {
 	fake.GetNetworkReturns(&api.Network{Type: "bridge", Name: testLXDBridge}, "", nil)
 
 	err := plugin.ensureBridge()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, fake.CreateNetworkCallCount())
 	assert.Empty(t, fake.UpdateNetworkCallCount())
 }
@@ -154,7 +155,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeBridgeIP(t *testing.T) {
 	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.ensureBridge()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 1, fake.CreateNetworkCallCount())
 
 	args := fake.CreateNetworkArgsForCall(0)
@@ -171,7 +172,7 @@ func Test_lxdBridgePlugin_ensureBridge_CorrectIPRangeAuto(t *testing.T) {
 	fake.GetNetworkReturns(nil, "", lxf.ErrNotFound)
 
 	err := plugin.ensureBridge()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 1, fake.CreateNetworkCallCount())
 
 	args := fake.CreateNetworkArgsForCall(0)
@@ -197,7 +198,7 @@ func Test_lxdBridgePlugin_findFreeIP_Simple(t *testing.T) {
 	fake.GetNetworkLeasesReturns([]api.NetworkLease{}, nil)
 
 	ip, err := plugin.findFreeIP()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "192.168.224.2", ip.String())
 }
 
@@ -224,7 +225,7 @@ func Test_lxdBridgePlugin_findFreeIP_WithLeases(t *testing.T) {
 	}, nil)
 
 	ip, err := plugin.findFreeIP()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "192.168.224.6", ip.String())
 }
 
@@ -245,7 +246,7 @@ func Test_lxdBridgePlugin_findFreeIP_NoRangeSupportYet(t *testing.T) {
 	}, "", nil)
 
 	_, err := plugin.findFreeIP()
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func testLXDBridgePodNetwork() (*lxdBridgePodNetwork, *lxdfakes.FakeInstanceServer) {
@@ -263,7 +264,7 @@ func Test_lxdBridgePodNetwork_ContainerNetwork(t *testing.T) {
 	podNet, _ := testLXDBridgePodNetwork()
 
 	contNet, err := podNet.ContainerNetwork("foo", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tContNet := contNet.(*lxdBridgeContainerNetwork)
 	assert.Equal(t, "foo", tContNet.cid)
@@ -275,7 +276,7 @@ func Test_lxdBridgePodNetwork_Status_NoData(t *testing.T) {
 	podNet, _ := testLXDBridgePodNetwork()
 
 	status, err := podNet.Status(ctx, &PropertiesRunning{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, status)
 }
 
@@ -285,7 +286,7 @@ func Test_lxdBridgePodNetwork_Status_InvalidData(t *testing.T) {
 	podNet, _ := testLXDBridgePodNetwork()
 
 	status, err := podNet.Status(ctx, &PropertiesRunning{Properties: Properties{Data: map[string]string{"interface-address": "bar"}}})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, status)
 }
 
@@ -295,7 +296,7 @@ func Test_lxdBridgePodNetwork_Status_Simple(t *testing.T) {
 	podNet, _ := testLXDBridgePodNetwork()
 
 	status, err := podNet.Status(ctx, &PropertiesRunning{Properties: Properties{Data: map[string]string{"interface-address": "192.168.224.2"}}})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "192.168.224.2", status.IPs[0].String())
 }
 
@@ -317,7 +318,7 @@ func Test_lxdBridgePodNetwork_WhenCreated_Simple(t *testing.T) {
 	fake.GetNetworkLeasesReturns([]api.NetworkLease{}, nil)
 
 	res, err := podNet.WhenCreated(ctx, &Properties{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, res.Data["interface-address"])
 	assert.NotEmpty(t, res.Nics[0].IPv4Address)
 }

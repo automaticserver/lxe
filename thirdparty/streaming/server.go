@@ -31,8 +31,8 @@ import (
 
 	restful "github.com/emicklei/go-restful"
 
-	"github.com/automaticserver/lxe/third_party/streaming/portforward"
-	remotecommandserver "github.com/automaticserver/lxe/third_party/streaming/remotecommand"
+	"github.com/automaticserver/lxe/thirdparty/streaming/portforward"
+	remotecommandserver "github.com/automaticserver/lxe/thirdparty/streaming/remotecommand"
 	"k8s.io/apimachinery/pkg/types"
 	remotecommandconsts "k8s.io/apimachinery/pkg/util/remotecommand"
 	"k8s.io/client-go/tools/remotecommand"

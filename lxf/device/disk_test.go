@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDisk_getName_KeyName(t *testing.T) {
@@ -58,6 +59,6 @@ func TestDisk_FromMap(t *testing.T) {
 	exp := &Disk{KeyName: "foo", Path: "bar", Source: "baz", Pool: "pool", Size: "size", Readonly: true, Optional: true}
 	d := &Disk{}
 	err := d.FromMap("foo", raw)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, d)
 }

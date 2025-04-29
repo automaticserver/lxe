@@ -21,7 +21,6 @@ const (
 	WindowWidthDefault  = 80
 )
 
-// nolint: revive
 var (
 	ErrExecTimeout     = errors.New("timeout reached")
 	ErrNoControlSocket = errors.New("no control socket found")

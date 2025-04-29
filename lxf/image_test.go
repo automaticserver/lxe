@@ -6,6 +6,7 @@ import (
 
 	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // Image not found error compatibility handling for lxd <= 5.0.0 (Issue #16). It was wrong to check for the error text "not found", as this has now changed during lxd 5.x development.
@@ -32,7 +33,7 @@ func Test_getRemoteImageFromAliasOrFingerprint_AliasNotFoundPreLXD5(t *testing.T
 
 	resp, err := getRemoteImageFromAliasOrFingerprint(c.server, "ubuntu:nextgen")
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "abcdefg", resp.Fingerprint)
 	assert.Equal(t, 1, fake.GetImageAliasCallCount())
 	assert.Equal(t, 1, fake.GetImageCallCount())
@@ -58,7 +59,7 @@ func Test_getRemoteImageFromAliasOrFingerprint_AliasNotFoundPostLXD5(t *testing.
 
 	resp, err := getRemoteImageFromAliasOrFingerprint(c.server, "ubuntu:nextgen")
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "abcdefg", resp.Fingerprint)
 	assert.Equal(t, 1, fake.GetImageAliasCallCount())
 	assert.Equal(t, 1, fake.GetImageCallCount())
@@ -82,7 +83,7 @@ func Test_getRemoteImageFromAliasOrFingerprint_ImageNotFoundPreLXD5(t *testing.T
 
 	resp, err := getRemoteImageFromAliasOrFingerprint(c.server, "ubuntu:nextgen")
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, resp)
 	assert.True(t, IsNotFoundError(err))
 	assert.Equal(t, 1, fake.GetImageAliasCallCount())
@@ -107,7 +108,7 @@ func Test_getRemoteImageFromAliasOrFingerprint_ImageNotFoundPostLXD5(t *testing.
 
 	resp, err := getRemoteImageFromAliasOrFingerprint(c.server, "ubuntu:nextgen")
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, resp)
 	assert.True(t, IsNotFoundError(err))
 	assert.Equal(t, 1, fake.GetImageAliasCallCount())

@@ -73,7 +73,7 @@ func trimKeyName(s string) string {
 		return s
 	}
 
-	partLen := maxKeyNameLength/2 - len(middleSeparatorKeyNameLength)/2 // nolint: gomnd
+	partLen := maxKeyNameLength/2 - len(middleSeparatorKeyNameLength)/2 // nolint: mnd
 
 	// we can expect there are no multibyte characters in this string. By dividing two ints the result is still int and thus automatically floored
 	left := s[:partLen]

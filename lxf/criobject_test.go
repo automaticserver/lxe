@@ -43,16 +43,16 @@ func TestIsCRIEmpty(t *testing.T) {
 	l, _ := testClient()
 
 	c := l.IsCRI(getCRIContainer(""))
-	assert.Equal(t, false, c)
+	assert.False(t, c)
 
 	p := l.IsCRI(getCRIProfile(""))
-	assert.Equal(t, false, p)
+	assert.False(t, p)
 
 	i := l.IsCRI(getCRIImage(""))
-	assert.Equal(t, false, i)
+	assert.False(t, i)
 
 	e := l.IsCRI(fmt.Errorf("some wrong object"))
-	assert.Equal(t, false, e)
+	assert.False(t, e)
 }
 
 func TestIsCRIFalse(t *testing.T) {
@@ -61,13 +61,13 @@ func TestIsCRIFalse(t *testing.T) {
 	l, _ := testClient()
 
 	c := l.IsCRI(getCRIContainer("false"))
-	assert.Equal(t, false, c)
+	assert.False(t, c)
 
 	p := l.IsCRI(getCRIProfile("False"))
-	assert.Equal(t, false, p)
+	assert.False(t, p)
 
 	i := l.IsCRI(getCRIImage("FALSE"))
-	assert.Equal(t, false, i)
+	assert.False(t, i)
 }
 
 func TestIsCRIWrong(t *testing.T) {
@@ -76,13 +76,13 @@ func TestIsCRIWrong(t *testing.T) {
 	l, _ := testClient()
 
 	c := l.IsCRI(getCRIContainer("no"))
-	assert.Equal(t, false, c)
+	assert.False(t, c)
 
 	p := l.IsCRI(getCRIProfile("yes"))
-	assert.Equal(t, false, p)
+	assert.False(t, p)
 
 	i := l.IsCRI(getCRIImage("maybe"))
-	assert.Equal(t, false, i)
+	assert.False(t, i)
 }
 
 func TestIsCRITrue(t *testing.T) {
@@ -91,13 +91,13 @@ func TestIsCRITrue(t *testing.T) {
 	l, _ := testClient()
 
 	c := l.IsCRI(getCRIContainer("true"))
-	assert.Equal(t, true, c)
+	assert.True(t, c)
 
 	p := l.IsCRI(getCRIProfile("True"))
-	assert.Equal(t, true, p)
+	assert.True(t, p)
 
 	i := l.IsCRI(getCRIImage("TRUE"))
-	assert.Equal(t, true, i)
+	assert.True(t, i)
 }
 
 func TestIsCRIPointer(t *testing.T) {
@@ -107,15 +107,15 @@ func TestIsCRIPointer(t *testing.T) {
 
 	c1 := getCRIContainer("true")
 	c := l.IsCRI(&c1)
-	assert.Equal(t, true, c)
+	assert.True(t, c)
 
 	p1 := getCRIProfile("True")
 	p := l.IsCRI(&p1)
-	assert.Equal(t, true, p)
+	assert.True(t, p)
 
 	i1 := getCRIImage("TRUE")
 	i := l.IsCRI(&i1)
-	assert.Equal(t, true, i)
+	assert.True(t, i)
 }
 
 func satisfyContainerCri(ct *api.Container) *api.Container {

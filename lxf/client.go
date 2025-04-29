@@ -179,7 +179,7 @@ func (l *client) connect() error {
 
 			// this issue could be observed by
 			// a) lsof -n -p $(pidof lxe)     yielding more and more connections
-			// b) pkill -SIGABRT lxe          seeing many many goroutines like this:
+			// b) pkill -SIGABRT lxe          seeing many goroutines like this:
 			// net/http.(*persistConn).readLoop(0xc000273b00)
 			// 	/home/dj/src/go/src/net/http/transport.go:1761 +0x6b9
 			// and

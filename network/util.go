@@ -10,11 +10,10 @@ import (
 // FindFreeIP tries to find an available IP address within given subnet, respecting reserved addresses in leases and
 // must be between the start and end address. Network and broadcast IP are also reserved and automatically added to
 // leases. If start or end is nil their closest available address from the subnet is selected.
-// nolint: gomnd
 func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 	// put non-usable addresses also to leases, so they can't be selected
 	networkIP := subnet.IP
-	broadcastIP := make(net.IP, 4)
+	broadcastIP := make(net.IP, 4) // nolint: mnd
 
 	for i := range broadcastIP {
 		broadcastIP[i] = subnet.IP[i] | ^subnet.Mask[i]
@@ -37,7 +36,7 @@ func FindFreeIP(subnet *net.IPNet, leases []net.IP, start, end net.IP) net.IP {
 OUTER:
 	for {
 		// randomly select an ip address within the specified subnet
-		trialB := make([]byte, 4)
+		trialB := make([]byte, 4)                            // nolint: mnd
 		binary.LittleEndian.PutUint32(trialB, rand.Uint32()) // nolint: gosec
 		for i, v := range trialB {
 			trialB[i] = subnet.IP[i] + (v &^ subnet.Mask[i])

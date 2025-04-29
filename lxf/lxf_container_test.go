@@ -9,6 +9,7 @@ import (
 	"github.com/canonical/lxd/shared/api"
 	opencontainers "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func basicContainer(name, sandbox string) *api.Container {
@@ -47,7 +48,7 @@ func TestClient_GetContainer_Minimal(t *testing.T) {
 	fake.GetContainerReturns(basicContainer("foo", "bar"), "", nil)
 
 	s, err := client.GetContainer("foo")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "foo", s.ID)
 	assert.Equal(t, "foo", fake.GetContainerArgsForCall(0))
 	assert.Equal(t, 1, fake.GetContainerCallCount())
@@ -64,7 +65,7 @@ func TestClient_GetContainer_Missing(t *testing.T) {
 
 	var expected *Container
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Exactly(t, expected, s)
 	assert.Equal(t, 1, fake.GetContainerCallCount())
 }
@@ -80,7 +81,7 @@ func TestClient_GetContainer_NonCri(t *testing.T) {
 
 	var expected *Container
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Exactly(t, expected, s)
 	assert.Equal(t, 1, fake.GetContainerCallCount())
 }
@@ -93,7 +94,7 @@ func TestClient_ListContainers_Minimal(t *testing.T) {
 	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, nil)
 
 	sl, err := client.ListContainers()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, sl, 2)
 	assert.Equal(t, 1, fake.GetContainersCallCount())
 }
@@ -106,8 +107,8 @@ func TestClient_ListContainers_Error(t *testing.T) {
 	fake.GetContainersReturns([]api.Container{*basicContainer("foo", "default"), *basicContainer("bar", "default")}, ErrNotFound)
 
 	sl, err := client.ListContainers()
-	assert.Error(t, err)
-	assert.Len(t, sl, 0)
+	require.Error(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetContainersCallCount())
 }
 
@@ -119,8 +120,8 @@ func TestClient_ListContainers_Missing(t *testing.T) {
 	fake.GetContainersReturns([]api.Container{}, nil)
 
 	sl, err := client.ListContainers()
-	assert.NoError(t, err)
-	assert.Len(t, sl, 0)
+	require.NoError(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetContainersCallCount())
 }
 
@@ -132,8 +133,8 @@ func TestClient_ListContainers_NonCri(t *testing.T) {
 	fake.GetContainersReturns([]api.Container{{Name: "foo"}, {Name: "bar"}}, nil)
 
 	sl, err := client.ListContainers()
-	assert.NoError(t, err)
-	assert.Len(t, sl, 0)
+	require.NoError(t, err)
+	assert.Empty(t, sl)
 	assert.Equal(t, 1, fake.GetContainersCallCount())
 }
 
@@ -226,7 +227,7 @@ func TestClient_toContainer_AllFieldsSuccessful(t *testing.T) {
 	}
 
 	c, err := client.toContainer(ct, "etag")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Exactly(t, exp, c)
 }
 

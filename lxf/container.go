@@ -185,6 +185,7 @@ func (c *Container) State() (*ContainerState, error) {
 	return c.state, nil
 }
 
+// nolint: gosec // not expected to receive negative
 func (c *Container) getState() (*ContainerState, error) {
 	cs := &ContainerState{}
 

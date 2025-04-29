@@ -9,6 +9,7 @@ import (
 	"github.com/canonical/lxd/lxc/config"
 	"github.com/canonical/lxd/shared/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testClient() (*client, *lxdfakes.FakeContainerServer) {
@@ -32,7 +33,7 @@ func TestClient_GetRuntimeInfo_Ok(t *testing.T) {
 	}, "", nil)
 
 	info, err := client.GetRuntimeInfo()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 1, fake.GetServerCallCount())
 	assert.Exactly(t, "a.b.0", info.Version)
 }
@@ -44,7 +45,7 @@ func TestClient_GetRuntimeInfo_Error(t *testing.T) {
 	fake.GetServerReturns(nil, "", errors.New("some connection error"))
 
 	_, err := client.GetRuntimeInfo()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Equal(t, 1, fake.GetServerCallCount())
 }
 
@@ -65,7 +66,7 @@ func TestClient_GetRuntimeInfo_Error(t *testing.T) {
 
 // func NewTestClient(t *testing.T) *Client {
 // 	client, err := NewClient("", os.Getenv("HOME")+"/.config/lxc/config.yml")
-// 	assert.NoError(t, err)
+// 	require.NoError(t, err)
 // 	return client
 // }
 

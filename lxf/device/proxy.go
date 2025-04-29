@@ -114,7 +114,7 @@ type ProxyEndpoint struct {
 // TODO verify and document allowed format values
 func NewProxyEndpoint(str string) (*ProxyEndpoint, error) {
 	parts := strings.Split(str, ":")
-	if len(parts) != 3 { // nolint: gomnd
+	if len(parts) != 3 { // nolint: mnd
 		return nil, fmt.Errorf("proxy endpoint %w, must be delimited by two colons (::) but was given: `%v`", ErrNotValid, str)
 	}
 

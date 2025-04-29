@@ -11,6 +11,7 @@ import (
 	"github.com/canonical/lxd/shared/api"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"k8s.io/client-go/tools/remotecommand"
 )
 
@@ -34,7 +35,7 @@ func TestClient_Exec_BasicOk(t *testing.T) {
 	})
 
 	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, CodeExecError, exitCode)
 }
 
@@ -50,6 +51,7 @@ func TestClient_Exec_Timeout(t *testing.T) {
 	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
+
 		go sendDataDone(arg3, 1200*time.Millisecond)
 
 		return fakeOp, nil
@@ -63,7 +65,7 @@ func TestClient_Exec_Timeout(t *testing.T) {
 	})
 
 	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 1, nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Exactly(t, ErrExecTimeout, err)
 	assert.Equal(t, CodeExecTimeout, exitCode)
 }
@@ -83,6 +85,7 @@ func TestClient_Exec_Resize(t *testing.T) {
 	fake.ExecContainerCalls(func(arg1 string, arg2 api.ContainerExecPost, arg3 *lxd.ContainerExecArgs) (lxd.Operation, error) {
 		arg3.Control = fakeSes.controlHandler
 		arg3.Control(fakeControl)
+
 		go sendDataDone(arg3, 0)
 
 		return fakeOp, nil
@@ -96,7 +99,7 @@ func TestClient_Exec_Resize(t *testing.T) {
 	})
 
 	exitCode, err := client.Exec("", nil, nil, nil, nil, false, false, 0, fakeSes.resize)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, CodeExecOk, exitCode)
 
 	// resize happens at any time
@@ -123,7 +126,7 @@ func TestClient_Exec_Parallel(t *testing.T) {
 		fakeOp.WaitReturns(nil)
 
 		returnCode, err := strconv.ParseFloat(arg2.Command[0], 64)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		fakeOp.GetReturns(api.Operation{
 			Metadata: map[string]interface{}{
@@ -138,11 +141,11 @@ func TestClient_Exec_Parallel(t *testing.T) {
 	n := 10
 	wg.Add(n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		go func(i int) {
 			exitCode, err := client.Exec("", []string{strconv.Itoa(i)}, nil, nil, nil, false, false, 0, nil)
 			assert.NoError(t, err)
-			assert.Equal(t, int32(i), exitCode)
+			assert.Equal(t, i, int(exitCode))
 			wg.Done()
 		}(i)
 	}

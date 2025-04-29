@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDetect_UnknownType(t *testing.T) {
 	t.Parallel()
 
 	_, err := Detect("foo", map[string]string{"type": "foo"})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.ErrorIs(t, err, ErrNotSupported)
 }
 
@@ -18,7 +19,7 @@ func TestDetect_KnownType(t *testing.T) {
 	t.Parallel()
 
 	n, err := Detect("foo", map[string]string{"type": "none"})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	exp := &None{KeyName: "foo"}
 	assert.Exactly(t, exp, n)
@@ -28,10 +29,10 @@ func TestDetect_SameTypeMultiple(t *testing.T) {
 	t.Parallel()
 
 	m, err := Detect("foo", map[string]string{"type": "none"})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	n, err := Detect("bar", map[string]string{"type": "none"})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.NotEqual(t, m, n)
 }
@@ -72,8 +73,6 @@ func Test_trimKeyName(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
-
 		t.Run(tt.arg, func(t *testing.T) {
 			t.Parallel()
 

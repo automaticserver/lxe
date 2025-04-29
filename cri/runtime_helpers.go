@@ -412,7 +412,7 @@ func (s RuntimeServer) ContainerStarted(c *lxf.Container) error {
 }
 
 // ContainerStopped implements lxf.EventHandler interface
-func (s *RuntimeServer) ContainerStopped(c *lxf.Container) error {
+func (s RuntimeServer) ContainerStopped(c *lxf.Container) error {
 	sb, err := c.Sandbox()
 	if err != nil {
 		return err
@@ -433,14 +433,13 @@ func (s *RuntimeServer) ContainerStopped(c *lxf.Container) error {
 	return nil
 }
 
-func (s *RuntimeServer) handleNetworkResult(sb *lxf.Sandbox, res *network.Result) error {
+func (s RuntimeServer) handleNetworkResult(sb *lxf.Sandbox, res *network.Result) error {
 	if res != nil {
 		if len(res.Data) > 0 {
 			sb.NetworkConfig.ModeData = res.Data
 		}
 
 		for _, n := range res.Nics {
-			n := n
 			sb.Devices.Upsert(&n)
 		}
 

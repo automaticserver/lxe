@@ -54,8 +54,6 @@ func (l *client) ListContainers() ([]*Container, error) {
 	var cl = []*Container{}
 
 	for _, ct := range cts {
-		ct := ct // pin!
-
 		if !l.IsCRI(ct) {
 			continue
 		}
@@ -72,6 +70,7 @@ func (l *client) ListContainers() ([]*Container, error) {
 }
 
 // toContainer will convert an lxd container to lxf format
+// nolint: gosec // strconv.Parse* are used accordingly so conversion is always in bounds
 func (l *client) toContainer(ct *api.Container, etag string) (*Container, error) { // nolint: gocognit, cyclop
 	var err error
 

@@ -57,7 +57,7 @@ func (s ImageServer) ListImages(ctx context.Context, req *rtApi.ListImagesReques
 	for _, imgInfo := range imglist {
 		rspImage := &rtApi.Image{
 			Id:          imgInfo.Hash,
-			Size_:       uint64(imgInfo.Size),
+			Size_:       uint64(imgInfo.Size), // nolint: gosec // not expected to receive negative
 			RepoDigests: []string{},
 			RepoTags:    []string{},
 		}
@@ -95,7 +95,7 @@ func (s ImageServer) ImageStatus(ctx context.Context, req *rtApi.ImageStatusRequ
 
 	rspImage := &rtApi.Image{
 		Id:          imgInfo.Hash,
-		Size_:       uint64(imgInfo.Size),
+		Size_:       uint64(imgInfo.Size), // nolint: gosec // not expected to receive negative
 		RepoDigests: []string{},
 		RepoTags:    []string{},
 	}

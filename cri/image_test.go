@@ -7,6 +7,7 @@ import (
 	crifakes "github.com/automaticserver/lxe/fakes/lxe/lxf"
 	"github.com/canonical/lxd/lxc/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -36,7 +37,7 @@ func Test_ImageServer_PullImage(t *testing.T) {
 		},
 	})
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 1, fake.PullImageCallCount())
 	assert.Equal(t, "something", resp.ImageRef)
 	assert.Equal(t, "ubuntu:nextgen", fake.PullImageArgsForCall(0))

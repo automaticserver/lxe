@@ -60,7 +60,7 @@ type cniPlugin struct {
 }
 
 // InitPluginCNI instantiates the cni plugin using the provided config
-func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint, revive // intended to not export cniPlugin
+func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint // intended to not export cniPlugin
 	conf.setDefaults()
 
 	exec := &invoke.DefaultExec{RawExec: &invoke.RawExec{Stderr: conf.OutputWriter}}
@@ -75,7 +75,7 @@ func InitPluginCNI(conf ConfCNI) (*cniPlugin, error) { // nolint: golint, revive
 func (p *cniPlugin) PodNetwork(id string, annotations map[string]string) (PodNetwork, error) {
 	netList, warnings, err := p.getCNINetworkConfig()
 	if err != nil {
-		return nil, fmt.Errorf("%w, %v", err, warnings)
+		return nil, fmt.Errorf("%w, %v", err, warnings) // nolint: errorlint
 	}
 
 	runtimeConf := p.getCNIRuntimeConf(id)
@@ -96,6 +96,7 @@ func (p *cniPlugin) UpdateRuntimeConfig(_ *rtApi.RuntimeConfig) error {
 }
 
 // getCNINetworkConfig looks into the cni configuration dir for configs to load
+// nolint: errorlint
 func (p *cniPlugin) getCNINetworkConfig() (*libcni.NetworkConfigList, error, error) {
 	confDir := p.conf.ConfPath
 

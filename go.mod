@@ -1,10 +1,10 @@
 module github.com/automaticserver/lxe
 
-go 1.23.3
+go 1.23.5
 
 require (
 	github.com/canonical/lxd v0.0.0-20241115083942-2101d7f6efda
-	github.com/containernetworking/cni v1.3.0
+	github.com/containernetworking/cni v1.2.3
 	github.com/dionysius/errand v1.1.0
 	github.com/docker/docker v28.1.1+incompatible
 	github.com/emicklei/go-restful v2.16.0+incompatible

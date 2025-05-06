@@ -11,11 +11,11 @@ import (
 )
 
 type FakeCNI struct {
-	AddNetworkStub        func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) (types.Result, error)
+	AddNetworkStub        func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) (types.Result, error)
 	addNetworkMutex       sync.RWMutex
 	addNetworkArgsForCall []struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}
 	addNetworkReturns struct {
@@ -41,11 +41,11 @@ type FakeCNI struct {
 		result1 types.Result
 		result2 error
 	}
-	CheckNetworkStub        func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) error
+	CheckNetworkStub        func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) error
 	checkNetworkMutex       sync.RWMutex
 	checkNetworkArgsForCall []struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}
 	checkNetworkReturns struct {
@@ -67,11 +67,11 @@ type FakeCNI struct {
 	checkNetworkListReturnsOnCall map[int]struct {
 		result1 error
 	}
-	DelNetworkStub        func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) error
+	DelNetworkStub        func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) error
 	delNetworkMutex       sync.RWMutex
 	delNetworkArgsForCall []struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}
 	delNetworkReturns struct {
@@ -119,10 +119,10 @@ type FakeCNI struct {
 		result1 []*libcni.NetworkAttachment
 		result2 error
 	}
-	GetNetworkCachedConfigStub        func(*libcni.PluginConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)
+	GetNetworkCachedConfigStub        func(*libcni.NetworkConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)
 	getNetworkCachedConfigMutex       sync.RWMutex
 	getNetworkCachedConfigArgsForCall []struct {
-		arg1 *libcni.PluginConfig
+		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}
 	getNetworkCachedConfigReturns struct {
@@ -135,10 +135,10 @@ type FakeCNI struct {
 		result2 *libcni.RuntimeConf
 		result3 error
 	}
-	GetNetworkCachedResultStub        func(*libcni.PluginConfig, *libcni.RuntimeConf) (types.Result, error)
+	GetNetworkCachedResultStub        func(*libcni.NetworkConfig, *libcni.RuntimeConf) (types.Result, error)
 	getNetworkCachedResultMutex       sync.RWMutex
 	getNetworkCachedResultArgsForCall []struct {
-		arg1 *libcni.PluginConfig
+		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}
 	getNetworkCachedResultReturns struct {
@@ -205,11 +205,11 @@ type FakeCNI struct {
 		result1 version.PluginInfo
 		result2 error
 	}
-	ValidateNetworkStub        func(context.Context, *libcni.PluginConfig) ([]string, error)
+	ValidateNetworkStub        func(context.Context, *libcni.NetworkConfig) ([]string, error)
 	validateNetworkMutex       sync.RWMutex
 	validateNetworkArgsForCall []struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 	}
 	validateNetworkReturns struct {
 		result1 []string
@@ -237,12 +237,12 @@ type FakeCNI struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeCNI) AddNetwork(arg1 context.Context, arg2 *libcni.PluginConfig, arg3 *libcni.RuntimeConf) (types.Result, error) {
+func (fake *FakeCNI) AddNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig, arg3 *libcni.RuntimeConf) (types.Result, error) {
 	fake.addNetworkMutex.Lock()
 	ret, specificReturn := fake.addNetworkReturnsOnCall[len(fake.addNetworkArgsForCall)]
 	fake.addNetworkArgsForCall = append(fake.addNetworkArgsForCall, struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
 	stub := fake.AddNetworkStub
@@ -264,13 +264,13 @@ func (fake *FakeCNI) AddNetworkCallCount() int {
 	return len(fake.addNetworkArgsForCall)
 }
 
-func (fake *FakeCNI) AddNetworkCalls(stub func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) (types.Result, error)) {
+func (fake *FakeCNI) AddNetworkCalls(stub func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) (types.Result, error)) {
 	fake.addNetworkMutex.Lock()
 	defer fake.addNetworkMutex.Unlock()
 	fake.AddNetworkStub = stub
 }
 
-func (fake *FakeCNI) AddNetworkArgsForCall(i int) (context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) {
+func (fake *FakeCNI) AddNetworkArgsForCall(i int) (context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) {
 	fake.addNetworkMutex.RLock()
 	defer fake.addNetworkMutex.RUnlock()
 	argsForCall := fake.addNetworkArgsForCall[i]
@@ -369,12 +369,12 @@ func (fake *FakeCNI) AddNetworkListReturnsOnCall(i int, result1 types.Result, re
 	}{result1, result2}
 }
 
-func (fake *FakeCNI) CheckNetwork(arg1 context.Context, arg2 *libcni.PluginConfig, arg3 *libcni.RuntimeConf) error {
+func (fake *FakeCNI) CheckNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig, arg3 *libcni.RuntimeConf) error {
 	fake.checkNetworkMutex.Lock()
 	ret, specificReturn := fake.checkNetworkReturnsOnCall[len(fake.checkNetworkArgsForCall)]
 	fake.checkNetworkArgsForCall = append(fake.checkNetworkArgsForCall, struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
 	stub := fake.CheckNetworkStub
@@ -396,13 +396,13 @@ func (fake *FakeCNI) CheckNetworkCallCount() int {
 	return len(fake.checkNetworkArgsForCall)
 }
 
-func (fake *FakeCNI) CheckNetworkCalls(stub func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) error) {
+func (fake *FakeCNI) CheckNetworkCalls(stub func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) error) {
 	fake.checkNetworkMutex.Lock()
 	defer fake.checkNetworkMutex.Unlock()
 	fake.CheckNetworkStub = stub
 }
 
-func (fake *FakeCNI) CheckNetworkArgsForCall(i int) (context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) {
+func (fake *FakeCNI) CheckNetworkArgsForCall(i int) (context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) {
 	fake.checkNetworkMutex.RLock()
 	defer fake.checkNetworkMutex.RUnlock()
 	argsForCall := fake.checkNetworkArgsForCall[i]
@@ -495,12 +495,12 @@ func (fake *FakeCNI) CheckNetworkListReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeCNI) DelNetwork(arg1 context.Context, arg2 *libcni.PluginConfig, arg3 *libcni.RuntimeConf) error {
+func (fake *FakeCNI) DelNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig, arg3 *libcni.RuntimeConf) error {
 	fake.delNetworkMutex.Lock()
 	ret, specificReturn := fake.delNetworkReturnsOnCall[len(fake.delNetworkArgsForCall)]
 	fake.delNetworkArgsForCall = append(fake.delNetworkArgsForCall, struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 		arg3 *libcni.RuntimeConf
 	}{arg1, arg2, arg3})
 	stub := fake.DelNetworkStub
@@ -522,13 +522,13 @@ func (fake *FakeCNI) DelNetworkCallCount() int {
 	return len(fake.delNetworkArgsForCall)
 }
 
-func (fake *FakeCNI) DelNetworkCalls(stub func(context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) error) {
+func (fake *FakeCNI) DelNetworkCalls(stub func(context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) error) {
 	fake.delNetworkMutex.Lock()
 	defer fake.delNetworkMutex.Unlock()
 	fake.DelNetworkStub = stub
 }
 
-func (fake *FakeCNI) DelNetworkArgsForCall(i int) (context.Context, *libcni.PluginConfig, *libcni.RuntimeConf) {
+func (fake *FakeCNI) DelNetworkArgsForCall(i int) (context.Context, *libcni.NetworkConfig, *libcni.RuntimeConf) {
 	fake.delNetworkMutex.RLock()
 	defer fake.delNetworkMutex.RUnlock()
 	argsForCall := fake.delNetworkArgsForCall[i]
@@ -748,11 +748,11 @@ func (fake *FakeCNI) GetCachedAttachmentsReturnsOnCall(i int, result1 []*libcni.
 	}{result1, result2}
 }
 
-func (fake *FakeCNI) GetNetworkCachedConfig(arg1 *libcni.PluginConfig, arg2 *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error) {
+func (fake *FakeCNI) GetNetworkCachedConfig(arg1 *libcni.NetworkConfig, arg2 *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error) {
 	fake.getNetworkCachedConfigMutex.Lock()
 	ret, specificReturn := fake.getNetworkCachedConfigReturnsOnCall[len(fake.getNetworkCachedConfigArgsForCall)]
 	fake.getNetworkCachedConfigArgsForCall = append(fake.getNetworkCachedConfigArgsForCall, struct {
-		arg1 *libcni.PluginConfig
+		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
 	stub := fake.GetNetworkCachedConfigStub
@@ -774,13 +774,13 @@ func (fake *FakeCNI) GetNetworkCachedConfigCallCount() int {
 	return len(fake.getNetworkCachedConfigArgsForCall)
 }
 
-func (fake *FakeCNI) GetNetworkCachedConfigCalls(stub func(*libcni.PluginConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)) {
+func (fake *FakeCNI) GetNetworkCachedConfigCalls(stub func(*libcni.NetworkConfig, *libcni.RuntimeConf) ([]byte, *libcni.RuntimeConf, error)) {
 	fake.getNetworkCachedConfigMutex.Lock()
 	defer fake.getNetworkCachedConfigMutex.Unlock()
 	fake.GetNetworkCachedConfigStub = stub
 }
 
-func (fake *FakeCNI) GetNetworkCachedConfigArgsForCall(i int) (*libcni.PluginConfig, *libcni.RuntimeConf) {
+func (fake *FakeCNI) GetNetworkCachedConfigArgsForCall(i int) (*libcni.NetworkConfig, *libcni.RuntimeConf) {
 	fake.getNetworkCachedConfigMutex.RLock()
 	defer fake.getNetworkCachedConfigMutex.RUnlock()
 	argsForCall := fake.getNetworkCachedConfigArgsForCall[i]
@@ -816,11 +816,11 @@ func (fake *FakeCNI) GetNetworkCachedConfigReturnsOnCall(i int, result1 []byte, 
 	}{result1, result2, result3}
 }
 
-func (fake *FakeCNI) GetNetworkCachedResult(arg1 *libcni.PluginConfig, arg2 *libcni.RuntimeConf) (types.Result, error) {
+func (fake *FakeCNI) GetNetworkCachedResult(arg1 *libcni.NetworkConfig, arg2 *libcni.RuntimeConf) (types.Result, error) {
 	fake.getNetworkCachedResultMutex.Lock()
 	ret, specificReturn := fake.getNetworkCachedResultReturnsOnCall[len(fake.getNetworkCachedResultArgsForCall)]
 	fake.getNetworkCachedResultArgsForCall = append(fake.getNetworkCachedResultArgsForCall, struct {
-		arg1 *libcni.PluginConfig
+		arg1 *libcni.NetworkConfig
 		arg2 *libcni.RuntimeConf
 	}{arg1, arg2})
 	stub := fake.GetNetworkCachedResultStub
@@ -842,13 +842,13 @@ func (fake *FakeCNI) GetNetworkCachedResultCallCount() int {
 	return len(fake.getNetworkCachedResultArgsForCall)
 }
 
-func (fake *FakeCNI) GetNetworkCachedResultCalls(stub func(*libcni.PluginConfig, *libcni.RuntimeConf) (types.Result, error)) {
+func (fake *FakeCNI) GetNetworkCachedResultCalls(stub func(*libcni.NetworkConfig, *libcni.RuntimeConf) (types.Result, error)) {
 	fake.getNetworkCachedResultMutex.Lock()
 	defer fake.getNetworkCachedResultMutex.Unlock()
 	fake.GetNetworkCachedResultStub = stub
 }
 
-func (fake *FakeCNI) GetNetworkCachedResultArgsForCall(i int) (*libcni.PluginConfig, *libcni.RuntimeConf) {
+func (fake *FakeCNI) GetNetworkCachedResultArgsForCall(i int) (*libcni.NetworkConfig, *libcni.RuntimeConf) {
 	fake.getNetworkCachedResultMutex.RLock()
 	defer fake.getNetworkCachedResultMutex.RUnlock()
 	argsForCall := fake.getNetworkCachedResultArgsForCall[i]
@@ -1141,12 +1141,12 @@ func (fake *FakeCNI) GetVersionInfoReturnsOnCall(i int, result1 version.PluginIn
 	}{result1, result2}
 }
 
-func (fake *FakeCNI) ValidateNetwork(arg1 context.Context, arg2 *libcni.PluginConfig) ([]string, error) {
+func (fake *FakeCNI) ValidateNetwork(arg1 context.Context, arg2 *libcni.NetworkConfig) ([]string, error) {
 	fake.validateNetworkMutex.Lock()
 	ret, specificReturn := fake.validateNetworkReturnsOnCall[len(fake.validateNetworkArgsForCall)]
 	fake.validateNetworkArgsForCall = append(fake.validateNetworkArgsForCall, struct {
 		arg1 context.Context
-		arg2 *libcni.PluginConfig
+		arg2 *libcni.NetworkConfig
 	}{arg1, arg2})
 	stub := fake.ValidateNetworkStub
 	fakeReturns := fake.validateNetworkReturns
@@ -1167,13 +1167,13 @@ func (fake *FakeCNI) ValidateNetworkCallCount() int {
 	return len(fake.validateNetworkArgsForCall)
 }
 
-func (fake *FakeCNI) ValidateNetworkCalls(stub func(context.Context, *libcni.PluginConfig) ([]string, error)) {
+func (fake *FakeCNI) ValidateNetworkCalls(stub func(context.Context, *libcni.NetworkConfig) ([]string, error)) {
 	fake.validateNetworkMutex.Lock()
 	defer fake.validateNetworkMutex.Unlock()
 	fake.ValidateNetworkStub = stub
 }
 
-func (fake *FakeCNI) ValidateNetworkArgsForCall(i int) (context.Context, *libcni.PluginConfig) {
+func (fake *FakeCNI) ValidateNetworkArgsForCall(i int) (context.Context, *libcni.NetworkConfig) {
 	fake.validateNetworkMutex.RLock()
 	defer fake.validateNetworkMutex.RUnlock()
 	argsForCall := fake.validateNetworkArgsForCall[i]

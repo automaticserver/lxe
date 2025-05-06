@@ -18,7 +18,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
-	utilNet "k8s.io/apimachinery/pkg/util/net"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -33,7 +32,6 @@ var (
 
 // RuntimeServer implements the CRI RuntimeServer
 type RuntimeServer struct {
-	rtApi.RuntimeServiceServer
 	lxf       lxf.Client
 	stream    *streamService
 	lxdConfig *config.Config
@@ -81,8 +79,8 @@ func (s RuntimeServer) Version(ctx context.Context, req *rtApi.VersionRequest) (
 	return response, nil
 }
 
-// RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure the sandbox is in the ready state on
-// success
+// RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure
+// the sandbox is in the ready state on success.
 func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandboxRequest) (*rtApi.RunPodSandboxResponse, error) { // nolint: gocognit, cyclop
 	log := log.WithContext(ctx).WithFields(logrus.Fields{
 		"podname":   req.GetConfig().GetMetadata().GetName(),
@@ -272,11 +270,15 @@ func (s RuntimeServer) RunPodSandbox(ctx context.Context, req *rtApi.RunPodSandb
 	return &rtApi.RunPodSandboxResponse{PodSandboxId: sb.ID}, nil
 }
 
-// StopPodSandbox stops any running process that is part of the sandbox and reclaims network resources (e.g. IP
-// addresses) allocated to the sandbox. If there are any running containers in the sandbox, they must be forcibly
-// terminated. This call is idempotent, and must not return an error if all relevant resources have already been
-// reclaimed. kubelet will call StopPodSandbox at least once before calling RemovePodSandbox. It will also attempt to
-// reclaim resources eagerly, as soon as a sandbox is not needed. Hence, multiple StopPodSandbox calls are expected.
+// StopPodSandbox stops any running process that is part of the sandbox and
+// reclaims network resources (e.g., IP addresses) allocated to the sandbox.
+// If there are any running containers in the sandbox, they must be forcibly
+// terminated.
+// This call is idempotent, and must not return an error if all relevant
+// resources have already been reclaimed. kubelet will call StopPodSandbox
+// at least once before calling RemovePodSandbox. It will also attempt to
+// reclaim resources eagerly, as soon as a sandbox is not needed. Hence,
+// multiple StopPodSandbox calls are expected.
 func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSandboxRequest) (*rtApi.StopPodSandboxResponse, error) {
 	log := log.WithContext(ctx).WithField("podid", req.GetPodSandboxId())
 	log.Info("stop pod")
@@ -306,8 +308,10 @@ func (s RuntimeServer) StopPodSandbox(ctx context.Context, req *rtApi.StopPodSan
 	return &rtApi.StopPodSandboxResponse{}, nil
 }
 
-// RemovePodSandbox removes the sandbox. This is pretty much the same as StopPodSandbox but also removes the sandbox and
-// the containers
+// RemovePodSandbox removes the sandbox. If there are any running containers
+// in the sandbox, they must be forcibly terminated and removed.
+// This call is idempotent, and must not return an error if the sandbox has
+// already been removed.
 func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePodSandboxRequest) (*rtApi.RemovePodSandboxResponse, error) {
 	log := log.WithContext(ctx).WithField("podid", req.GetPodSandboxId())
 	log.Info("remove pod")
@@ -342,7 +346,8 @@ func (s RuntimeServer) RemovePodSandbox(ctx context.Context, req *rtApi.RemovePo
 	return &rtApi.RemovePodSandboxResponse{}, nil
 }
 
-// PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not present, returns an error.
+// PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
+// present, returns an error.
 func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandboxStatusRequest) (*rtApi.PodSandboxStatusResponse, error) {
 	log := log.WithContext(ctx).WithField("podid", req.GetPodSandboxId())
 
@@ -402,74 +407,6 @@ func (s RuntimeServer) PodSandboxStatus(ctx context.Context, req *rtApi.PodSandb
 	return response, nil
 }
 
-// // PodSandboxStats returns stats of the pod. If the pod sandbox does not exist, the call returns an error.
-// func (s RuntimeServer) PodSandboxStats(ctx context.Context, req *rtApi.PodSandboxStatsRequest) (*rtApi.PodSandboxStatsResponse, error) {
-// 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
-// }
-
-// getInetAddress returns the ip address of the sandbox. empty string if nothing was found
-func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string { // nolint: cyclop
-	log := log.WithContext(ctx).WithField("podid", sb.ID)
-
-	switch sb.NetworkConfig.Mode {
-	case lxf.NetworkHost:
-		ip, err := utilNet.ChooseHostInterface()
-		if err != nil {
-			log.WithError(err).Error("Couldn't choose host interface")
-
-			return ""
-		}
-
-		return ip.String()
-	case lxf.NetworkNone:
-		return ""
-	case lxf.NetworkBridged:
-		fallthrough
-	case lxf.NetworkCNI:
-		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
-		if err != nil {
-			log.WithError(err).Error("Couldn't get cni pod network")
-
-			return ""
-		}
-
-		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
-		if err != nil {
-			log.WithError(err).Error("Couldn't get status of cni pod network")
-
-			return ""
-		}
-
-		if len(status.IPs) > 0 {
-			return status.IPs[0].String()
-		}
-	}
-
-	// If not yet returned, look into the containers interface list and select the address from the default interface
-	// TODO: is this still needed? Look into network.Bridge as well
-	cl, err := sb.Containers()
-	if err != nil {
-		log.WithError(err).Error("Couldn't list containers while trying to get inet address")
-
-		return ""
-	}
-
-	for _, c := range cl {
-		// ignore any non-running containers
-		if c.StateName != lxf.ContainerStateRunning {
-			continue
-		}
-
-		// get the ipv4 address of eth0
-		ip := c.GetInetAddress([]string{network.DefaultInterface})
-		if ip != "" {
-			return ip
-		}
-	}
-
-	return ""
-}
-
 // ListPodSandbox returns a list of PodSandboxes.
 func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSandboxRequest) (*rtApi.ListPodSandboxResponse, error) {
 	log := log.WithContext(ctx).WithField("filter", req.GetFilter().String())
@@ -516,11 +453,6 @@ func (s RuntimeServer) ListPodSandbox(ctx context.Context, req *rtApi.ListPodSan
 
 	return response, nil
 }
-
-// // ListPodSandboxStats returns stats of the pods matching a filter.
-// func (s RuntimeServer) ListPodSandboxStats(ctx context.Context, req *rtApi.ListPodSandboxStatsRequest) (*rtApi.ListPodSandboxStatsResponse, error) {
-// 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
-// }
 
 // CreateContainer creates a new container in specified PodSandbox
 func (s RuntimeServer) CreateContainer(ctx context.Context, req *rtApi.CreateContainerRequest) (*rtApi.CreateContainerResponse, error) { // nolint: cyclop
@@ -669,8 +601,11 @@ func (s RuntimeServer) StartContainer(ctx context.Context, req *rtApi.StartConta
 	return &rtApi.StartContainerResponse{}, nil
 }
 
-// StopContainer stops a running container with a grace period (i.e., timeout). This call is idempotent, and must not
-// return an error if the container has already been stopped.
+// StopContainer stops a running container with a grace period (i.e., timeout).
+// This call is idempotent, and must not return an error if the container has
+// already been stopped.
+// The runtime must forcibly kill the container after the grace period is
+// reached.
 func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContainerRequest) (*rtApi.StopContainerResponse, error) {
 	log := log.WithContext(ctx).WithField("containerid", req.GetContainerId())
 	log.Info("stop container")
@@ -694,8 +629,10 @@ func (s RuntimeServer) StopContainer(ctx context.Context, req *rtApi.StopContain
 	return &rtApi.StopContainerResponse{}, nil
 }
 
-// RemoveContainer removes the container. If the container is running, the container must be forcibly removed. This call
-// is idempotent, and must not return an error if the container has already been removed. nolint: dupl
+// RemoveContainer removes the container. If the container is running, the
+// container must be forcibly removed.
+// This call is idempotent, and must not return an error if the container has
+// already been removed.
 func (s RuntimeServer) RemoveContainer(ctx context.Context, req *rtApi.RemoveContainerRequest) (*rtApi.RemoveContainerResponse, error) {
 	log := log.WithContext(ctx).WithField("containerid", req.GetContainerId())
 	log.Info("remove container")
@@ -756,7 +693,8 @@ func (s RuntimeServer) ListContainers(ctx context.Context, req *rtApi.ListContai
 	return response, nil
 }
 
-// ContainerStatus returns status of the container. If the container is not present, returns an error.
+// ContainerStatus returns status of the container. If the container is not
+// present, returns an error.
 func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.ContainerStatusRequest) (*rtApi.ContainerStatusResponse, error) {
 	log := log.WithContext(ctx).WithField("containerid", req.GetContainerId())
 
@@ -774,14 +712,17 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 	return response, nil
 }
 
-// UpdateContainerResources updates ContainerConfig of the container.
+// UpdateContainerResources updates ContainerConfig of the container synchronously.
+// If runtime fails to transactionally update the requested resources, an error is returned.
 func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.UpdateContainerResourcesRequest) (*rtApi.UpdateContainerResourcesResponse, error) {
 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }
 
-// ReopenContainerLog asks runtime to reopen the stdout/stderr log file for the container. This is often called after
-// the log file has been rotated. If the container is not running, container runtime can choose to either create a new
-// log file and return nil, or return an error. Once it returns error, new container log file MUST NOT be created.
+// ReopenContainerLog asks runtime to reopen the stdout/stderr log file
+// for the container. This is often called after the log file has been
+// rotated. If the container is not running, container runtime can choose
+// to either create a new log file and return nil, or return an error.
+// Once it returns error, new container log file MUST NOT be created.
 func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.ReopenContainerLogRequest) (*rtApi.ReopenContainerLogResponse, error) {
 	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }
@@ -850,7 +791,8 @@ func (s RuntimeServer) PortForward(ctx context.Context, req *rtApi.PortForwardRe
 	return resp, nil
 }
 
-// ContainerStats returns stats of the container. If the container does not exist, the call returns an error.
+// ContainerStats returns stats of the container. If the container does not
+// exist, the call returns an error.
 func (s RuntimeServer) ContainerStats(ctx context.Context, req *rtApi.ContainerStatsRequest) (*rtApi.ContainerStatsResponse, error) {
 	log := log.WithContext(ctx).WithField("containerid", req.GetContainerId())
 
@@ -910,6 +852,16 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 	return response, nil
 }
 
+// PodSandboxStats returns stats of the pod. If the pod sandbox does not exist, the call returns an error.
+func (s RuntimeServer) PodSandboxStats(ctx context.Context, req *rtApi.PodSandboxStatsRequest) (*rtApi.PodSandboxStatsResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
+// // ListPodSandboxStats returns stats of the pods matching a filter.
+func (s RuntimeServer) ListPodSandboxStats(ctx context.Context, req *rtApi.ListPodSandboxStatsRequest) (*rtApi.ListPodSandboxStatsResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
 // UpdateRuntimeConfig updates the runtime configuration based on the given request.
 func (s RuntimeServer) UpdateRuntimeConfig(ctx context.Context, req *rtApi.UpdateRuntimeConfigRequest) (*rtApi.UpdateRuntimeConfigResponse, error) {
 	log := log.WithContext(ctx).WithField("cidr", req.GetRuntimeConfig().GetNetworkConfig().GetPodCidr())
@@ -941,4 +893,39 @@ func (s RuntimeServer) Status(ctx context.Context, req *rtApi.StatusRequest) (*r
 	}
 
 	return response, nil
+}
+
+// CheckpointContainer checkpoints a container
+func (s RuntimeServer) CheckpointContainer(ctx context.Context, req *rtApi.CheckpointContainerRequest) (*rtApi.CheckpointContainerResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
+// GetContainerEvents gets container events from the CRI runtime
+func (s RuntimeServer) GetContainerEvents(req *rtApi.GetEventsRequest, srv rtApi.RuntimeService_GetContainerEventsServer) error {
+	return SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
+// ListMetricDescriptors gets the descriptors for the metrics that will be returned in ListPodSandboxMetrics.
+// This list should be static at startup: either the client and server restart together when
+// adding or removing metrics descriptors, or they should not change.
+// Put differently, if ListPodSandboxMetrics references a name that is not described in the initial
+// ListMetricDescriptors call, then the metric will not be broadcasted.
+func (s RuntimeServer) ListMetricDescriptors(ctx context.Context, req *rtApi.ListMetricDescriptorsRequest) (*rtApi.ListMetricDescriptorsResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
+// ListPodSandboxMetrics gets pod sandbox metrics from CRI Runtime
+func (s RuntimeServer) ListPodSandboxMetrics(ctx context.Context, req *rtApi.ListPodSandboxMetricsRequest) (*rtApi.ListPodSandboxMetricsResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+}
+
+// RuntimeConfig returns configuration information of the runtime.
+// A couple of notes:
+//   - The RuntimeConfigRequest object is not to be confused with the contents of UpdateRuntimeConfigRequest.
+//     The former is for having runtime tell Kubelet what to do, the latter vice versa.
+//   - It is the expectation of the Kubelet that these fields are static for the lifecycle of the Kubelet.
+//     The Kubelet will not re-request the RuntimeConfiguration after startup, and CRI implementations should
+//     avoid updating them without a full node reboot.
+func (s RuntimeServer) RuntimeConfig(ctx context.Context, req *rtApi.RuntimeConfigRequest) (*rtApi.RuntimeConfigResponse, error) {
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
 }

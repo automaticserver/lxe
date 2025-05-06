@@ -14,6 +14,7 @@ import (
 	sharedLXD "github.com/canonical/lxd/shared"
 	homedir "github.com/mitchellh/go-homedir"
 	"golang.org/x/net/context"
+	utilNet "k8s.io/apimachinery/pkg/util/net"
 	rtApi "k8s.io/cri-api/pkg/apis/runtime/v1"
 )
 
@@ -449,4 +450,67 @@ func (s RuntimeServer) handleNetworkResult(sb *lxf.Sandbox, res *network.Result)
 	}
 
 	return nil
+}
+
+// getInetAddress returns the ip address of the sandbox. empty string if nothing was found
+func (s RuntimeServer) getInetAddress(ctx context.Context, sb *lxf.Sandbox) string { // nolint: cyclop
+	log := log.WithContext(ctx).WithField("podid", sb.ID)
+
+	switch sb.NetworkConfig.Mode {
+	case lxf.NetworkHost:
+		ip, err := utilNet.ChooseHostInterface()
+		if err != nil {
+			log.WithError(err).Error("Couldn't choose host interface")
+
+			return ""
+		}
+
+		return ip.String()
+	case lxf.NetworkNone:
+		return ""
+	case lxf.NetworkBridged:
+		fallthrough
+	case lxf.NetworkCNI:
+		podNet, err := s.network.PodNetwork(sb.ID, sb.Annotations)
+		if err != nil {
+			log.WithError(err).Error("Couldn't get cni pod network")
+
+			return ""
+		}
+
+		status, err := podNet.Status(ctx, &network.PropertiesRunning{Properties: network.Properties{Data: sb.NetworkConfig.ModeData}, Pid: 0})
+		if err != nil {
+			log.WithError(err).Error("Couldn't get status of cni pod network")
+
+			return ""
+		}
+
+		if len(status.IPs) > 0 {
+			return status.IPs[0].String()
+		}
+	}
+
+	// If not yet returned, look into the containers interface list and select the address from the default interface
+	// TODO: is this still needed? Look into network.Bridge as well
+	cl, err := sb.Containers()
+	if err != nil {
+		log.WithError(err).Error("Couldn't list containers while trying to get inet address")
+
+		return ""
+	}
+
+	for _, c := range cl {
+		// ignore any non-running containers
+		if c.StateName != lxf.ContainerStateRunning {
+			continue
+		}
+
+		// get the ipv4 address of eth0
+		ip := c.GetInetAddress([]string{network.DefaultInterface})
+		if ip != "" {
+			return ip
+		}
+	}
+
+	return ""
 }

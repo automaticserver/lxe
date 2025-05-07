@@ -6,13 +6,11 @@ During development we found various technical and non-technical issues and reaso
 
 ### "LXD only does system containers"
 
-LXD [does not offer to create containers from OCI images](https://discuss.linuxcontainers.org/t/using-oci-templates-in-lxd/1911) (follow the thread). LXC itself can. According to the last comment you might be able to work around this issue, possibly by providing a remote for these images, or maybe using the underlying LXC itself.
-
-But here lies a **conceptual conflict between LXD and Kubernetes**. Kubernetes wants only application containers while LXD is designed to only run system containers. For now, LXE supports only but any provided image from a (public) LXD remote.
+LXD [does not offer to create containers from OCI images](https://documentation.ubuntu.com/lxd/latest/explanation/instances/#application-containers-vs-system-containers). Here lies a **conceptual conflict between LXD and Kubernetes**. Kubernetes wants only application containers while LXD is designed to only run system containers. For now, LXE supports only but any provided image from a LXD remote.
 
 ### Image name format
 
-Kubernetes is too focused on the OCI (or docker?) image name format and communications. It applies [default tags](https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/images/image_manager.go#L95), provides only [docker specific credentials](https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/container/runtime.go#L140) if they are defined and [validates the image name](https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/images/image_manager.go#L150) to [docker grammar](https://github.com/docker/distribution/blob/master/reference/reference.go#L4). So this leaves us with a conflict, that even the image name format of a normal LXD image (e.g. `images:ubuntu/trusty`) is not allowed.
+Kubernetes is too focused on the OCI (or docker?) image name format and communications. It applies [default tags](https://github.com/kubernetes/kubernetes/blob/a3097010faac734fb4956dbc91ae9034d0a9f840/pkg/kubelet/images/image_manager.go#L155) and [validates the image name](https://github.com/kubernetes/kubernetes/blob/a3097010faac734fb4956dbc91ae9034d0a9f840/pkg/kubelet/images/image_manager.go#L181) to [docker grammar](https://pkg.go.dev/github.com/distribution/reference#pkg-overview). So this leaves us with a conflict, that even the image name format of a normal LXD image (e.g. `images:ubuntu/trusty`) is not allowed.
 
 So this leaves us with an awkward workaround to have to specify the following grammar and rules:
 

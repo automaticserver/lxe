@@ -1,6 +1,6 @@
 # PodSpec and Container API implementation
 
-The following table provides an overview of the current implementation of the [`PodSpec` v1 core](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#podspec-v1-core) and [`Container` v1 core](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#container-v1-core) API.
+The following table provides an overview of the current implementation of the [`PodSpec` v1 core](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/) and [`Container` v1 core](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#Container) API.
 
 - Some properties have implementation specific characteristics, *marked with an asterisk (\*)*
 - Properties without CRI implications are *marked with a dash (-)*.
@@ -10,13 +10,13 @@ The following table provides an overview of the current implementation of the [`
 | -- | -- | -- | -- |
 | `activeDeadlineSeconds` | - | _not CRI related_ |  |
 | `affinity` | - | _not CRI related_ |  |
-| `automountServiceAccountToken` | yes | implicitly provided with [`CRI Mounts`](https://github.com/kubernetes/kubernetes/blob/release-1.12/pkg/kubelet/apis/cri/runtime/v1alpha2/api.pb.go#L1835) |  |
+| `automountServiceAccountToken` | yes | implicitly provided with CRI mounts |  |
 | `containers` | yes* | only one container per pod currently, see [FAQ](development-preview-faq.md) | the lxc containers |
 | `dnsConfig` | yes | see `dnsPolicy` | |
 | `dnsPolicy` | yes | kubelet does all the work and provides the target settings |  |
 | `hostAliases` | yes | kubelet does all the work and provides the hosts file as CRI Mount |  |
 | `hostIPC` | ? |  |  |
-| `hostNetwork` | yes* | if false LXE calls [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration) | if true then `config.raw.lxc.include` to a file containing `lxc.net.0.type=none` |
+| `hostNetwork` | yes* | if false LXE calls [CNI](https://github.com/containernetworking/cni/blob/main/SPEC.md#network-configuration) | if true then `config.raw.lxc.include` to a file containing `lxc.net.0.type=none` |
 | `hostPID` | ? |  |  |
 | `hostname` | yes* | providing hostname using cloud-init vendor-data, see [FAQ](development-preview-faq.md) | unfortunately in LXD the container name *is* the hostname, so providing via `config.user.vendor-data` |
 | `imagePullSecrets` | ? | authentication to LXD servers are different than to docker, see `container.image` |  |
@@ -58,6 +58,6 @@ The following table provides an overview of the current implementation of the [`
 | `terminationMessagePath` | ? |  |  |
 | `terminationMessagePolicy` | ? |  |  |
 | `tty` | ? |  |  |
-| `volumeDevices` | yes | with [`CRI Devices`](https://github.com/kubernetes/kubernetes/blob/release-1.12/pkg/kubelet/apis/cri/runtime/v1alpha2/api.pb.go#L1837) | `config.devices.*.type=block` |
-| `volumeMounts` | yes | with [`CRI Mounts`](https://github.com/kubernetes/kubernetes/blob/release-1.12/pkg/kubelet/apis/cri/runtime/v1alpha2/api.pb.go#L1835) | `config.devices.*.type=disk` |
+| `volumeDevices` | yes | with CRI devices | `config.devices.*.type=block` |
+| `volumeMounts` | yes | with CRI mounts | `config.devices.*.type=disk` |
 | `workingDir` | ? |  |  |

@@ -6,9 +6,9 @@ Unit tests can be run with `make test` or `go test ./...` and don't require any 
 
 ## cri-tools' critest
 
-LXE has a `--critest` option which prepares some default images to use in the `critest` command since LXE uses LXD and that doesn't support OCI images. It also rewrites *some* image requests as the hardcoded image names in critest are just not available in LXD. If it does so it clearly writes this in the output like `CRITest: %s`. This feature is considered experimental as the images might still not meet the wished requirments.
+LXE has a `--critest` option which prepares some default images to use in the `critest` command since LXE uses LXD and that doesn't support OCI images. It also rewrites *some* image requests as the hardcoded image names in critest are just not available in LXD. If it does so it clearly writes this in the output like `CRITest: %s`. This feature is considered experimental as the images might still not meet the wished requirements.
 
-LXE will never pass all the critest cases due to the fact that LXD does not support OCI images and LXD might not offer all the runtime features docker provides. LXD does **system containers**, while docker and similiar OCI runtimes do **application containers**.
+LXE will never pass all the critest cases due to the fact that [LXD does not support OCI images](development-preview-faq.md) and LXD might not offer all the runtime features docker provides. [LXD does **system containers**, while docker and similiar OCI runtimes do **application containers**](https://documentation.ubuntu.com/lxd/latest/explanation/instances/#application-containers-vs-system-containers).
 
 Run lxe in critest mode:
 

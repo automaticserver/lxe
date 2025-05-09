@@ -37,5 +37,9 @@ type SilentError struct {
 }
 
 func SilErr(log *logrus.Entry, code codes.Code, err error, msg string) error {
+	if logrus.GetLevel() >= logrus.DebugLevel {
+		log.WithError(err).WithField("code", code).Errorf("silent error: %s", msg)
+	}
+
 	return SilentError{AnnotatedError{log, code, err, msg}}
 }

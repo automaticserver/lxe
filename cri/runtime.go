@@ -715,7 +715,7 @@ func (s RuntimeServer) ContainerStatus(ctx context.Context, req *rtApi.Container
 // UpdateContainerResources updates ContainerConfig of the container synchronously.
 // If runtime fails to transactionally update the requested resources, an error is returned.
 func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.UpdateContainerResourcesRequest) (*rtApi.UpdateContainerResourcesResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "UpdateContainerResources")
 }
 
 // ReopenContainerLog asks runtime to reopen the stdout/stderr log file
@@ -724,7 +724,7 @@ func (s RuntimeServer) UpdateContainerResources(ctx context.Context, req *rtApi.
 // to either create a new log file and return nil, or return an error.
 // Once it returns error, new container log file MUST NOT be created.
 func (s RuntimeServer) ReopenContainerLog(ctx context.Context, req *rtApi.ReopenContainerLogRequest) (*rtApi.ReopenContainerLogResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "ReopenContainerLog")
 }
 
 // ExecSync runs a command in a container synchronously.
@@ -773,7 +773,7 @@ func (s RuntimeServer) Exec(ctx context.Context, req *rtApi.ExecRequest) (*rtApi
 
 // Attach prepares a streaming endpoint to attach to a running container.
 func (s RuntimeServer) Attach(ctx context.Context, req *rtApi.AttachRequest) (*rtApi.AttachResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "Attach")
 }
 
 // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
@@ -854,12 +854,12 @@ func (s RuntimeServer) ListContainerStats(ctx context.Context, req *rtApi.ListCo
 
 // PodSandboxStats returns stats of the pod. If the pod sandbox does not exist, the call returns an error.
 func (s RuntimeServer) PodSandboxStats(ctx context.Context, req *rtApi.PodSandboxStatsRequest) (*rtApi.PodSandboxStatsResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "PodSandboxStats")
 }
 
 // // ListPodSandboxStats returns stats of the pods matching a filter.
 func (s RuntimeServer) ListPodSandboxStats(ctx context.Context, req *rtApi.ListPodSandboxStatsRequest) (*rtApi.ListPodSandboxStatsResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "ListPodSandboxStats")
 }
 
 // UpdateRuntimeConfig updates the runtime configuration based on the given request.
@@ -897,12 +897,12 @@ func (s RuntimeServer) Status(ctx context.Context, req *rtApi.StatusRequest) (*r
 
 // CheckpointContainer checkpoints a container
 func (s RuntimeServer) CheckpointContainer(ctx context.Context, req *rtApi.CheckpointContainerRequest) (*rtApi.CheckpointContainerResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "CheckpointContainer")
 }
 
 // GetContainerEvents gets container events from the CRI runtime
 func (s RuntimeServer) GetContainerEvents(req *rtApi.GetEventsRequest, srv rtApi.RuntimeService_GetContainerEventsServer) error {
-	return SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return SilErr(log, codes.Unimplemented, ErrNotImplemented, "GetContainerEvents")
 }
 
 // ListMetricDescriptors gets the descriptors for the metrics that will be returned in ListPodSandboxMetrics.
@@ -911,12 +911,12 @@ func (s RuntimeServer) GetContainerEvents(req *rtApi.GetEventsRequest, srv rtApi
 // Put differently, if ListPodSandboxMetrics references a name that is not described in the initial
 // ListMetricDescriptors call, then the metric will not be broadcasted.
 func (s RuntimeServer) ListMetricDescriptors(ctx context.Context, req *rtApi.ListMetricDescriptorsRequest) (*rtApi.ListMetricDescriptorsResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "ListMetricDescriptors")
 }
 
 // ListPodSandboxMetrics gets pod sandbox metrics from CRI Runtime
 func (s RuntimeServer) ListPodSandboxMetrics(ctx context.Context, req *rtApi.ListPodSandboxMetricsRequest) (*rtApi.ListPodSandboxMetricsResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "ListPodSandboxMetrics")
 }
 
 // RuntimeConfig returns configuration information of the runtime.
@@ -927,5 +927,5 @@ func (s RuntimeServer) ListPodSandboxMetrics(ctx context.Context, req *rtApi.Lis
 //     The Kubelet will not re-request the RuntimeConfiguration after startup, and CRI implementations should
 //     avoid updating them without a full node reboot.
 func (s RuntimeServer) RuntimeConfig(ctx context.Context, req *rtApi.RuntimeConfigRequest) (*rtApi.RuntimeConfigResponse, error) {
-	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "")
+	return nil, SilErr(log, codes.Unimplemented, ErrNotImplemented, "RuntimeConfig")
 }

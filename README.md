@@ -11,14 +11,13 @@
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/automaticserver/lxe)](https://github.com/automaticserver/lxe/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/automaticserver/lxe)](https://goreportcard.com/report/github.com/automaticserver/lxe)
 [![GitHub](https://img.shields.io/github/license/automaticserver/lxe?color=lightgrey)](https://github.com/automaticserver/lxe/blob/master/COPYING)
-[![Gitter](https://img.shields.io/gitter/room/automaticserver/lxe?color=blueviolet)](https://gitter.im/automaticserver-lxe)
 
-LXE is a shim of the Kubernetes [Container Runtime Interface](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md) for LXD.
-This project is currently under heavy development, expect incompatible changes.
+LXE is a shim of the Kubernetes [Container Runtime Interface (CRI)](https://kubernetes.io/docs/concepts/architecture/cri/) for LXD.
+This project is still experimental.
 
 ## Requirements
 
-You need to have LXD installed, which packages are officially only available [via snap](https://linuxcontainers.org/lxd/getting-started-cli/#snap-package-archlinux-debian-fedora-opensuse-and-ubuntu). Debian is working on a LXD [deb package](https://wiki.debian.org/LXD), other distros might be as well. A LXD built by source is also supported.
+You need to have LXD installed, which packages are officially only available [via snap](https://canonical.com/lxd/install) or build it by source. Currently LXE is built and tested against LXD 5.0 LTS. Debian offers [the incus fork](https://wiki.debian.org/Incus), other distros might be as well.
 
 ## Installing LXE from releases
 
@@ -30,11 +29,11 @@ Head over to the [releases page](https://github.com/automaticserver/lxe/releases
 
 Please follow these steps carefully. Some parameters and arguments depend on how you installed LXD.
 
-Make sure [that you have LXD running](https://github.com/canonical/lxd#machine-setup) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), LXE will need that later.
+Make sure [that you have LXD running](https://documentation.ubuntu.com/lxd/latest/getting_started/) and the LXD-client's remote configuration file exists (e.g. by running `lxc list` once), LXE will need that later.
 
 ### Running LXE
 
-LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://linuxcontainers.org/lxd/getting-started-cli/#access-control). When using the network-plugin cni root permissions are required.
+LXE can be run as a non-privileged user, so give it [access to lxd's socket](https://documentation.ubuntu.com/server/how-to/containers/lxd-containers/index.html#configuration). When using CNI as the network-plugin root permissions are required.
 
 #### Parameters
 
@@ -47,9 +46,7 @@ The most important LXE options are the following:
       --socket string               Path of the socket where it should provide the runtime and image service to kubelet. (default "/run/lxe.sock")
 ```
 
-We recommend to use CNI as the network plugin as it offers more flexibility and integration to [common kubernetes network setups](https://kubernetes.io/docs/concepts/cluster-administration/networking/). But for sure you can use the currently default network plugin, which uses lxd's integrated networking, and build kubernetes cluster networking around it.
-
-The CNI plugin is selected by passing the `--network-plugin=cni` option. The CNI configuration is read from within `--cni-conf-dir` (default /etc/cni/net.d) and uses that file to set up each pod’s network. The CNI configuration file must match the [CNI specification](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration), and any required CNI plugins referenced by the configuration must be present in `--cni-bin-dir` (default /opt/cni/bin).
+We recommend to use [Container Network Interface (CNI)](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/) as the network plugin as it offers more flexibility and integration to [common kubernetes network setups](https://kubernetes.io/docs/concepts/cluster-administration/networking/). The CNI plugin is selected by passing the `--network-plugin=cni` option. The CNI configuration is read from within `--cni-conf-dir` (default /etc/cni/net.d) and uses that file to set up each pod’s network. The CNI configuration file must match the [CNI specification](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration), and any required CNI plugins referenced by the configuration must be present in `--cni-bin-dir` (default /opt/cni/bin).
 
 If there are multiple CNI configuration files in the directory, the first configuration file by name in lexicographic order is used. Keep in mind you can also chain several plugins using a conflist file. Example configuration `/etc/cni/net.d/10-mynet.conf`:
 
@@ -128,11 +125,9 @@ You can also combine all these variants. Command-line parameters have precedence
 
 ### Configure Kubelet to use LXE
 
-Now that you have LXE running on your system you can define the LXE socket as CRI endpoint in kubelet. You'll have to define the following options `--container-runtime=remote` and `--container-runtime-endpoint=unix:///run/lxe.sock` and your kubelet should be able to connect to your LXE socket.
+Now that you have LXE running on your system you can define the LXE socket as CRI endpoint in kubelet. You'll have to define the following options `--container-runtime-endpoint=unix:///run/lxe.sock` and `--containerd=` and your kubelet should be able to connect to your LXE socket.
 
 ## Installing LXE from source
-
-LXE requires golang 1.18.
 
 ### Quick Installation
 
